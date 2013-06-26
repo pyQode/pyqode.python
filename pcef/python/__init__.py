@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # PCEF
@@ -12,8 +12,9 @@
 This package contains python specific modes, panels and editors.
 """
 # from pcef.python import panels
-import pcef
-# from pcef.core import QCodeEdit, Slot
+import re
+import pcef.core
+from pcef.qt import QtCore
 from pcef.python import plugins
 from pcef.python.modes import PyHighlighterMode
 from pcef.python.modes import PyAutoIndentMode
@@ -51,7 +52,7 @@ class QPythonCodeEdit(pcef.core.QCodeEdit):
         self.installMode(pcef.core.ZoomMode())
         self.installMode(PyAutoIndentMode())
 
-    @pcef.QtCore.Slot()
+    @QtCore.Slot()
     def useDarkStyle(self, use=True):
         if not use:
             return
@@ -72,7 +73,7 @@ class QPythonCodeEdit(pcef.core.QCodeEdit):
                             '#404040')
         self.pyHighlighter.rehighlight()
 
-    @pcef.QtCore.Slot()
+    @QtCore.Slot()
     def useLightStyle(self, use=True):
         if not use:
             return
@@ -92,4 +93,14 @@ class QPythonCodeEdit(pcef.core.QCodeEdit):
         self.style.setValue("whiteSpaceForeground",
                             pcef.core.constants.EDITOR_WS_FOREGROUND)
         self.pyHighlighter.rehighlight()
+
+    def detectEncoding(self, data):
+        encoding = self.getDefaultEncoding()
+        data = str(data.decode("utf-8"))
+        for l in data.splitlines():
+            regexp = re.compile(r"#.*coding[:=]\s*([-\w.]+)")
+            match = regexp.match(l)
+            if match:
+                encoding = match.groups()[0]
+        return encoding
 
