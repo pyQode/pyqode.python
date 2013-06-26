@@ -16,15 +16,14 @@ logging.basicConfig(level=logging.INFO)
 import os
 import sys
 os.environ.setdefault("QT_API", "PyQt")
-from pcef import QtCore, QtGui
-import pcef
-if pcef.python3:
+from pcef.qt import QtCore, QtGui
+if sys.version_info[0] == 3:
     from examples.gui_integration.ui.python_editor_ui3 import Ui_MainWindow
     logging.info("Using python3")
 else:
     from examples.gui_integration.ui.python_editor_ui import Ui_MainWindow
     logging.info("Using python2")
-
+ 
 
 class PythonEditorWindow(QtGui.QMainWindow, Ui_MainWindow):
     def __init__(self):

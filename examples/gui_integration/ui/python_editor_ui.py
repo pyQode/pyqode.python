@@ -117,5 +117,5 @@ class Ui_MainWindow(object):
         self.actionLight.setText(_translate("MainWindow", "Light", None))
         self.actionDark.setText(_translate("MainWindow", "Dark", None))
 
-from pcef import QPythonCodeEdit
+from pcef.python import QPythonCodeEdit
 import examples_rc
