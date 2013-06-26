@@ -11,23 +11,19 @@
 """
 This package contains python specific modes, panels and editors.
 """
-from pcef.python import panels
-from pcef.python import modes
-
-from pcef.core.editor import QCodeEdit
-from pcef.core.panels import LineNumberPanel
-from pcef.core.modes import CaretLineHighlighterMode
-from pcef.core.modes import RightMarginMode
-from pcef.core.modes import ZoomMode
+# from pcef.python import panels
+import pcef
+# from pcef.core import QCodeEdit, Slot
+from pcef.python import plugins
 from pcef.python.modes import PyHighlighterMode
 from pcef.python.modes import PyAutoIndentMode
-from pcef.constants import PanelPosition
-
-from pcef.qt import QtCore
-from pcef import constants
 
 
-class QPythonCodeEdit(QCodeEdit):
+#: pcef-python version
+__version__ = "1.0.0-dev"
+
+
+class QPythonCodeEdit(pcef.core.QCodeEdit):
     """
     Extends QCodeEdit with a hardcoded set of modes and panels specifics to
     a python code editor widget
@@ -44,21 +40,22 @@ class QPythonCodeEdit(QCodeEdit):
     LIGHT_STYLE = 1
 
     def __init__(self, parent=None):
-        QCodeEdit.__init__(self, parent)
+        pcef.core.QCodeEdit.__init__(self, parent)
         self.setLineWrapMode(self.NoWrap)
         self.setWindowTitle("PCEF - Generic Editor")
-        self.installPanel(LineNumberPanel(), PanelPosition.LEFT)
-        self.installMode(CaretLineHighlighterMode())
-        self.installMode(RightMarginMode())
+        self.installPanel(pcef.core.LineNumberPanel(),
+                          pcef.core.PanelPosition.LEFT)
+        self.installMode(pcef.core.CaretLineHighlighterMode())
+        self.installMode(pcef.core.RightMarginMode())
         self.installMode(PyHighlighterMode(self.document()))
-        self.installMode(ZoomMode())
+        self.installMode(pcef.core.ZoomMode())
         self.installMode(PyAutoIndentMode())
 
-    @QtCore.Slot()
+    @pcef.QtCore.Slot()
     def useDarkStyle(self, use=True):
         if not use:
             return
-        for k, v in constants.DEFAULT_DARK_STYLES.items():
+        for k, v in pcef.core.constants.DEFAULT_DARK_STYLES.items():
             self.style.setValue(k, v, "Python")
         self.style.setValue("background", "#252525")
         self.style.setValue("foreground", "#A9B7C6")
@@ -75,24 +72,24 @@ class QPythonCodeEdit(QCodeEdit):
                             '#404040')
         self.pyHighlighter.rehighlight()
 
-    @QtCore.Slot()
+    @pcef.QtCore.Slot()
     def useLightStyle(self, use=True):
         if not use:
             return
-        for k, v in constants.DEFAULT_STYLES.items():
+        for k, v in pcef.core.constants.DEFAULT_STYLES.items():
             self.style.setValue(k, v, "Python")
         self.style.setValue("background", "#FFFFFF")
         self.style.setValue("foreground", "#000000")
         self.style.setValue("caretLineBackground", "#E4EDF8")
         self.style.setValue("selectionBackground",
-                            constants.SELECTION_BACKGROUND)
+                            pcef.core.constants.SELECTION_BACKGROUND)
         self.style.setValue("selectionForeground",
-                            constants.SELECTION_FOREGROUND)
+                            pcef.core.constants.SELECTION_FOREGROUND)
         self.style.setValue("panelBackground",
-                            constants.LINE_NBR_BACKGROUND)
+                            pcef.core.constants.LINE_NBR_BACKGROUND)
         self.style.setValue("panelForeground",
-                            constants.LINE_NBR_FOREGROUND)
+                            pcef.core.constants.LINE_NBR_FOREGROUND)
         self.style.setValue("whiteSpaceForeground",
-                            constants.EDITOR_WS_FOREGROUND)
+                            pcef.core.constants.EDITOR_WS_FOREGROUND)
         self.pyHighlighter.rehighlight()
 
