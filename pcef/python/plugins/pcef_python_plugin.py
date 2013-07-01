@@ -9,12 +9,9 @@ in your path on Windows)
 """
 # This only works with PyQt, PySide does not support the QtDesigner module
 import os
-import PyQt4
-import pcef.python
-from pcef.core.plugins import QCodeEditPlugin
-from PyQt4.QtGui import QApplication
-
 os.environ.setdefault("QT_API", "PyQt")
+import pcef.python
+from pcef.core.plugins.pcef_core_plugin import QCodeEditPlugin
 
 
 class QPythonCodeEditPlugin(QCodeEditPlugin):

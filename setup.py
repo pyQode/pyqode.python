@@ -46,6 +46,7 @@ setup(
     description='PCEF python specific modes and panels',
     long_description=readme(),
     install_requires=requirements,
-    entry_points={'gui_scripts': ['pcef_designer = designer:main']},
+    entry_points={'pcef_plugins':
+                 ['pcef_python = pcef.python.plugins.pcef_python_plugin']},
     zip_safe=False
 )

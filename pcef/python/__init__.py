@@ -15,7 +15,6 @@ This package contains python specific modes, panels and editors.
 import re
 import pcef.core
 from pcef.qt import QtCore
-from pcef.python import plugins
 from pcef.python.modes import PyHighlighterMode
 from pcef.python.modes import PyAutoIndentMode
 
