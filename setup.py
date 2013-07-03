@@ -14,6 +14,7 @@ This setup script packages pcef-python
 from setuptools import setup, find_packages
 import sys
 
+
 def read_version():
     with open("pcef/python/__init__.py") as f:
         lines = f.read().splitlines()
