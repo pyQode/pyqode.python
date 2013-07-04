@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-#
+# 
 # PCEF - Python/Qt Code Editing Framework
 # Copyright 2013, Colin Duquesnoy <colin.duquesnoy@gmail.com>
 #
@@ -29,6 +29,8 @@ class PythonEditorWindow(QtGui.QMainWindow, Ui_MainWindow):
     def __init__(self):
         QtGui.QMainWindow.__init__(self)
         self.setupUi(self)
+        self.editor.dirtyChanged.connect(self.actionSave.setEnabled)
+        self.actionSave.triggered.connect(self.editor.saveToFile)
         # Add modes to the modes menu
         for k, v in self.editor.modes().items():
             a = QtGui.QAction(self.menuModes)
