@@ -45,6 +45,8 @@ class QPythonCodeEdit(pcef.core.QCodeEdit):
         self.setWindowTitle("PCEF - Generic Editor")
         self.installPanel(pcef.core.LineNumberPanel(),
                           pcef.core.PanelPosition.LEFT)
+        self.installPanel(pcef.core.SearchAndReplacePanel(),
+                          pcef.core.PanelPosition.BOTTOM)
         self.installMode(pcef.core.CaretLineHighlighterMode())
         self.installMode(pcef.core.RightMarginMode())
         self.installMode(PyHighlighterMode(self.document()))
