@@ -13,3 +13,5 @@ Contains python specific modes
 """
 from pcef.python.modes.syntax_highlighter import PyHighlighterMode
 from pcef.python.modes.indenter import PyAutoIndentMode
+
+__all__ = ["PyHighlighterMode", "PyAutoIndentMode"]

@@ -105,3 +105,5 @@ class QPythonCodeEdit(pcef.core.QCodeEdit):
                 encoding = match.groups()[0]
         return encoding
 
+__all__ = ['PyHighlighterMode', 'PyAutoIndentMode', "__version__",
+           "QPythonCodeEdit"]
