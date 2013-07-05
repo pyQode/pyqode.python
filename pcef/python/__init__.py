@@ -70,6 +70,8 @@ class QPythonCodeEdit(pcef.core.QCodeEdit):
                             '#302F2F')
         self.style.setValue("panelForeground",
                             '#808080')
+        self.style.setValue("panelHighlight",
+                            '#404040')
         self.style.setValue("whiteSpaceForeground",
                             '#404040')
         self.pyHighlighter.rehighlight()
@@ -88,11 +90,13 @@ class QPythonCodeEdit(pcef.core.QCodeEdit):
         self.style.setValue("selectionForeground",
                             pcef.core.constants.SELECTION_FOREGROUND)
         self.style.setValue("panelBackground",
-                            pcef.core.constants.LINE_NBR_BACKGROUND)
+                            pcef.core.constants.PANEL_BACKGROUND)
         self.style.setValue("panelForeground",
-                            pcef.core.constants.LINE_NBR_FOREGROUND)
+                            pcef.core.constants.PANEL_FOREGROUND)
         self.style.setValue("whiteSpaceForeground",
                             pcef.core.constants.EDITOR_WS_FOREGROUND)
+        self.style.setValue("panelHighlight",
+                            pcef.core.constants.PANEL_HIGHLIGHT)
         self.pyHighlighter.rehighlight()
 
     def detectEncoding(self, data):
