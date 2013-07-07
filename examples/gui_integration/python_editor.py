@@ -31,6 +31,7 @@ class PythonEditorWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.editor.dirtyChanged.connect(self.actionSave.setEnabled)
         self.actionSave.triggered.connect(self.editor.saveToFile)
+        self.menubar.addMenu(self.editor.contextMenu)
         # Add modes to the modes menu
         for k, v in self.editor.modes().items():
             a = QtGui.QAction(self.menuModes)
