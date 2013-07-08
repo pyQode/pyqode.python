@@ -9,5 +9,5 @@ This package contains the following modes and panels:
 This package is installed as part of the pcef package in a subpackage called python::
   
   
-  import pcef
+  import pcef.python
   editor = pcef.python.QPythonCodeEdit()
