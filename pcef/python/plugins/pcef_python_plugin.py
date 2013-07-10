@@ -19,6 +19,7 @@ class QPythonCodeEditPlugin(QCodeEditPlugin):
     _class = 'QPythonCodeEdit'    # name of the widget class
     _name = "QPythonCodeEdit"
     _icon = None
+    _type = pcef.python.QPythonCodeEdit
 
     def createWidget(self, parent):
         return pcef.python.QPythonCodeEdit(parent)
