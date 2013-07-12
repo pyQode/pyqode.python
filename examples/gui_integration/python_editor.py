@@ -31,6 +31,8 @@ class PythonEditorWindow(QtGui.QMainWindow, Ui_MainWindow):
         QtGui.QMainWindow.__init__(self)
         self.setupUi(self)
         self.editor.foldingPanel.addIndicator(FoldingIndicator(22, 30))
+        self.editor.foldingPanel.addIndicator(FoldingIndicator(25, 28))
+        self.editor.foldingPanel.addIndicator(FoldingIndicator(50, 60))
         self.editor.dirtyChanged.connect(self.actionSave.setEnabled)
         self.actionSave.triggered.connect(self.editor.saveToFile)
         mnu = QtGui.QMenu("Edit", self.menubar)
