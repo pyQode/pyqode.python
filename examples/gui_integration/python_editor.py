@@ -38,31 +38,41 @@ class PythonEditorWindow(QtGui.QMainWindow, Ui_MainWindow):
         for k, v in self.editor.modes().items():
             a = QtGui.QAction(self.menuModes)
             a.setText(k)
+            a.setCheckable(True)
+            a.setChecked(True)
+            a.changed.connect(self.onModeCheckStateChanged)
+            a.mode = v
             self.menuModes.addAction(a)
         # Add panels to the panels menu
         for zones, panel_dic in self.editor.panels().items():
             for k, v in panel_dic.items():
                 a = QtGui.QAction(self.menuModes)
                 a.setText(k)
+                a.setCheckable(True)
+                a.setChecked(True)
+                a.changed.connect(self.onPanelCheckStateChanged)
+                a.panel = v
                 self.menuPanels.addAction(a)
-        # create action group for styles
-        group = QtGui.QActionGroup(self)
-        group.addAction(self.actionDark)
-        group.addAction(self.actionLight)
-        self.actionLight.setChecked(True)
         try:
             self.editor.openFile(__file__)
         except (OSError, IOError) as e:
             pass
         except AttributeError:
             pass
-
     @QtCore.Slot()
     def on_actionOpen_triggered(self):
         filePath = QtGui.QFileDialog.getOpenFileName(
             self, "Choose a file", os.path.expanduser("~"))
         if filePath:
             self.editor.openFile(filePath)
+
+    def onPanelCheckStateChanged(self):
+        action = self.sender()
+        action.panel.enabled = action.isChecked()
+
+    def onModeCheckStateChanged(self):
+        action = self.sender()
+        action.mode.enabled = action.isChecked()
 
 
 def main():
