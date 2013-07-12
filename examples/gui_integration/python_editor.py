@@ -17,6 +17,7 @@ import os
 import sys
 os.environ.setdefault("QT_API", "PyQt")
 from pcef.qt import QtCore, QtGui
+from pcef.core import FoldingIndicator
 if sys.version_info[0] == 3:
     from examples.gui_integration.ui.python_editor_ui3 import Ui_MainWindow
     logging.info("Using python3")
@@ -29,6 +30,7 @@ class PythonEditorWindow(QtGui.QMainWindow, Ui_MainWindow):
     def __init__(self):
         QtGui.QMainWindow.__init__(self)
         self.setupUi(self)
+        self.editor.foldingPanel.addIndicator(FoldingIndicator(22, 30))
         self.editor.dirtyChanged.connect(self.actionSave.setEnabled)
         self.actionSave.triggered.connect(self.editor.saveToFile)
         mnu = QtGui.QMenu("Edit", self.menubar)
