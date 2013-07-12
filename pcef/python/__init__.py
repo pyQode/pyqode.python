@@ -43,6 +43,7 @@ class QPythonCodeEdit(pcef.core.QCodeEdit):
         pcef.core.QCodeEdit.__init__(self, parent)
         self.setLineWrapMode(self.NoWrap)
         self.setWindowTitle("PCEF - Generic Editor")
+        self.installPanel(pcef.core.FoldingPanel())
         self.installPanel(pcef.core.LineNumberPanel(),
                           pcef.core.PanelPosition.LEFT)
         self.installPanel(pcef.core.SearchAndReplacePanel(),
