@@ -14,7 +14,7 @@ This package contains python specific modes, panels and editors.
 # from pcef.python import panels
 import re
 import pcef.core
-from pcef.qt import QtCore
+from pcef.qt import QtCore, QtGui
 from pcef.python.modes import PyHighlighterMode
 from pcef.python.modes import PyAutoIndentMode
 
@@ -75,6 +75,8 @@ class QPythonCodeEdit(pcef.core.QCodeEdit):
                             '#404040')
         self.style.setValue("whiteSpaceForeground",
                             '#404040')
+        self.style.setValue("nativeFoldingIndicator", False)
+        self.style.setValue("foldScopeBackground", QtGui.QColor("#808080"))
         self.pyHighlighter.rehighlight()
 
     @QtCore.Slot()
@@ -98,6 +100,8 @@ class QPythonCodeEdit(pcef.core.QCodeEdit):
                             pcef.core.constants.EDITOR_WS_FOREGROUND)
         self.style.setValue("panelHighlight",
                             pcef.core.constants.PANEL_HIGHLIGHT)
+        self.style.setValue("nativeFoldingIndicator", True)
+        self.foldingPanel.resetScopeColor()
         self.pyHighlighter.rehighlight()
 
     def detectEncoding(self, data):
