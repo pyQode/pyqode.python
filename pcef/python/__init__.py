@@ -108,7 +108,7 @@ class QPythonCodeEdit(pcef.core.QCodeEdit):
         self.style.setValue("panelHighlight",
                             pcef.core.constants.PANEL_HIGHLIGHT)
         self.style.setValue("nativeFoldingIndicator", True)
-        self.foldingPanel.resetScopeColor()
+        self.foldingPanel.resetIndicatorsBackground()
         self.pyHighlighter.rehighlight()
 
     def detectEncoding(self, data):

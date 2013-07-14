@@ -30,12 +30,7 @@ class PythonEditorWindow(QtGui.QMainWindow, Ui_MainWindow):
     def __init__(self):
         QtGui.QMainWindow.__init__(self)
         self.setupUi(self)
-        self.editor.foldingPanel.addIndicator(FoldingIndicator(22, 30))
-        self.editor.foldingPanel.addIndicator(FoldingIndicator(25, 28))
-        fi = FoldingIndicator(50, 60)
-        fi.state = fi.FOLDED
-        self.editor.foldingPanel.addIndicator(fi)
-        self.editor.dirtyChanged.connect(self.actionSave.setEnabled)
+        self.editor.show()
         self.actionSave.triggered.connect(self.editor.saveToFile)
         mnu = QtGui.QMenu("Edit", self.menubar)
         mnu.addActions(self.editor.actions())
@@ -65,6 +60,13 @@ class PythonEditorWindow(QtGui.QMainWindow, Ui_MainWindow):
             pass
         except AttributeError:
             pass
+        self.editor.foldingPanel.addIndicator(FoldingIndicator(22, 30))
+        self.editor.foldingPanel.addIndicator(FoldingIndicator(25, 28))
+        fi = FoldingIndicator(50, 60)
+        self.editor.foldingPanel.addIndicator(fi)
+        self.editor.foldingPanel.fold(fi)
+        self.editor.dirtyChanged.connect(self.actionSave.setEnabled)
+
     @QtCore.Slot()
     def on_actionOpen_triggered(self):
         filePath = QtGui.QFileDialog.getOpenFileName(
