@@ -75,6 +75,8 @@ class QPythonCodeEdit(pcef.core.QCodeEdit):
                             '#404040')
         self.style.setValue("whiteSpaceForeground",
                             '#404040')
+        self.style.setValue("lineForeground", "#606060")
+        self.style.setValue("lineForegroundSel", "#909090")
         self.style.setValue("nativeFoldingIndicator", False)
         self.style.setValue("foldIndicatorBackground", QtGui.QColor("#696969"))
         self.pyHighlighter.rehighlight()
@@ -98,6 +100,11 @@ class QPythonCodeEdit(pcef.core.QCodeEdit):
                             pcef.core.constants.PANEL_FOREGROUND)
         self.style.setValue("whiteSpaceForeground",
                             pcef.core.constants.EDITOR_WS_FOREGROUND)
+        pal = QtGui.QApplication.instance().palette()
+        self.style.setValue("lineForeground", pal.color(
+                QtGui.QPalette.Disabled, QtGui.QPalette.WindowText))
+        self.style.setValue("lineForegroundSel", pal.color(
+            QtGui.QPalette.Active, QtGui.QPalette.WindowText))
         self.style.setValue("panelHighlight",
                             pcef.core.constants.PANEL_HIGHLIGHT)
         self.style.setValue("nativeFoldingIndicator", True)
