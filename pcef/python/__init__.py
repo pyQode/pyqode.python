@@ -76,7 +76,7 @@ class QPythonCodeEdit(pcef.core.QCodeEdit):
         self.style.setValue("whiteSpaceForeground",
                             '#404040')
         self.style.setValue("nativeFoldingIndicator", False)
-        self.style.setValue("foldScopeBackground", QtGui.QColor("#808080"))
+        self.style.setValue("foldIndicatorBackground", QtGui.QColor("#696969"))
         self.pyHighlighter.rehighlight()
 
     @QtCore.Slot()
