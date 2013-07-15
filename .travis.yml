@@ -5,6 +5,10 @@ python:
 virtualenv:
   system_site_packages: true
 before_install:
+ - git clone https://github.com/ColinDuquesnoy/pcef-core.git
+ - cd pcef-core
+ - sudo python setup.py install
+ - cd ..
  - sudo apt-get install -qq python-pyside
  - sudo apt-get install -qq python-qt4
  - sudo apt-get install -qq python3-pyside
