@@ -1,7 +1,7 @@
 pcef-python
 ===========
 
-.. image:: https://travis-ci.org/ColinDuquesnoy/pcef-python.png?branch=develop
+.. image:: https://api.travis-ci.org/ColinDuquesnoy/pcef-python.png?branch=dev
     :target: https://travis-ci.org/ColinDuquesnoy/pcef-python
     :alt: Travis-CI build status
 
