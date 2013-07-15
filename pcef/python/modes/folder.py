@@ -45,18 +45,24 @@ class PyFolderMode(Mode):
             foldPanel = self.editor.foldingPanel
         except AttributeError:
             return
-        foldPanel.clearIndicators()
+        oldIndicators = foldPanel.indicators
         root_node = layout.analyseLayout(self.editor.toPlainText())
-        markers = self.__getMarkers(root_node)
-        for start, end in markers:
-            foldPanel.addIndicator(FoldingIndicator(start, end))
+        indicators = self.__getIndicators(root_node)
+        for new, old in zip(indicators, oldIndicators):
+            if old.state == old.FOLDED:
+                new.state = new.FOLDED
+        foldPanel.clearIndicators()
+        for indic in indicators:
+            foldPanel.addIndicator(indic)
+            if indic.state == indic.FOLDED:
+                foldPanel.fold(indic)
 
-    def __getMarkers(self, root_node):
+    def __getIndicators(self, root_node):
         markers = []
         for c in root_node.children:
             if (c.type == layout.DocumentLayoutNode.Type.GLOBAL_VAR or
                     c.type == layout.DocumentLayoutNode.Type.ENTRY_POINT):
                 continue
-            markers.append((c.start, c.end))
-            markers += self.__getMarkers(c)
+            markers.append(FoldingIndicator(c.start, c.end))
+            markers += self.__getIndicators(c)
         return markers
