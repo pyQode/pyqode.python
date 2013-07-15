@@ -1,6 +1,11 @@
 pcef-python
 ===========
 
+.. image:: https://travis-ci.org/ColinDuquesnoy/pcef-python.png?branch=develop
+    :target: https://travis-ci.org/ColinDuquesnoy/pcef-python
+    :alt: Travis-CI build status
+
+
 A set of PCEF modes and panels specific to the python programming language.
 
 This package contains the following modes and panels:
