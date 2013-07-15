@@ -1,6 +1,16 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
+# pcef-python
+# Copyright 2013, Colin Duquesnoy <colin.duquesnoy@gmail.com>
+#
+# This software is released under the LGPLv3 license.
+# You should have received a copy of the GNU Lesser General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+#
 """
 This module provides classes and function to do a quick analysis of a python
-document.
+document layout.
 
 It returns a tree of DocumentNode which includes the following informations:
     - imports
@@ -43,8 +53,12 @@ class DocumentLayoutNode(object):
                 return "FUNCTION"
             elif t == cls.CLASS:
                 return "CLASS"
-            else:
+            elif t == cls.IMPORTS:
                 return "IMPORTS"
+            elif t == cls.GLOBAL_VAR:
+                return "GLOBAL_VAR"
+            else:
+                return "UNKNWON TYPE"
 
     def __init__(self, identifier, nodeType=0):
         """
@@ -155,6 +169,13 @@ def analyseLayout(source_code):
             if not imports.start:
                 imports.start = i + 1
             imports.end = i + 1
+        if "=" in line and not "==" in line and indent_lvl == 0:
+            name = line.split("=")[0]
+            varNode = DocumentLayoutNode(name,
+                                         DocumentLayoutNode.Type.GLOBAL_VAR)
+            varNode.start = varNode.end = i
+            root.addChild(varNode)
+        # function or class
         if line.strip().startswith("def") or line.strip().startswith("class"):
             node_type = DocumentLayoutNode.Type.CLASS
             if line.strip().startswith("def"):
