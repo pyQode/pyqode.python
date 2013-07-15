@@ -47,12 +47,16 @@ class PyFolderMode(Mode):
             return
         foldPanel.clearIndicators()
         root_node = layout.analyseLayout(self.editor.toPlainText())
-        for start, end in self.__getMarkers(root_node):
+        markers = self.__getMarkers(root_node)
+        for start, end in markers:
             foldPanel.addIndicator(FoldingIndicator(start, end))
 
     def __getMarkers(self, root_node):
         markers = []
         for c in root_node.children:
+            if (c.type == layout.DocumentLayoutNode.Type.GLOBAL_VAR or
+                    c.type == layout.DocumentLayoutNode.Type.ENTRY_POINT):
+                continue
             markers.append((c.start, c.end))
             markers += self.__getMarkers(c)
         return markers
