@@ -175,6 +175,13 @@ def analyseLayout(source_code):
                                          DocumentLayoutNode.Type.GLOBAL_VAR)
             varNode.start = varNode.end = i
             root.addChild(varNode)
+        if ("__name__" in line and "==" in line and "__main__"  in line and
+                    indent_lvl == 0):
+            varNode = DocumentLayoutNode("Entry point",
+                                         DocumentLayoutNode.Type.GLOBAL_VAR)
+            varNode.start = i + 1
+            varNode.end = len(lines)
+            root.addChild(varNode)
         # function or class
         if line.strip().startswith("def") or line.strip().startswith("class"):
             node_type = DocumentLayoutNode.Type.CLASS

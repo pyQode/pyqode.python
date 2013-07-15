@@ -15,6 +15,7 @@ This package contains python specific modes, panels and editors.
 import re
 import pcef.core
 from pcef.qt import QtCore, QtGui
+from pcef.python.modes import PyFolderMode
 from pcef.python.modes import PyHighlighterMode
 from pcef.python.modes import PyAutoIndentMode
 
@@ -53,6 +54,7 @@ class QPythonCodeEdit(pcef.core.QCodeEdit):
         self.installMode(PyHighlighterMode(self.document()))
         self.installMode(pcef.core.ZoomMode())
         self.installMode(PyAutoIndentMode())
+        self.installMode(PyFolderMode())
 
     @QtCore.Slot()
     def useDarkStyle(self, use=True):
