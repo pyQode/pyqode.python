@@ -15,7 +15,6 @@ before_install:
  - sudo apt-get install -qq python3-pyqt4
  - sudo apt-get install -qq python-pygments
  - sudo apt-get install -qq python3-pygments
- - pip install pcef-core
  - pip install jedi
  - pip install pep8
  - pip install pyflakes
