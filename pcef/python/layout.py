@@ -20,7 +20,7 @@ It returns a tree of DocumentNode which includes the following informations:
     - methods
 """
 import weakref
-
+from pcef.qt import QtCore
 
 class DocumentLayoutNode(object):
     """
@@ -44,6 +44,8 @@ class DocumentLayoutNode(object):
         IMPORTS = 3
         #: Global variable
         GLOBAL_VAR = 4
+        #: Entry point: if __name__ == "__main__"
+        ENTRY_POINT = 5
 
         @classmethod
         def toString(cls, t):
@@ -57,8 +59,10 @@ class DocumentLayoutNode(object):
                 return "IMPORTS"
             elif t == cls.GLOBAL_VAR:
                 return "GLOBAL_VAR"
+            elif t == cls.ENTRY_POINT:
+                return "ENTRY_POINT"
             else:
-                return "UNKNWON TYPE"
+                return "UNKNOWN TYPE"
 
     def __init__(self, identifier, nodeType=0):
         """
@@ -169,7 +173,9 @@ def analyseLayout(source_code):
             if not imports.start:
                 imports.start = i + 1
             imports.end = i + 1
-        if "=" in line and not "==" in line and indent_lvl == 0:
+        exp = QtCore.QRegExp("^\\w*\\s=\\s")
+        if exp.indexIn(line) != -1:
+            print(exp.indexIn(line))
             name = line.split("=")[0]
             varNode = DocumentLayoutNode(name,
                                          DocumentLayoutNode.Type.GLOBAL_VAR)
@@ -178,7 +184,7 @@ def analyseLayout(source_code):
         if ("__name__" in line and "==" in line and "__main__"  in line and
                     indent_lvl == 0):
             varNode = DocumentLayoutNode("Entry point",
-                                         DocumentLayoutNode.Type.GLOBAL_VAR)
+                                         DocumentLayoutNode.Type.ENTRY_POINT)
             varNode.start = i + 1
             varNode.end = len(lines)
             root.addChild(varNode)
