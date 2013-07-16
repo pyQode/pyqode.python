@@ -65,16 +65,16 @@ class QPythonCodeEdit(pcef.core.QCodeEdit):
         self.style.setValue("background", "#252525")
         self.style.setValue("foreground", "#A9B7C6")
         self.style.setValue("caretLineBackground", "#2d2d2d")
-        self.style.setValue("selectionBackground",
-                            '#78879b')
-        self.style.setValue("selectionForeground",
-                            "#FFFFFF")
-        self.style.setValue("panelBackground",
-                            '#302F2F')
-        self.style.setValue("panelForeground",
-                            '#808080')
-        self.style.setValue("panelHighlight",
-                            '#404040')
+        # self.style.setValue("selectionBackground",
+        #                     '#78879b')
+        # self.style.setValue("selectionForeground",
+        #                     "#FFFFFF")
+        # self.style.setValue("panelBackground",
+        #                     '#302F2F')
+        # self.style.setValue("panelForeground",
+        #                     '#808080')
+        # self.style.setValue("panelHighlight",
+        #                     '#404040')
         self.style.setValue("whiteSpaceForeground",
                             '#404040')
         self.style.setValue("lineForeground", "#606060")
@@ -96,10 +96,10 @@ class QPythonCodeEdit(pcef.core.QCodeEdit):
                             pcef.core.constants.SELECTION_BACKGROUND)
         self.style.setValue("selectionForeground",
                             pcef.core.constants.SELECTION_FOREGROUND)
-        self.style.setValue("panelBackground",
-                            pcef.core.constants.PANEL_BACKGROUND)
-        self.style.setValue("panelForeground",
-                            pcef.core.constants.PANEL_FOREGROUND)
+        # self.style.setValue("panelBackground",
+        #                     pcef.core.constants.PANEL_BACKGROUND)
+        # self.style.setValue("panelForeground",
+        #                     pcef.core.constants.PANEL_FOREGROUND)
         self.style.setValue("whiteSpaceForeground",
                             pcef.core.constants.EDITOR_WS_FOREGROUND)
         pal = QtGui.QApplication.instance().palette()
@@ -107,8 +107,8 @@ class QPythonCodeEdit(pcef.core.QCodeEdit):
                 QtGui.QPalette.Disabled, QtGui.QPalette.WindowText))
         self.style.setValue("lineForegroundSel", pal.color(
             QtGui.QPalette.Active, QtGui.QPalette.WindowText))
-        self.style.setValue("panelHighlight",
-                            pcef.core.constants.PANEL_HIGHLIGHT)
+        # self.style.setValue("panelHighlight",
+        #                     pcef.core.constants.PANEL_HIGHLIGHT)
         self.style.setValue("nativeFoldingIndicator", True)
         self.foldingPanel.resetIndicatorsBackground()
         self.pyHighlighter.rehighlight()
