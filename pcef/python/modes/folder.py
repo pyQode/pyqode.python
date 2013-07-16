@@ -41,22 +41,17 @@ class PyFolderMode(Mode):
         the PyDocAnalyser
         :return:
         """
-        try:
-            foldPanel = self.editor.foldingPanel
-        except AttributeError:
-            return
-        root_node = layout.analyseLayout(self.editor.toPlainText())
-        indicators = self.__getIndicators(root_node)
-        oldIndicators = foldPanel.indicators
-        if len(indicators) == len(oldIndicators):
-            for new, old in zip(indicators, oldIndicators):
-                if old.state == old.FOLDED:
-                    new.state = new.FOLDED
-        foldPanel.clearIndicators()
-        for indic in indicators:
-            foldPanel.addIndicator(indic)
-            if indic.state == indic.FOLDED:
-                foldPanel.fold(indic)
+        if self.editor.filePath:
+            try:
+                foldPanel = self.editor.foldingPanel
+            except AttributeError:
+                return
+            foldPanel.printState()
+            root_node = layout.analyseLayout(self.editor.toPlainText())
+            indicators = self.__getIndicators(root_node)
+            foldPanel.clearIndicators()
+            for indic in indicators:
+                foldPanel.addIndicator(indic)
 
     def __getIndicators(self, root_node):
         markers = []
