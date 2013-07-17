@@ -116,14 +116,17 @@ class DocumentLayoutNode(object):
         for c in self.children:
             finish = False
             while not finish:
-                l = lines[c.end - 1].strip()
-                if c.identifier == "on_actionOpen_triggered":
-                    pass
-                empty_line = l.isspace() or l == "" or "@" in l
-                if c.end <= 0 or not empty_line:
+                try:
+                    l = lines[c.end - 1].strip()
+                    if c.identifier == "on_actionOpen_triggered":
+                        pass
+                    empty_line = l.isspace() or l == "" or "@" in l
+                    if c.end <= 0 or not empty_line:
+                        finish = True
+                    else:
+                        c.end -= 1
+                except IndexError:
                     finish = True
-                else:
-                    c.end -= 1
             ch.append(c)
         self.children[:] = ch
 
