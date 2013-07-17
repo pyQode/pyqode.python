@@ -32,6 +32,10 @@ class PythonEditorWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.editor.show()
         self.actionSave.triggered.connect(self.editor.saveToFile)
+        if QtGui.QIcon.hasThemeIcon("document-save"):
+            self.actionSave.setIcon(QtGui.QIcon.fromTheme("document-save"))
+        if QtGui.QIcon.hasThemeIcon("document-open"):
+            self.actionOpen.setIcon(QtGui.QIcon.fromTheme("document-open"))
         mnu = QtGui.QMenu("Edit", self.menubar)
         mnu.addActions(self.editor.actions())
         self.menubar.addMenu(mnu)
