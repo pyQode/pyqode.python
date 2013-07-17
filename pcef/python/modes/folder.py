@@ -46,7 +46,6 @@ class PyFolderMode(Mode):
                 foldPanel = self.editor.foldingPanel
             except AttributeError:
                 return
-            foldPanel.printState()
             root_node = layout.analyseLayout(self.editor.toPlainText())
             indicators = self.__getIndicators(root_node)
             foldPanel.clearIndicators()
