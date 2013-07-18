@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# 
+#
 # PCEF - Python/Qt Code Editing Framework
 # Copyright 2013, Colin Duquesnoy <colin.duquesnoy@gmail.com>
 #
@@ -52,8 +52,8 @@ class PythonEditorWindow(QtGui.QMainWindow):
                 self.menuPanels.addAction(a)
         try:
             self.editor.openFile(__file__)
-        except (OSError, IOError) as e:
-            pass  # tata
+        except (OSError, IOError):
+            pass
         except AttributeError:
             pass
 
@@ -81,5 +81,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
