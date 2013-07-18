@@ -56,7 +56,7 @@ class PythonEditorWindow(QtGui.QMainWindow):
             pass
         except AttributeError:
             pass
-pokopkp
+
     @QtCore.Slot()
     def on_actionOpen_triggered(self):
         filePath = QtGui.QFileDialog.getOpenFileName(
