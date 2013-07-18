@@ -53,8 +53,10 @@ class QPythonCodeEdit(pcef.core.QCodeEdit):
         self.installMode(pcef.core.RightMarginMode())
         self.installMode(PyHighlighterMode(self.document()))
         self.installMode(pcef.core.ZoomMode())
+        self.installMode(pcef.core.FileWatcherMode())
         self.installMode(PyAutoIndentMode())
         self.installMode(PyFolderMode())
+
 
     @QtCore.Slot()
     def useDarkStyle(self, use=True):
