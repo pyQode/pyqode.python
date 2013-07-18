@@ -16,6 +16,7 @@ import re
 import sys
 import pcef.core
 from pcef.qt import QtCore, QtGui
+from pcef.python.modes import PEP8CheckerMode
 from pcef.python.modes import PyAutoIndentMode
 from pcef.python.modes import PyFlakesCheckerMode
 from pcef.python.modes import PyFolderMode
@@ -61,6 +62,7 @@ class QPythonCodeEdit(pcef.core.QCodeEdit):
         self.installMode(PyAutoIndentMode())
         self.installMode(PyFolderMode())
         self.installMode(PyFlakesCheckerMode())
+        self.installMode(PEP8CheckerMode())
 
 
     @QtCore.Slot()
@@ -101,5 +103,5 @@ class QPythonCodeEdit(pcef.core.QCodeEdit):
                 encoding = match.groups()[0]
         return encoding
 
-__all__ = ['PyHighlighterMode', 'PyAutoIndentMode', "__version__",
-           "QPythonCodeEdit"]
+__all__ = ["PEP8CheckerMode", 'PyHighlighterMode', 'PyAutoIndentMode',
+           "__version__", "QPythonCodeEdit"]

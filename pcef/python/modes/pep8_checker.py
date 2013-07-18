@@ -11,35 +11,51 @@
 """
 This module contains the pyFlakes checker mode
 """
+from io import StringIO
 import logging
 import _ast
+import sys
 from pcef.core import CheckerMode, CheckerMessage
 from pcef.core import MSG_STATUS_ERROR, MSG_STATUS_INFO, MSG_STATUS_WARNING
 from pcef.qt import QtCore, QtGui
 
 
-class PyFlakesCheckerMode(CheckerMode):
-    DESCRIPTION = "Check python code using pyFlakes"
-    IDENTIFIER = "pyFlakesChecker"
+class PEP8CheckerMode(CheckerMode):
+    DESCRIPTION = "Check python code for PEP8 issues"
+    IDENTIFIER = "pep8Checker"
 
     def install(self, editor):
         CheckerMode.install(self, editor)
         try:
-            import pyflakes
+            import pep8
         except ImportError:
-            logging.warning("Cannot import PyFlakes, PyFlakesCheckerMode "
-                            "disabled")
+            logging.warning("Cannot import pep8.py, PEP8CheckerMode disabled")
             self.enabled = False
         else:
-            logging.debug("PyFlakes found!")
+            logging.debug("pep8.py found!")
 
     def run(self, document, filePath):
         assert isinstance(document, QtGui.QTextDocument)
-        self.check(document.toPlainText(), filePath)
+        old_stdout = sys.stdout
+        sys.stdout = mystdout = StringIO()
+        self.check(document.toPlainText().splitlines(True), filePath)
+        sys.stdout = old_stdout
+        self.analyse(mystdout.getvalue().splitlines())
 
-    def check(self, codeString, filename):
+    def analyse(self, lines):
+        for line in lines:
+            tokens = line.split(":")
+            nbTokens = len(tokens)
+            msg = tokens[nbTokens-1]
+            status = MSG_STATUS_WARNING
+            if msg.startswith("E"):
+                MSG_STATUS_ERROR
+            line = int(tokens[nbTokens-3])
+            self.addMessageRequested.emit(CheckerMessage(msg, status, line))
+
+    def check(self, lines, filename):
         """
-        Checks the python source code using PyFlakes checker.
+        Checks the python source code using PEP8 checker.
 
         :param codeString: The code string to check
 
@@ -48,45 +64,7 @@ class PyFlakesCheckerMode(CheckerMode):
         .. note: This is a modified version of the check function found in the
                  pyFlakes script.
         """
-        # First, compile into an AST and handle syntax errors.
-        try:
-            tree = compile(codeString.encode(self.editor.fileEncoding),
-                           filename, "exec", _ast.PyCF_ONLY_AST)
-        except SyntaxError as value:
-                msg = value.args[0]
-                print(msg)
-                (lineno, offset, text) = value.lineno, value.offset, value.text
-                # If there's an encoding problem with the file, the text is None
-                if text is None:
-                    # Avoid using msg, since for the only known case, it
-                    # contains a bogus message that claims the encoding the
-                    # file declared was unknown.s
-                    logging.warning("%s: problem decoding source" % filename)
-                else:
-                    self.addMessageRequested.emit(
-                        CheckerMessage(msg, MSG_STATUS_ERROR, lineno))
-                return 1
-        else:
-            # Okay, it's syntactically valid.  Now check it.
-            from pyflakes import checker, messages
-            msg_types = {messages.UnusedImport: MSG_STATUS_WARNING,
-                         messages.RedefinedWhileUnused: MSG_STATUS_WARNING,
-                         messages.RedefinedInListComp: MSG_STATUS_WARNING,
-                         messages.ImportShadowedByLoopVar: MSG_STATUS_WARNING,
-                         messages.ImportStarUsed: MSG_STATUS_WARNING,
-                         messages.UndefinedName: MSG_STATUS_ERROR,
-                         messages.DoctestSyntaxError: MSG_STATUS_ERROR,
-                         messages.UndefinedExport: MSG_STATUS_ERROR,
-                         messages.UndefinedLocal:  MSG_STATUS_ERROR,
-                         messages.DuplicateArgument: MSG_STATUS_WARNING,
-                         messages.Redefined: MSG_STATUS_WARNING,
-                         messages.LateFutureImport: MSG_STATUS_WARNING,
-                         messages.UnusedVariable: MSG_STATUS_WARNING}
-            w = checker.Checker(tree, filename)
-            w.messages.sort(key=lambda msg: msg.lineno)
-            for warning in w.messages:
-                msg = warning.message % warning.message_args
-                line = warning.lineno
-                status = msg_types[type(warning)]
-                self.addMessageRequested.emit(CheckerMessage(msg, status, line))
-            return len(w.messages)
+        import pep8
+        pep8style = pep8.StyleGuide(parse_argv=False, config_file=True)
+        pep8style.input_file(filename, lines=lines)
+
