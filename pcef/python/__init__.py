@@ -57,32 +57,32 @@ class QPythonCodeEdit(pcef.core.QCodeEdit):
         self.installMode(PyAutoIndentMode())
         self.installMode(PyFolderMode())
 
-
     @QtCore.Slot()
     def useDarkStyle(self, use=True):
         if not use:
             return
+        style = self.style.clone()
         for k, v in pcef.core.constants.DEFAULT_DARK_STYLES.items():
-            self.style.setValue(k, v, "Python")
-        self.style.setValue("background", "#252525")
-        self.style.setValue("foreground", "#A9B7C6")
-        self.style.setValue("caretLineBackground", "#2d2d2d")
-        self.style.setValue("whiteSpaceForeground",
-                            '#404040')
-        self.pyHighlighter.rehighlight()
+            style.setValue(k, v, "Python")
+        style.setValue("background", "#252525")
+        style.setValue("foreground", "#A9B7C6")
+        style.setValue("caretLineBackground", "#2d2d2d")
+        style.setValue("whiteSpaceForeground", '#404040')
+        self.style = style
 
     @QtCore.Slot()
     def useLightStyle(self, use=True):
         if not use:
             return
+        style = self.style.clone()
         for k, v in pcef.core.constants.DEFAULT_STYLES.items():
-            self.style.setValue(k, v, "Python")
-        self.style.setValue("background", "#FFFFFF")
-        self.style.setValue("foreground", "#000000")
-        self.style.setValue("caretLineBackground", "#E4EDF8")
-        self.style.setValue("whiteSpaceForeground",
-                            pcef.core.constants.EDITOR_WS_FOREGROUND)
-        self.pyHighlighter.rehighlight()
+            style.setValue(k, v, "Python")
+        style.setValue("background", "#FFFFFF")
+        style.setValue("foreground", "#000000")
+        style.setValue("caretLineBackground", "#E4EDF8")
+        style.setValue("whiteSpaceForeground",
+                       pcef.core.constants.EDITOR_WS_FOREGROUND)
+        self.style = style
 
     def detectEncoding(self, data):
         encoding = self.getDefaultEncoding()
