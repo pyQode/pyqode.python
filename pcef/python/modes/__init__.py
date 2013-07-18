@@ -11,8 +11,11 @@
 """
 Contains python specific modes
 """
+from pcef.python.modes.indenter import PyAutoIndentMode
+from pcef.python.modes.pyflakes_checker import PyFlakesCheckerMode
 from pcef.python.modes.folder import PyFolderMode
 from pcef.python.modes.syntax_highlighter import PyHighlighterMode
-from pcef.python.modes.indenter import PyAutoIndentMode
 
-__all__ = ["PyFolderMode", "PyHighlighterMode", "PyAutoIndentMode"]
+
+__all__ = ["PyAutoIndentMode", "PyFlakesCheckerMode", "PyFolderMode",
+           "PyHighlighterMode"]

@@ -13,11 +13,14 @@ This package contains python specific modes, panels and editors.
 """
 # from pcef.python import panels
 import re
+import sys
 import pcef.core
 from pcef.qt import QtCore, QtGui
+from pcef.python.modes import PyAutoIndentMode
+from pcef.python.modes import PyFlakesCheckerMode
 from pcef.python.modes import PyFolderMode
 from pcef.python.modes import PyHighlighterMode
-from pcef.python.modes import PyAutoIndentMode
+
 
 
 #: pcef-python version
@@ -47,6 +50,7 @@ class QPythonCodeEdit(pcef.core.QCodeEdit):
         self.installPanel(pcef.core.FoldingPanel())
         self.installPanel(pcef.core.LineNumberPanel(),
                           pcef.core.PanelPosition.LEFT)
+        self.installPanel(pcef.core.MarkerPanel())
         self.installPanel(pcef.core.SearchAndReplacePanel(),
                           pcef.core.PanelPosition.BOTTOM)
         self.installMode(pcef.core.CaretLineHighlighterMode())
@@ -56,6 +60,8 @@ class QPythonCodeEdit(pcef.core.QCodeEdit):
         self.installMode(pcef.core.FileWatcherMode())
         self.installMode(PyAutoIndentMode())
         self.installMode(PyFolderMode())
+        self.installMode(PyFlakesCheckerMode())
+
 
     @QtCore.Slot()
     def useDarkStyle(self, use=True):
@@ -86,7 +92,8 @@ class QPythonCodeEdit(pcef.core.QCodeEdit):
 
     def detectEncoding(self, data):
         encoding = self.getDefaultEncoding()
-        data = str(data.decode("utf-8"))
+        if sys.version_info[0] == 3:
+            data = str(data.decode("utf-8"))
         for l in data.splitlines():
             regexp = re.compile(r"#.*coding[:=]\s*([-\w.]+)")
             match = regexp.match(l)
