@@ -24,14 +24,13 @@ if sys.version_info[0] == 3:
 else:
     from examples.gui_integration.ui.python_editor_ui import Ui_MainWindow
     logging.info("Using python2")
- 
+
 
 class PythonEditorWindow(QtGui.QMainWindow, Ui_MainWindow):
     def __init__(self):
         QtGui.QMainWindow.__init__(self)
         self.setupUi(self)
         self.editor.show()
-        self.actionSave.triggered.connect(self.editor.saveToFile)
         if QtGui.QIcon.hasThemeIcon("document-save"):
             self.actionSave.setIcon(QtGui.QIcon.fromTheme("document-save"))
         if QtGui.QIcon.hasThemeIcon("document-open"):
