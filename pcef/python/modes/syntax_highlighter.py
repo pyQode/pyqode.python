@@ -163,6 +163,10 @@ class PyHighlighterMode(QSyntaxHighlighter, Mode):
         else:
             self.setDocument(None)
 
+    def onStyleChanged(self, section, key, value):
+        if not key:
+            self.rehighlight()
+
     def highlightBlock(self, text):
         """Apply syntax highlighting to the given block of text.
         """
