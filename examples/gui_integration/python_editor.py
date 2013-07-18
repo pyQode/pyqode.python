@@ -19,7 +19,7 @@ os.environ.setdefault("QT_API", "PyQt")
 from pcef.qt import QtCore, QtGui
 from ui import loadUi
 
-  
+
 class PythonEditorWindow(QtGui.QMainWindow):
     def __init__(self):
         QtGui.QMainWindow.__init__(self)
@@ -53,7 +53,7 @@ class PythonEditorWindow(QtGui.QMainWindow):
         try:
             self.editor.openFile(__file__)
         except (OSError, IOError) as e:
-            pass
+            pass  # tata
         except AttributeError:
             pass
 
