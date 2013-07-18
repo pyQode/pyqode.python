@@ -15,7 +15,7 @@ from pcef.core.plugins.pcef_core_plugin import QCodeEditPlugin
 
 
 class QPythonCodeEditPlugin(QCodeEditPlugin):
-    _module = 'pcef'        # path to the widget's module
+    _module = 'pcef.python'        # path to the widget's module
     _class = 'QPythonCodeEdit'    # name of the widget class
     _name = "QPythonCodeEdit"
     _icon = None

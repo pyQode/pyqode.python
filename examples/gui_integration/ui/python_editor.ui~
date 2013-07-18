@@ -153,12 +153,12 @@
   <customwidget>
    <class>QPythonCodeEdit</class>
    <extends>QCodeEdit</extends>
-   <header>pcef.python</header>
+   <header>pcef</header>
   </customwidget>
   <customwidget>
    <class>QCodeEdit</class>
    <extends>QPlainTextEdit</extends>
-   <header>pcef.python</header>
+   <header>pcef</header>
   </customwidget>
  </customwidgets>
  <resources>

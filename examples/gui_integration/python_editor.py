@@ -17,20 +17,13 @@ import os
 import sys
 os.environ.setdefault("QT_API", "PyQt")
 from pcef.qt import QtCore, QtGui
-from pcef.core import FoldingIndicator
-if sys.version_info[0] == 3:
-    from examples.gui_integration.ui.python_editor_ui3 import Ui_MainWindow
-    logging.info("Using python3")
-else:
-    from examples.gui_integration.ui.python_editor_ui import Ui_MainWindow
-    logging.info("Using python2")
+from ui import loadUi
 
-
-class PythonEditorWindow(QtGui.QMainWindow, Ui_MainWindow):
+  
+class PythonEditorWindow(QtGui.QMainWindow):
     def __init__(self):
         QtGui.QMainWindow.__init__(self)
-        self.setupUi(self)
-        self.editor.show()
+        loadUi("python_editor.ui", self, rcFilename="examples.qrc")
         if QtGui.QIcon.hasThemeIcon("document-save"):
             self.actionSave.setIcon(QtGui.QIcon.fromTheme("document-save"))
         if QtGui.QIcon.hasThemeIcon("document-open"):
@@ -63,7 +56,7 @@ class PythonEditorWindow(QtGui.QMainWindow, Ui_MainWindow):
             pass
         except AttributeError:
             pass
-
+pokopkp
     @QtCore.Slot()
     def on_actionOpen_triggered(self):
         filePath = QtGui.QFileDialog.getOpenFileName(
