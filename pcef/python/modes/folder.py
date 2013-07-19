@@ -24,7 +24,7 @@ class PyFolderMode(Mode):
         Mode.__init__(self)
         self.__nbLines = 0
 
-    def onStateChanged(self, state):
+    def _onStateChanged(self, state):
         """
         Called when the mode is activated/deactivated
         """

@@ -24,8 +24,8 @@ class PEP8CheckerMode(CheckerMode):
     DESCRIPTION = "Check python code for PEP8 issues"
     IDENTIFIER = "pep8Checker"
 
-    def install(self, editor):
-        CheckerMode.install(self, editor)
+    def _onInstall(self, editor):
+        CheckerMode._onInstall(self, editor)
         try:
             import pep8
         except ImportError:

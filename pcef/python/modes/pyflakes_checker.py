@@ -22,8 +22,8 @@ class PyFlakesCheckerMode(CheckerMode):
     DESCRIPTION = "Check python code using pyFlakes"
     IDENTIFIER = "pyFlakesChecker"
 
-    def install(self, editor):
-        CheckerMode.install(self, editor)
+    def _onInstall(self, editor):
+        CheckerMode._onInstall(self, editor)
         try:
             import pyflakes
         except ImportError:

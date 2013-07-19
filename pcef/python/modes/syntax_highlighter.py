@@ -152,18 +152,18 @@ class PyHighlighterMode(QSyntaxHighlighter, Mode):
                 _format.setFontUnderline(True)
         return _format
 
-    def install(self, editor):
-        Mode.install(self, editor)
+    def _onInstall(self, editor):
+        Mode._onInstall(self, editor)
         for k, v in constants.DEFAULT_STYLES.items():
             self.editor.style.addProperty(k, v, "Python")
 
-    def onStateChanged(self, state):
+    def _onStateChanged(self, state):
         if state:
             self.setDocument(self.editor.document())
         else:
             self.setDocument(None)
 
-    def onStyleChanged(self, section, key, value):
+    def _onStyleChanged(self, section, key):
         if not key:
             self.rehighlight()
 
