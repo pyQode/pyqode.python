@@ -85,7 +85,7 @@ class QPythonCodeEdit(pcef.core.QCodeEdit):
         if not use:
             return
         style = self.style.clone()
-        for k, v in DEFAULT_STYLES.items():
+        for k, v in DEFAULT_LIGHT_STYLES.items():
             style.setValue(k, v, "Python")
         style.setValue("background", "#FFFFFF")
         style.setValue("foreground", "#000000")
