@@ -16,7 +16,10 @@ from pcef.python.modes.indenter import PyAutoIndentMode
 from pcef.python.modes.pyflakes_checker import PyFlakesCheckerMode
 from pcef.python.modes.folder import PyFolderMode
 from pcef.python.modes.syntax_highlighter import PyHighlighterMode
+from pcef.python.modes.syntax_highlighter import DEFAULT_DARK_STYLES
+from pcef.python.modes.syntax_highlighter import DEFAULT_LIGHT_STYLES
 
 
 __all__ = ["PEP8CheckerMode", "PyAutoIndentMode", "PyFlakesCheckerMode",
-           "PyFolderMode", "PyHighlighterMode"]
+           "PyFolderMode", "PyHighlighterMode", "DEFAULT_DARK_STYLES",
+           "DEFAULT_LIGHT_STYLES"]

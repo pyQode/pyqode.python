@@ -21,6 +21,8 @@ from pcef.python.modes import PyAutoIndentMode
 from pcef.python.modes import PyFlakesCheckerMode
 from pcef.python.modes import PyFolderMode
 from pcef.python.modes import PyHighlighterMode
+from pcef.python.modes import DEFAULT_DARK_STYLES
+from pcef.python.modes import DEFAULT_LIGHT_STYLES
 
 
 
@@ -70,7 +72,7 @@ class QPythonCodeEdit(pcef.core.QCodeEdit):
         if not use:
             return
         style = self.style.clone()
-        for k, v in pcef.core.constants.DEFAULT_DARK_STYLES.items():
+        for k, v in DEFAULT_DARK_STYLES.items():
             style.setValue(k, v, "Python")
         style.setValue("background", "#252525")
         style.setValue("foreground", "#A9B7C6")
@@ -83,7 +85,7 @@ class QPythonCodeEdit(pcef.core.QCodeEdit):
         if not use:
             return
         style = self.style.clone()
-        for k, v in pcef.core.constants.DEFAULT_STYLES.items():
+        for k, v in DEFAULT_STYLES.items():
             style.setValue(k, v, "Python")
         style.setValue("background", "#FFFFFF")
         style.setValue("foreground", "#000000")
