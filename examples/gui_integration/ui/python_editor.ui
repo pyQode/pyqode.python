@@ -15,7 +15,16 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <property name="margin">
+    <property name="leftMargin">
+     <number>1</number>
+    </property>
+    <property name="topMargin">
+     <number>1</number>
+    </property>
+    <property name="rightMargin">
+     <number>1</number>
+    </property>
+    <property name="bottomMargin">
      <number>1</number>
     </property>
     <property name="spacing">
@@ -32,7 +41,7 @@
      <x>0</x>
      <y>0</y>
      <width>1078</width>
-     <height>25</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -151,13 +160,13 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>QPythonCodeEdit</class>
-   <extends>QCodeEdit</extends>
+   <class>QCodeEdit</class>
+   <extends>QPlainTextEdit</extends>
    <header>pcef.python</header>
   </customwidget>
   <customwidget>
-   <class>QCodeEdit</class>
-   <extends>QPlainTextEdit</extends>
+   <class>QPythonCodeEdit</class>
+   <extends>QCodeEdit</extends>
    <header>pcef.python</header>
   </customwidget>
  </customwidgets>
@@ -178,38 +187,6 @@
     <hint type="destinationlabel">
      <x>-1</x>
      <y>-1</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionLight</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>editor</receiver>
-   <slot>useLightStyle()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>538</x>
-     <y>447</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionDark</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>editor</receiver>
-   <slot>useDarkStyle()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>538</x>
-     <y>447</y>
     </hint>
    </hints>
   </connection>

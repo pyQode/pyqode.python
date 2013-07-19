@@ -21,6 +21,7 @@ from ui import loadUi
 
 
 class PythonEditorWindow(QtGui.QMainWindow):
+
     def __init__(self):
         QtGui.QMainWindow.__init__(self)
         loadUi("python_editor.ui", self, rcFilename="examples.qrc")
@@ -31,7 +32,24 @@ class PythonEditorWindow(QtGui.QMainWindow):
         mnu = QtGui.QMenu("Edit", self.menubar)
         mnu.addActions(self.editor.actions())
         self.menubar.addMenu(mnu)
-        # Add modes to the modes menu
+        self.setupStylesMenu()
+        self.setupModesMenu()
+        self.setupPanelsMenu()
+        try:
+            self.editor.openFile(__file__)
+        except (OSError, IOError):
+            pass
+        except AttributeError:
+            pass
+
+    def setupStylesMenu(self):
+        group = QtGui.QActionGroup(self)
+        group.addAction(self.actionLight)
+        self.actionLight.setChecked(True)
+        group.addAction(self.actionDark)
+        group.triggered.connect(self.changeStyle)
+
+    def setupModesMenu(self):
         for k, v in self.editor.modes().items():
             a = QtGui.QAction(self.menuModes)
             a.setText(k)
@@ -40,7 +58,8 @@ class PythonEditorWindow(QtGui.QMainWindow):
             a.changed.connect(self.onModeCheckStateChanged)
             a.mode = v
             self.menuModes.addAction(a)
-        # Add panels to the panels menu
+
+    def setupPanelsMenu(self):
         for zones, panel_dic in self.editor.panels().items():
             for k, v in panel_dic.items():
                 a = QtGui.QAction(self.menuModes)
@@ -50,12 +69,12 @@ class PythonEditorWindow(QtGui.QMainWindow):
                 a.changed.connect(self.onPanelCheckStateChanged)
                 a.panel = v
                 self.menuPanels.addAction(a)
-        try:
-            self.editor.openFile(__file__)
-        except (OSError, IOError):
-            pass
-        except AttributeError:
-            pass
+
+    def changeStyle(self, action):
+        if action == self.actionLight:
+            self.editor.useLightStyle()
+        elif action == self.actionDark:
+            self.editor.useDarkStyle()
 
     @QtCore.Slot()
     def on_actionOpen_triggered(self):
