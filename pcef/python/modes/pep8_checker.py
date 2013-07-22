@@ -11,7 +11,7 @@
 """
 This module contains the pyFlakes checker mode
 """
-from io import StringIO
+from io import StringIO, BytesIO
 import logging
 import _ast
 import sys
@@ -37,7 +37,10 @@ class PEP8CheckerMode(CheckerMode):
     def run(self, document, filePath):
         assert isinstance(document, QtGui.QTextDocument)
         old_stdout = sys.stdout
-        sys.stdout = mystdout = StringIO()
+        if sys.version_info[0] == 3:
+            sys.stdout = mystdout = StringIO()
+        else:
+            sys.stdout = mystdout = BytesIO()
         self.check(document.toPlainText().splitlines(True), filePath)
         sys.stdout = old_stdout
         self.analyse(mystdout.getvalue().splitlines())
