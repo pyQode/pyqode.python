@@ -53,7 +53,10 @@ class PEP8CheckerMode(CheckerMode):
             status = MSG_STATUS_WARNING
             if msg.startswith("E"):
                 MSG_STATUS_ERROR
-            line = int(tokens[nbTokens-3])
+            try:
+                line = int(tokens[nbTokens-3])
+            except IndexError:
+                return
             self.addMessageRequested.emit(CheckerMessage(msg, status, line))
 
     def check(self, lines, filename):
