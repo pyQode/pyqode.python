@@ -13,16 +13,18 @@ This module contains the pyFlakes checker mode
 """
 from io import StringIO, BytesIO
 import logging
-import _ast
 import sys
 from pcef.core import CheckerMode, CheckerMessage
-from pcef.core import MSG_STATUS_ERROR, MSG_STATUS_INFO, MSG_STATUS_WARNING
-from pcef.qt import QtCore, QtGui
+from pcef.core import MSG_STATUS_ERROR, MSG_STATUS_WARNING
+from pcef.qt import QtGui
 
 
 class PEP8CheckerMode(CheckerMode):
     DESCRIPTION = "Check python code for PEP8 issues"
     IDENTIFIER = "pep8Checker"
+
+    def __init__(self):
+        CheckerMode.__init__(self, clearOnRequest=False)
 
     def _onInstall(self, editor):
         CheckerMode._onInstall(self, editor)
@@ -43,6 +45,7 @@ class PEP8CheckerMode(CheckerMode):
             sys.stdout = mystdout = BytesIO()
         self.check(document.toPlainText().splitlines(True), filePath)
         sys.stdout = old_stdout
+        self.clearMessagesRequested.emit()
         self.analyse(mystdout.getvalue().splitlines())
 
     def analyse(self, lines):
@@ -73,4 +76,3 @@ class PEP8CheckerMode(CheckerMode):
         import pep8
         pep8style = pep8.StyleGuide(parse_argv=False, config_file=True)
         pep8style.input_file(filename, lines=lines)
-

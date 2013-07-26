@@ -1,5 +1,5 @@
 # syntax.py
-from pcef.core import constants, TextStyle
+from pcef.core import TextStyle
 from pcef.qt.QtCore import QRegExp
 from pcef.qt.QtGui import QColor, QTextCharFormat, QFont, QSyntaxHighlighter
 from pcef.core.mode import Mode
@@ -61,11 +61,12 @@ class PyHighlighterMode(QSyntaxHighlighter, Mode):
     ]
 
     builtins = [
-        "__import__", "abs", "all", "any", "apply", "basestring", "bin", "bool",
-        "buffer", "bytearray", "bytes", "callable", "chr", "classmethod", "cmp",
-        "coerce", "compile", "complex", "delattr", "dict", "dir", "divmod",
-        "enumerate", "eval", "execfile", "exit", "file", "filter", "float",
-        "frozenset", "getattr", "globals", "hasattr", "hash", "hex", "id", "as",
+        "__import__", "abs", "all", "any", "apply", "basestring", "bin",
+        "bool", "buffer", "bytearray", "bytes", "callable", "chr",
+        "classmethod", "cmp", "coerce", "compile", "complex", "delattr",
+        "dict", "dir", "divmod", "enumerate", "eval", "execfile", "exit",
+        "file", "filter", "float", "frozenset", "getattr", "globals",
+        "hasattr", "hash", "hex", "id", "as",
         "input", "int", "intern", "isinstance", "issubclass", "iter", "len",
         "list", "locals", "long", "map", "max", "min", "next", "object", "oct",
         "open", "ord", "pow", "property", "range", "raw_input", "reduce",
@@ -263,13 +264,13 @@ class PyHighlighterMode(QSyntaxHighlighter, Mode):
 
         #Spaces
         expression = QRegExp('\s+')
-        index = expression.indexIn(original_txt , 0)
+        index = expression.indexIn(original_txt, 0)
         while index >= 0:
             index = expression.pos(0)
             length = len(expression.cap(0))
             self.setFormat(index, length, self.format(
                 self.editor.style.value("whiteSpaceForeground")))
-            index = expression.indexIn(original_txt , index + length)
+            index = expression.indexIn(original_txt, index + length)
 
     def match_multiline(self, text, delimiter, in_state, style):
         """Do highlighting of multi-line strings. ``delimiter`` should be a

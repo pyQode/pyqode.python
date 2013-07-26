@@ -14,13 +14,16 @@ This module contains the pyFlakes checker mode
 import logging
 import _ast
 from pcef.core import CheckerMode, CheckerMessage
-from pcef.core import MSG_STATUS_ERROR, MSG_STATUS_INFO, MSG_STATUS_WARNING
-from pcef.qt import QtCore, QtGui
+from pcef.core import MSG_STATUS_ERROR, MSG_STATUS_WARNING
+from pcef.qt import QtGui
 
 
 class PyFlakesCheckerMode(CheckerMode):
     DESCRIPTION = "Check python code using pyFlakes"
     IDENTIFIER = "pyFlakesChecker"
+
+    def __init__(self):
+        CheckerMode.__init__(self, clearOnRequest=False)
 
     def _onInstall(self, editor):
         CheckerMode._onInstall(self, editor)
@@ -53,19 +56,21 @@ class PyFlakesCheckerMode(CheckerMode):
             tree = compile(codeString.encode(self.editor.fileEncoding),
                            filename, "exec", _ast.PyCF_ONLY_AST)
         except SyntaxError as value:
-                msg = value.args[0]
-                (lineno, offset, text) = value.lineno, value.offset, value.text
-                # If there's an encoding problem with the file, the text is None
-                if text is None:
-                    # Avoid using msg, since for the only known case, it
-                    # contains a bogus message that claims the encoding the
-                    # file declared was unknown.s
-                    logging.warning("%s: problem decoding source" % filename)
-                else:
-                    self.addMessageRequested.emit(
-                        CheckerMessage(msg, MSG_STATUS_ERROR, lineno))
-                return 1
+            self.clearMessagesRequested.emit()
+            msg = value.args[0]
+            (lineno, offset, text) = value.lineno, value.offset, value.text
+            # If there's an encoding problem with the file, the text is None
+            if text is None:
+                # Avoid using msg, since for the only known case, it
+                # contains a bogus message that claims the encoding the
+                # file declared was unknown.s
+                logging.warning("%s: problem decoding source" % filename)
+            else:
+                self.addMessageRequested.emit(
+                    CheckerMessage(msg, MSG_STATUS_ERROR, lineno))
+            return 1
         else:
+            self.clearMessagesRequested.emit()
             # Okay, it's syntactically valid.  Now check it.
             from pyflakes import checker, messages
             msg_types = {messages.UnusedImport: MSG_STATUS_WARNING,
@@ -87,5 +92,6 @@ class PyFlakesCheckerMode(CheckerMode):
                 msg = warning.message % warning.message_args
                 line = warning.lineno
                 status = msg_types[type(warning)]
-                self.addMessageRequested.emit(CheckerMessage(msg, status, line))
+                self.addMessageRequested.emit(CheckerMessage(msg, status,
+                                                             line))
             return len(w.messages)

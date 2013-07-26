@@ -16,7 +16,7 @@ import os
 import re
 import sys
 import pcef.core
-from pcef.qt import QtCore, QtGui
+from pcef.qt import QtCore
 from pcef.python.modes import JediCompletionProvider
 from pcef.python.modes import PEP8CheckerMode
 from pcef.python.modes import PyAutoIndentMode

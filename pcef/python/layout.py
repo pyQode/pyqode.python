@@ -22,6 +22,7 @@ It returns a tree of DocumentNode which includes the following informations:
 import weakref
 from pcef.qt import QtCore
 
+
 class DocumentLayoutNode(object):
     """
     Represents a node in the document layout.
@@ -130,13 +131,13 @@ class DocumentLayoutNode(object):
             ch.append(c)
         self.children[:] = ch
 
-
     def debugPrint(self, indent=0):
         """
         Prints the node tree hierarchy.
         """
         print(" " * indent, self.identifier, self.start, self.end,
-            self.indentationLevel, DocumentLayoutNode.Type.toString(self.type))
+              self.indentationLevel, DocumentLayoutNode.Type.toString(
+                  self.type))
         for c in self.children:
             c.debugPrint(indent + 4)
 
@@ -178,14 +179,13 @@ def analyseLayout(source_code):
             imports.end = i + 1
         exp = QtCore.QRegExp("^\\w*\\s=\\s")
         if exp.indexIn(line) != -1:
-            print(exp.indexIn(line))
             name = line.split("=")[0]
             varNode = DocumentLayoutNode(name,
                                          DocumentLayoutNode.Type.GLOBAL_VAR)
             varNode.start = varNode.end = i
             root.addChild(varNode)
-        if ("__name__" in line and "==" in line and "__main__"  in line and
-                    indent_lvl == 0):
+        if ("__name__" in line and "==" in line and "__main__" in line and
+                indent_lvl == 0):
             varNode = DocumentLayoutNode("Entry point",
                                          DocumentLayoutNode.Type.ENTRY_POINT)
             varNode.start = i + 1
@@ -197,8 +197,8 @@ def analyseLayout(source_code):
             if line.strip().startswith("def"):
                 node_type = DocumentLayoutNode.Type.FUNCTION
             try:
-                n = DocumentLayoutNode(line.lstrip().split(" ")[1].split("(")[0],
-                                 node_type)
+                n = DocumentLayoutNode(
+                    line.lstrip().split(" ")[1].split("(")[0], node_type)
                 n.indentationLevel = indent_lvl
                 n.start = i + 1
                 if indent_lvl < prev_indent_level:

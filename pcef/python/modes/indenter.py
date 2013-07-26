@@ -14,8 +14,9 @@ from pcef.core.modes.indenter import AutoIndentMode
 
 
 class PyAutoIndentMode(AutoIndentMode):
-    """ A basic auto indent mode that provides a basic auto indentation based on the previous
-    line indentation.
+    """
+    A basic auto indent mode that provides a basic auto indentation based
+    on the previous line indentation.
 
     This mode can be extended by overriding the _getIndent method.
     """
@@ -39,7 +40,8 @@ class PyAutoIndentMode(AutoIndentMode):
         pos = tc.position()
         if pos != 0:
             indent = AutoIndentMode._getIndent(self, tc)
-            tc.movePosition(QTextCursor.StartOfLine, QTextCursor.MoveAnchor, -1)
+            tc.movePosition(QTextCursor.StartOfLine, QTextCursor.MoveAnchor,
+                            -1)
             tc.movePosition(QTextCursor.WordLeft)
             tc.select(QTextCursor.WordUnderCursor)
             last_word = tc.selectedText().strip()

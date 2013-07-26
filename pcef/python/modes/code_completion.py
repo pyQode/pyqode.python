@@ -34,7 +34,7 @@ class JediCompletionProvider(CompletionProvider):
         try:
             retVal = []
             script = jedi.Script(code, line, column,
-                                 filePath, fileEncoding)
+                                 "", fileEncoding)
             # print("Jedi run", line, column)
             completions = script.completions()
             # print(len(completions))
@@ -48,7 +48,8 @@ class JediCompletionProvider(CompletionProvider):
                         icon = ICONS[suggestionType]
                     else:
                         logging.getLogger("pcef").warning(
-                            "Unimplemented completion type: %s" % suggestionType)
+                            "Unimplemented completion type: %s" %
+                            suggestionType)
                     retVal.append(Completion(completion.name, icon=icon,
                                              tooltip=desc.split(':')[1]))
         except Exception:

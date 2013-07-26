@@ -29,4 +29,3 @@ try:
             return pcef.python.QPythonCodeEdit(parent)
 except ImportError:
     print("Cannot use pcef plugins without PyQt4")
-

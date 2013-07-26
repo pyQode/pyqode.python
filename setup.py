@@ -12,7 +12,6 @@
 This setup script packages pcef-python
 """
 from setuptools import setup, find_packages
-import sys
 
 
 def read_version():
@@ -26,11 +25,10 @@ def read_version():
 def readme():
     return str(open('README.rst').read())
 
+
 # get requirements
 requirements = ['pcef-core', 'jedi', 'pep8', 'pyflakes']
-# todo check pylint with python3 on ubuntu, this does not works on win32
-# if sys.platform != "win32":
-#     requirements += ["pylint"]
+
 
 setup(
     name='pcef-python',
