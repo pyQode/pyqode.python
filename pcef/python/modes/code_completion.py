@@ -2,7 +2,6 @@
 Contains the JediCompletionProvider class implementation
 """
 import logging
-import jedi
 from pcef.core import CompletionProvider, Completion
 
 
@@ -27,11 +26,18 @@ class JediCompletionProvider(CompletionProvider):
     def run(self, code, line, column, completionPrefix,
             filePath, fileEncoding):
         try:
-            # print("Jedi run", line, column)
+            import jedi
+        except ImportError:
+            logging.getLogger("pcef").warning(
+                "Code completion not working, jedi not found")
+            return []
+        try:
             retVal = []
             script = jedi.Script(code, line, column,
                                  filePath, fileEncoding)
+            # print("Jedi run", line, column)
             completions = script.completions()
+            # print(len(completions))
             for completion in completions:
                     # get type from description
                     desc = completion.description
@@ -45,7 +51,7 @@ class JediCompletionProvider(CompletionProvider):
                             "Unimplemented completion type: %s" % suggestionType)
                     retVal.append(Completion(completion.name, icon=icon,
                                              tooltip=desc.split(':')[1]))
-        except jedi.NotFoundError:
+        except Exception:
             pass
-
+        # print("Finished")
         return retVal
