@@ -49,7 +49,6 @@ class JediCompletionProvider(CompletionProvider, QtCore.QObject):
     def __init__(self, editor, showProgressDialog=True):
         QtCore.QObject.__init__(self)
         CompletionProvider.__init__(self, editor, priority=1)
-        jedi.settings.add_bracket_after_function = True
         self.editor.newTextSet.connect(self.__onNewTextSet)
         self.__jobRunner = DelayJobRunner(self, nbThreadsMax=1, delay=500)
         self.__dlg = QtGui.QProgressDialog(editor)
