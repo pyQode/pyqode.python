@@ -12,6 +12,7 @@
 This package contains python specific modes, panels and editors.
 """
 # from pcef.python import panels
+import os
 import re
 import sys
 import pcef.core
@@ -23,8 +24,25 @@ from pcef.python.modes import PyFolderMode
 from pcef.python.modes import PyHighlighterMode
 from pcef.python.modes import DEFAULT_DARK_STYLES
 from pcef.python.modes import DEFAULT_LIGHT_STYLES
+from pcef.qt.ui import importRc
 
 
+def getUiDirectory():
+    """
+    Gets the pcef-core ui directory
+    """
+    return os.path.join(os.path.abspath(os.path.join(__file__, "..")), "ui")
+
+
+def getRcDirectory():
+    """
+    Gets the pcef-core rc directory
+    """
+    return os.path.join(os.path.abspath(os.path.join(__file__, "..")), "ui",
+                        "rc")
+
+# import the core rc modules
+importRc(os.path.join(getUiDirectory(), "pcef_python_icons.qrc"))
 
 #: pcef-python version
 __version__ = "1.0.0-dev"

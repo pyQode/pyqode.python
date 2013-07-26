@@ -1,0 +1,9 @@
+<RCC>
+  <qresource prefix="pcef_python_icons">
+    <file>rc/class.png</file>
+    <file>rc/func.png</file>
+    <file>rc/keyword.png</file>
+    <file>rc/namespace.png</file>
+    <file>rc/var.png</file>
+  </qresource>
+</RCC>
