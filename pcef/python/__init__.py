@@ -79,7 +79,7 @@ class QPythonCodeEdit(pcef.core.QCodeEdit):
         self.installMode(pcef.core.RightMarginMode())
         self.installMode(pcef.core.CodeCompletionMode())
         self.codeCompletionMode.addCompletionProvider(
-            JediCompletionProvider())
+            JediCompletionProvider(self))
         self.codeCompletionMode.addCompletionProvider(
             pcef.core.DocumentWordCompletionProvider(self))
         self.installMode(pcef.core.ZoomMode())
