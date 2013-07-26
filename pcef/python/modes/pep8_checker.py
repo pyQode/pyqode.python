@@ -43,10 +43,14 @@ class PEP8CheckerMode(CheckerMode):
             sys.stdout = mystdout = StringIO()
         else:
             sys.stdout = mystdout = BytesIO()
-        self.check(document.toPlainText().splitlines(True), filePath)
-        sys.stdout = old_stdout
         self.clearMessagesRequested.emit()
-        self.analyse(mystdout.getvalue().splitlines())
+        try:
+            self.check(document.toPlainText().splitlines(True), filePath)
+            sys.stdout = old_stdout
+            self.analyse(mystdout.getvalue().splitlines())
+        except TypeError:
+            print(document.toPlainText().splitlines(True), filePath)
+            pass
 
     def analyse(self, lines):
         for line in lines:

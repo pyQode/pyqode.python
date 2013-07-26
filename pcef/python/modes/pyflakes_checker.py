@@ -52,6 +52,8 @@ class PyFlakesCheckerMode(CheckerMode):
                  pyFlakes script.
         """
         # First, compile into an AST and handle syntax errors.
+        if not codeString or not self.editor.fileEncoding:
+            return
         try:
             tree = compile(codeString.encode(self.editor.fileEncoding),
                            filename, "exec", _ast.PyCF_ONLY_AST)
