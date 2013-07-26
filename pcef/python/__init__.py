@@ -17,6 +17,7 @@ import re
 import sys
 import pcef.core
 from pcef.qt import QtCore, QtGui
+from pcef.python.modes import JediCompletionProvider
 from pcef.python.modes import PEP8CheckerMode
 from pcef.python.modes import PyAutoIndentMode
 from pcef.python.modes import PyFlakesCheckerMode
@@ -77,6 +78,8 @@ class QPythonCodeEdit(pcef.core.QCodeEdit):
         self.installMode(pcef.core.CaretLineHighlighterMode())
         self.installMode(pcef.core.RightMarginMode())
         self.installMode(pcef.core.CodeCompletionMode())
+        self.codeCompletionMode.addCompletionProvider(
+            JediCompletionProvider())
         self.installMode(pcef.core.ZoomMode())
         self.installMode(pcef.core.FileWatcherMode())
         self.installMode(PyHighlighterMode(self.document()))

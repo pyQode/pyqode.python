@@ -11,6 +11,7 @@
 """
 Contains python specific modes
 """
+from pcef.python.modes.code_completion import JediCompletionProvider
 from pcef.python.modes.pep8_checker import PEP8CheckerMode
 from pcef.python.modes.indenter import PyAutoIndentMode
 from pcef.python.modes.pyflakes_checker import PyFlakesCheckerMode
@@ -20,6 +21,6 @@ from pcef.python.modes.syntax_highlighter import DEFAULT_DARK_STYLES
 from pcef.python.modes.syntax_highlighter import DEFAULT_LIGHT_STYLES
 
 
-__all__ = ["PEP8CheckerMode", "PyAutoIndentMode", "PyFlakesCheckerMode",
-           "PyFolderMode", "PyHighlighterMode", "DEFAULT_DARK_STYLES",
-           "DEFAULT_LIGHT_STYLES"]
+__all__ = ["JediCompletionProvider", "PEP8CheckerMode", "PyAutoIndentMode",
+           "PyFlakesCheckerMode", "PyFolderMode", "PyHighlighterMode",
+           "DEFAULT_DARK_STYLES", "DEFAULT_LIGHT_STYLES"]
