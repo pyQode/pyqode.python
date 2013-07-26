@@ -80,6 +80,8 @@ class QPythonCodeEdit(pcef.core.QCodeEdit):
         self.installMode(pcef.core.CodeCompletionMode())
         self.codeCompletionMode.addCompletionProvider(
             JediCompletionProvider())
+        self.codeCompletionMode.addCompletionProvider(
+            pcef.core.DocumentWordCompletionProvider(self))
         self.installMode(pcef.core.ZoomMode())
         self.installMode(pcef.core.FileWatcherMode())
         self.installMode(PyHighlighterMode(self.document()))
