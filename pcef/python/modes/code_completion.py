@@ -60,9 +60,6 @@ class JediCompletionProvider(CompletionProvider, QtCore.QObject):
             self.preLoadProgressUpdate.connect(self.updateProgressDialog)
             self.preLoadDialogExecRequired.connect(self.__execDlg)
 
-    def __del__(self):
-        self.editor.newTextSet.disconnect(self.__onNewTextSet)
-
     def hideProgressDialog(self):
         self.__dlg.hide()
 
