@@ -18,9 +18,9 @@ def leave():
 def main():
     app = QtGui.QApplication(sys.argv)
     editor = QPythonCodeEdit()
-    editor.openFile(__file__)
     editor.show()
-    QtCore.QTimer.singleShot(500, leave)
+    editor.openFile(__file__)
+    QtCore.QTimer.singleShot(7000, leave)
     return app.exec_()
 
 
