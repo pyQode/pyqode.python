@@ -21,20 +21,17 @@ from pcef.core import DelayJobRunner
 from pcef.qt import QtCore, QtGui
 
 
-ICONS = {'Class': ':/pcef_python_icons/rc/class.png',
-         'class': ':/pcef_python_icons/rc/class.png',
-         'Import': ':/pcef_python_icons/rc/namespace.png',
-         'import': ':/pcef_python_icons/rc/namespace.png',
-         'Statement': ':/pcef_python_icons/rc/var.png',
-         'statement': ':/pcef_python_icons/rc/var.png',
-         'ForFlow': ':/pcef_python_icons/rc/var.png',
-         'forflow': ':/pcef_python_icons/rc/var.png',
-         'Module': ':/pcef_python_icons/rc/keyword.png',
-         'module': ':/pcef_python_icons/rc/keyword.png',
-         'Param': ':/pcef_python_icons/rc/var.png',
-         'param': ':/pcef_python_icons/rc/var.png',
-         'Function': ':/pcef_python_icons/rc/func.png',
-         'function': ':/pcef_python_icons/rc/func.png'}
+ICONS = {'CLASS': ':/pcef_python_icons/rc/class.png',
+         'IMPORT': ':/pcef_python_icons/rc/namespace.png',
+         'STATEMENT': ':/pcef_python_icons/rc/var.png',
+         'FORFLOW': ':/pcef_python_icons/rc/var.png',
+         'MODULE': ':/pcef_python_icons/rc/keyword.png',
+         'PARAM': ':/pcef_python_icons/rc/var.png',
+         'PARAM-PRIV': ':/pcef_python_icons/rc/var.png',
+         'PARAM-PROT': ':/pcef_python_icons/rc/var.png',
+         'FUNCTION': ':/pcef_python_icons/rc/func.png',
+         'FUNCTION-PRIV': ':/pcef_python_icons/rc/func_priv.png',
+         'FUNCTION-PROT': ':/pcef_python_icons/rc/func_prot.png'}
 
 
 class JediCompletionProvider(CompletionProvider, QtCore.QObject):
@@ -131,9 +128,17 @@ class JediCompletionProvider(CompletionProvider, QtCore.QObject):
             for completion in completions:
                     # get type from description
                     desc = completion.description
-                    suggestionType = desc.split(':')[0]
+                    suggestionType = desc.split(':')[0].upper()
                     # get the associated icon if any
                     icon = None
+                    if (suggestionType == "FORFLOW" or
+                            suggestionType == "STATEMENT"):
+                        suggestionType = "PARAM"
+                    if suggestionType == "PARAM" or suggestionType == "FUNCTION":
+                        if completion.name.startswith("__"):
+                            suggestionType += "-PRIV"
+                        elif completion.name.startswith("_"):
+                            suggestionType += "-PROT"
                     if suggestionType in ICONS:
                         icon = ICONS[suggestionType]
                     else:
