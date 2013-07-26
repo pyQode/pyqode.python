@@ -54,7 +54,6 @@ class PyFlakesCheckerMode(CheckerMode):
                            filename, "exec", _ast.PyCF_ONLY_AST)
         except SyntaxError as value:
                 msg = value.args[0]
-                print(msg)
                 (lineno, offset, text) = value.lineno, value.offset, value.text
                 # If there's an encoding problem with the file, the text is None
                 if text is None:
