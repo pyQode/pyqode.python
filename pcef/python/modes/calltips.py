@@ -76,8 +76,6 @@ class JediCompletionProvider(CompletionProvider, QtCore.QObject):
             self.__dlg.exec_()
 
     def __onNewTextSet(self):
-        self.__dlg.setWindowTitle(
-            "Preloading")
         self.__jobRunner.requestJob(
             self.__preLoadDocument, True, self.editor.toPlainText(),
             self.editor.filePath, self.editor.fileEncoding)
@@ -120,7 +118,6 @@ class JediCompletionProvider(CompletionProvider, QtCore.QObject):
 
     def run(self, code, line, column, completionPrefix,
             filePath, fileEncoding):
-        print("CC:", completionPrefix, code)
         try:
             retVal = []
             script = jedi.Script(code, line, column,
