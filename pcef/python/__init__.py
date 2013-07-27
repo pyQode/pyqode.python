@@ -17,6 +17,7 @@ import re
 import sys
 import pcef.core
 from pcef.qt import QtCore
+from pcef.python.modes import CalltipsMode
 from pcef.python.modes import JediCompletionProvider
 from pcef.python.modes import PEP8CheckerMode
 from pcef.python.modes import PyAutoIndentMode
@@ -89,6 +90,7 @@ class QPythonCodeEdit(pcef.core.QCodeEdit):
         self.installMode(PyFolderMode())
         self.installMode(PyFlakesCheckerMode())
         self.installMode(PEP8CheckerMode())
+        self.installMode(CalltipsMode())
 
     @QtCore.Slot()
     def useDarkStyle(self, use=True):

@@ -14,140 +14,73 @@ Contains the JediCompletionProvider class implementation.
 import jedi
 import logging
 
-from pcef.core import CompletionProvider
-from pcef.core import Completion
-from pcef.core import indexByName
-from pcef.core import DelayJobRunner
+from pcef.core import Mode, DelayJobRunner
 from pcef.qt import QtCore, QtGui
 
 
-ICONS = {'CLASS': ':/pcef_python_icons/rc/class.png',
-         'IMPORT': ':/pcef_python_icons/rc/namespace.png',
-         'STATEMENT': ':/pcef_python_icons/rc/var.png',
-         'FORFLOW': ':/pcef_python_icons/rc/var.png',
-         'MODULE': ':/pcef_python_icons/rc/keyword.png',
-         'PARAM': ':/pcef_python_icons/rc/var.png',
-         'PARAM-PRIV': ':/pcef_python_icons/rc/var.png',
-         'PARAM-PROT': ':/pcef_python_icons/rc/var.png',
-         'FUNCTION': ':/pcef_python_icons/rc/func.png',
-         'FUNCTION-PRIV': ':/pcef_python_icons/rc/func_priv.png',
-         'FUNCTION-PROT': ':/pcef_python_icons/rc/func_prot.png'}
+class CalltipsMode(Mode, QtCore.QObject):
+    IDENTIFIER = "calltipsMode"
+    DESCRIPTION = "Provides functions calltips using the jedi library"
 
+    tooltipDisplayRequested = QtCore.Signal(object, int)
+    tooltipHideRequested = QtCore.Signal()
 
-class JediCompletionProvider(CompletionProvider, QtCore.QObject):
-
-    #: Signal emitted when the pre load progressed. Params: labelText, value
-    preLoadProgressUpdate = QtCore.Signal(str, int)
-    preLoadFinished = QtCore.Signal()
-    preLoadDialogExecRequired = QtCore.Signal()
-
-    # PRELOADED_NAMES = []
-
-    def __init__(self, editor, showProgressDialog=True):
+    def __init__(self):
+        Mode.__init__(self)
         QtCore.QObject.__init__(self)
-        CompletionProvider.__init__(self, editor, priority=1)
-        self.editor.newTextSet.connect(self.__onNewTextSet)
-        self.__jobRunner = DelayJobRunner(self, nbThreadsMax=1, delay=500)
-        self.__dlg = QtGui.QProgressDialog(editor)
-        self.__dlg.setCancelButton(None)
-        self.__dlg.setWindowModality(QtCore.Qt.WindowModal)
-        self.__showDlg = showProgressDialog
-        if showProgressDialog:
-            self.preLoadFinished.connect(self.hideProgressDialog)
-            self.preLoadProgressUpdate.connect(self.updateProgressDialog)
-            self.preLoadDialogExecRequired.connect(self.__execDlg)
+        self.__jobRunner = DelayJobRunner(self, nbThreadsMax=1, delay=700)
+        self.tooltipDisplayRequested.connect(self.__displayTooltip)
+        self.tooltipHideRequested.connect(QtGui.QToolTip.hideText)
 
-    def hideProgressDialog(self):
-        self.__dlg.hide()
-
-    def updateProgressDialog(self, labelText, value):
-        if value == -1:
-            self.__dlg.setValue(0)
-            self.__dlg.setMinimum(0)
-            self.__dlg.setMaximum(0)
+    def _onStateChanged(self, state):
+        if state:
+            self.editor.keyReleased.connect(self.__onKeyReleased)
         else:
-            self.__dlg.setMinimum(0)
-            self.__dlg.setMaximum(100)
-            self.__dlg.setValue(value)
-        self.__dlg.setLabelText(labelText)
+            self.editor.keyReleased.disconnect(self.__onKeyReleased)
 
-    def __execDlg(self):
-        if self.__showDlg:
-            self.__dlg.exec_()
+    def __onKeyReleased(self, event):
+        if (event.key() == QtCore.Qt.Key_ParenLeft or
+                event.key() == QtCore.Qt.Key_Comma or
+                event.key() == QtCore.Qt.Key_Space):
+            tc = self.editor.textCursor()
+            line = tc.blockNumber() + 1
+            col = tc.columnNumber()
+            fn = self.editor.filePath
+            encoding = self.editor.fileEncoding
+            source = self.editor.toPlainText()
+            self.__jobRunner.requestJob(self.__execRequest, True,
+                                        source, line, col, fn, encoding)
+        else:
+            QtGui.QToolTip.hideText()
 
-    def __onNewTextSet(self):
-        self.__jobRunner.requestJob(
-            self.__preLoadDocument, True, self.editor.toPlainText(),
-            self.editor.filePath, self.editor.fileEncoding)
+    def __execRequest(self, code, line, col, path, encoding):
+        script = jedi.Script(code, line, col, path, encoding)
+        call = script.get_in_function_call()
+        if call:
+            self.tooltipDisplayRequested.emit(call, col)
+        else:
+            self.tooltipHideRequested.emit()
 
-    def __preLoadDocument(self, code, fileEncoding, filePath):
-        l = logging.getLogger("pcef")
-        self.preLoadDialogExecRequired.emit()
-        self.preLoadProgressUpdate.emit("Parsing module...", -1)
-        names = jedi.api.defined_names(code, filePath, fileEncoding)
-        # put up heavy modules first to avoid segfault with python 3
-        index = indexByName(names, "QtCore")
-        if index != -1:
-            names.insert(0, names.pop(index))
-        index = indexByName(names, "QtGui")
-        if index != -1:
-            names.insert(0, names.pop(index))
-        index = indexByName(names, "numpy")
-        if index != -1:
-            names.insert(0, names.pop(index))
-        toPreload = []
-        for definition in names:
-            script = ""
-            if definition.type == "import":
-                script = "{0};{1}.".format(definition.description, definition.name)
-            elif definition.type == "class":
-                script = "{0}.".format(definition.name)
-            if script:
-                toPreload.append((definition, script))
-        nb = len(toPreload)
-        for i, elem in enumerate(toPreload):
-            definition = elem[0]
-            script = elem[1]
-            msg = "Parsing {2} ({0}/{1})".format(i+1, nb,
-                                                          definition.name)
-            l.info(msg)
-            self.preLoadProgressUpdate.emit(msg, -1)
-            jedi.Script(script, 1, len(script), None).completions()
-        l.info("Preloading finished")
-        self.preLoadFinished.emit()
-
-    def run(self, code, line, column, completionPrefix,
-            filePath, fileEncoding):
-        try:
-            retVal = []
-            script = jedi.Script(code, line, column,
-                                 "", fileEncoding)
-            # print("Jedi run", line, column)
-            completions = script.completions()
-            # print(len(completions))
-            for completion in completions:
-                    # get type from description
-                    desc = completion.description
-                    suggestionType = desc.split(':')[0].upper()
-                    # get the associated icon if any
-                    icon = None
-                    if (suggestionType == "FORFLOW" or
-                            suggestionType == "STATEMENT"):
-                        suggestionType = "PARAM"
-                    if suggestionType == "PARAM" or suggestionType == "FUNCTION":
-                        if completion.name.startswith("__"):
-                            suggestionType += "-PRIV"
-                        elif completion.name.startswith("_"):
-                            suggestionType += "-PROT"
-                    if suggestionType in ICONS:
-                        icon = ICONS[suggestionType]
-                    else:
-                        logging.getLogger("pcef").warning(
-                            "Unimplemented completion type: %s" %
-                            suggestionType)
-                    retVal.append(Completion(completion.name, icon=icon,
-                                             tooltip=desc.split(':')[1]))
-        except Exception:
-            pass
-        # print("Finished")
-        return retVal
+    def __displayTooltip(self, call, col):
+        if not call:
+            return
+        # create a formatted calltip (current index appear in bold)
+        calltip = "<nobr>{0}.{1}(".format(call.module.name, call.call_name)
+        for i, param in enumerate(call.params):
+            if i != 0:
+                calltip += ", "
+            if i == call.index:
+                calltip += "<b>"
+            calltip += str(param.token_list[0])
+            if i == call.index:
+                calltip += "</b>"
+        calltip += ')</nobr>'
+        # set tool tip position at the start of the bracket
+        charWidth = self.editor.fontMetrics().width('A')
+        w_offset = (col - call.bracket_start[1]) * charWidth
+        position = QtCore.QPoint(
+            self.editor.cursorRect().x() - w_offset,
+            self.editor.cursorRect().y())
+        position = self.editor.mapToGlobal(position)
+        # show tooltip
+        QtGui.QToolTip.showText(position, calltip, self.editor)
