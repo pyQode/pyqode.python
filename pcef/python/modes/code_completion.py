@@ -120,7 +120,6 @@ class JediCompletionProvider(CompletionProvider, QtCore.QObject):
 
     def run(self, code, line, column, completionPrefix,
             filePath, fileEncoding):
-        print("CC:", completionPrefix, code)
         try:
             retVal = []
             script = jedi.Script(code, line, column,
