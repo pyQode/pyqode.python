@@ -49,7 +49,6 @@ class PEP8CheckerMode(CheckerMode):
             sys.stdout = old_stdout
             self.analyse(mystdout.getvalue().splitlines())
         except TypeError:
-            print(document.toPlainText().splitlines(True), filePath)
             pass
 
     def analyse(self, lines):
