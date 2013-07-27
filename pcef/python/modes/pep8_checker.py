@@ -37,7 +37,6 @@ class PEP8CheckerMode(CheckerMode):
             logging.debug("pep8.py found!")
 
     def run(self, document, filePath):
-        assert isinstance(document, QtGui.QTextDocument)
         old_stdout = sys.stdout
         if sys.version_info[0] == 3:
             sys.stdout = mystdout = StringIO()

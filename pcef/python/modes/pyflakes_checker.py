@@ -37,7 +37,6 @@ class PyFlakesCheckerMode(CheckerMode):
             logging.debug("PyFlakes found!")
 
     def run(self, document, filePath):
-        assert isinstance(document, QtGui.QTextDocument)
         self.check(document.toPlainText(), filePath)
 
     def check(self, codeString, filename):
