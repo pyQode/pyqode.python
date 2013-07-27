@@ -20,7 +20,7 @@ from pcef.qt import QtGui
 
 class PyFlakesCheckerMode(CheckerMode):
     DESCRIPTION = "Check python code using pyFlakes"
-    IDENTIFIER = "pyFlakesChecker"
+    IDENTIFIER = "pyFlakesCheckerMode"
 
     def __init__(self):
         CheckerMode.__init__(self, clearOnRequest=False)

@@ -21,7 +21,7 @@ class PyAutoIndentMode(AutoIndentMode):
     This mode can be extended by overriding the _getIndent method.
     """
     #: Mode identifier
-    IDENTIFIER = "pyAutoIndent"
+    IDENTIFIER = "pyAutoIndentMode"
     #: Mode description
     _DESCRIPTION = """ This mode provides python specific auto indentation. """
 

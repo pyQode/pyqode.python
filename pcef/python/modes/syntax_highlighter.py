@@ -47,7 +47,7 @@ DEFAULT_DARK_STYLES = {
 class PyHighlighterMode(QSyntaxHighlighter, Mode):
     """Syntax highlighter for the Python language.
     """
-    IDENTIFIER = "pyHighlighter"
+    IDENTIFIER = "pyHighlighterMode"
     _DESCRIPTION = "Custom QSyntaxHighlighter to highlight python syntax"
 
     # Python keywords

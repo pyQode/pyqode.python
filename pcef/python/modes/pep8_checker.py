@@ -21,7 +21,7 @@ from pcef.qt import QtGui
 
 class PEP8CheckerMode(CheckerMode):
     DESCRIPTION = "Check python code for PEP8 issues"
-    IDENTIFIER = "pep8Checker"
+    IDENTIFIER = "pep8CheckerMode"
 
     def __init__(self):
         CheckerMode.__init__(self, clearOnRequest=False)

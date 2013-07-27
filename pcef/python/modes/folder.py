@@ -13,11 +13,11 @@ from pcef.core import Mode, FoldingIndicator
 from pcef.python import layout
 
 
-class PyFolderMode(Mode):
+class FolderMode(Mode):
     """
     Mode that manage the fold panel using the layout module
     """
-    IDENTIFIER = "pyFolderMode"
+    IDENTIFIER = "folderMode"
     DESCRIPTION = "Manage the fold panel for a python source code"
 
     def __init__(self):
