@@ -64,6 +64,8 @@ class PEP8CheckerMode(CheckerMode):
                 line = int(tokens[nbTokens-3])
             except IndexError:
                 return
+            except ValueError:
+                return
             self.addMessageRequested.emit(CheckerMessage(msg, status, line))
 
     def check(self, lines, filename):
