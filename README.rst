@@ -3,7 +3,7 @@ Python extensions for PCEF
 
 *version 1.0.0-beta.1*
 
-.. image:: https://api.travis-ci.org/ColinDuquesnoy/pcef-python.png?branch=master
+.. image:: https://travis-ci.org/ColinDuquesnoy/pcef-python.png?branch=master
     :target: https://travis-ci.org/ColinDuquesnoy/pcef-python
     :alt: Travis-CI build status
 
@@ -91,3 +91,27 @@ Resources
 .. _Jedi: https://github.com/davidhalter/jedi
 
 
+Screenshots
+-------------
+
+Here are a few screenshots to illustrate the python specific features *(all the screenshots were taken on Linux Mint 15 Cinnamon)*:
+
+* Code completion:
+
+.. image:: https://raw.github.com/ColinDuquesnoy/pcef-python/master/screenshots/code_completion.png
+    :alt: Code completion
+    
+* Code folding:
+
+.. image:: https://raw.github.com/ColinDuquesnoy/pcef-python/master/screenshots/code_folding.png
+    :alt: Code Folding
+    
+* On the fly code checking (PyFlakes):
+
+.. image:: https://raw.github.com/ColinDuquesnoy/pcef-python/master/screenshots/error_indicators.png
+    :alt: Error indicators
+    
+* On the fly PEP8 style checking
+
+.. image:: https://raw.github.com/ColinDuquesnoy/pcef-python/master/screenshots/pep8_warnings.png
+    :alt: PEP8 warnings
