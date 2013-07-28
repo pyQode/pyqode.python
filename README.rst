@@ -1,5 +1,5 @@
-Python Code Editor Extension for PCEF
-===================================
+Python extensions for PCEF
+========================================
 
 *version 1.0.0-beta.1*
 
