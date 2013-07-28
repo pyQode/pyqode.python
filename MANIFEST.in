@@ -1,0 +1,16 @@
+#
+# MANIFEST.in
+#
+# Manifest template for creating the PCEF source distribution.
+
+include MANIFEST.in
+include setup.py
+include COPYING
+include README.rst
+include examples/gui_integration/*
+include examples/gui_integration/ui/*
+include examples/gui_integration/ui/rc/*
+
+
+
+
