@@ -115,3 +115,8 @@ Here are a few screenshots to illustrate the python specific features *(all the 
 
 .. image:: https://raw.github.com/ColinDuquesnoy/pcef-python/master/screenshots/pep8_warnings.png
     :alt: PEP8 warnings
+
+* Dark color scheme
+
+.. image:: https://raw.github.com/ColinDuquesnoy/pcef-python/master/screenshots/dark_style.png
+    :alt: Dark style
