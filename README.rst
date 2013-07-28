@@ -3,7 +3,7 @@ Python extensions for PCEF
 
 *version 1.0.0-beta.1*
 
-.. image:: https://api.travis-ci.org/ColinDuquesnoy/pcef-python.png?branch=dev
+.. image:: https://api.travis-ci.org/ColinDuquesnoy/pcef-python.png?branch=master
     :target: https://travis-ci.org/ColinDuquesnoy/pcef-python
     :alt: Travis-CI build status
 
