@@ -47,7 +47,7 @@ def getRcDirectory():
 importRc(os.path.join(getUiDirectory(), "pcef_python_icons.qrc"))
 
 #: pcef-python version
-__version__ = "1.0.0-dev"
+__version__ = "1.0.0-beta.1"
 
 
 class QPythonCodeEdit(pcef.core.QCodeEdit):
