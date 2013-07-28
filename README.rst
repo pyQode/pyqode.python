@@ -1,4 +1,4 @@
-Python extensions for PCEF
+Python support for PCEF
 ========================================
 
 *version 1.0.0-beta.1*
