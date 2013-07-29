@@ -13,6 +13,7 @@ Contains the JediCompletionProvider class implementation.
 """
 import jedi
 import logging
+import time
 
 from pcef.core import CompletionProvider
 from pcef.core import Completion
@@ -47,10 +48,11 @@ class JediCompletionProvider(CompletionProvider, QtCore.QObject):
         QtCore.QObject.__init__(self)
         CompletionProvider.__init__(self, editor, priority=1)
         self.editor.newTextSet.connect(self.__onNewTextSet)
+        self.editor.focusedIn.connect(self.hideProgressDialog)
         self.__jobRunner = DelayJobRunner(self, nbThreadsMax=1, delay=500)
         self.__dlg = QtGui.QProgressDialog(editor)
         self.__dlg.setCancelButton(None)
-        self.__dlg.setWindowModality(QtCore.Qt.WindowModal)
+        self.__dlg.hide()
         self.__showDlg = showProgressDialog
         if showProgressDialog:
             self.preLoadFinished.connect(self.hideProgressDialog)
@@ -58,6 +60,7 @@ class JediCompletionProvider(CompletionProvider, QtCore.QObject):
             self.preLoadDialogExecRequired.connect(self.__execDlg)
 
     def hideProgressDialog(self):
+        print("Hide")
         self.__dlg.hide()
 
     def updateProgressDialog(self, labelText, value):
@@ -73,7 +76,7 @@ class JediCompletionProvider(CompletionProvider, QtCore.QObject):
 
     def __execDlg(self):
         if self.__showDlg:
-            self.__dlg.exec_()
+            self.__dlg.show()
 
     def __onNewTextSet(self):
         self.__dlg.setWindowTitle(
@@ -115,6 +118,8 @@ class JediCompletionProvider(CompletionProvider, QtCore.QObject):
             l.info(msg)
             self.preLoadProgressUpdate.emit(msg, -1)
             jedi.Script(script, 1, len(script), None).completions()
+        self.preLoadProgressUpdate.emit(msg, 100)
+        time.sleep(0.2)
         l.info("Preloading finished")
         self.preLoadFinished.emit()
 
