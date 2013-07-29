@@ -36,7 +36,7 @@ class PEP8CheckerMode(CheckerMode):
         else:
             logging.debug("pep8.py found!")
 
-    def run(self, document, filePath):
+    def run(self, code, filePath):
         old_stdout = sys.stdout
         if sys.version_info[0] == 3:
             sys.stdout = mystdout = StringIO()
@@ -44,7 +44,7 @@ class PEP8CheckerMode(CheckerMode):
             sys.stdout = mystdout = BytesIO()
         self.clearMessagesRequested.emit()
         try:
-            self.check(document.toPlainText().splitlines(True), filePath)
+            self.check(code.splitlines(True), filePath)
             sys.stdout = old_stdout
             self.analyse(mystdout.getvalue().splitlines())
         except TypeError:

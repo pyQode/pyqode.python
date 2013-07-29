@@ -36,8 +36,8 @@ class PyFlakesCheckerMode(CheckerMode):
         else:
             logging.debug("PyFlakes found!")
 
-    def run(self, document, filePath):
-        self.check(document.toPlainText(), filePath)
+    def run(self, code, filePath):
+        self.check(code, filePath)
 
     def check(self, codeString, filename):
         """
