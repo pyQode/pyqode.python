@@ -48,7 +48,6 @@ class JediCompletionProvider(CompletionProvider, QtCore.QObject):
         QtCore.QObject.__init__(self)
         CompletionProvider.__init__(self, editor, priority=1)
         self.editor.newTextSet.connect(self.__onNewTextSet)
-        self.editor.focusedIn.connect(self.hideProgressDialog)
         self.__jobRunner = DelayJobRunner(self, nbThreadsMax=1, delay=500)
         self.__dlg = QtGui.QProgressDialog(editor)
         self.__dlg.setCancelButton(None)
