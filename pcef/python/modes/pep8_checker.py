@@ -11,12 +11,32 @@
 """
 This module contains the pyFlakes checker mode
 """
-from io import StringIO, BytesIO
 import logging
-import sys
+import time
 from pcef.core import CheckerMode, CheckerMessage
 from pcef.core import MSG_STATUS_ERROR, MSG_STATUS_WARNING
-from pcef.qt import QtGui
+
+try:
+    import pep8
+
+    class CustomReport(pep8.StandardReport):
+        def get_file_results(self):
+            self._deferred_print.sort()
+            return self._deferred_print
+
+    class CustomChecker(pep8.Checker):
+        def __init__(self, *args, **kwargs):
+            super(CustomChecker, self).__init__(
+                *args, report=CustomReport(kwargs.pop("options")), **kwargs)
+            pass
+
+except ImportError:
+
+    class CustomReport(object):
+        pass
+
+    class CustomChecker(object):
+        pass
 
 
 class PEP8CheckerMode(CheckerMode):
@@ -37,34 +57,14 @@ class PEP8CheckerMode(CheckerMode):
             logging.debug("pep8.py found!")
 
     def run(self, code, filePath):
-        old_stdout = sys.stdout
-        if sys.version_info[0] == 3:
-            sys.stdout = mystdout = StringIO()
-        else:
-            sys.stdout = mystdout = BytesIO()
-        self.clearMessagesRequested.emit()
-        try:
-            self.check(code.splitlines(True), filePath)
-            sys.stdout = old_stdout
-            self.analyse(mystdout.getvalue().splitlines())
-        except TypeError:
-            pass
-
-    def analyse(self, lines):
-        for line in lines:
-            tokens = line.split(":")
-            nbTokens = len(tokens)
-            msg = tokens[nbTokens-1]
-            status = MSG_STATUS_WARNING
-            if msg.startswith("E"):
-                MSG_STATUS_ERROR
-            try:
-                line = int(tokens[nbTokens-3])
-            except IndexError:
-                return
-            except ValueError:
-                return
-            self.addMessageRequested.emit(CheckerMessage(msg, status, line))
+        logging.info("PEP8 running")
+        results = self.check(code.splitlines(True), filePath)
+        messages = []
+        for line_number, offset, code, text, doc in results:
+            messages.append(CheckerMessage(
+                text, MSG_STATUS_WARNING, line_number))
+            time.sleep(0.001)
+        self.addMessagesRequested.emit(messages, True)
 
     def check(self, lines, filename):
         """
@@ -78,5 +78,6 @@ class PEP8CheckerMode(CheckerMode):
                  pyFlakes script.
         """
         import pep8
-        pep8style = pep8.StyleGuide(parse_argv=False, config_file=True)
-        pep8style.input_file(filename, lines=lines)
+        pep8style = pep8.StyleGuide(parse_argv=False, config_file=True,
+                                    checker_class=CustomChecker)
+        return pep8style.input_file(filename, lines=lines)
