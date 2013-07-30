@@ -34,7 +34,6 @@ ICONS = {'CLASS': ':/pcef_python_icons/rc/class.png',
          'FUNCTION-PRIV': ':/pcef_python_icons/rc/func_priv.png',
          'FUNCTION-PROT': ':/pcef_python_icons/rc/func_prot.png'}
 
-
 class JediCompletionProvider(CompletionProvider, QtCore.QObject):
 
     #: Signal emitted when the pre load progressed. Params: labelText, value
@@ -116,7 +115,7 @@ class JediCompletionProvider(CompletionProvider, QtCore.QObject):
             l.info(msg)
             self.preLoadProgressUpdate.emit(msg, -1)
             jedi.Script(script, 1, len(script), None).completions()
-        self.preLoadProgressUpdate.emit(msg, 100)
+        self.preLoadProgressUpdate.emit("Finished", 100)
         time.sleep(0.2)
         l.info("Preloading finished")
         self.preLoadFinished.emit()
