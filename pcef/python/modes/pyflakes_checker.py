@@ -57,7 +57,6 @@ class PyFlakesCheckerMode(CheckerMode):
             tree = compile(codeString.encode(self.editor.fileEncoding),
                            filename, "exec", _ast.PyCF_ONLY_AST)
         except SyntaxError as value:
-            self.clearMessagesRequested.emit()
             msg = value.args[0]
             (lineno, offset, text) = value.lineno, value.offset, value.text
             # If there's an encoding problem with the file, the text is None
@@ -67,11 +66,10 @@ class PyFlakesCheckerMode(CheckerMode):
                 # file declared was unknown.s
                 logging.warning("%s: problem decoding source" % filename)
             else:
-                self.addMessageRequested.emit(
-                    CheckerMessage(msg, MSG_STATUS_ERROR, lineno))
+                self.addMessagesRequested.emit(
+                    CheckerMessage(msg, MSG_STATUS_ERROR, lineno), True)
             return 1
         else:
-            self.clearMessagesRequested.emit()
             # Okay, it's syntactically valid.  Now check it.
             from pyflakes import checker, messages
             msg_types = {messages.UnusedImport: MSG_STATUS_WARNING,
@@ -89,10 +87,12 @@ class PyFlakesCheckerMode(CheckerMode):
                          messages.UnusedVariable: MSG_STATUS_WARNING}
             w = checker.Checker(tree, filename)
             w.messages.sort(key=lambda msg: msg.lineno)
+            msgs = []
             for warning in w.messages:
                 msg = warning.message % warning.message_args
                 line = warning.lineno
                 status = msg_types[type(warning)]
-                self.addMessageRequested.emit(CheckerMessage(msg, status,
-                                                             line))
+                msgs.append(CheckerMessage(msg, status, line))
+            self.clearMessagesRequested.emit()
+            self.addMessagesRequested.emit(msgs, True)
             return len(w.messages)
