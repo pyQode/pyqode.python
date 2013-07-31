@@ -11,7 +11,7 @@
 """
 This module contains the python specific syntax highlighter
 """
-from pcef.core import TextStyle
+from pcef.core import TextStyle, memoized
 from pcef.qt.QtCore import QRegExp
 from pcef.qt.QtGui import QColor, QTextCharFormat, QFont, QSyntaxHighlighter
 from pcef.core.mode import Mode
@@ -64,7 +64,7 @@ class PyHighlighterMode(QSyntaxHighlighter, Mode):
 
     # Python keywords
     keywords = [
-        'and', 'assert', 'break', 'class', 'continue', 'def',
+        'and', 'assert', 'break', 'continue', 'def', 'class',
         'del', 'elif', 'else', 'except', 'exec', 'finally',
         'for', 'from', 'global', 'if', 'import', 'in',
         'is', 'lambda', 'not', 'or', 'pass', 'print',
@@ -128,6 +128,7 @@ class PyHighlighterMode(QSyntaxHighlighter, Mode):
 
     def __init__(self, document=None):
         QSyntaxHighlighter.__init__(self, document)
+        self.__doc = document
         Mode.__init__(self)
         # Multi-line strings (expression, flag, style)
         # FIXME: The triple-quotes in these two lines will mess up the
@@ -135,54 +136,48 @@ class PyHighlighterMode(QSyntaxHighlighter, Mode):
         self.tri_single = (QRegExp("'''"), 1, 'docstring')
         self.tri_double = (QRegExp('"""'), 2, 'docstring')
 
+        self.cnt = 0
+
         rules = []
 
-        # Keyword, operator, and brace rules
-        rules += [(r'\b%s\b' % w, 0, 'keyword')
-            for w in PyHighlighterMode.keywords]
-        rules += [(r'\b%s\b' % w, 0, 'builtins')
-            for w in PyHighlighterMode.builtins]
-        rules += [(r'%s\b' % w, 0, 'docstringTag')
-            for w in PyHighlighterMode.docstringTags]
-        rules += [(r'%s' % b, 0, 'brace')
-            for b in PyHighlighterMode.braces]
-        rules += [(r'%s' % b, 0, 'punctuation')
-            for b in PyHighlighterMode.punctuations]
+        self.wordsPattern = QRegExp(r'\b\w+\b')
+        self.spacesPattern = QRegExp('\s+')
 
         # All other rules
         rules += [
             # 'def' followed by an identifier
-            (r'\bdef\b\s*(\w+)', 1, 'function'),
+            (r'\bdef\b\s*(\w+)', 'function'),
             # 'class' followed by an identifier
-            (r'\bclass\b\s*(\w+)', 1, 'class'),
+            (r'\bclass\b\s*(\w+)', 'class'),
             # predefined items (__xxx__)
-            (r'__.*__', 0, 'predefined'),
+            (r'\b__.*__\b', 'predefined'),
             # Double-quoted string, possibly containing escape sequences
-            (r'"[^"\\]*(\\.[^"\\]*)*"', 0, 'string'),
+            (r'"[^"\\]*(\\.[^"\\]*)*"', 'string'),
 
-            (r'@.*', 0, 'decorator'),
+            (r'@.*', 'decorator'),
 
             # Numeric literals
-            (r'\b[+-]?[0-9]+[lL]?\b', 0, 'numbers'),
-            (r'\b[+-]?0[xX][0-9A-Fa-f]+[lL]?\b', 0, 'numbers'),
-            (r'\b[+-]?[0-9]+(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?\b', 0, 'numbers'),
-
-            (r'\bself\b', 0, 'self'),
+            (r'\b[+-]?[0-9]+[lL]?\b', 'numbers'),
+            (r'\b[+-]?0[xX][0-9A-Fa-f]+[lL]?\b', 'numbers'),
+            (r'\b[+-]?[0-9]+(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?\b', 'numbers'),
         ]
-        rules += [(r'%s' % o, 0, 'operator')
-            for o in PyHighlighterMode.operators]
+        rules += [(r'%s' % o, 'operator')
+                  for o in PyHighlighterMode.operators]
 
-        rules += [(r'#[^\n]*', 0, 'comment')]
+        rules += [(r'#[^\n]*', 'comment')]
 
         # Single-quoted string, possibly containing escape sequences
-        rules += [(r"'[^'\\]*(\\.[^'\\]*)*'", 0, 'string')]
+        rules += [(r"'[^'\\]*(\\.[^'\\]*)*'", 'string')]
 
         # Build a QRegExp for each pattern
-        self.rules = [(QRegExp(pat), index, fmt)
-            for (pat, index, fmt) in rules]
+        self.rules = [(QRegExp(pat), fmt)
+            for (pat, fmt) in rules]
 
-    def format(self, style_key):
+    @memoized
+    def format(self, style_key, current_style_bck):
         """Return a QTextCharFormat with the given attributes.
+
+        :param current_style_bck: Used to clear cache
         """
         if isinstance(style_key, QColor):
             value = style_key
@@ -208,6 +203,9 @@ class PyHighlighterMode(QSyntaxHighlighter, Mode):
         Mode._onInstall(self, editor)
         for k, v in DEFAULT_LIGHT_STYLES.items():
             self.editor.style.addProperty(k, v, "Python")
+        self.__foreground = self.editor.style.value(
+            "whiteSpaceForeground")
+        self.__bck = self.editor.style.value("background").name()
 
     def _onStateChanged(self, state):
         if state:
@@ -217,109 +215,116 @@ class PyHighlighterMode(QSyntaxHighlighter, Mode):
 
     def _onStyleChanged(self, section, key):
         if not key:
+            self.__foreground = self.editor.style.value(
+                "whiteSpaceForeground")
+            self.__bck = self.editor.style.value("background").name()
             self.rehighlight()
+        if key == "whiteSpaceForeground":
+            self.__foreground = self.editor.style.value(
+                "whiteSpaceForeground")
+        elif key == "background":
+            self.__bck = self.editor.style.value("background").name()
+
+    @memoized
+    def formatFromWord(self, word):
+        if word in self.keywords:
+            return "keyword"
+        if word in self.builtins:
+            return "builtins"
+        if word in self.docstringTags:
+            return "docstringTag"
+        if word in self.braces:
+            return "braces"
+        if word in self.punctuations:
+            return "punctuation"
+        if word == "self":
+            return word
+        return None
+
+    def highlightSpaces(self, text):
+        expression = self.spacesPattern
+        index = expression.indexIn(text, 0)
+        while index >= 0:
+            index = expression.pos(0)
+            length = len(expression.cap(0))
+            self.setFormat(index, length, self.format(self.__foreground,
+                                                      self.__bck))
+            index = expression.indexIn(text, index + length)
+
+            # # self.setCurrentBlockState(0)
+            # in_multiline = self.match_multiline(text, *self.tri_single)
+            # if not in_multiline:
+            #     in_multiline = self.match_multiline(text, *self.tri_double)
 
     def highlightBlock(self, text):
         """Apply syntax highlighting to the given block of text.
         """
-        original_txt = text
-        # Do other syntax formatting
-        for expression, nth, fm in self.rules:
-            index = expression.indexIn(text, 0)
-
+        if self.match_multiline(text):
+            self.highlightSpaces(text)
+            return
+        for expression, fmt in self.rules:
+            index = expression.indexIn(text)
+            used = False
             while index >= 0:
-                # We actually want the index of the nth match
-                index = expression.pos(nth)
-                length = len(expression.cap(nth))
-                self.setFormat(index, length, self.format(fm))
-                index = expression.indexIn(text, index + length)
+                l = expression.matchedLength()
+                self.setFormat(index, l, self.format(fmt, self.__bck))
+                index = expression.indexIn(text, index + l)
+                used = True
+            if used and fmt == "comment":
+                self.highlightSpaces(text)
+                return
 
-        # Do string highlighting
-        for expression, nth, fm in self.rules:
-            index = expression.indexIn(text, 0)
-            while index >= 0:
-                if fm == "string":
-                    # We actually want the index of the nth match
-                    index = expression.pos(nth)
-                    length = len(expression.cap(nth))
-                    self.setFormat(index, length, self.format(fm))
-                index = expression.indexIn(text, index + length)
-
-        # Do docstring highlighting
-        for expression, nth, fm in self.rules:
-            index = expression.indexIn(text, 0)
-            while index >= 0:
-                if fm == "docstring":
-                    # We actually want the index of the nth match
-                    index = expression.pos(nth)
-                    length = len(expression.cap(nth))
-                    self.setFormat(index, length, self.format(fm))
-                index = expression.indexIn(text, index + length)
-
-        self.setCurrentBlockState(0)
-
-        # Do multi-line strings
-        in_multiline = self.match_multiline(text, *self.tri_single)
-        if not in_multiline:
-            in_multiline = self.match_multiline(text, *self.tri_double)
-
-        # Do docstring tag highlighting
-        for expression, nth, fm in self.rules:
-            index = expression.indexIn(text, 0)
-            while index >= 0:
-                if fm == "docstringTag":
-                    # We actually want the index of the nth match
-                    index = expression.pos(nth)
-                    length = len(expression.cap(nth))
-                    self.setFormat(index, length, self.format(fm))
-                index = expression.indexIn(text, index + length)
+        # words
+        index = self.wordsPattern.indexIn(text)
+        while index >= 0:
+            l = self.wordsPattern.matchedLength()
+            word = text[index:index+l]
+            fmt = self.formatFromWord(word)
+            if fmt:
+                self.setFormat(index, l, self.format(fmt, self.__bck))
+            index = self.wordsPattern.indexIn(text, index + l)
 
         #Spaces
-        expression = QRegExp('\s+')
-        index = expression.indexIn(original_txt, 0)
-        while index >= 0:
-            index = expression.pos(0)
-            length = len(expression.cap(0))
-            self.setFormat(index, length, self.format(
-                self.editor.style.value("whiteSpaceForeground")))
-            index = expression.indexIn(original_txt, index + length)
+        self.highlightSpaces(text)
 
-    def match_multiline(self, text, delimiter, in_state, style):
-        """Do highlighting of multi-line strings. ``delimiter`` should be a
-        ``QRegExp`` for triple-single-quotes or triple-double-quotes, and
-        ``in_state`` should be a unique integer to represent the corresponding
-        state changes when inside those strings. Returns True if we're still
-        inside a multi-line string when this function is finished.
+    def match_multiline(self, text):
         """
-        # If inside triple-single quotes, start at 0
-        if self.previousBlockState() == in_state:
-            start = 0
-            add = 0
-        # Otherwise, look for the delimiter on this line
-        else:
-            start = delimiter.indexIn(text)
-            # Move past this match
-            add = delimiter.matchedLength()
-
-        # As long as there's a delimiter match on this line...
-        while start >= 0:
-            # Look for the ending delimiter
-            end = delimiter.indexIn(text, start + add)
-            # Ending delimiter on this line?
-            if end >= add:
-                length = end - start + add + delimiter.matchedLength()
-                self.setCurrentBlockState(0)
-            # No; multi-line string
+        Highlight multilines
+        """
+        multi = False
+        state = 0
+        index = self.tri_single[0].indexIn(text)
+        if index == -1:
+            index = self.tri_double[0].indexIn(text)
+            if index == -1:
+                if self.previousBlockState() > 0:
+                    multi = True
+                    state = self.previousBlockState()
             else:
-                self.setCurrentBlockState(in_state)
-                length = len(text) - start + add
-            # Apply formatting
-            self.setFormat(start, length, self.format(style))
-            # Look for the next match
-            start = delimiter.indexIn(text, start + length)
-
-        # Return True if still inside a multi-line string, False otherwise
-        if self.currentBlockState() == in_state:
-            return True
+                # debut ou fin si le previous est 2
+                if self.previousBlockState() == 2:
+                    multi = True  # end of comment
+                    state = 0
+                elif self.previousBlockState() == 0:
+                    multi = True
+                    state = 2
+                else:
+                    multi = True
+                    state = 1
         else:
-            return False
+            if self.previousBlockState() == 1:
+                multi = True  # end of comment
+                state = 0
+            elif self.previousBlockState() == 0:
+                multi = True
+                state = 1
+            else:
+                multi = True
+                state = 2
+        if multi:
+            self.setFormat(0, len(text), self.format("docstring",
+                                                     self.__bck))
+        self.setCurrentBlockState(state)
+        return multi
+
+
