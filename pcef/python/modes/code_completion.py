@@ -110,11 +110,10 @@ class JediCompletionProvider(CompletionProvider, QtCore.QObject):
         for i, elem in enumerate(toPreload):
             definition = elem[0]
             script = elem[1]
-            msg = "Parsing {2} ({0}/{1})".format(i+1, nb,
-                                                          definition.name)
+            msg = "Parsing {2} ({0}/{1})".format(i+1, nb, definition.name)
             l.info(msg)
             self.preLoadProgressUpdate.emit(msg, -1)
-            jedi.Script(script, 1, len(script), None).completions()
+            jedi.Script(script, 1, len(script), "").completions()
         self.preLoadProgressUpdate.emit("Finished", 100)
         time.sleep(0.2)
         l.info("Preloading finished")
