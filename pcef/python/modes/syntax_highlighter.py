@@ -8,8 +8,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
-"""
-This module contains the python specific syntax highlighter
+""" This module contains the python specific syntax highlighter
 """
 from pcef.core import TextStyle, memoized
 from pcef.qt.QtCore import QRegExp
@@ -29,7 +28,7 @@ DEFAULT_LIGHT_STYLES = {
     'class': TextStyle('#800080 nbold nitalic nunderlined'),
     'function': TextStyle('#800080 nbold nitalic nunderlined'),
     'string': TextStyle('#008000 nbold nitalic nunderlined'),
-    'docstring': TextStyle('#000080 nbold nitalic nunderlined'),
+    'docstring': TextStyle('#0000AA nbold nitalic nunderlined'),
     'comment': TextStyle('#008000 nbold italic nunderlined'),
     'self': TextStyle('#8F2828 nbold italic nunderlined'),
     'numbers': TextStyle('#000080 nbold nitalic nunderlined'),
@@ -57,7 +56,7 @@ DEFAULT_DARK_STYLES = {
 
 
 class PyHighlighterMode(QSyntaxHighlighter, Mode):
-    """Syntax highlighter for the Python language.
+    """ Syntax highlighter for the Python language.
     """
     IDENTIFIER = "pyHighlighterMode"
     _DESCRIPTION = "Custom QSyntaxHighlighter to highlight python syntax"
@@ -140,8 +139,8 @@ class PyHighlighterMode(QSyntaxHighlighter, Mode):
 
         rules = []
 
-        self.wordsPattern = QRegExp(r'\b\w+\b')
-        self.spacesPattern = QRegExp('\s+')
+        self.spacesPattern = QRegExp(r'\s+')
+        self.wordsPattern = QRegExp(r'\s+')
 
         # All other rules
         rules += [
@@ -149,10 +148,10 @@ class PyHighlighterMode(QSyntaxHighlighter, Mode):
             (r'\bdef\b\s*(\w+)', 'function'),
             # 'class' followed by an identifier
             (r'\bclass\b\s*(\w+)', 'class'),
+            # words (keywords, builtin, ...
+            (r'\b\w+\b', 'word'),
             # predefined items (__xxx__)
             (r'\b__.*__\b', 'predefined'),
-            # Double-quoted string, possibly containing escape sequences
-            (r'"[^"\\]*(\\.[^"\\]*)*"', 'string'),
 
             (r'@.*', 'decorator'),
 
@@ -160,6 +159,9 @@ class PyHighlighterMode(QSyntaxHighlighter, Mode):
             (r'\b[+-]?[0-9]+[lL]?\b', 'numbers'),
             (r'\b[+-]?0[xX][0-9A-Fa-f]+[lL]?\b', 'numbers'),
             (r'\b[+-]?[0-9]+(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?\b', 'numbers'),
+
+            # Double-quoted string, possibly containing escape sequences
+            (r'"[^"\\]*(\\.[^"\\]*)*"', 'string'),
         ]
         rules += [(r'%s' % o, 'operator')
                   for o in PyHighlighterMode.operators]
@@ -231,8 +233,8 @@ class PyHighlighterMode(QSyntaxHighlighter, Mode):
             return "keyword"
         if word in self.builtins:
             return "builtins"
-        if word in self.docstringTags:
-            return "docstringTag"
+        # if word in self.docstringTags:
+        #     return "docstringTag"
         if word in self.braces:
             return "braces"
         if word in self.punctuations:
@@ -251,38 +253,35 @@ class PyHighlighterMode(QSyntaxHighlighter, Mode):
                                                       self.__bck))
             index = expression.indexIn(text, index + length)
 
-            # # self.setCurrentBlockState(0)
-            # in_multiline = self.match_multiline(text, *self.tri_single)
-            # if not in_multiline:
-            #     in_multiline = self.match_multiline(text, *self.tri_double)
+    def highlightDocstringTags(self, text):
+        index = self.wordsPattern.indexIn(text)
+        while index >= 0:
+            l = self.wordsPattern.matchedLength()
+            word = text[index:index + l]
+            fmt = self.formatFromWord(word)
+            if fmt:
+                self.setFormat(index, l, self.format(fmt, self.__bck))
+            index = self.wordsPattern.indexIn(text, index + l)
 
     def highlightBlock(self, text):
         """Apply syntax highlighting to the given block of text.
         """
         if self.match_multiline(text):
+            self.highlightDocstringTags(text)
             self.highlightSpaces(text)
             return
         for expression, fmt in self.rules:
             index = expression.indexIn(text)
-            used = False
+            # used = False
+            toApply = fmt
             while index >= 0:
                 l = expression.matchedLength()
-                self.setFormat(index, l, self.format(fmt, self.__bck))
+                if fmt == "word":
+                    word = text[index:index + l]
+                    toApply = self.formatFromWord(word)
+                if toApply:
+                    self.setFormat(index, l, self.format(toApply, self.__bck))
                 index = expression.indexIn(text, index + l)
-                used = True
-            if used and fmt == "comment":
-                self.highlightSpaces(text)
-                return
-
-        # words
-        index = self.wordsPattern.indexIn(text)
-        while index >= 0:
-            l = self.wordsPattern.matchedLength()
-            word = text[index:index+l]
-            fmt = self.formatFromWord(word)
-            if fmt:
-                self.setFormat(index, l, self.format(fmt, self.__bck))
-            index = self.wordsPattern.indexIn(text, index + l)
 
         #Spaces
         self.highlightSpaces(text)
@@ -293,38 +292,43 @@ class PyHighlighterMode(QSyntaxHighlighter, Mode):
         """
         multi = False
         state = 0
-        index = self.tri_single[0].indexIn(text)
-        if index == -1:
-            index = self.tri_double[0].indexIn(text)
-            if index == -1:
-                if self.previousBlockState() > 0:
-                    multi = True
-                    state = self.previousBlockState()
-            else:
-                # debut ou fin si le previous est 2
-                if self.previousBlockState() == 2:
-                    multi = True  # end of comment
-                    state = 0
-                elif self.previousBlockState() == 0:
-                    multi = True
-                    state = 2
-                else:
-                    multi = True
-                    state = 1
-        else:
+        original_text = text
+        text = text.strip()
+        # single quoted
+        if text.startswith("'''") or text.endswith("'''"):
+            # begin of comment
             if self.previousBlockState() == 1:
-                multi = True  # end of comment
+                # end of comment
+                multi = True
                 state = 0
-            elif self.previousBlockState() == 0:
+            elif (self.previousBlockState() == 0 or
+                          self.previousBlockState() == -1):
+                # start of single quoted comment
                 multi = True
                 state = 1
             else:
+                # in double quoted doctring
                 multi = True
                 state = 2
+        elif text.startswith('"""') or text.endswith('"""'):
+            if self.previousBlockState() == 2:
+                # end of comment
+                multi = True
+                state = 0
+            elif (self.previousBlockState() == 0 or
+                          self.previousBlockState() == -1):
+                # start of comment
+                multi = True
+                state = 2
+            else:
+                multi = True
+                state = 1
+        else:
+            if self.previousBlockState() > 0:
+                multi = True
+                state = self.previousBlockState()
         if multi:
-            self.setFormat(0, len(text), self.format("docstring",
+            self.setFormat(0, len(original_text), self.format("docstring",
                                                      self.__bck))
         self.setCurrentBlockState(state)
         return multi
-
-
