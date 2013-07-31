@@ -13,9 +13,7 @@ Integrates the generic editor using the pcef qt designer plugin.
 """
 import logging
 logging.basicConfig(level=logging.INFO)
-import os
 import sys
-os.environ.setdefault("QT_API", "PyQt")
 from pcef.qt import QtCore, QtGui
 from ui import loadUi
 
