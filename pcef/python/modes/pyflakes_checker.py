@@ -93,6 +93,5 @@ class PyFlakesCheckerMode(CheckerMode):
                 line = warning.lineno
                 status = msg_types[type(warning)]
                 msgs.append(CheckerMessage(msg, status, line))
-            self.clearMessagesRequested.emit()
             self.addMessagesRequested.emit(msgs, True)
             return len(w.messages)

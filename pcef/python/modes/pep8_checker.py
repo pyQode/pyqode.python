@@ -57,13 +57,12 @@ class PEP8CheckerMode(CheckerMode):
             logging.debug("pep8.py found!")
 
     def run(self, code, filePath):
-        logging.info("PEP8 running")
+        s = time.time()
         results = self.check(code.splitlines(True), filePath)
         messages = []
         for line_number, offset, code, text, doc in results:
             messages.append(CheckerMessage(
                 text, MSG_STATUS_WARNING, line_number))
-            time.sleep(0.001)
         self.addMessagesRequested.emit(messages, True)
 
     def check(self, lines, filename):
