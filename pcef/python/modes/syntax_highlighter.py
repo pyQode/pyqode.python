@@ -122,16 +122,12 @@ class PyHighlighterMode(QSyntaxHighlighter, Mode):
     braces = [
         '\{', '\}', '\(', '\)', '\[', '\]',
     ]
-
     punctuations = ["\:", "\,", "\."]
 
     def __init__(self, document=None):
         QSyntaxHighlighter.__init__(self, document)
         self.__doc = document
         Mode.__init__(self)
-        # Multi-line strings (expression, flag, style)
-        # FIXME: The triple-quotes in these two lines will mess up the
-        # syntax highlighting from this point onward
         self.tri_single = (QRegExp("'''"), 1, 'docstring')
         self.tri_double = (QRegExp('"""'), 2, 'docstring')
 
@@ -172,12 +168,12 @@ class PyHighlighterMode(QSyntaxHighlighter, Mode):
         rules += [(r"'[^'\\]*(\\.[^'\\]*)*'", 'string')]
 
         # Build a QRegExp for each pattern
-        self.rules = [(QRegExp(pat), fmt)
-            for (pat, fmt) in rules]
+        self.rules = [(QRegExp(pat), fmt) for (pat, fmt) in rules]
 
     @memoized
     def format(self, style_key, current_style_bck):
-        """Return a QTextCharFormat with the given attributes.
+        """
+        Return a QTextCharFormat with the given attributes.
 
         :param current_style_bck: Used to clear cache
         """
@@ -264,7 +260,8 @@ class PyHighlighterMode(QSyntaxHighlighter, Mode):
             index = self.wordsPattern.indexIn(text, index + l)
 
     def highlightBlock(self, text):
-        """Apply syntax highlighting to the given block of text.
+        """
+        Apply syntax highlighting to the given block of text.
         """
         if self.match_multiline(text):
             self.highlightDocstringTags(text)
@@ -302,7 +299,7 @@ class PyHighlighterMode(QSyntaxHighlighter, Mode):
                 multi = True
                 state = 0
             elif (self.previousBlockState() == 0 or
-                          self.previousBlockState() == -1):
+                    self.previousBlockState() == -1):
                 # start of single quoted comment
                 multi = True
                 state = 1
@@ -316,7 +313,7 @@ class PyHighlighterMode(QSyntaxHighlighter, Mode):
                 multi = True
                 state = 0
             elif (self.previousBlockState() == 0 or
-                          self.previousBlockState() == -1):
+                    self.previousBlockState() == -1):
                 # start of comment
                 multi = True
                 state = 2
@@ -329,6 +326,6 @@ class PyHighlighterMode(QSyntaxHighlighter, Mode):
                 state = self.previousBlockState()
         if multi:
             self.setFormat(0, len(original_text), self.format("docstring",
-                                                     self.__bck))
+                                                              self.__bck))
         self.setCurrentBlockState(state)
         return multi
