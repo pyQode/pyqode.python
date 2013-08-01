@@ -34,93 +34,12 @@ ICONS = {'CLASS': ':/pcef_python_icons/rc/class.png',
          'FUNCTION-PRIV': ':/pcef_python_icons/rc/func_priv.png',
          'FUNCTION-PROT': ':/pcef_python_icons/rc/func_prot.png'}
 
+
 class JediCompletionProvider(CompletionProvider, QtCore.QObject):
 
-    #: Signal emitted when the pre load progressed. Params: labelText, value
-    preLoadProgressUpdate = QtCore.Signal(str, int)
-    preLoadFinished = QtCore.Signal()
-    preLoadDialogExecRequired = QtCore.Signal()
-
-    # PRELOADED_NAMES = []
-
-    def __init__(self, editor, showProgressDialog=True):
+    def __init__(self, editor):
         QtCore.QObject.__init__(self)
         CompletionProvider.__init__(self, editor, priority=1)
-        self.editor.newTextSet.connect(self.__onNewTextSet)
-        self.__jobRunner = DelayJobRunner(self, nbThreadsMax=1, delay=500)
-        self.__dlg = QtGui.QProgressDialog(editor)
-        self.__dlg.setCancelButton(None)
-        self.__dlg.hide()
-        self.__showDlg = showProgressDialog
-        if showProgressDialog:
-            self.preLoadFinished.connect(self.hideProgressDialog)
-            self.preLoadProgressUpdate.connect(self.updateProgressDialog)
-            self.preLoadDialogExecRequired.connect(self.__execDlg)
-
-    def hideProgressDialog(self):
-        self.__dlg.hide()
-
-    def updateProgressDialog(self, labelText, value):
-        if value == -1:
-            self.__dlg.setValue(0)
-            self.__dlg.setMinimum(0)
-            self.__dlg.setMaximum(0)
-        else:
-            self.__dlg.setMinimum(0)
-            self.__dlg.setMaximum(100)
-            self.__dlg.setValue(value)
-        self.__dlg.setLabelText(labelText)
-
-    def __execDlg(self):
-        if self.__showDlg:
-            self.__dlg.show()
-
-    def __onNewTextSet(self):
-        self.__dlg.setWindowTitle(
-            "Preloading")
-        self.__jobRunner.requestJob(
-            self.__preLoadDocument, True, self.editor.toPlainText(),
-            self.editor.filePath, self.editor.fileEncoding)
-
-    def __preLoadDocument(self, code, fileEncoding, filePath):
-        l = logging.getLogger("pcef")
-        self.preLoadDialogExecRequired.emit()
-        self.preLoadProgressUpdate.emit("Parsing module...", -1)
-        names = jedi.api.defined_names(code, filePath, fileEncoding)
-        # put up heavy modules first to avoid segfault with python 3
-        index = indexByName(names, "QtCore")
-        if index != -1:
-            names.insert(0, names.pop(index))
-        index = indexByName(names, "QtGui")
-        if index != -1:
-            names.insert(0, names.pop(index))
-        index = indexByName(names, "numpy")
-        if index != -1:
-            names.insert(0, names.pop(index))
-        toPreload = []
-        for definition in names:
-            script = ""
-            if definition.type == "import":
-                script = "{0};{1}.".format(definition.description, definition.name)
-            elif definition.type == "class":
-                script = "{0}.".format(definition.name)
-            if script:
-                toPreload.append((definition, script))
-        nb = len(toPreload)
-        for i, elem in enumerate(toPreload):
-            definition = elem[0]
-            script = elem[1]
-            msg = "Parsing {2} ({0}/{1})".format(i+1, nb, definition.name)
-            l.info(msg)
-            self.preLoadProgressUpdate.emit(msg, -1)
-            try:
-                jedi.Script(script, 1, len(script), "").completions()
-            except Exception as e:
-                logging.error("Failed to parse %s - %s" % (definition.name, e))
-        self.preLoadProgressUpdate.emit("Finished", 100)
-        time.sleep(0.2)
-        l.info("Preloading finished")
-        self.preLoadFinished.emit()
 
     def run(self, code, line, column, completionPrefix,
             filePath, fileEncoding):
