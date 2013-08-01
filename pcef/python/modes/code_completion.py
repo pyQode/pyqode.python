@@ -113,7 +113,10 @@ class JediCompletionProvider(CompletionProvider, QtCore.QObject):
             msg = "Parsing {2} ({0}/{1})".format(i+1, nb, definition.name)
             l.info(msg)
             self.preLoadProgressUpdate.emit(msg, -1)
-            jedi.Script(script, 1, len(script), "").completions()
+            try:
+                jedi.Script(script, 1, len(script), "").completions()
+            except Exception as e:
+                logging.error("Failed to parse %s - %s" % (definition.name, e))
         self.preLoadProgressUpdate.emit("Finished", 100)
         time.sleep(0.2)
         l.info("Preloading finished")
