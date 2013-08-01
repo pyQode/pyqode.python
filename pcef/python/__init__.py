@@ -26,6 +26,7 @@ from pcef.python.modes import FolderMode
 from pcef.python.modes import PyHighlighterMode
 from pcef.python.modes import DEFAULT_DARK_STYLES
 from pcef.python.modes import DEFAULT_LIGHT_STYLES
+from pcef.python.panels import PreLoadPanel
 from pcef.qt.ui import importRc
 
 
@@ -87,10 +88,12 @@ class QPythonCodeEdit(pcef.core.QCodeEdit):
         self.installMode(pcef.core.FileWatcherMode())
         self.installMode(PyHighlighterMode(self.document()))
         self.installMode(PyAutoIndentMode())
-        self.installMode(FolderMode())
+        # self.installMode(FolderMode())
         self.installMode(PyFlakesCheckerMode())
         self.installMode(PEP8CheckerMode())
         self.installMode(CalltipsMode())
+        self.installPanel(PreLoadPanel(), pcef.core.PanelPosition.TOP)
+        self.preLoadPanel.setVisible(False)
 
     @QtCore.Slot()
     def useDarkStyle(self, use=True):
