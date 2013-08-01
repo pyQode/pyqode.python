@@ -9,5 +9,6 @@
         <file>rc/func_prot.png</file>
         <file>rc/var_priv.png</file>
         <file>rc/var_prot.png</file>
+        <file>rc/spinner.gif</file>
     </qresource>
 </RCC>
