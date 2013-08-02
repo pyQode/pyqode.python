@@ -12,6 +12,7 @@
 This module contains the pyFlakes checker mode
 """
 import logging
+import multiprocessing
 import time
 from pcef.core import CheckerMode, CheckerMessage
 from pcef.core import MSG_STATUS_ERROR, MSG_STATUS_WARNING
@@ -39,14 +40,29 @@ except ImportError:
         pass
 
 
+def pep8AnalysisProcess(q, code, filePath, fileEncoding):
+    import pep8
+    pep8style = pep8.StyleGuide(parse_argv=False, config_file=True,
+                                checker_class=CustomChecker)
+    results = pep8style.input_file(filePath, lines=code.splitlines(True))
+    messages = []
+    for line_number, offset, code, text, doc in results:
+        messages.append(CheckerMessage(
+            text, MSG_STATUS_WARNING, line_number))
+    q.put(messages)
+
+
 class PEP8CheckerMode(CheckerMode):
     DESCRIPTION = "Check python code for PEP8 issues"
     IDENTIFIER = "pep8CheckerMode"
 
     def __init__(self):
-        CheckerMode.__init__(self, clearOnRequest=False)
+        CheckerMode.__init__(self, pep8AnalysisProcess, clearOnRequest=False)
 
     def _onInstall(self, editor):
+        """
+        Checks for pep8 support on install
+        """
         CheckerMode._onInstall(self, editor)
         try:
             import pep8
@@ -55,28 +71,3 @@ class PEP8CheckerMode(CheckerMode):
             self.enabled = False
         else:
             logging.debug("pep8.py found!")
-
-    def run(self, code, filePath):
-        s = time.time()
-        results = self.check(code.splitlines(True), filePath)
-        messages = []
-        for line_number, offset, code, text, doc in results:
-            messages.append(CheckerMessage(
-                text, MSG_STATUS_WARNING, line_number))
-        self.addMessagesRequested.emit(messages, True)
-
-    def check(self, lines, filename):
-        """
-        Checks the python source code using PEP8 checker.
-
-        :param codeString: The code string to check
-
-        :param filename;
-
-        .. note: This is a modified version of the check function found in the
-                 pyFlakes script.
-        """
-        import pep8
-        pep8style = pep8.StyleGuide(parse_argv=False, config_file=True,
-                                    checker_class=CustomChecker)
-        return pep8style.input_file(filename, lines=lines)
