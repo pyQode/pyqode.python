@@ -79,8 +79,12 @@ class PythonEditorWindow(QtGui.QMainWindow):
     def on_actionOpen_triggered(self):
         filePath = QtGui.QFileDialog.getOpenFileName(
             self, "Choose a file", os.path.expanduser("~"))
-        if filePath:
-            self.editor.openFile(filePath)
+        if os.environ['QT_API'] == 'PySide':
+            if filePath[0]:
+                self.editor.openFile(filePath[0])
+        else:
+            if filePath:
+                self.editor.openFile(filePath)
 
     def onPanelCheckStateChanged(self):
         action = self.sender()
