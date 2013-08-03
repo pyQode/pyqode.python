@@ -81,9 +81,9 @@ class QPythonCodeEdit(pcef.core.QCodeEdit):
         self.installMode(pcef.core.RightMarginMode())
         self.installMode(pcef.core.CodeCompletionMode())
         self.codeCompletionMode.addCompletionProvider(
-            JediCompletionProvider(self))
+            JediCompletionProvider())
         self.codeCompletionMode.addCompletionProvider(
-            pcef.core.DocumentWordCompletionProvider(self))
+            pcef.core.DocumentWordCompletionProvider())
         self.installMode(pcef.core.ZoomMode())
         self.installMode(pcef.core.FileWatcherMode())
         self.installMode(PyHighlighterMode(self.document()))
@@ -91,7 +91,7 @@ class QPythonCodeEdit(pcef.core.QCodeEdit):
         # self.installMode(FolderMode())
         self.installMode(PyFlakesCheckerMode())
         self.installMode(PEP8CheckerMode())
-        self.installMode(CalltipsMode())
+        # self.installMode(CalltipsMode())
         self.installPanel(PreLoadPanel(), pcef.core.PanelPosition.TOP)
         self.preLoadPanel.setVisible(False)
 
