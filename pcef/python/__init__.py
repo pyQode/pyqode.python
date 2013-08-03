@@ -85,7 +85,7 @@ class QPythonCodeEdit(pcef.core.QCodeEdit):
         self.codeCompletionMode.addCompletionProvider(
             pcef.core.DocumentWordCompletionProvider())
         self.installMode(pcef.core.ZoomMode())
-        self.installMode(pcef.core.FileWatcherMode())
+        # self.installMode(pcef.core.FileWatcherMode())
         self.installMode(PyHighlighterMode(self.document()))
         self.installMode(PyAutoIndentMode())
         # self.installMode(FolderMode())
