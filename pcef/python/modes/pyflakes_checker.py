@@ -15,6 +15,7 @@ import logging
 import _ast
 from pcef.core import CheckerMode, CheckerMessage
 from pcef.core import MSG_STATUS_ERROR, MSG_STATUS_WARNING
+from pcef.core import CHECK_TRIGGER_TXT_SAVED
 
 
 def pyflakesAnalysisProcess(q, codeString, filename, fileEncoding):
@@ -68,6 +69,7 @@ class PyFlakesCheckerMode(CheckerMode):
 
     def __init__(self):
         CheckerMode.__init__(self, pyflakesAnalysisProcess,
+                             trigger=CHECK_TRIGGER_TXT_SAVED,
                              clearOnRequest=False)
 
     def _onInstall(self, editor):
