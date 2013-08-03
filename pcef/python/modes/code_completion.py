@@ -35,13 +35,41 @@ ICONS = {'CLASS': ':/pcef_python_icons/rc/class.png',
          'FUNCTION-PROT': ':/pcef_python_icons/rc/func_prot.png'}
 
 
-class JediCompletionProvider(CompletionProvider, QtCore.QObject):
+class JediCompletionProvider(CompletionProvider):
+    PRIORITY = 1
 
-    def __init__(self, editor):
-        QtCore.QObject.__init__(self)
-        CompletionProvider.__init__(self, editor, priority=1)
+    def preload(self, code, fileEncoding, filePath):
+        names = jedi.api.defined_names(code, filePath, fileEncoding)
+        index = indexByName(names, "QtCore")
+        if index != -1:
+            names.insert(0, names.pop(index))
+        index = indexByName(names, "QtGui")
+        if index != -1:
+            names.insert(0, names.pop(index))
+        index = indexByName(names, "numpy")
+        if index != -1:
+            names.insert(0, names.pop(index))
+        toPreLoad = []
+        for definition in names:
+            script = ""
+            if definition.type == "import":
+                script = "{0};{1}.".format(definition.description, definition.name)
+            elif definition.type == "class":
+                script = "{0}.".format(definition.name)
+            if script:
+                toPreLoad.append((definition, script))
+        nb = len(toPreLoad)
+        for i, elem in enumerate(toPreLoad):
+            definition = elem[0]
+            script = elem[1]
+            msg = "Parsing {2} ({0}/{1})".format(i+1, nb, definition.name)
+            try:
+                jedi.Script(script, 1, len(script), "").completions()
+            except Exception as e:
+                logging.error("Failed to parse %s - %s" % (definition.name, e))
+        return CompletionProvider.preload(self, code, fileEncoding, filePath)
 
-    def run(self, code, line, column, completionPrefix,
+    def complete(self, code, line, column, completionPrefix,
             filePath, fileEncoding):
         try:
             retVal = []
@@ -74,5 +102,4 @@ class JediCompletionProvider(CompletionProvider, QtCore.QObject):
                                              tooltip=desc.split(':')[1]))
         except Exception:
             pass
-        # print("Finished")
         return retVal
