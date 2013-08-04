@@ -9,12 +9,13 @@ before_install:
  - cd pcef-core
  - python setup.py install
  - cd ..
- - sudo apt-get install -qq python-pyside
- - sudo apt-get install -qq python-qt4
- - sudo apt-get install -qq python3-pyside
- - sudo apt-get install -qq python3-pyqt4
- - sudo apt-get install -qq python-pygments
- - sudo apt-get install -qq python3-pygments
+ - sudo apt-get update
+ - sudo apt-get install -qq python-pyside --fix-missing
+ - sudo apt-get install -qq python-qt4 --fix-missing
+ - sudo apt-get install -qq python3-pyside --fix-missing
+ - sudo apt-get install -qq python3-pyqt4 --fix-missing
+ - sudo apt-get install -qq python-pygments --fix-missing
+ - sudo apt-get install -qq python3-pygments --fix-missing
  - pip install jedi
  - pip install pep8
  - pip install pyflakes
