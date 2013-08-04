@@ -10,7 +10,7 @@
 #
 """ This module contains the python specific syntax highlighter
 """
-from pcef.core import TextStyle, memoized
+from pcef.core import TextStyle, memoized, SyntaxHighlighter
 from pcef.qt.QtCore import QRegExp
 from pcef.qt.QtGui import QColor, QTextCharFormat, QFont, QSyntaxHighlighter
 from pcef.core.mode import Mode
@@ -55,7 +55,7 @@ DEFAULT_DARK_STYLES = {
 }
 
 
-class PyHighlighterMode(QSyntaxHighlighter, Mode):
+class PyHighlighterMode(SyntaxHighlighter, Mode):
     """ Syntax highlighter for the Python language.
     """
     IDENTIFIER = "pyHighlighterMode"
@@ -125,7 +125,7 @@ class PyHighlighterMode(QSyntaxHighlighter, Mode):
     punctuations = ["\:", "\,", "\."]
 
     def __init__(self, document=None):
-        QSyntaxHighlighter.__init__(self, document)
+        SyntaxHighlighter.__init__(self, document)
         self.__doc = document
         Mode.__init__(self)
         self.tri_single = (QRegExp("'''"), 1, 'docstring')
@@ -263,6 +263,7 @@ class PyHighlighterMode(QSyntaxHighlighter, Mode):
         """
         Apply syntax highlighting to the given block of text.
         """
+        SyntaxHighlighter.highlightBlock(self, text)
         if self.match_multiline(text):
             self.highlightDocstringTags(text)
             self.highlightSpaces(text)
