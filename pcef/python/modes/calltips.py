@@ -58,11 +58,24 @@ class CalltipsMode(Mode, QtCore.QObject):
         call = script.get_in_function_call()
         if call:
             self.tooltipDisplayRequested.emit(call, col)
-        else:
-            self.tooltipHideRequested.emit()
+        # else:
+        #     self.tooltipHideRequested.emit()
+
+    def __isLastCharEndOfWord(self):
+        try:
+            tc = self.editor.selectWordUnderCursor()
+            tc.setPosition(tc.position())
+            tc.movePosition(tc.StartOfLine, tc.KeepAnchor)
+            l = tc.selectedText()
+            lastChar = l[len(l) - 1]
+            seps = self.editor.settings.value("wordSeparators")
+            symbols = [",", " ", "("]
+            return lastChar in seps and not lastChar in symbols
+        except IndexError:
+            return False
 
     def __displayTooltip(self, call, col):
-        if not call:
+        if not call or self.__isLastCharEndOfWord():
             return
         # create a formatted calltip (current index appear in bold)
         calltip = "<nobr>{0}.{1}(".format(call.module.name, call.call_name)
