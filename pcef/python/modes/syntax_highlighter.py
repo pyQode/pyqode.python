@@ -312,9 +312,11 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
                 state = 0
                 docstring = wasDocstring
             elif prevState == 0 or prevState == -1:
-                # start of single quoted comment
-                multi = True
                 state = 1
+                # start of single quoted comment
+                if text.startswith("'''") and text.endswith("'''") and len(text) > 6:
+                    state = 0
+                multi = True
             else:
                 # in double quoted doctring
                 multi = True
@@ -330,6 +332,10 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
                 # start of comment
                 multi = True
                 state = 2
+                # start of single quoted comment
+                if text.startswith('"""') and text.endswith('"""') and len(text) > 6:
+                    state = 0
+
             else:
                 multi = True
                 state = 1
