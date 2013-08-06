@@ -291,18 +291,27 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
         state = 0
         original_text = text
         text = text.strip()
+        # check for mutliquoted string that is not a docstring
+        docstring = 0x80
         if "=" in text:
             text = text.split("=")[1].strip()
+            docstring = 0
+
+        # retrieve value from state
+        prevState = self.previousBlockState() & 0x7F
+        if self.previousBlockState() == -1:
+            prevState = 0
+        wasDocstring = self.previousBlockState() & 0x80
 
         # single quoted
         if text.startswith("'''") or text.endswith("'''"):
             # begin of comment
-            if self.previousBlockState() == 1:
+            if prevState == 1:
                 # end of comment
                 multi = True
                 state = 0
-            elif (self.previousBlockState() == 0 or
-                    self.previousBlockState() == -1):
+                docstring = wasDocstring
+            elif prevState == 0 or prevState == -1:
                 # start of single quoted comment
                 multi = True
                 state = 1
@@ -310,25 +319,33 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
                 # in double quoted doctring
                 multi = True
                 state = 2
+                docstring = wasDocstring
         elif text.startswith('"""') or text.endswith('"""'):
-            if self.previousBlockState() == 2:
+            if prevState == 2:
                 # end of comment
                 multi = True
                 state = 0
-            elif (self.previousBlockState() == 0 or
-                    self.previousBlockState() == -1):
+                docstring = wasDocstring
+            elif prevState == 0 or prevState == -1:
                 # start of comment
                 multi = True
                 state = 2
             else:
                 multi = True
                 state = 1
+                docstring = wasDocstring
         else:
-            if self.previousBlockState() > 0:
+            if prevState > 0:
                 multi = True
-                state = self.previousBlockState()
+                state = prevState
+                docstring = wasDocstring
         if multi:
+            fmt = "docstring"
+            if not docstring:
+                fmt = "string"
             self.setFormat(len(original_text) - len(text),
-                           len(text), self.format("docstring", self.__bck))
+                           len(text), self.format(fmt, self.__bck))
+        # takes multiline type into account
+        state |= docstring
         self.setCurrentBlockState(state)
         return multi
