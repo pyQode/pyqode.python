@@ -137,6 +137,7 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
 
         self.spacesPattern = QRegExp(r'\s+')
         self.wordsPattern = QRegExp(r'\s+')
+        self.docstringPattern = QRegExp(r"(:|@)\w+")
 
         # All other rules
         rules += [
@@ -228,8 +229,6 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
             return "keyword"
         if word in self.builtins:
             return "builtins"
-        # if word in self.docstringTags:
-        #     return "docstringTag"
         if word in self.braces:
             return "braces"
         if word in self.punctuations:
@@ -249,14 +248,12 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
             index = expression.indexIn(text, index + length)
 
     def highlightDocstringTags(self, text):
-        index = self.wordsPattern.indexIn(text)
+        index = self.docstringPattern.indexIn(text, 0)
         while index >= 0:
-            l = self.wordsPattern.matchedLength()
-            word = text[index:index + l]
-            fmt = self.formatFromWord(word)
-            if fmt:
-                self.setFormat(index, l, self.format(fmt, self.__bck))
-            index = self.wordsPattern.indexIn(text, index + l)
+            length = self.docstringPattern.matchedLength()
+            self.setFormat(index, length, self.format("docstringTag",
+                                                      self.__bck))
+            index = self.docstringPattern.indexIn(text, index + length)
 
     def highlightBlock(self, text):
         """
@@ -264,8 +261,8 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
         """
         SyntaxHighlighter.highlightBlock(self, text)
         if self.match_multiline(text):
-            self.highlightDocstringTags(text)
             self.highlightSpaces(text)
+            self.highlightDocstringTags(text)
             return
         for expression, fmt in self.rules:
             index = expression.indexIn(text)
