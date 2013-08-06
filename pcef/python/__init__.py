@@ -22,7 +22,6 @@ from pcef.python.modes import JediCompletionProvider
 from pcef.python.modes import PEP8CheckerMode
 from pcef.python.modes import PyAutoIndentMode
 from pcef.python.modes import PyFlakesCheckerMode
-from pcef.python.modes import FolderMode
 from pcef.python.modes import PyHighlighterMode
 from pcef.python.modes import DEFAULT_DARK_STYLES
 from pcef.python.modes import DEFAULT_LIGHT_STYLES
@@ -88,7 +87,6 @@ class QPythonCodeEdit(pcef.core.QCodeEdit):
         self.installMode(pcef.core.FileWatcherMode())
         self.installMode(PyHighlighterMode(self.document()))
         self.installMode(PyAutoIndentMode())
-        # self.installMode(FolderMode())
         self.installMode(PyFlakesCheckerMode())
         self.installMode(PEP8CheckerMode())
         self.installMode(CalltipsMode())
