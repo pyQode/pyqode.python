@@ -168,7 +168,6 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
 
         # Build a QRegExp for each pattern
         self.rules = [(QRegExp(pat), fmt) for (pat, fmt) in rules]
-        print(self.rules)
 
     @memoized
     def format(self, style_key, current_style_bck):
