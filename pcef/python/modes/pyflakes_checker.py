@@ -69,7 +69,7 @@ class PyFlakesCheckerMode(CheckerMode):
 
     def __init__(self):
         CheckerMode.__init__(self, pyflakesAnalysisProcess,
-                             trigger=CHECK_TRIGGER_TXT_SAVED,
+                             delay=1200,
                              clearOnRequest=False)
 
     def _onInstall(self, editor):
