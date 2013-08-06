@@ -43,7 +43,6 @@ class JediCompletionProvider(CompletionProvider):
 
     def preload(self, code, filePath, fileEncoding):
         try:
-            print(self.addToPath)
             if self.addToPath:
                 dir = os.path.dirname(filePath)
                 sys.path.append(dir)
