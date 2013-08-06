@@ -291,6 +291,9 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
         state = 0
         original_text = text
         text = text.strip()
+        if "=" in text:
+            text = text.split("=")[1].strip()
+
         # single quoted
         if text.startswith("'''") or text.endswith("'''"):
             # begin of comment
@@ -325,7 +328,7 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
                 multi = True
                 state = self.previousBlockState()
         if multi:
-            self.setFormat(0, len(original_text), self.format("docstring",
-                                                              self.__bck))
+            self.setFormat(len(original_text) - len(text),
+                           len(text), self.format("docstring", self.__bck))
         self.setCurrentBlockState(state)
         return multi
