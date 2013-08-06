@@ -155,20 +155,20 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
             (r'\b[+-]?[0-9]+[lL]?\b', 'numbers'),
             (r'\b[+-]?0[xX][0-9A-Fa-f]+[lL]?\b', 'numbers'),
             (r'\b[+-]?[0-9]+(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?\b', 'numbers'),
-
-            # Double-quoted string, possibly containing escape sequences
-            (r'"[^"\\]*(\\.[^"\\]*)*"', 'string'),
         ]
+        # Double-quoted string, possibly containing escape sequences
         rules += [(r'%s' % o, 'operator')
                   for o in PyHighlighterMode.operators]
 
         rules += [(r'#[^\n]*', 'comment')]
 
         # Single-quoted string, possibly containing escape sequences
+        rules += [(r'"[^"\\]*(\\.[^"\\]*)*"', 'string')]
         rules += [(r"'[^'\\]*(\\.[^'\\]*)*'", 'string')]
 
         # Build a QRegExp for each pattern
         self.rules = [(QRegExp(pat), fmt) for (pat, fmt) in rules]
+        print(self.rules)
 
     @memoized
     def format(self, style_key, current_style_bck):
