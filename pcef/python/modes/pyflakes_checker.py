@@ -11,9 +11,8 @@
 """
 This module contains the pyFlakes checker mode
 """
-import logging
 import _ast
-from pcef.core import CheckerMode, CheckerMessage
+from pcef.core import CheckerMode, CheckerMessage, logger
 from pcef.core import MSG_STATUS_ERROR, MSG_STATUS_WARNING
 from pcef.core import CHECK_TRIGGER_TXT_SAVED
 
@@ -34,7 +33,7 @@ def pyflakesAnalysisProcess(q, codeString, filename, fileEncoding):
             # Avoid using msg, since for the only known case, it
             # contains a bogus message that claims the encoding the
             # file declared was unknown.s
-            logging.warning("%s: problem decoding source" % filename)
+            logger.warning("%s: problem decoding source" % filename)
         else:
             msgs.append(
                 CheckerMessage(msg, MSG_STATUS_ERROR, lineno))
@@ -63,6 +62,7 @@ def pyflakesAnalysisProcess(q, codeString, filename, fileEncoding):
             msgs.append(CheckerMessage(msg, status, line))
     q.put(msgs)
 
+
 class PyFlakesCheckerMode(CheckerMode):
     DESCRIPTION = "Check python code using pyFlakes"
     IDENTIFIER = "pyFlakesCheckerMode"
@@ -81,8 +81,6 @@ class PyFlakesCheckerMode(CheckerMode):
         try:
             import pyflakes
         except ImportError:
-            logging.warning("Cannot import PyFlakes, PyFlakesCheckerMode "
+            logger.warning("Cannot import PyFlakes, PyFlakesCheckerMode "
                             "disabled")
             self.enabled = False
-        else:
-            logging.debug("PyFlakes found!")

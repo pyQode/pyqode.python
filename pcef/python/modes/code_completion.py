@@ -12,14 +12,11 @@
 Contains the JediCompletionProvider class implementation.
 """
 import jedi
-import logging
-import time
 
 from pcef.core import CompletionProvider
 from pcef.core import Completion
 from pcef.core import indexByName
-from pcef.core import DelayJobRunner
-from pcef.qt import QtCore, QtGui
+from pcef.core import logger
 
 
 ICONS = {'CLASS': ':/pcef_python_icons/rc/class.png',
@@ -66,7 +63,7 @@ class JediCompletionProvider(CompletionProvider):
             try:
                 jedi.Script(script, 1, len(script), "").completions()
             except Exception as e:
-                logging.error("Failed to parse %s - %s" % (definition.name, e))
+                logger.error("Failed to parse %s - %s" % (definition.name, e))
         return CompletionProvider.preload(self, code, fileEncoding, filePath)
 
     def complete(self, code, line, column, completionPrefix,
@@ -95,9 +92,8 @@ class JediCompletionProvider(CompletionProvider):
                     if suggestionType in ICONS:
                         icon = ICONS[suggestionType]
                     else:
-                        logging.getLogger("pcef").warning(
-                            "Unimplemented completion type: %s" %
-                            suggestionType)
+                        logger.warning("Unimplemented completion type: %s" %
+                                       suggestionType)
                     retVal.append(Completion(completion.name, icon=icon,
                                              tooltip=desc.split(':')[1]))
         except Exception:

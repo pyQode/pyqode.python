@@ -11,11 +11,8 @@
 """
 This module contains the pyFlakes checker mode
 """
-import logging
-import multiprocessing
-import time
-from pcef.core import CheckerMode, CheckerMessage
-from pcef.core import MSG_STATUS_ERROR, MSG_STATUS_WARNING
+from pcef.core import CheckerMode, CheckerMessage, logger
+from pcef.core import MSG_STATUS_WARNING
 
 try:
     import pep8
@@ -67,7 +64,5 @@ class PEP8CheckerMode(CheckerMode):
         try:
             import pep8
         except ImportError:
-            logging.warning("Cannot import pep8.py, PEP8CheckerMode disabled")
+            logger.warning("Cannot import pep8.py, PEP8CheckerMode disabled")
             self.enabled = False
-        else:
-            logging.debug("pep8.py found!")

@@ -12,9 +12,8 @@
 Contains the JediCompletionProvider class implementation.
 """
 import jedi
-import logging
 
-from pcef.core import Mode, DelayJobRunner
+from pcef.core import Mode, DelayJobRunner, logger
 from pcef.qt import QtCore, QtGui
 
 
@@ -54,12 +53,13 @@ class CalltipsMode(Mode, QtCore.QObject):
             QtGui.QToolTip.hideText()
 
     def __execRequest(self, code, line, col, path, encoding):
+        logger.debug("Calltip requested")
         script = jedi.Script(code, line, col, path, encoding)
         call = script.get_in_function_call()
         if call:
             self.tooltipDisplayRequested.emit(call, col)
-        # else:
-        #     self.tooltipHideRequested.emit()
+            return
+        logger.debug("No call tip found")
 
     def __isLastCharEndOfWord(self):
         try:
