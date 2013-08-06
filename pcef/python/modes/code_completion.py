@@ -11,9 +11,11 @@
 """
 Contains the JediCompletionProvider class implementation.
 """
+import os
 import jedi
+import sys
 
-from pcef.core import CompletionProvider
+from pcef.core import CompletionProvider, logger
 from pcef.core import Completion
 from pcef.core import indexByName
 from pcef.core import logger
@@ -35,35 +37,46 @@ ICONS = {'CLASS': ':/pcef_python_icons/rc/class.png',
 class JediCompletionProvider(CompletionProvider):
     PRIORITY = 1
 
-    def preload(self, code, fileEncoding, filePath):
-        names = jedi.api.defined_names(code, filePath, fileEncoding)
-        index = indexByName(names, "QtCore")
-        if index != -1:
-            names.insert(0, names.pop(index))
-        index = indexByName(names, "QtGui")
-        if index != -1:
-            names.insert(0, names.pop(index))
-        index = indexByName(names, "numpy")
-        if index != -1:
-            names.insert(0, names.pop(index))
-        toPreLoad = []
-        for definition in names:
-            script = ""
-            if definition.type == "import":
-                script = "{0};{1}.".format(definition.description, definition.name)
-            elif definition.type == "class":
-                script = "{0}.".format(definition.name)
-            if script:
-                toPreLoad.append((definition, script))
-        nb = len(toPreLoad)
-        for i, elem in enumerate(toPreLoad):
-            definition = elem[0]
-            script = elem[1]
-            msg = "Parsing {2} ({0}/{1})".format(i+1, nb, definition.name)
-            try:
-                jedi.Script(script, 1, len(script), "").completions()
-            except Exception as e:
-                logger.error("Failed to parse %s - %s" % (definition.name, e))
+    def __init__(self, addToPath=True):
+        CompletionProvider.__init__(self)
+        self.addToPath = addToPath
+
+    def preload(self, code, filePath, fileEncoding):
+        try:
+            print(self.addToPath)
+            if self.addToPath:
+                dir = os.path.dirname(filePath)
+                sys.path.append(dir)
+            names = jedi.api.defined_names(code, filePath, fileEncoding)
+            index = indexByName(names, "QtCore")
+            if index != -1:
+                names.insert(0, names.pop(index))
+            index = indexByName(names, "QtGui")
+            if index != -1:
+                names.insert(0, names.pop(index))
+            index = indexByName(names, "numpy")
+            if index != -1:
+                names.insert(0, names.pop(index))
+            toPreLoad = []
+            for definition in names:
+                script = ""
+                if definition.type == "import":
+                    script = "{0};{1}.".format(definition.description, definition.name)
+                elif definition.type == "class":
+                    script = "{0}.".format(definition.name)
+                if script:
+                    toPreLoad.append((definition, script))
+            nb = len(toPreLoad)
+            for i, elem in enumerate(toPreLoad):
+                definition = elem[0]
+                script = elem[1]
+                msg = "Parsing {2} ({0}/{1})".format(i+1, nb, definition.name)
+                try:
+                    jedi.Script(script, 1, len(script), "").completions()
+                except Exception as e:
+                    logger.error("Failed to parse %s - %s" % (definition.name, e))
+        except :
+            pass
         return CompletionProvider.preload(self, code, fileEncoding, filePath)
 
     def complete(self, code, line, column, completionPrefix,
