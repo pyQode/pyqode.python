@@ -13,7 +13,7 @@
 from pcef.core import TextStyle, memoized, SyntaxHighlighter
 from pcef.qt.QtCore import QRegExp
 from pcef.qt.QtGui import QColor, QTextCharFormat, QFont, QSyntaxHighlighter
-from pcef.core.mode import Mode
+from pcef.core import Mode, IndentBasedFoldDetector
 
 
 # Default highlighter styles values, mostly for the python highlighter but they
@@ -125,7 +125,8 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
     punctuations = ["\:", "\,", "\."]
 
     def __init__(self, document=None):
-        SyntaxHighlighter.__init__(self, document)
+        SyntaxHighlighter.__init__(self, document,
+                                   foldDetector=IndentBasedFoldDetector())
         self.__doc = document
         Mode.__init__(self)
         self.tri_single = (QRegExp("'''"), 1, 'docstring')
