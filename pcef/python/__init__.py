@@ -27,6 +27,7 @@ from pcef.python.modes import DEFAULT_DARK_STYLES
 from pcef.python.modes import DEFAULT_LIGHT_STYLES
 from pcef.python.panels import PreLoadPanel
 from pcef.qt.ui import importRc
+from pcef.qt import QtGui
 
 
 def getUiDirectory():
@@ -85,6 +86,7 @@ class QPythonCodeEdit(pcef.core.QCodeEdit):
             pcef.core.DocumentWordCompletionProvider())
         self.installMode(pcef.core.ZoomMode())
         self.installMode(pcef.core.FileWatcherMode())
+        self.installMode(pcef.core.SymbolMatcherMode())
         self.installMode(PyHighlighterMode(self.document()))
         self.installMode(PyAutoIndentMode())
         self.installMode(PyFlakesCheckerMode())
@@ -100,10 +102,12 @@ class QPythonCodeEdit(pcef.core.QCodeEdit):
         style = self.style.clone()
         for k, v in DEFAULT_DARK_STYLES.items():
             style.setValue(k, v, "Python")
-        style.setValue("background", "#252525")
-        style.setValue("foreground", "#A9B7C6")
-        style.setValue("caretLineBackground", "#2d2d2d")
-        style.setValue("whiteSpaceForeground", '#404040')
+        style.setValue("background", QtGui.QColor("#252525"))
+        style.setValue("foreground", QtGui.QColor("#A9B7C6"))
+        style.setValue("caretLineBackground", QtGui.QColor("#2d2d2d"))
+        style.setValue("whiteSpaceForeground", QtGui.QColor('#404040'))
+        style.setValue("matchedBraceBackground", None)
+        style.setValue("matchedBraceForeground", QtGui.QColor("#FF8647"))
         self.style = style
 
     @QtCore.Slot()
@@ -113,11 +117,13 @@ class QPythonCodeEdit(pcef.core.QCodeEdit):
         style = self.style.clone()
         for k, v in DEFAULT_LIGHT_STYLES.items():
             style.setValue(k, v, "Python")
-        style.setValue("background", "#FFFFFF")
-        style.setValue("foreground", "#000000")
-        style.setValue("caretLineBackground", "#E4EDF8")
+        style.setValue("background", QtGui.QColor("#FFFFFF"))
+        style.setValue("foreground", QtGui.QColor("#000000"))
+        style.setValue("caretLineBackground", QtGui.QColor("#E4EDF8"))
         style.setValue("whiteSpaceForeground",
                        pcef.core.constants.EDITOR_WS_FOREGROUND)
+        style.setValue("matchedBraceBackground", QtGui.QColor("#B4EEB4"))
+        style.setValue("matchedBraceForeground", QtGui.QColor("#FF0000"))
         self.style = style
 
     def detectEncoding(self, data):
