@@ -23,7 +23,7 @@ class PreLoadPanel(Panel):
         self.layout = QtGui.QHBoxLayout()
         self.layout.addWidget(self.label)
         self.layout.setStretchFactor(self.label, 100)
-        self.movie = QtGui.QMovie(":/pcef_python_icons/rc/spinner.gif")
+        self.movie = QtGui.QMovie(":/pyqode_python_icons/rc/spinner.gif")
         self.movieLabel.setMovie(self.movie)
         c = QtGui.QColor(0)
         c.setAlpha(0)
