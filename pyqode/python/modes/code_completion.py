@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# PCEF - Python/Qt Code Editing Framework
+# pyQode - Python/Qt Code Editor widget
 # Copyright 2013, Colin Duquesnoy <colin.duquesnoy@gmail.com>
 #
 # This software is released under the LGPLv3 license.
@@ -15,23 +15,23 @@ import os
 import jedi
 import sys
 
-from pcef.core import CompletionProvider, logger
-from pcef.core import Completion
-from pcef.core import indexByName
-from pcef.core import logger
+from pyqode.core import CompletionProvider, logger
+from pyqode.core import Completion
+from pyqode.core import indexByName
+from pyqode.core import logger
 
 
-ICONS = {'CLASS': ':/pcef_python_icons/rc/class.png',
-         'IMPORT': ':/pcef_python_icons/rc/namespace.png',
-         'STATEMENT': ':/pcef_python_icons/rc/var.png',
-         'FORFLOW': ':/pcef_python_icons/rc/var.png',
-         'MODULE': ':/pcef_python_icons/rc/keyword.png',
-         'PARAM': ':/pcef_python_icons/rc/var.png',
-         'PARAM-PRIV': ':/pcef_python_icons/rc/var.png',
-         'PARAM-PROT': ':/pcef_python_icons/rc/var.png',
-         'FUNCTION': ':/pcef_python_icons/rc/func.png',
-         'FUNCTION-PRIV': ':/pcef_python_icons/rc/func_priv.png',
-         'FUNCTION-PROT': ':/pcef_python_icons/rc/func_prot.png'}
+ICONS = {'CLASS': ':/pyqode_python_icons/rc/class.png',
+         'IMPORT': ':/pyqode_python_icons/rc/namespace.png',
+         'STATEMENT': ':/pyqode_python_icons/rc/var.png',
+         'FORFLOW': ':/pyqode_python_icons/rc/var.png',
+         'MODULE': ':/pyqode_python_icons/rc/keyword.png',
+         'PARAM': ':/pyqode_python_icons/rc/var.png',
+         'PARAM-PRIV': ':/pyqode_python_icons/rc/var.png',
+         'PARAM-PROT': ':/pyqode_python_icons/rc/var.png',
+         'FUNCTION': ':/pyqode_python_icons/rc/func.png',
+         'FUNCTION-PRIV': ':/pyqode_python_icons/rc/func_priv.png',
+         'FUNCTION-PROT': ':/pyqode_python_icons/rc/func_prot.png'}
 
 
 class JediCompletionProvider(CompletionProvider):

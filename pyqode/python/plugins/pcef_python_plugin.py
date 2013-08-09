@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# PCEF - Python/Qt Code Editing Framework
+# pyQode - Python/Qt Code Editor widget
 # Copyright 2013, Colin Duquesnoy <colin.duquesnoy@gmail.com>
 #
 # This software is released under the LGPLv3 license.
@@ -26,7 +26,7 @@ import pcef.python
 PLUGINS_TYPES = {'QPythonCodeEdit': pcef.python.QPythonCodeEdit}
 
 try:
-    from pcef.core.plugins.pcef_core_plugin import QCodeEditPlugin
+    from pyqode.core.plugins.pcef_core_plugin import QCodeEditPlugin
 
     class QPythonCodeEditPlugin(QCodeEditPlugin):
         _module = 'pcef.python'        # path to the widget's module

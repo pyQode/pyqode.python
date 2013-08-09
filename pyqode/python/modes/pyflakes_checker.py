@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# PCEF - Python/Qt Code Editing Framework
+# pyQode - Python/Qt Code Editor widget
 # Copyright 2013, Colin Duquesnoy <colin.duquesnoy@gmail.com>
 #
 # This software is released under the LGPLv3 license.
@@ -12,9 +12,9 @@
 This module contains the pyFlakes checker mode
 """
 import _ast
-from pcef.core import CheckerMode, CheckerMessage, logger
-from pcef.core import MSG_STATUS_ERROR, MSG_STATUS_WARNING
-from pcef.core import CHECK_TRIGGER_TXT_SAVED
+from pyqode.core import CheckerMode, CheckerMessage, logger
+from pyqode.core import MSG_STATUS_ERROR, MSG_STATUS_WARNING
+from pyqode.core import CHECK_TRIGGER_TXT_SAVED
 
 
 def pyflakesAnalysisProcess(q, codeString, filename, fileEncoding):

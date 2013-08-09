@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# PCEF
+# pyQode - Python/Qt Code Editor widget
 # Copyright 2013, Colin Duquesnoy <colin.duquesnoy@gmail.com>
 #
 # This software is released under the LGPLv3 license.
@@ -11,47 +11,47 @@
 """
 This package contains python specific modes, panels and editors.
 """
-# from pcef.python import panels
+# from pyqode.python import panels
 import os
 import re
 import sys
-import pcef.core
-from pcef.qt import QtCore
-from pcef.python.modes import CalltipsMode
-from pcef.python.modes import JediCompletionProvider
-from pcef.python.modes import PEP8CheckerMode
-from pcef.python.modes import PyAutoIndentMode
-from pcef.python.modes import PyFlakesCheckerMode
-from pcef.python.modes import PyHighlighterMode
-from pcef.python.modes import DEFAULT_DARK_STYLES
-from pcef.python.modes import DEFAULT_LIGHT_STYLES
-from pcef.python.panels import PreLoadPanel
-from pcef.qt.ui import importRc
-from pcef.qt import QtGui
+import pyqode.core
+from pyqode.qt import QtCore
+from pyqode.python.modes import CalltipsMode
+from pyqode.python.modes import JediCompletionProvider
+from pyqode.python.modes import PEP8CheckerMode
+from pyqode.python.modes import PyAutoIndentMode
+from pyqode.python.modes import PyFlakesCheckerMode
+from pyqode.python.modes import PyHighlighterMode
+from pyqode.python.modes import DEFAULT_DARK_STYLES
+from pyqode.python.modes import DEFAULT_LIGHT_STYLES
+from pyqode.python.panels import PreLoadPanel
+from pyqode.qt.ui import importRc
+from pyqode.qt import QtGui
 
 
 def getUiDirectory():
     """
-    Gets the pcef-core ui directory
+    Gets the pyqode-core ui directory
     """
     return os.path.join(os.path.abspath(os.path.join(__file__, "..")), "ui")
 
 
 def getRcDirectory():
     """
-    Gets the pcef-core rc directory
+    Gets the pyqode-core rc directory
     """
     return os.path.join(os.path.abspath(os.path.join(__file__, "..")), "ui",
                         "rc")
 
 # import the core rc modules
-importRc(os.path.join(getUiDirectory(), "pcef_python_icons.qrc"))
+importRc(os.path.join(getUiDirectory(), "pyqode_python_icons.qrc"))
 
-#: pcef-python version
+#: pyqode-python version
 __version__ = "1.0.0-beta.1"
 
 
-class QPythonCodeEdit(pcef.core.QCodeEdit):
+class QPythonCodeEdit(pyqode.core.QCodeEdit):
     """
     Extends QCodeEdit with a hardcoded set of modes and panels specifics to
     a python code editor widget
@@ -68,31 +68,31 @@ class QPythonCodeEdit(pcef.core.QCodeEdit):
     LIGHT_STYLE = 1
 
     def __init__(self, parent=None):
-        pcef.core.QCodeEdit.__init__(self, parent)
+        pyqode.core.QCodeEdit.__init__(self, parent)
         self.setLineWrapMode(self.NoWrap)
-        self.setWindowTitle("PCEF - Generic Editor")
-        self.installPanel(pcef.core.FoldingPanel())
-        self.installPanel(pcef.core.LineNumberPanel(),
-                          pcef.core.PanelPosition.LEFT)
-        self.installPanel(pcef.core.MarkerPanel())
-        self.installPanel(pcef.core.SearchAndReplacePanel(),
-                          pcef.core.PanelPosition.BOTTOM)
-        self.installMode(pcef.core.CaretLineHighlighterMode())
-        self.installMode(pcef.core.RightMarginMode())
-        self.installMode(pcef.core.CodeCompletionMode())
+        self.setWindowTitle("pyQode - Generic Editor")
+        self.installPanel(pyqode.core.FoldingPanel())
+        self.installPanel(pyqode.core.LineNumberPanel(),
+                          pyqode.core.PanelPosition.LEFT)
+        self.installPanel(pyqode.core.MarkerPanel())
+        self.installPanel(pyqode.core.SearchAndReplacePanel(),
+                          pyqode.core.PanelPosition.BOTTOM)
+        self.installMode(pyqode.core.CaretLineHighlighterMode())
+        self.installMode(pyqode.core.RightMarginMode())
+        self.installMode(pyqode.core.CodeCompletionMode())
         self.codeCompletionMode.addCompletionProvider(
             JediCompletionProvider())
         self.codeCompletionMode.addCompletionProvider(
-            pcef.core.DocumentWordCompletionProvider())
-        self.installMode(pcef.core.ZoomMode())
-        self.installMode(pcef.core.FileWatcherMode())
-        self.installMode(pcef.core.SymbolMatcherMode())
+            pyqode.core.DocumentWordCompletionProvider())
+        self.installMode(pyqode.core.ZoomMode())
+        self.installMode(pyqode.core.FileWatcherMode())
+        self.installMode(pyqode.core.SymbolMatcherMode())
         self.installMode(PyHighlighterMode(self.document()))
         self.installMode(PyAutoIndentMode())
         self.installMode(PyFlakesCheckerMode())
         self.installMode(PEP8CheckerMode())
         self.installMode(CalltipsMode())
-        self.installPanel(PreLoadPanel(), pcef.core.PanelPosition.TOP)
+        self.installPanel(PreLoadPanel(), pyqode.core.PanelPosition.TOP)
         self.preLoadPanel.setVisible(False)
 
     @QtCore.Slot()
@@ -121,7 +121,7 @@ class QPythonCodeEdit(pcef.core.QCodeEdit):
         style.setValue("foreground", QtGui.QColor("#000000"))
         style.setValue("caretLineBackground", QtGui.QColor("#E4EDF8"))
         style.setValue("whiteSpaceForeground",
-                       pcef.core.constants.EDITOR_WS_FOREGROUND)
+                       pyqode.core.constants.EDITOR_WS_FOREGROUND)
         style.setValue("matchedBraceBackground", QtGui.QColor("#B4EEB4"))
         style.setValue("matchedBraceForeground", QtGui.QColor("#FF0000"))
         self.style = style

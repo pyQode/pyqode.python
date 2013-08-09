@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# PCEF - Python/Qt Code Editing Framework
+# pyQode - Python/Qt Code Editor widget
 # Copyright 2013, Colin Duquesnoy <colin.duquesnoy@gmail.com>
 #
 # This software is released under the LGPLv3 license.
@@ -13,8 +13,8 @@ Contains the JediCompletionProvider class implementation.
 """
 import jedi
 
-from pcef.core import Mode, DelayJobRunner, logger
-from pcef.qt import QtCore, QtGui
+from pyqode.core import Mode, DelayJobRunner, logger
+from pyqode.qt import QtCore, QtGui
 
 
 class CalltipsMode(Mode, QtCore.QObject):

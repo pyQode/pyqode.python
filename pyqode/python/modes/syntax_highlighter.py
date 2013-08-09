@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# PCEF - Python/Qt Code Editing Framework
+# pyQode - Python/Qt Code Editor widget
 # Copyright 2013, Colin Duquesnoy <colin.duquesnoy@gmail.com>
 #
 # This software is released under the LGPLv3 license.
@@ -10,10 +10,10 @@
 #
 """ This module contains the python specific syntax highlighter
 """
-from pcef.core import TextStyle, memoized, SyntaxHighlighter
-from pcef.qt.QtCore import QRegExp
-from pcef.qt.QtGui import QColor, QTextCharFormat, QFont, QSyntaxHighlighter
-from pcef.core import Mode, IndentBasedFoldDetector
+from pyqode.core import TextStyle, memoized, SyntaxHighlighter
+from pyqode.qt.QtCore import QRegExp
+from pyqode.qt.QtGui import QColor, QTextCharFormat, QFont, QSyntaxHighlighter
+from pyqode.core import Mode, IndentBasedFoldDetector
 
 
 # Default highlighter styles values, mostly for the python highlighter but they

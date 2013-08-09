@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# PCEF - Python/Qt Code Editing Framework
+# pyQode - Python/Qt Code Editor widget
 # Copyright 2013, Colin Duquesnoy <colin.duquesnoy@gmail.com>
 #
 # This software is released under the LGPLv3 license.
@@ -9,13 +9,13 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 """
-Integrates the generic editor using the pcef qt designer plugin.
+Integrates the generic editor using the pyQode qt designer plugin.
 """
 import logging
 logging.basicConfig(level=logging.INFO)
 import os
 import sys
-from pcef.qt import QtCore, QtGui
+from pyqode.qt import QtCore, QtGui
 from ui import loadUi
 
 
@@ -23,11 +23,13 @@ class PythonEditorWindow(QtGui.QMainWindow):
 
     def __init__(self):
         QtGui.QMainWindow.__init__(self)
-        loadUi("python_editor.ui", self, rcFilename="examples.qrc")
-        if QtGui.QIcon.hasThemeIcon("document-save"):
-            self.actionSave.setIcon(QtGui.QIcon.fromTheme("document-save"))
-        if QtGui.QIcon.hasThemeIcon("document-open"):
-            self.actionOpen.setIcon(QtGui.QIcon.fromTheme("document-open"))
+        loadUi("python_editor.ui", self, rcFilename="editor.qrc")
+        self.actionOpen.setIcon(
+            QtGui.QIcon.fromTheme("document-save", QtGui.QIcon(
+                ":/example_icons/rc/folder.png")))
+        self.actionSave.setIcon(
+            QtGui.QIcon.fromTheme("document-save", QtGui.QIcon(
+                ":/example_icons/rc/document-save.png")))
         mnu = QtGui.QMenu("Edit", self.menubar)
         mnu.addActions(self.editor.actions())
         self.menubar.addMenu(mnu)

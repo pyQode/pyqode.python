@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# PCEF - Python/Qt Code Editing Framework
+# pyQode - Python/Qt Code Editor widget
 # Copyright 2013, Colin Duquesnoy <colin.duquesnoy@gmail.com>
 #
 # This software is released under the LGPLv3 license.
@@ -9,8 +9,8 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 """ Contains smart indent modes """
-from pcef.qt.QtGui import QTextCursor
-from pcef.core.modes.indenter import AutoIndentMode
+from pyqode.qt.QtGui import QTextCursor
+from pyqode.core.modes.indenter import AutoIndentMode
 
 
 class PyAutoIndentMode(AutoIndentMode):

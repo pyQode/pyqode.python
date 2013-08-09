@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# PCEF - Python/Qt Code Editing Framework
+# pyQode - Python/Qt Code Editor widget
 # Copyright 2013, Colin Duquesnoy <colin.duquesnoy@gmail.com>
 #
 # This software is released under the LGPLv3 license.
@@ -16,8 +16,8 @@ version (2.7, 3.2, 3.3).
 It runs a QApplication and shows a QPythonCodeEdit for 500ms.
 """
 import sys
-from pcef.qt import QtCore, QtGui
-from pcef.python import QPythonCodeEdit
+from pyqode.qt import QtCore, QtGui
+from pyqode.python import QPythonCodeEdit
 
 
 def leave():

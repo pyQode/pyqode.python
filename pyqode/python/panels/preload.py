@@ -1,8 +1,8 @@
 """
 This panel shows preload informations
 """
-from pcef.core import Panel
-from pcef.qt import QtGui, QtCore
+from pyqode.core import Panel
+from pyqode.qt import QtGui, QtCore
 
 
 class PreLoadPanel(Panel):
