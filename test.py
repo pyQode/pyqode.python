@@ -29,7 +29,7 @@ def main():
     app = QtGui.QApplication(sys.argv)
     editor = QPythonCodeEdit()
     editor.show()
-    # editor.openFile(__file__)
+    editor.openFile(__file__)
     QtCore.QTimer.singleShot(7000, leave)
     return app.exec_()
 
