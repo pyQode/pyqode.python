@@ -91,6 +91,13 @@ Resources
 .. _Jedi: https://github.com/davidhalter/jedi
 
 
+Change log
+--------------
+- 1.0b2:
+    - fix code completion icons path
+- 1.0b: First beta version
+
+
 Screenshots
 -------------
 
