@@ -25,7 +25,7 @@ class PythonEditorWindow(QtGui.QMainWindow):
         QtGui.QMainWindow.__init__(self)
         loadUi("python_editor.ui", self, rcFilename="editor.qrc")
         self.actionOpen.setIcon(
-            QtGui.QIcon.fromTheme("document-save", QtGui.QIcon(
+            QtGui.QIcon.fromTheme("document-open", QtGui.QIcon(
                 ":/example_icons/rc/folder.png")))
         self.actionSave.setIcon(
             QtGui.QIcon.fromTheme("document-save", QtGui.QIcon(
