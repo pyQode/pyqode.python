@@ -1,7 +1,7 @@
 Python support for pyQode
 ========================================
 
-*version 1.0.0-beta.1*
+*version 1.0b*
 
 .. image:: https://travis-ci.org/ColinDuquesnoy/pyqode-python.png?branch=master
     :target: https://travis-ci.org/ColinDuquesnoy/pyqode-python

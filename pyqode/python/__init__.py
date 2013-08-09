@@ -48,7 +48,7 @@ def getRcDirectory():
 importRc(os.path.join(getUiDirectory(), "pyqode_python_icons.qrc"))
 
 #: pyqode-python version
-__version__ = "1.0.0-beta.1"
+__version__ = "1.0b"
 
 
 class QPythonCodeEdit(pyqode.core.QCodeEdit):
