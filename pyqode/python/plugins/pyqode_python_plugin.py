@@ -26,7 +26,7 @@ import pyqode.python
 PLUGINS_TYPES = {'QPythonCodeEdit': pyqode.python.QPythonCodeEdit}
 
 try:
-    from pyqode.core.plugins.pcef_core_plugin import QCodeEditPlugin
+    from pyqode.core.plugins.pyqode_core_plugin import QCodeEditPlugin
 
     class QPythonCodeEditPlugin(QCodeEditPlugin):
         _module = 'pcef.python'        # path to the widget's module
