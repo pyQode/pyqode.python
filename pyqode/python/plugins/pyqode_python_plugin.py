@@ -21,9 +21,9 @@ in your path on Windows)
 import os
 if not 'QT_API' in os.environ:
     os.environ.setdefault("QT_API", "PyQt")
-import pcef.python
+import pyqode.python
 
-PLUGINS_TYPES = {'QPythonCodeEdit': pcef.python.QPythonCodeEdit}
+PLUGINS_TYPES = {'QPythonCodeEdit': pyqode.python.QPythonCodeEdit}
 
 try:
     from pyqode.core.plugins.pcef_core_plugin import QCodeEditPlugin
@@ -33,9 +33,9 @@ try:
         _class = 'QPythonCodeEdit'    # name of the widget class
         _name = "QPythonCodeEdit"
         _icon = None
-        _type = pcef.python.QPythonCodeEdit
+        _type = pyqode.python.QPythonCodeEdit
 
         def createWidget(self, parent):
-            return pcef.python.QPythonCodeEdit(parent)
+            return pyqode.python.QPythonCodeEdit(parent)
 except ImportError:
     print("Cannot use pcef plugins without PyQt4")
