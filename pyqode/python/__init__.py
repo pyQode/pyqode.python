@@ -45,7 +45,13 @@ def getRcDirectory():
                         "rc")
 
 # import the core rc modules
-importRc(os.path.join(getUiDirectory(), "pyqode_python_icons.qrc"))
+#importRc(os.path.join(getUiDirectory(), "pyqode_python_icons.qrc"))
+# import the core rc modules
+if os.environ["QT_API"] == "PyQt":
+    from pyqode.python.ui import pyqode_python_icons_pyqt_rc
+else:
+    from pyqode.python.ui import pyqode_python_icons_pyside_rc
+
 
 #: pyqode-python version
 __version__ = "1.0b2"
