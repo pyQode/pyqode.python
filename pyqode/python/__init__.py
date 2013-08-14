@@ -12,6 +12,7 @@
 This package contains python specific modes, panels and editors.
 """
 # from pyqode.python import panels
+from glob import glob
 import os
 import re
 import sys
@@ -30,12 +31,17 @@ from pyqode.qt.ui import importRc
 from pyqode.qt import QtGui
 
 
+#: pyqode-python version
+__version__ = "1.0b2"
+
+
 def getUiDirectory():
     """
     Gets the pyqode-core ui directory
     """
-    return os.path.join(os.path.abspath(os.path.join(__file__, "..")), "ui")
+    return os.path.join(os.path.dirname(__file__), "ui")
 
+print(getUiDirectory())
 
 def getRcDirectory():
     """
@@ -53,8 +59,21 @@ else:
     from pyqode.python.ui import pyqode_python_icons_pyside_rc
 
 
-#: pyqode-python version
-__version__ = "1.0b2"
+def cxFreeze_getDataFiles():
+    """
+    Returns the core package's data files in a format suitable for cx_freeze.
+
+    .. note: At the moment there is no ui file specific to pyqode-python but the
+             function is already here for any future use so its a good practice
+             to always use it.
+    """
+    uiDir = getUiDirectory()
+    dataFiles = []
+    for f in glob(os.path.join(uiDir, "*.ui")):
+        assert os.path.exists(f)
+        dataFiles += [tuple((f, os.path.join("pyqode_ui/",
+                                            os.path.split(f)[1])))]
+    return dataFiles
 
 
 class QPythonCodeEdit(pyqode.core.QCodeEdit):
