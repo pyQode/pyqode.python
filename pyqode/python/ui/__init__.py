@@ -9,7 +9,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 import os
-import pcef.qt
+import pyqode.qt
 
 
 def loadUi(uiFileName, baseInstance, rcFilename=None):
@@ -28,5 +28,5 @@ def loadUi(uiFileName, baseInstance, rcFilename=None):
     if rcFilename:
         rcFile = os.path.join(os.path.abspath(os.path.join(__file__, "..")),
                               rcFilename)
-        pcef.qt.importRc(rcFile)
-    pcef.qt.loadUi(uiFile, baseInstance)
+        pyqode.qt.importRc(rcFile)
+    pyqode.qt.loadUi(uiFile, baseInstance)

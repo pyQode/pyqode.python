@@ -29,7 +29,7 @@ try:
     from pyqode.core.plugins.pyqode_core_plugin import QCodeEditPlugin
 
     class QPythonCodeEditPlugin(QCodeEditPlugin):
-        _module = 'pcef.python'        # path to the widget's module
+        _module = 'pyqode.python'        # path to the widget's module
         _class = 'QPythonCodeEdit'    # name of the widget class
         _name = "QPythonCodeEdit"
         _icon = None
@@ -38,4 +38,4 @@ try:
         def createWidget(self, parent):
             return pyqode.python.QPythonCodeEdit(parent)
 except ImportError:
-    print("Cannot use pcef plugins without PyQt4")
+    print("Cannot use pyQode plugins without PyQt4")
