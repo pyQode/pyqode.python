@@ -27,7 +27,6 @@ from pyqode.python.modes import PyHighlighterMode
 from pyqode.python.modes import DEFAULT_DARK_STYLES
 from pyqode.python.modes import DEFAULT_LIGHT_STYLES
 from pyqode.python.panels import PreLoadPanel
-from pyqode.qt.ui import importRc
 from pyqode.qt import QtGui
 
 
@@ -164,3 +163,6 @@ class QPythonCodeEdit(pyqode.core.QCodeEdit):
 
 __all__ = ["PEP8CheckerMode", 'PyHighlighterMode', 'PyAutoIndentMode',
            "__version__", "QPythonCodeEdit"]
+
+if sys.platform == "win32":
+    __all__ += ["cxFreeze_getDataFiles"]
