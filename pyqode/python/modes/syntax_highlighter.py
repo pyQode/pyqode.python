@@ -256,11 +256,10 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
                                                       self.__bck))
             index = self.docstringPattern.indexIn(text, index + length)
 
-    def highlightBlock(self, text):
+    def doHighlightBlock(self, text):
         """
         Apply syntax highlighting to the given block of text.
         """
-        SyntaxHighlighter.highlightBlock(self, text)
         if self.match_multiline(text):
             self.highlightSpaces(text)
             self.highlightDocstringTags(text)
