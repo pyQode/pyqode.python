@@ -40,7 +40,6 @@ def getUiDirectory():
     """
     return os.path.join(os.path.dirname(__file__), "ui")
 
-print(getUiDirectory())
 
 def getRcDirectory():
     """

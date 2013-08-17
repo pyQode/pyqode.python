@@ -351,4 +351,5 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
         # takes multiline type into account
         state |= docstring
         self.setCurrentBlockState(state)
+        # print("State:", state)
         return multi
