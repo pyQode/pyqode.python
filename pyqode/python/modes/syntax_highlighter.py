@@ -231,8 +231,10 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
         if key == "whiteSpaceForeground":
             self.__foreground = self.editor.style.value(
                 "whiteSpaceForeground")
+            self.rehighlight()
         elif key == "background":
             self.__bck = self.editor.style.value("background").name()
+            self.rehighlight()
 
     @memoized
     def formatFromWord(self, word):
