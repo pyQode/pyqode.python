@@ -20,6 +20,7 @@
 #
 """ This module contains the python specific syntax highlighter
 """
+import sys
 from pyqode.core import TextStyle, memoized, SyntaxHighlighter
 from pyqode.qt.QtCore import QRegExp
 from pyqode.qt.QtGui import QColor, QTextCharFormat, QFont, QSyntaxHighlighter
@@ -68,7 +69,6 @@ DEFAULT_DARK_STYLES = {
 class PyHighlighterMode(SyntaxHighlighter, Mode):
     """ Syntax highlighter for the Python language.
     """
-    IDENTIFIER = "pyHighlighterMode"
     _DESCRIPTION = "Custom QSyntaxHighlighter to highlight python syntax"
 
     # Python keywords
@@ -236,6 +236,10 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
             self.__bck = self.editor.style.value("background").name()
             self.rehighlight()
 
+    def rehighlight(self, *args, **kwargs):
+        self.__cancelMemoizeCache()
+        SyntaxHighlighter.rehighlight(self)
+
     @memoized
     def formatFromWord(self, word):
         if word in self.keywords:
@@ -365,3 +369,10 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
         self.setCurrentBlockState(state)
         # print("State:", state)
         return multi
+
+    def __cancelMemoizeCache(self):
+        def nextInt():
+            for i in range(sys.maxsize):
+                yield i
+
+        self.__bck = nextInt()
