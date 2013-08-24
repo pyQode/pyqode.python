@@ -31,10 +31,8 @@ def read_version():
             if "__version__" in l:
                 return l.split("=")[1].strip()
 
-
 def readme():
     return str(open('README.rst').read())
-
 
 # get requirements
 requirements = ['pyqode-core', 'jedi', 'pep8', 'pyflakes']

@@ -40,6 +40,7 @@ def main():
     editor = QPythonCodeEdit()
     editor.show()
     editor.openFile(__file__)
+    #noinspection PyCallByClass
     QtCore.QTimer.singleShot(7000, leave)
     return app.exec_()
 
