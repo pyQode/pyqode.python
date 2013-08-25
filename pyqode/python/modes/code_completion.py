@@ -84,8 +84,8 @@ class JediCompletionProvider(CompletionProvider):
                     jedi.Script(script, 1, len(script), "").completions()
                 except Exception as e:
                     logger.error("Failed to parse %s - %s" % (definition.name, e))
-        except :
-            pass
+        except Exception as e:
+            logger.error("JediCompletionProvider failed to preload: %s" % e)
         return CompletionProvider.preload(self, code, fileEncoding, filePath)
 
     def complete(self, code, line, column, completionPrefix,
@@ -118,6 +118,6 @@ class JediCompletionProvider(CompletionProvider):
                                        suggestionType)
                     retVal.append(Completion(completion.name, icon=icon,
                                              tooltip=desc.split(':')[1]))
-        except Exception:
-            pass
+        except Exception as e:
+            logger.error("Jedi failed to provide completions. Error: %s" % e)
         return retVal
