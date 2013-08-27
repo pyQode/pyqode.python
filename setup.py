@@ -29,7 +29,7 @@ def read_version():
         lines = f.read().splitlines()
         for l in lines:
             if "__version__" in l:
-                return l.split("=")[1].strip()
+                return l.split("=")[1].strip().replace('"', '')
 
 def readme():
     return str(open('README.rst').read())
@@ -39,7 +39,7 @@ requirements = ['pyqode-core', 'jedi', 'pep8', 'pyflakes']
 
 
 setup(
-    name='pyqode-python',
+    name='pyqode.python',
     namespace_packages=['pyqode'],
     version=read_version(),
     packages=find_packages(),
