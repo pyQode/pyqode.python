@@ -33,6 +33,7 @@ from pyqode.python.modes import JediCompletionProvider
 from pyqode.python.modes import PEP8CheckerMode
 from pyqode.python.modes import PyAutoIndentMode
 from pyqode.python.modes import PyFlakesCheckerMode
+from pyqode.python.modes import PyIndenterMode
 from pyqode.python.modes import PyHighlighterMode
 from pyqode.python.modes import DEFAULT_DARK_STYLES
 from pyqode.python.modes import DEFAULT_LIGHT_STYLES
@@ -125,6 +126,7 @@ class QPythonCodeEdit(pyqode.core.QCodeEdit):
         self.installMode(PyFlakesCheckerMode())
         self.installMode(PEP8CheckerMode())
         self.installMode(CalltipsMode())
+        self.installMode(PyIndenterMode())
         self.installPanel(PreLoadPanel(), pyqode.core.PanelPosition.TOP)
         self.preLoadPanel.setVisible(False)
 
