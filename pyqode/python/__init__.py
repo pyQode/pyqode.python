@@ -101,7 +101,11 @@ class QPythonCodeEdit(pyqode.core.QCodeEdit):
     DARK_STYLE = 0
     LIGHT_STYLE = 1
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, addToPath=True):
+        """
+        :param addToPath: True to add the open file's parent directory to
+                          sys.path so that jedi can complete sibling modules.
+        """
         pyqode.core.QCodeEdit.__init__(self, parent)
         self.setLineWrapMode(self.NoWrap)
         self.setWindowTitle("pyQode - Generic Editor")
