@@ -26,6 +26,7 @@ from pyqode.core import Mode, DelayJobRunner, logger, constants
 from pyqode.core import CodeCompletionMode
 from pyqode.qt import QtCore, QtGui
 
+
 class CalltipsWorker(object):
     def __init__(self, code, line, col, path, encoding):
         self.code = code
@@ -87,12 +88,6 @@ class CalltipsMode(Mode, QtCore.QObject):
         logger.debug("Calltip requested")
         worker = CalltipsWorker(*args)
         CodeCompletionMode.SERVER.requestWork(self, worker)
-        #script = jedi.Script(code, line, col, path, encoding)
-        #call = script.get_in_function_call()
-        #if call:
-        #    self.tooltipDisplayRequested.emit(call, col)
-        #    return
-        #logger.debug("No call tip found")
 
     def __onWorkFinished(self, caller_id, worker, results):
         if caller_id == id(self) and isinstance(worker, CalltipsWorker):
