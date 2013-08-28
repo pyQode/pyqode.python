@@ -304,6 +304,8 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
         state = 0
         original_text = text
         text = text.strip()
+        if text.startswith("#"):
+            return False
         # check for mutliquoted string that is not a docstring
         docstring = 0x80
         if "=" in text:
