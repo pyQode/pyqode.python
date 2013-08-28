@@ -22,9 +22,28 @@
 Contains the JediCompletionProvider class implementation.
 """
 import jedi
-
 from pyqode.core import Mode, DelayJobRunner, logger, constants
+from pyqode.core import CodeCompletionMode
 from pyqode.qt import QtCore, QtGui
+
+class CalltipsWorker(object):
+    def __init__(self, code, line, col, path, encoding):
+        self.code = code
+        self.line = line
+        self.col = col
+        self.path = path
+        self.encoding = encoding
+
+    def __call__(self, *args, **kwargs):
+        script = jedi.Script(self.code, self.line, self.col, self.path,
+                             self.encoding)
+        c = script.get_in_function_call()
+        if c:
+            results = [str(c.module.name), str(c.call_name),
+                       [str(p.token_list[0]) for p in c.params], c.index,
+                       c.bracket_start]
+            return results
+        return []
 
 
 class CalltipsMode(Mode, QtCore.QObject):
@@ -44,8 +63,11 @@ class CalltipsMode(Mode, QtCore.QObject):
     def _onStateChanged(self, state):
         if state:
             self.editor.keyReleased.connect(self.__onKeyReleased)
+            CodeCompletionMode.SERVER.signals.workCompleted.connect(
+                self.__onWorkFinished)
         else:
-            self.editor.keyReleased.disconnect(self.__onKeyReleased)
+            CodeCompletionMode.SERVER.signals.workCompleted.disconnect(
+                self.__onWorkFinished)
 
     def __onKeyReleased(self, event):
         if (event.key() == QtCore.Qt.Key_ParenLeft or
@@ -57,19 +79,30 @@ class CalltipsMode(Mode, QtCore.QObject):
             fn = self.editor.filePath
             encoding = self.editor.fileEncoding
             source = self.editor.toPlainText()
-            self.__jobRunner.requestJob(self.__execRequest, True,
-                                        source, line, col, fn, encoding)
+            self.__requestCalltip(source, line, col, fn, encoding)
         else:
             QtGui.QToolTip.hideText()
 
-    def __execRequest(self, code, line, col, path, encoding):
+    def __requestCalltip(self, *args):
         logger.debug("Calltip requested")
-        script = jedi.Script(code, line, col, path, encoding)
-        call = script.get_in_function_call()
-        if call:
-            self.tooltipDisplayRequested.emit(call, col)
-            return
-        logger.debug("No call tip found")
+        worker = CalltipsWorker(*args)
+        CodeCompletionMode.SERVER.requestWork(self, worker)
+        #script = jedi.Script(code, line, col, path, encoding)
+        #call = script.get_in_function_call()
+        #if call:
+        #    self.tooltipDisplayRequested.emit(call, col)
+        #    return
+        #logger.debug("No call tip found")
+
+    def __onWorkFinished(self, caller_id, worker, results):
+        if caller_id == id(self) and isinstance(worker, CalltipsWorker):
+            if results:
+                call = {"call.module.name": results[0],
+                        "call.call_name": results[1],
+                        "call.params": results[2],
+                        "call.index": results[3],
+                        "call.bracket_start": results[4]}
+                self.tooltipDisplayRequested.emit(call, worker.col)
 
     def __isLastCharEndOfWord(self):
         try:
@@ -88,19 +121,20 @@ class CalltipsMode(Mode, QtCore.QObject):
         if not call or self.__isLastCharEndOfWord():
             return
         # create a formatted calltip (current index appear in bold)
-        calltip = "<nobr>{0}.{1}(".format(call.module.name, call.call_name)
-        for i, param in enumerate(call.params):
+        calltip = "<nobr>{0}.{1}(".format(call['call.module.name'],
+                                          call['call.call_name'])
+        for i, param in enumerate(call['call.params']):
             if i != 0:
                 calltip += ", "
-            if i == call.index:
+            if i == call['call.index']:
                 calltip += "<b>"
-            calltip += str(param.token_list[0])
-            if i == call.index:
+            calltip += param
+            if i == call['call.index']:
                 calltip += "</b>"
         calltip += ')</nobr>'
         # set tool tip position at the start of the bracket
         charWidth = self.editor.fontMetrics().width('A')
-        w_offset = (col - call.bracket_start[1]) * charWidth
+        w_offset = (col - call['call.bracket_start'][1]) * charWidth
         position = QtCore.QPoint(
             self.editor.cursorRect().x() - w_offset,
             self.editor.cursorRect().y())
