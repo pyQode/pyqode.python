@@ -106,9 +106,9 @@ class QPythonCodeEdit(pyqode.core.QCodeEdit):
         :param addToPath: True to add the open file's parent directory to
                           sys.path so that jedi can complete sibling modules.
         """
-        pyqode.core.QCodeEdit.__init__(self, parent)
+        super(QPythonCodeEdit, self).__init__(parent)
         self.setLineWrapMode(self.NoWrap)
-        self.setWindowTitle("pyQode - Generic Editor")
+        self.setWindowTitle("pyQode - Python Editor")
         self.installPanel(pyqode.core.FoldingPanel())
         self.installPanel(pyqode.core.LineNumberPanel(),
                           pyqode.core.PanelPosition.LEFT)
@@ -119,7 +119,7 @@ class QPythonCodeEdit(pyqode.core.QCodeEdit):
         self.installMode(pyqode.core.RightMarginMode())
         self.installMode(pyqode.core.CodeCompletionMode())
         self.codeCompletionMode.addCompletionProvider(
-            JediCompletionProvider())
+            JediCompletionProvider(addToPath=addToPath))
         self.codeCompletionMode.addCompletionProvider(
             pyqode.core.DocumentWordCompletionProvider())
         self.installMode(pyqode.core.ZoomMode())
