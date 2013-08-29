@@ -60,6 +60,7 @@ class CalltipsMode(Mode, QtCore.QObject):
         self.__jobRunner = DelayJobRunner(self, nbThreadsMax=1, delay=700)
         self.tooltipDisplayRequested.connect(self.__displayTooltip)
         self.tooltipHideRequested.connect(QtGui.QToolTip.hideText)
+        self.__requestCnt = 0
 
     def _onStateChanged(self, state):
         if state:
@@ -85,12 +86,15 @@ class CalltipsMode(Mode, QtCore.QObject):
             QtGui.QToolTip.hideText()
 
     def __requestCalltip(self, *args):
-        logger.debug("Calltip requested")
-        worker = CalltipsWorker(*args)
-        CodeCompletionMode.SERVER.requestWork(self, worker)
+        if self.__requestCnt == 0:
+            self.__requestCnt += 1
+            logger.debug("Calltip requested")
+            worker = CalltipsWorker(*args)
+            CodeCompletionMode.SERVER.requestWork(self, worker)
 
     def __onWorkFinished(self, caller_id, worker, results):
         if caller_id == id(self) and isinstance(worker, CalltipsWorker):
+            self.__requestCnt -= 1
             if results:
                 call = {"call.module.name": results[0],
                         "call.call_name": results[1],
