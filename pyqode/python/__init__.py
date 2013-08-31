@@ -45,44 +45,7 @@ from pyqode.qt import QtGui
 __version__ = "1.0b2"
 
 
-def getUiDirectory():
-    """
-    Gets the pyqode-core ui directory
-    """
-    return os.path.join(os.path.dirname(__file__), "ui")
-
-
-def getRcDirectory():
-    """
-    Gets the pyqode-core rc directory
-    """
-    return os.path.join(os.path.abspath(os.path.join(__file__, "..")), "ui",
-                        "rc")
-
-# import the core rc modules
-#importRc(os.path.join(getUiDirectory(), "pyqode_python_icons.qrc"))
-# import the core rc modules
-if os.environ["QT_API"] == "PyQt":
-    from pyqode.python.ui import pyqode_python_icons_pyqt_rc
-else:
-    from pyqode.python.ui import pyqode_python_icons_pyside_rc
-
-
-def cxFreeze_getDataFiles():
-    """
-    Returns the core package's data files in a format suitable for cx_freeze.
-
-    .. note: At the moment there is no ui file specific to pyqode-python but the
-             function is already here for any future use so its a good practice
-             to always use it.
-    """
-    uiDir = getUiDirectory()
-    dataFiles = []
-    for f in glob(os.path.join(uiDir, "*.ui")):
-        assert os.path.exists(f)
-        dataFiles += [tuple((f, os.path.join("pyqode_ui/",
-                                            os.path.split(f)[1])))]
-    return dataFiles
+import pyqode.python.ui.pyqode_python_icons_rc
 
 
 class QPythonCodeEdit(pyqode.core.QCodeEdit):

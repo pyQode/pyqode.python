@@ -35,7 +35,7 @@ def readme():
     return str(open('README.rst').read())
 
 # get requirements
-requirements = ['pyqode-core', 'jedi', 'pep8', 'pyflakes']
+requirements = ['pyqode.core', 'jedi', 'pep8', 'pyflakes']
 
 
 setup(

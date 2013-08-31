@@ -26,14 +26,14 @@ logging.basicConfig(level=logging.DEBUG)
 import os
 import sys
 from pyqode.qt import QtCore, QtGui
-from ui import loadUi
+from ui.python_editor_ui import Ui_MainWindow
 
 
-class PythonEditorWindow(QtGui.QMainWindow):
-
+class PythonEditorWindow(QtGui.QMainWindow, Ui_MainWindow):
     def __init__(self):
         QtGui.QMainWindow.__init__(self)
-        loadUi("python_editor.ui", self, rcFilename="editor.qrc")
+        Ui_MainWindow.__init__(self)
+        self.setupUi(self)
         self.actionOpen.setIcon(
             QtGui.QIcon.fromTheme("document-open", QtGui.QIcon(
                 ":/example_icons/rc/folder.png")))
