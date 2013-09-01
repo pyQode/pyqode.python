@@ -19,7 +19,7 @@
 # with pyQode. If not, see http://www.gnu.org/licenses/.
 #
 """
-This setup script packages pyqode-python
+This setup script packages pyqode.python
 """
 from setuptools import setup, find_packages
 
@@ -31,8 +31,10 @@ def read_version():
             if "__version__" in l:
                 return l.split("=")[1].strip().replace('"', '')
 
+
 def readme():
     return str(open('README.rst').read())
+
 
 # get requirements
 requirements = ['pyqode.core', 'jedi', 'pep8', 'pyflakes']
@@ -46,7 +48,7 @@ setup(
     keywords=["QCodeEditor", "PySide", "PyQt", "code editor", "python"],
     package_data={'pyqode.python.ui': ['*.ui', 'rc/*']},
     package_dir={'pyqode': 'pyqode'},
-    url='https://github.com/ColinDuquesnoy/pyqode-python',
+    url='https://github.com/ColinDuquesnoy/pyqode.python',
     license='GNU LGPL v3',
     author='Colin Duquesnoy',
     author_email='colin.duquesnoy@gmail.com',
