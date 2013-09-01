@@ -6,13 +6,10 @@
 include MANIFEST.in
 include setup.py
 include COPYING
+include COPYING.lesser
 include README.rst
 include pyqode/python/ui/*
 include pyqode/python/ui/rc/*
 include examples/gui_integration/*
 include examples/gui_integration/ui/*
 include examples/gui_integration/ui/rc/*
-
-
-
-

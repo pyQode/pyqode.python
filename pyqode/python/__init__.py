@@ -33,6 +33,7 @@ from pyqode.python.modes import JediCompletionProvider
 from pyqode.python.modes import PEP8CheckerMode
 from pyqode.python.modes import PyAutoIndentMode
 from pyqode.python.modes import PyFlakesCheckerMode
+from pyqode.python.modes import PyIndenterMode
 from pyqode.python.modes import PyHighlighterMode
 from pyqode.python.modes import DEFAULT_DARK_STYLES
 from pyqode.python.modes import DEFAULT_LIGHT_STYLES
@@ -41,47 +42,10 @@ from pyqode.qt import QtGui
 
 
 #: pyqode-python version
-__version__ = "1.0b2"
+__version__ = "1.0b3"
 
 
-def getUiDirectory():
-    """
-    Gets the pyqode-core ui directory
-    """
-    return os.path.join(os.path.dirname(__file__), "ui")
-
-
-def getRcDirectory():
-    """
-    Gets the pyqode-core rc directory
-    """
-    return os.path.join(os.path.abspath(os.path.join(__file__, "..")), "ui",
-                        "rc")
-
-# import the core rc modules
-#importRc(os.path.join(getUiDirectory(), "pyqode_python_icons.qrc"))
-# import the core rc modules
-if os.environ["QT_API"] == "PyQt":
-    from pyqode.python.ui import pyqode_python_icons_pyqt_rc
-else:
-    from pyqode.python.ui import pyqode_python_icons_pyside_rc
-
-
-def cxFreeze_getDataFiles():
-    """
-    Returns the core package's data files in a format suitable for cx_freeze.
-
-    .. note: At the moment there is no ui file specific to pyqode-python but the
-             function is already here for any future use so its a good practice
-             to always use it.
-    """
-    uiDir = getUiDirectory()
-    dataFiles = []
-    for f in glob(os.path.join(uiDir, "*.ui")):
-        assert os.path.exists(f)
-        dataFiles += [tuple((f, os.path.join("pyqode_ui/",
-                                            os.path.split(f)[1])))]
-    return dataFiles
+import pyqode.python.ui.pyqode_python_icons_rc
 
 
 class QPythonCodeEdit(pyqode.core.QCodeEdit):
@@ -100,10 +64,14 @@ class QPythonCodeEdit(pyqode.core.QCodeEdit):
     DARK_STYLE = 0
     LIGHT_STYLE = 1
 
-    def __init__(self, parent=None):
-        pyqode.core.QCodeEdit.__init__(self, parent)
+    def __init__(self, parent=None, addToPath=True):
+        """
+        :param addToPath: True to add the open file's parent directory to
+                          sys.path so that jedi can complete sibling modules.
+        """
+        super(QPythonCodeEdit, self).__init__(parent)
         self.setLineWrapMode(self.NoWrap)
-        self.setWindowTitle("pyQode - Generic Editor")
+        self.setWindowTitle("pyQode - Python Editor")
         self.installPanel(pyqode.core.FoldingPanel())
         self.installPanel(pyqode.core.LineNumberPanel(),
                           pyqode.core.PanelPosition.LEFT)
@@ -114,7 +82,7 @@ class QPythonCodeEdit(pyqode.core.QCodeEdit):
         self.installMode(pyqode.core.RightMarginMode())
         self.installMode(pyqode.core.CodeCompletionMode())
         self.codeCompletionMode.addCompletionProvider(
-            JediCompletionProvider())
+            JediCompletionProvider(addToPath=addToPath))
         self.codeCompletionMode.addCompletionProvider(
             pyqode.core.DocumentWordCompletionProvider())
         self.installMode(pyqode.core.ZoomMode())
@@ -125,6 +93,7 @@ class QPythonCodeEdit(pyqode.core.QCodeEdit):
         self.installMode(PyFlakesCheckerMode())
         self.installMode(PEP8CheckerMode())
         self.installMode(CalltipsMode())
+        self.installMode(PyIndenterMode())
         self.installPanel(PreLoadPanel(), pyqode.core.PanelPosition.TOP)
         self.preLoadPanel.setVisible(False)
 
@@ -172,6 +141,3 @@ class QPythonCodeEdit(pyqode.core.QCodeEdit):
 
 __all__ = ["PEP8CheckerMode", 'PyHighlighterMode', 'PyAutoIndentMode',
            "__version__", "QPythonCodeEdit"]
-
-if sys.platform == "win32":
-    __all__ += ["cxFreeze_getDataFiles"]
