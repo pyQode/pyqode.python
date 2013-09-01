@@ -141,6 +141,3 @@ class QPythonCodeEdit(pyqode.core.QCodeEdit):
 
 __all__ = ["PEP8CheckerMode", 'PyHighlighterMode', 'PyAutoIndentMode',
            "__version__", "QPythonCodeEdit"]
-
-if sys.platform == "win32":
-    __all__ += ["cxFreeze_getDataFiles"]
