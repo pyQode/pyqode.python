@@ -5,8 +5,7 @@
 
 include MANIFEST.in
 include setup.py
-include COPYING
-include COPYING.lesser
+include LICENSE
 include README.rst
 include pyqode/python/ui/*
 include pyqode/python/ui/rc/*
