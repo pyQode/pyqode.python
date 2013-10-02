@@ -27,7 +27,8 @@
 """ This module contains the python specific syntax highlighter
 """
 import sys
-from pyqode.core import TextStyle, memoized, SyntaxHighlighter
+from pyqode.core import TextStyle, SyntaxHighlighter
+from pyqode.core.system import memoized
 from pyqode.qt.QtCore import QRegExp
 from pyqode.qt.QtGui import QColor, QTextCharFormat, QFont, QSyntaxHighlighter
 from pyqode.core import Mode, IndentBasedFoldDetector
