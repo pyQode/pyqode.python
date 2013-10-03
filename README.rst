@@ -1,11 +1,17 @@
 Python support for pyQode
 ========================================
 
-*version 1.0b3*
-
 .. image:: https://travis-ci.org/ColinDuquesnoy/pyqode.python.png?branch=master
     :target: https://travis-ci.org/ColinDuquesnoy/pyqode.python
     :alt: Travis-CI build status
+
+.. image:: https://pypip.in/d/pyqode.python/badge.png
+    :target: https://crate.io/packages/pyqode.python/
+    :alt: Number of PyPI downloads
+
+.. image:: https://pypip.in/v/pyqode.python/badge.png
+    :target: https://crate.io/packages/pyqode.python/
+    :alt: Latest PyPI version
 
 What is pyqode.python?
 -----------------------
