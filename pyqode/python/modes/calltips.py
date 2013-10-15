@@ -81,8 +81,7 @@ class CalltipsMode(Mode, QtCore.QObject):
 
     def __onKeyReleased(self, event):
         if (event.key() == QtCore.Qt.Key_ParenLeft or
-                event.key() == QtCore.Qt.Key_Comma or
-                event.key() == QtCore.Qt.Key_Space):
+                event.key() == QtCore.Qt.Key_Comma):
             tc = self.editor.textCursor()
             line = tc.blockNumber() + 1
             col = tc.columnNumber()
@@ -90,8 +89,6 @@ class CalltipsMode(Mode, QtCore.QObject):
             encoding = self.editor.fileEncoding
             source = self.editor.toPlainText()
             self.__requestCalltip(source, line, col, fn, encoding)
-        else:
-            QtGui.QToolTip.hideText()
 
     def __requestCalltip(self, *args):
         if self.__requestCnt == 0:
@@ -102,6 +99,7 @@ class CalltipsMode(Mode, QtCore.QObject):
 
     def __onWorkFinished(self, caller_id, worker, results):
         if caller_id == id(self) and isinstance(worker, CalltipsWorker):
+            logger.debug("Calltip request finished")
             self.__requestCnt -= 1
             if results:
                 call = {"call.module.name": results[0],
