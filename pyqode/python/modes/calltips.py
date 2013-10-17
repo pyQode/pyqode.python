@@ -44,11 +44,12 @@ class CalltipsWorker(object):
     def __call__(self, *args, **kwargs):
         script = jedi.Script(self.code, self.line, self.col, self.path,
                              self.encoding)
-        c = script.get_in_function_call()
-        if c:
+        signatures = script.call_signatures()
+        for c in signatures:
             results = [str(c.module.name), str(c.call_name),
                        [str(p.token_list[0]) for p in c.params], c.index,
                        c.bracket_start]
+            # seems like len of signatures is always 1 when getting calltips
             return results
         return []
 
