@@ -24,7 +24,7 @@
 #THE SOFTWARE.
 #
 """
-This panel shows preload informations
+This panel shows pre-load information.
 """
 from pyqode.core import Panel
 from pyqode.qt import QtGui, QtCore
@@ -32,13 +32,16 @@ from pyqode.qt import QtGui, QtCore
 
 class PreLoadPanel(Panel):
     """
-    Preload the new file and show the current action + a progress bar
+    You can subclass the jedi completion provider to preload heavy modules which
+    might take a while and need to be notify in a way or another to the user.
+    This panel can be used for that purpose. It connects to the
+    :attr:`pyqode.core.CodeCompletionMode.preLoadStarted` and
+    :attr:`pyqode.core.CodeCompletionMode.preLoadCompleted`
+    to automatically show/hide a little notification area with a
+    QLabel and QMovieAnimation.
     """
     IDENTIFIER = "preLoadPanel"
     DESCRIPTION = "Pre-load the module definitions in a background thread"
-
-    visibilityChangeRequested = QtCore.Signal(bool)
-    progressUpdateRequested = QtCore.Signal(str)
 
     def __init__(self):
         Panel.__init__(self)
