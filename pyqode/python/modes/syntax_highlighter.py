@@ -29,8 +29,7 @@
 import sys
 from pyqode.core import TextStyle, SyntaxHighlighter
 from pyqode.core.system import memoized
-from pyqode.qt.QtCore import QRegExp
-from pyqode.qt.QtGui import QColor, QTextCharFormat, QFont, QSyntaxHighlighter
+from pyqode.qt import QtGui, QtCore
 from pyqode.core import Mode, IndentBasedFoldDetector
 
 
@@ -76,7 +75,7 @@ DEFAULT_DARK_STYLES = {
 class PyHighlighterMode(SyntaxHighlighter, Mode):
     """ Syntax highlighter for the Python language.
     """
-    _DESCRIPTION = "Custom QSyntaxHighlighter to highlight python syntax"
+    _DESCRIPTION = "Custom QtGui.QSyntaxHighlighter to highlight python syntax"
 
     # Python keywords
     keywords = [
@@ -146,16 +145,16 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
                                    foldDetector=IndentBasedFoldDetector())
         self.__doc = document
         Mode.__init__(self)
-        self.tri_single = (QRegExp("'''"), 1, 'docstring')
-        self.tri_double = (QRegExp('"""'), 2, 'docstring')
+        self.tri_single = (QtCore.QRegExp("'''"), 1, 'docstring')
+        self.tri_double = (QtCore.QRegExp('"""'), 2, 'docstring')
 
         self.cnt = 0
 
         rules = []
 
-        self.spacesPattern = QRegExp(r'\s+')
-        self.wordsPattern = QRegExp(r'\s+')
-        self.docstringPattern = QRegExp(r"(:|@)\w+")
+        self.spacesPattern = QtCore.QRegExp(r'\s+')
+        self.wordsPattern = QtCore.QRegExp(r'\s+')
+        self.docstringPattern = QtCore.QRegExp(r"(:|@)\w+")
 
         # All other rules
         rules += [
@@ -185,30 +184,30 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
         rules += [(r'"[^"\\]*(\\.[^"\\]*)*"', 'string')]
         rules += [(r"'[^'\\]*(\\.[^'\\]*)*'", 'string')]
 
-        # Build a QRegExp for each pattern
-        self.rules = [(QRegExp(pat), fmt) for (pat, fmt) in rules]
+        # Build a QtCore.QRegExp for each pattern
+        self.rules = [(QtCore.QRegExp(pat), fmt) for (pat, fmt) in rules]
 
     @memoized
     def format(self, style_key, current_style_bck):
         """
-        Return a QTextCharFormat with the given attributes.
+        Return a QtGui.QTextCharFormat with the given attributes.
 
         :param current_style_bck: Used to clear cache
         """
-        if isinstance(style_key, QColor):
+        if isinstance(style_key, QtGui.QColor):
             value = style_key
         else:
             value = self.editor.style.value(style_key, "Python")
-        if isinstance(value, QColor):
+        if isinstance(value, QtGui.QColor):
             _color = value
-            _format = QTextCharFormat()
+            _format = QtGui.QTextCharFormat()
             _format.setForeground(_color)
             return _format
         else:
-            _format = QTextCharFormat()
+            _format = QtGui.QTextCharFormat()
             _format.setForeground(value.color)
             if value.bold:
-                _format.setFontWeight(QFont.Bold)
+                _format.setFontWeight(QtGui.QFont.Bold)
             if value.italic:
                 _format.setFontItalic(True)
             if value.underlined:
