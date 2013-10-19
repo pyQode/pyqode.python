@@ -41,7 +41,7 @@ Alternatively you can clone the repository using git:
 .. code-block:: bash
 
     $ git clone git@github.com:ColinDuquesnoy/pyqode.python.git
-    $ cd pyqode.core
+    $ cd pyqode.python
     $ python setup.py install
 
 .. _source archive: https://github.com/ColinDuquesnoy/pyqode.python/archive/master.zip
