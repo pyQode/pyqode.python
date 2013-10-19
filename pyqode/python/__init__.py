@@ -45,7 +45,7 @@ from pyqode.python.panels import PreLoadPanel
 
 
 #: pyqode-python version
-__version__ = "1.0b3"
+__version__ = "1.0"
 
 
 import pyqode.python.ui.pyqode_python_icons_rc
