@@ -33,7 +33,8 @@ from pyqode.qt import QtGui
 class PyIndenterMode(IndenterMode):
     """
     Implements python specific indentation, tab/back-tab always
-    indents/unindents the whole line.
+    indents/unindents the **whole** line. This replace the default IndenterMode
+    which we found to be better suited for python code editing.
     """
 
     def indent(self):

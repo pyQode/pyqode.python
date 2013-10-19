@@ -33,8 +33,9 @@ from pyqode.qt import QtGui, QtCore
 from pyqode.core import Mode, IndentBasedFoldDetector
 
 
-# Default highlighter styles values, mostly for the python highlighter but they
-# may be shared between different highlighter/languages
+#: Default (white) color scheme for :class:`pyqode.python.PyHighlighterMode`
+#: Those values are added to :attr:`pyqode.core.QCodeEdit.style` properties in
+#: the *Python* section
 DEFAULT_LIGHT_STYLES = {
     'keyword': TextStyle('#808000 nbold nitalic nunderlined'),
     'builtins': TextStyle('#808000 nbold nitalic nunderlined'),
@@ -53,6 +54,9 @@ DEFAULT_LIGHT_STYLES = {
     'docstringTag': TextStyle('#0000FF nbold nitalic underlined'),
 }
 
+#: Alternative dark color scheme for :class:`pyqode.python.PyHighlighterMode`
+#: Those values are added to :attr:`pyqode.core.QCodeEdit.style` properties in
+#: the *Python* section
 DEFAULT_DARK_STYLES = {
     'keyword': TextStyle('#CC7832 bold nitalic nunderlined'),
     'builtins': TextStyle('#CC7832 nbold nitalic nunderlined'),
@@ -73,11 +77,31 @@ DEFAULT_DARK_STYLES = {
 
 
 class PyHighlighterMode(SyntaxHighlighter, Mode):
-    """ Syntax highlighter for the Python language.
+    """
+    Syntax highlighter specifically crafted for the Python programming language.
+
+    Contrarily to :class:`pyqode.core.PygmentsSyntaxHighlighter` this syntax
+    highlighter highlights multi-line comments and docstrings properly.
+    Its color scheme is entirely configurable (the properties are available in
+    the Python section of :attr:`pyqode.core.QCodeEdit.style`).
+
+    .. note:: To detect and remember multi-line strings/docstrings we use
+              :attr:`QtGui.QTextBlock.userState` which is a bitmask combination
+              that store two information:
+
+                  * the 7 first **bits** are used to store the following states:
+
+                      - 0: not a multi-line string/docstring
+                      - 1: start of multi-line string/docstring
+                      - 2: multi-line string/docstring
+
+                  * the 8th **bit** is used to make the difference between a
+                    docstring and a string which are highlighted with a different
+                    color.
     """
     _DESCRIPTION = "Custom QtGui.QSyntaxHighlighter to highlight python syntax"
 
-    # Python keywords
+    #: List of python keywords
     keywords = [
         'and', 'assert', 'break', 'continue', 'def', 'class',
         'del', 'elif', 'else', 'except', 'exec', 'finally',
@@ -87,6 +111,7 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
         'None', 'True', 'False', "with"
     ]
 
+    #: List of builtins
     builtins = [
         "__import__", "abs", "all", "any", "apply", "basestring", "bin",
         "bool", "buffer", "bytearray", "bytes", "callable", "chr",
@@ -115,7 +140,7 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
         "UserWarning", "ValueError", "VMSError", "Warning", "WindowsError",
         "ZeroDivisionError"]
 
-    # Python operators
+    #: List of python operators
     operators = [
         '=',
         # Comparison
@@ -128,16 +153,19 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
         '\^', '\|', '\&', '\~', '>>', '<<',
     ]
 
+    #: List of docstring tags (only Sphinx atm)
     docstringTags = [
         ":param", ":type", ":return", ":rtype", ":raise", ":except",
         "@param", "@type", "@return", "@rtype", "@raise", "@except",
         ".. note", ".. warning"
     ]
 
-    # Python braces
+    #: List of special punctuation
     braces = [
         '\{', '\}', '\(', '\)', '\[', '\]',
     ]
+
+    #: List of highlighted punctuations
     punctuations = ["\:", "\,", "\."]
 
     def __init__(self, document=None):
@@ -189,11 +217,6 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
 
     @memoized
     def format(self, style_key, current_style_bck):
-        """
-        Return a QtGui.QTextCharFormat with the given attributes.
-
-        :param current_style_bck: Used to clear cache
-        """
         if isinstance(style_key, QtGui.QColor):
             value = style_key
         else:
@@ -279,9 +302,6 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
             index = self.docstringPattern.indexIn(text, index + length)
 
     def doHighlightBlock(self, text):
-        """
-        Apply syntax highlighting to the given block of text.
-        """
         if self.match_multiline(text):
             self.highlightSpaces(text)
             self.highlightDocstringTags(text)
@@ -303,30 +323,40 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
         self.highlightSpaces(text)
 
     def match_multiline(self, text):
-        """
-        Highlight multilines
-        """
+        #
+        # checks if the text is a multi-line comment, makes the difference
+        # between single quote and double quote, makes the difference between
+        # a multi line string and multi line docstring.
+        #
         multi = False
         state = 0
         original_text = text
         text = text.strip()
         if text.startswith("#"):
             return False
-        # check for mutliquoted string that is not a docstring
+
+        # check for mutli-line string that is not a docstring (a var)
         docstring = 0x80
         if "=" in text:
             text = text.split("=")[1].strip()
             docstring = 0
 
-        # retrieve value from state
+        # retrieve value from state, is the previous line a multi-line
+        # string or docstring?
+        # state is the stored in the first 7 bits
+        # 0: not a multi-line comment or the last line
+        # 1: start of multi-line comment
+        # 2: multi-line comment (not start nor end)
         prevState = self.previousBlockState() & 0x7F
         if self.previousBlockState() == -1:
             prevState = 0
+        # docstring or string is stored in bit 8
+        # 0: string
+        # 1: docstring
         wasDocstring = self.previousBlockState() & 0x80
 
         # single quoted
         if text.startswith("'''") or text.endswith("'''"):
-            # begin of comment
             if prevState == 1:
                 # end of comment
                 multi = True
@@ -339,7 +369,7 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
                     state = 0
                 multi = True
             else:
-                # in double quoted doctring
+                # in single quoted docstring/string
                 multi = True
                 state = 2
                 docstring = wasDocstring
@@ -353,7 +383,7 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
                 # start of comment
                 multi = True
                 state = 2
-                # start of single quoted comment
+                # start of single quoted string/docstring
                 if text.startswith('"""') and text.endswith('"""') and len(text) > 6:
                     state = 0
 
@@ -372,7 +402,7 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
                 fmt = "string"
             self.setFormat(len(original_text) - len(text),
                            len(text), self.format(fmt, self.__bck))
-        # takes multiline type into account
+        # takes multi-line type into account
         state |= docstring
         self.setCurrentBlockState(state)
         # print("State:", state)

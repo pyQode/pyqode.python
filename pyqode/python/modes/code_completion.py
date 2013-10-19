@@ -34,6 +34,7 @@ from pyqode.core import CompletionProvider, logger
 from pyqode.core import Completion
 
 
+#: Default icons
 ICONS = {'CLASS': ':/pyqode_python_icons/rc/class.png',
          'IMPORT': ':/pyqode_python_icons/rc/namespace.png',
          'STATEMENT': ':/pyqode_python_icons/rc/var.png',
@@ -49,13 +50,27 @@ ICONS = {'CLASS': ':/pyqode_python_icons/rc/class.png',
 
 
 class JediCompletionProvider(CompletionProvider):
+    """
+    Completion provider using the awesome `jedi`_  library
+
+    .. _`jedi`: https://github.com/davidhalter/jedi
+    """
+    #: Jedi provider's priority is higher than the priority of the default
+    #: DocumentWordsCompletionProvider, this makes the jedi completions appear
+    # before the document words completions.
     PRIORITY = 1
 
     def __init__(self, addToPath=True):
         CompletionProvider.__init__(self)
+        #: True to add the parent directory of the python module to sys.path.
+        #: Default is True.
         self.addToPath = addToPath
 
     def preload(self, code, filePath, fileEncoding):
+        """
+        Preload the opened file (jedi.api.preload_module) and possibly add the
+        parent directory to :py:attr:`sys.path` (if addToPath is True)
+        """
         try:
             if self.addToPath:
                 dir = os.path.dirname(filePath)
@@ -68,6 +83,9 @@ class JediCompletionProvider(CompletionProvider):
 
     def complete(self, code, line, column, completionPrefix,
             filePath, fileEncoding):
+        """
+        Completes python code using `jedi`_.
+        """
         try:
             retVal = []
             script = jedi.Script(code, line, column,

@@ -1,12 +1,14 @@
 Credits
 ==============
 
-pyQode uses a couple of external libraries and projects.
+pyqode.python uses a couple of external libraries that were really helpful:
 
-Here is the complete list:
-    * python
-    * Qt using PySide or PyQt
-    * Tango icons
-    * Pygments
+    * `Jedi`_: code completion, calltips
+    * `PEP8`_: style checker
+    * `pyFlakes`_: syntax checker
 
-The framework has been greatly inspired by the Qt Creator source code.
+Thanks to their developers for their great work!
+
+.. _`Jedi`: https://pypi.python.org/pypi/jedi
+.. _`PEP8`: https://pypi.python.org/pypi/pep8
+.. _`pyFlakes`: https://pypi.python.org/pypi/pyflakes

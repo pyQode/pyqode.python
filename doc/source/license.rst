@@ -1,7 +1,7 @@
 License
 ============
 
-pyQode is licensed under the MIT license.
+pyqode.python is licensed under the MIT license.
 
 
 The MIT License (MIT)

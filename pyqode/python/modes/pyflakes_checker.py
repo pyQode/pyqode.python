@@ -33,6 +33,10 @@ from pyqode.core import CHECK_TRIGGER_TXT_SAVED
 
 
 def pyflakesAnalysisProcess(q, codeString, filename, fileEncoding):
+    """
+    Function executed in background process to run the pyflakes on the
+    codeString.
+    """
     msgs = []
     # First, compile into an AST and handle syntax errors.
     if not codeString or not fileEncoding:
@@ -79,6 +83,9 @@ def pyflakesAnalysisProcess(q, codeString, filename, fileEncoding):
 
 
 class PyFlakesCheckerMode(CheckerMode):
+    """
+    This checker mode runs pyflakes on the fly to check your python syntax.
+    """
     DESCRIPTION = "Check python code using pyFlakes"
     IDENTIFIER = "pyFlakesCheckerMode"
 

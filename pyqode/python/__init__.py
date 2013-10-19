@@ -29,18 +29,19 @@ This package contains python specific modes, panels and editor.
 import re
 import sys
 import pyqode.core
-from pyqode.qt import QtCore
+from pyqode.qt import QtCore, QtGui
+
+# public API
 from pyqode.python.modes import CalltipsMode
 from pyqode.python.modes import JediCompletionProvider
 from pyqode.python.modes import PEP8CheckerMode
 from pyqode.python.modes import PyAutoIndentMode
 from pyqode.python.modes import PyFlakesCheckerMode
-from pyqode.python.modes import PyIndenterMode
 from pyqode.python.modes import PyHighlighterMode
+from pyqode.python.modes import PyIndenterMode
 from pyqode.python.modes import DEFAULT_DARK_STYLES
 from pyqode.python.modes import DEFAULT_LIGHT_STYLES
 from pyqode.python.panels import PreLoadPanel
-from pyqode.qt import QtGui
 
 
 #: pyqode-python version
@@ -126,7 +127,7 @@ class QPythonCodeEdit(pyqode.core.QCodeEdit):
         """
         if not use:
             return
-        set_dark_color_scheme(self)
+        setDarkColorScheme(self)
 
     @QtCore.Slot()
     def useLightStyle(self, use=True):
@@ -136,7 +137,7 @@ class QPythonCodeEdit(pyqode.core.QCodeEdit):
         """
         if not use:
             return
-        set_light_color_scheme(self)
+        setLightColorScheme(self)
 
     def detectEncoding(self, data):
         """
@@ -153,7 +154,7 @@ class QPythonCodeEdit(pyqode.core.QCodeEdit):
         return encoding
 
 
-def set_dark_color_scheme(codeEdit):
+def setDarkColorScheme(codeEdit):
     """
     Set a dark scheme on a :class:`pyqode.core.QCodeEdit`.
 
@@ -178,7 +179,7 @@ def set_dark_color_scheme(codeEdit):
     codeEdit.style = style
 
 
-def set_light_color_scheme(codeEdit):
+def setLightColorScheme(codeEdit):
     """
     Set a light scheme on a :class:`pyqode.core.QCodeEdit`.
 
@@ -207,4 +208,5 @@ def set_light_color_scheme(codeEdit):
 __all__ = ["PEP8CheckerMode", 'PyHighlighterMode', 'PyAutoIndentMode',
            "CalltipsMode", "JediCompletionProvider", "PyFlakesCheckerMode",
            "PyIndenterMode", "PreLoadPanel", "__version__", "QPythonCodeEdit",
-           "set_light_color_scheme", "set_light_color_scheme"]
+           "setLightColorScheme", "setDarkColorScheme",
+           "DEFAULT_LIGHT_STYLES", "DEFAULT_DARK_STYLES"]

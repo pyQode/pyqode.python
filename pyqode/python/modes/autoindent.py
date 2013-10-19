@@ -30,10 +30,9 @@ from pyqode.core.modes.autoindent import AutoIndentMode
 
 class PyAutoIndentMode(AutoIndentMode):
     """
-    A basic auto indent mode that provides a basic auto indentation based
-    on the previous line indentation.
-
-    This mode can be extended by overriding the _getIndent method.
+    Customised :class:`pyqode.core.AutoIndentMode` for python, the indentation
+    level is based on the previous line indent but is automatically incremented
+    after a *:* and decremented after *pass* or *return*
     """
     #: Mode identifier
     IDENTIFIER = "pyAutoIndentMode"
@@ -44,14 +43,6 @@ class PyAutoIndentMode(AutoIndentMode):
         super(PyAutoIndentMode, self).__init__()
 
     def _getIndent(self, tc):
-        """
-        Return the indentation text (a series of spaces, tabs)
-
-        The indentation level is based on the indentation level of the previous
-        line
-
-        :param tc: QTextCursor
-        """
         pos = tc.position()
         if pos != 0:
             indent = AutoIndentMode._getIndent(self, tc)

@@ -33,11 +33,19 @@ try:
     import pep8
 
     class CustomReport(pep8.StandardReport):
+        """
+        Custom report used to get the pep8 results as a list of string. This
+        is easier to handler then retrieving the stdout and parsing.
+        """
+
         def get_file_results(self):
             self._deferred_print.sort()
             return self._deferred_print
 
     class CustomChecker(pep8.Checker):
+        """
+        Custom Checker with our Custom report.
+        """
         def __init__(self, *args, **kwargs):
             super(CustomChecker, self).__init__(
                 *args, report=CustomReport(kwargs.pop("options")), **kwargs)
@@ -53,7 +61,13 @@ except ImportError:
 
 
 def pep8AnalysisProcess(q, code, filePath, fileEncoding):
+    """
+    This functions is run in a background process to check the code against
+    PEP8 using pep8.py.
+    """
     import pep8
+    # setup our custom style guide with our custom checker which returns a list
+    # of strings instread of spitting the results at stdout
     pep8style = pep8.StyleGuide(parse_argv=False, config_file=True,
                                 checker_class=CustomChecker)
     results = pep8style.input_file(filePath, lines=code.splitlines(True))
@@ -65,7 +79,12 @@ def pep8AnalysisProcess(q, code, filePath, fileEncoding):
 
 
 class PEP8CheckerMode(CheckerMode):
+    """
+    This checker mode runs pep8.py on the fly to check your python style.
+    """
+    #: Mode description
     DESCRIPTION = "Check python code for PEP8 issues"
+    #: Mode identifier
     IDENTIFIER = "pep8CheckerMode"
 
     def __init__(self):
