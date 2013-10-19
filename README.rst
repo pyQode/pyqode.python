@@ -1,4 +1,4 @@
-Python support for pyQode
+Add python support to pyQode
 ========================================
 
 .. image:: https://travis-ci.org/ColinDuquesnoy/pyqode.python.png?branch=master
@@ -86,6 +86,7 @@ Resources
 -  `Downloads`_
 -  `Source repository`_
 -  `Wiki`_
+-  `Documentation`_
 
 .. _Downloads: https://github.com/ColinDuquesnoy/pyqode.python/releases
 .. _Source repository: https://github.com/ColinDuquesnoy/pyqode.python/
@@ -93,8 +94,9 @@ Resources
 
 
 .. _official pyqode extension package: https://github.com/ColinDuquesnoy/pyqode.core/wiki/Extensions#official-packages
-.. _pyQode: https://github.com/ColinDuquesnoy/pyqode.core
+.. _pyQode: https://github.com/ColinDuquesnoy/pyqode.python
 .. _Jedi: https://github.com/davidhalter/jedi
+.. _`Documentation`: http://pyqodepython.readthedocs.org/en/latest/
 
 
 Change log
