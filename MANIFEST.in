@@ -5,9 +5,11 @@
 
 include MANIFEST.in
 include setup.py
-include COPYING
-include COPYING.lesser
+include ez_setup.py
+include LICENSE.txt
+include AUTHORS.txt
 include README.rst
+include CONTRIBUTING.rst
 include pyqode/python/ui/*
 include pyqode/python/ui/rc/*
 include examples/gui_integration/*

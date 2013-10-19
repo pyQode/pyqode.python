@@ -1,22 +1,27 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright 2013 Colin Duquesnoy
+#The MIT License (MIT)
 #
-# This file is part of pyQode.
+#Copyright (c) <2013> <Colin Duquesnoy and others, see AUTHORS.txt>
 #
-# pyQode is free software: you can redistribute it and/or modify it under
-# the terms of the GNU Lesser General Public License as published by the Free
-# Software Foundation, either version 3 of the License, or (at your option) any
-# later version.
+#Permission is hereby granted, free of charge, to any person obtaining a copy
+#of this software and associated documentation files (the "Software"), to deal
+#in the Software without restriction, including without limitation the rights
+#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+#copies of the Software, and to permit persons to whom the Software is
+#furnished to do so, subject to the following conditions:
 #
-# pyQode is distributed in the hope that it will be useful, but WITHOUT
-# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-# FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
-# details.
+#The above copyright notice and this permission notice shall be included in
+#all copies or substantial portions of the Software.
 #
-# You should have received a copy of the GNU Lesser General Public License along
-# with pyQode. If not, see http://www.gnu.org/licenses/.
+#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+#AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+#OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+#THE SOFTWARE.
 #
 """
 This module contains the pyFlakes checker mode
@@ -28,11 +33,19 @@ try:
     import pep8
 
     class CustomReport(pep8.StandardReport):
+        """
+        Custom report used to get the pep8 results as a list of string. This
+        is easier to handler then retrieving the stdout and parsing.
+        """
+
         def get_file_results(self):
             self._deferred_print.sort()
             return self._deferred_print
 
     class CustomChecker(pep8.Checker):
+        """
+        Custom Checker with our Custom report.
+        """
         def __init__(self, *args, **kwargs):
             super(CustomChecker, self).__init__(
                 *args, report=CustomReport(kwargs.pop("options")), **kwargs)
@@ -48,7 +61,13 @@ except ImportError:
 
 
 def pep8AnalysisProcess(q, code, filePath, fileEncoding):
+    """
+    This functions is run in a background process to check the code against
+    PEP8 using pep8.py.
+    """
     import pep8
+    # setup our custom style guide with our custom checker which returns a list
+    # of strings instread of spitting the results at stdout
     pep8style = pep8.StyleGuide(parse_argv=False, config_file=True,
                                 checker_class=CustomChecker)
     results = pep8style.input_file(filePath, lines=code.splitlines(True))
@@ -60,7 +79,12 @@ def pep8AnalysisProcess(q, code, filePath, fileEncoding):
 
 
 class PEP8CheckerMode(CheckerMode):
+    """
+    This checker mode runs pep8.py on the fly to check your python style.
+    """
+    #: Mode description
     DESCRIPTION = "Check python code for PEP8 issues"
+    #: Mode identifier
     IDENTIFIER = "pep8CheckerMode"
 
     def __init__(self):

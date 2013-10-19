@@ -1,26 +1,32 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright 2013 Colin Duquesnoy
+#The MIT License (MIT)
 #
-# This file is part of pyQode.
+#Copyright (c) <2013> <Colin Duquesnoy and others, see AUTHORS.txt>
 #
-# pyQode is free software: you can redistribute it and/or modify it under
-# the terms of the GNU Lesser General Public License as published by the Free
-# Software Foundation, either version 3 of the License, or (at your option) any
-# later version.
+#Permission is hereby granted, free of charge, to any person obtaining a copy
+#of this software and associated documentation files (the "Software"), to deal
+#in the Software without restriction, including without limitation the rights
+#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+#copies of the Software, and to permit persons to whom the Software is
+#furnished to do so, subject to the following conditions:
 #
-# pyQode is distributed in the hope that it will be useful, but WITHOUT
-# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-# FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
-# details.
+#The above copyright notice and this permission notice shall be included in
+#all copies or substantial portions of the Software.
 #
-# You should have received a copy of the GNU Lesser General Public License along
-# with pyQode. If not, see http://www.gnu.org/licenses/.
+#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+#AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+#OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+#THE SOFTWARE.
 #
 """
 Contains the JediCompletionProvider class implementation.
 """
+import os
 import jedi
 from pyqode.core import Mode, DelayJobRunner, logger, constants
 from pyqode.core import CodeCompletionMode
@@ -38,17 +44,24 @@ class CalltipsWorker(object):
     def __call__(self, *args, **kwargs):
         script = jedi.Script(self.code, self.line, self.col, self.path,
                              self.encoding)
-        c = script.get_in_function_call()
-        if c:
+        signatures = script.call_signatures()
+        for c in signatures:
             results = [str(c.module.name), str(c.call_name),
                        [str(p.token_list[0]) for p in c.params], c.index,
                        c.bracket_start]
+            # seems like len of signatures is always 1 when getting calltips
             return results
         return []
 
 
 class CalltipsMode(Mode, QtCore.QObject):
+    """
+    This mode shows function/method call tips in a QToolTip using
+    :meth:`jedi.Script.call_signatures`.
+    """
+    #: Mode identifier
     IDENTIFIER = "calltipsMode"
+    #: Mode description
     DESCRIPTION = "Provides functions calltips using the jedi library"
 
     tooltipDisplayRequested = QtCore.Signal(object, int)
@@ -63,18 +76,19 @@ class CalltipsMode(Mode, QtCore.QObject):
         self.__requestCnt = 0
 
     def _onStateChanged(self, state):
-        if state:
-            self.editor.keyReleased.connect(self.__onKeyReleased)
-            CodeCompletionMode.SERVER.signals.workCompleted.connect(
-                self.__onWorkFinished)
-        else:
-            CodeCompletionMode.SERVER.signals.workCompleted.disconnect(
-                self.__onWorkFinished)
+        if not "PYQODE_NO_COMPLETION_SERVER" in os.environ:
+            if state:
+                self.editor.keyReleased.connect(self.__onKeyReleased)
+
+                CodeCompletionMode.SERVER.signals.workCompleted.connect(
+                    self.__onWorkFinished)
+            else:
+                CodeCompletionMode.SERVER.signals.workCompleted.disconnect(
+                    self.__onWorkFinished)
 
     def __onKeyReleased(self, event):
         if (event.key() == QtCore.Qt.Key_ParenLeft or
-                event.key() == QtCore.Qt.Key_Comma or
-                event.key() == QtCore.Qt.Key_Space):
+                event.key() == QtCore.Qt.Key_Comma):
             tc = self.editor.textCursor()
             line = tc.blockNumber() + 1
             col = tc.columnNumber()
@@ -82,8 +96,6 @@ class CalltipsMode(Mode, QtCore.QObject):
             encoding = self.editor.fileEncoding
             source = self.editor.toPlainText()
             self.__requestCalltip(source, line, col, fn, encoding)
-        else:
-            QtGui.QToolTip.hideText()
 
     def __requestCalltip(self, *args):
         if self.__requestCnt == 0:
@@ -94,6 +106,7 @@ class CalltipsMode(Mode, QtCore.QObject):
 
     def __onWorkFinished(self, caller_id, worker, results):
         if caller_id == id(self) and isinstance(worker, CalltipsWorker):
+            logger.debug("Calltip request finished")
             self.__requestCnt -= 1
             if results:
                 call = {"call.module.name": results[0],

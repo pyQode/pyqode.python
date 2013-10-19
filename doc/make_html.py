@@ -24,7 +24,8 @@
 #THE SOFTWARE.
 #
 """
-pyQode is a code editor framework for python qt applications.
+Call this module to creates the pyQode documentation. (Requires Sphinx to be
+installed)
 """
-import pkg_resources
-pkg_resources.declare_namespace(__name__)
+import os
+os.system("make html")

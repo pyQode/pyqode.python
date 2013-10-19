@@ -1,22 +1,27 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright 2013 Colin Duquesnoy
+#The MIT License (MIT)
 #
-# This file is part of pyQode.
+#Copyright (c) <2013> <Colin Duquesnoy and others, see AUTHORS.txt>
 #
-# pyQode is free software: you can redistribute it and/or modify it under
-# the terms of the GNU Lesser General Public License as published by the Free
-# Software Foundation, either version 3 of the License, or (at your option) any
-# later version.
+#Permission is hereby granted, free of charge, to any person obtaining a copy
+#of this software and associated documentation files (the "Software"), to deal
+#in the Software without restriction, including without limitation the rights
+#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+#copies of the Software, and to permit persons to whom the Software is
+#furnished to do so, subject to the following conditions:
 #
-# pyQode is distributed in the hope that it will be useful, but WITHOUT
-# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-# FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
-# details.
+#The above copyright notice and this permission notice shall be included in
+#all copies or substantial portions of the Software.
 #
-# You should have received a copy of the GNU Lesser General Public License along
-# with pyQode. If not, see http://www.gnu.org/licenses/.
+#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+#AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+#OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+#THE SOFTWARE.
 #
 """
 Contains the JediCompletionProvider class implementation.
@@ -29,6 +34,7 @@ from pyqode.core import CompletionProvider, logger
 from pyqode.core import Completion
 
 
+#: Default icons
 ICONS = {'CLASS': ':/pyqode_python_icons/rc/class.png',
          'IMPORT': ':/pyqode_python_icons/rc/namespace.png',
          'STATEMENT': ':/pyqode_python_icons/rc/var.png',
@@ -44,13 +50,27 @@ ICONS = {'CLASS': ':/pyqode_python_icons/rc/class.png',
 
 
 class JediCompletionProvider(CompletionProvider):
+    """
+    Completion provider using the awesome `jedi`_  library
+
+    .. _`jedi`: https://github.com/davidhalter/jedi
+    """
+    #: Jedi provider's priority is higher than the priority of the default
+    #: DocumentWordsCompletionProvider, this makes the jedi completions appear
+    # before the document words completions.
     PRIORITY = 1
 
     def __init__(self, addToPath=True):
         CompletionProvider.__init__(self)
+        #: True to add the parent directory of the python module to sys.path.
+        #: Default is True.
         self.addToPath = addToPath
 
     def preload(self, code, filePath, fileEncoding):
+        """
+        Preload the opened file (jedi.api.preload_module) and possibly add the
+        parent directory to :py:attr:`sys.path` (if addToPath is True)
+        """
         try:
             if self.addToPath:
                 dir = os.path.dirname(filePath)
@@ -63,6 +83,9 @@ class JediCompletionProvider(CompletionProvider):
 
     def complete(self, code, line, column, completionPrefix,
             filePath, fileEncoding):
+        """
+        Completes python code using `jedi`_.
+        """
         try:
             retVal = []
             script = jedi.Script(code, line, column,

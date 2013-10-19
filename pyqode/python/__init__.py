@@ -1,48 +1,51 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright 2013 Colin Duquesnoy
+#The MIT License (MIT)
 #
-# This file is part of pyQode.
+#Copyright (c) <2013> <Colin Duquesnoy and others, see AUTHORS.txt>
 #
-# pyQode is free software: you can redistribute it and/or modify it under
-# the terms of the GNU Lesser General Public License as published by the Free
-# Software Foundation, either version 3 of the License, or (at your option) any
-# later version.
+#Permission is hereby granted, free of charge, to any person obtaining a copy
+#of this software and associated documentation files (the "Software"), to deal
+#in the Software without restriction, including without limitation the rights
+#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+#copies of the Software, and to permit persons to whom the Software is
+#furnished to do so, subject to the following conditions:
 #
-# pyQode is distributed in the hope that it will be useful, but WITHOUT
-# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-# FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
-# details.
+#The above copyright notice and this permission notice shall be included in
+#all copies or substantial portions of the Software.
 #
-# You should have received a copy of the GNU Lesser General Public License along
-# with pyQode. If not, see http://www.gnu.org/licenses/.
+#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+#AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+#OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+#THE SOFTWARE.
 #
 """
-This package contains python specific modes, panels and editors.
+This package contains python specific modes, panels and editor.
 """
-# from pyqode.python import panels
-from glob import glob
-import os
 import re
 import sys
 import pyqode.core
-from pyqode.qt import QtCore
+from pyqode.qt import QtCore, QtGui
+
+# public API
 from pyqode.python.modes import CalltipsMode
 from pyqode.python.modes import JediCompletionProvider
 from pyqode.python.modes import PEP8CheckerMode
 from pyqode.python.modes import PyAutoIndentMode
 from pyqode.python.modes import PyFlakesCheckerMode
-from pyqode.python.modes import PyIndenterMode
 from pyqode.python.modes import PyHighlighterMode
+from pyqode.python.modes import PyIndenterMode
 from pyqode.python.modes import DEFAULT_DARK_STYLES
 from pyqode.python.modes import DEFAULT_LIGHT_STYLES
 from pyqode.python.panels import PreLoadPanel
-from pyqode.qt import QtGui
 
 
 #: pyqode-python version
-__version__ = "1.0b3"
+__version__ = "1.0"
 
 
 import pyqode.python.ui.pyqode_python_icons_rc
@@ -51,15 +54,34 @@ import pyqode.python.ui.pyqode_python_icons_rc
 class QPythonCodeEdit(pyqode.core.QCodeEdit):
     """
     Extends QCodeEdit with a hardcoded set of modes and panels specifics to
-    a python code editor widget
+    a python code editor widget.
 
     **Panels:**
-        * line number panel
-        * search and replace panel
+        * :class:`pyqode.core.FoldingPanel`
+        * :class:`pyqode.core.LineNumberPanel`
+        * :class:`pyqode.core.MarkerPanel`
+        * :class:`pyqode.core.SearchAndReplacePanel`
 
     **Modes:**
-        * document word completion
-        * generic syntax highlighter (pygments)
+        * :class:`pyqode.core.CaretLineHighlighterMode`
+        * :class:`pyqode.core.RightMarginMode`
+        * :class:`pyqode.core.CodeCompletionMode` + :class:`pyqode.python.JediCompletionProvider` and :class:`pyqode.core.DocumentWordCompletionProvider`
+        * :class:`pyqode.core.ZoomMode`
+        * :class:`pyqode.core.SymbolMatcherMode`
+        * :class:`pyqode.python.PyHighlighterMode`
+        * :class:`pyqode.python.PyAutoIndentMode`
+        * :class:`pyqode.python.PyFlakesCheckerMode`
+        * :class:`pyqode.python.PEP8CheckerMode`
+        * :class:`pyqode.python.CalltipsMode`
+        * :class:`pyqode.python.PyIndenterMode`
+
+    It also implements utility methods to switch from a white style to a dark
+    style and inversely.
+
+    .. note:: This code editor widget use PEP 0263 to detect file encoding.
+              If the opened file does not respects the PEP 0263,
+              :py:func:`sys.getfilesystemencoding` is used as the default
+              encoding.
     """
     DARK_STYLE = 0
     LIGHT_STYLE = 1
@@ -78,6 +100,8 @@ class QPythonCodeEdit(pyqode.core.QCodeEdit):
         self.installPanel(pyqode.core.MarkerPanel())
         self.installPanel(pyqode.core.SearchAndReplacePanel(),
                           pyqode.core.PanelPosition.BOTTOM)
+        #self.installPanel(PreLoadPanel(), pyqode.core.PanelPosition.TOP)
+        #self.preLoadPanel.setVisible(False)
         self.installMode(pyqode.core.CaretLineHighlighterMode())
         self.installMode(pyqode.core.RightMarginMode())
         self.installMode(pyqode.core.CodeCompletionMode())
@@ -86,7 +110,7 @@ class QPythonCodeEdit(pyqode.core.QCodeEdit):
         self.codeCompletionMode.addCompletionProvider(
             pyqode.core.DocumentWordCompletionProvider())
         self.installMode(pyqode.core.ZoomMode())
-        self.installMode(pyqode.core.FileWatcherMode())
+        #self.installMode(pyqode.core.FileWatcherMode())
         self.installMode(pyqode.core.SymbolMatcherMode())
         self.installMode(PyHighlighterMode(self.document()))
         self.installMode(PyAutoIndentMode())
@@ -94,41 +118,31 @@ class QPythonCodeEdit(pyqode.core.QCodeEdit):
         self.installMode(PEP8CheckerMode())
         self.installMode(CalltipsMode())
         self.installMode(PyIndenterMode())
-        self.installPanel(PreLoadPanel(), pyqode.core.PanelPosition.TOP)
-        self.preLoadPanel.setVisible(False)
 
     @QtCore.Slot()
     def useDarkStyle(self, use=True):
+        """
+        Changes the editor style to a dark color scheme similar to pycharm's
+        darcula color scheme.
+        """
         if not use:
             return
-        style = self.style.clone()
-        for k, v in DEFAULT_DARK_STYLES.items():
-            style.setValue(k, v, "Python")
-        style.setValue("background", QtGui.QColor("#252525"))
-        style.setValue("foreground", QtGui.QColor("#A9B7C6"))
-        style.setValue("caretLineBackground", QtGui.QColor("#2d2d2d"))
-        style.setValue("whiteSpaceForeground", QtGui.QColor('#404040'))
-        style.setValue("matchedBraceBackground", None)
-        style.setValue("matchedBraceForeground", QtGui.QColor("#FF8647"))
-        self.style = style
+        setDarkColorScheme(self)
 
     @QtCore.Slot()
     def useLightStyle(self, use=True):
+        """
+        Changes the editor style to a dark color scheme similar to QtCreator's
+        default color scheme.
+        """
         if not use:
             return
-        style = self.style.clone()
-        for k, v in DEFAULT_LIGHT_STYLES.items():
-            style.setValue(k, v, "Python")
-        style.setValue("background", QtGui.QColor("#FFFFFF"))
-        style.setValue("foreground", QtGui.QColor("#000000"))
-        style.setValue("caretLineBackground", QtGui.QColor("#E4EDF8"))
-        style.setValue("whiteSpaceForeground",
-                       pyqode.core.constants.EDITOR_WS_FOREGROUND)
-        style.setValue("matchedBraceBackground", QtGui.QColor("#B4EEB4"))
-        style.setValue("matchedBraceForeground", QtGui.QColor("#FF0000"))
-        self.style = style
+        setLightColorScheme(self)
 
     def detectEncoding(self, data):
+        """
+        Detects encoding based on PEP 0263
+        """
         encoding = self.getDefaultEncoding()
         if sys.version_info[0] == 3:
             data = str(data.decode("utf-8"))
@@ -139,5 +153,60 @@ class QPythonCodeEdit(pyqode.core.QCodeEdit):
                 encoding = match.groups()[0]
         return encoding
 
+
+def setDarkColorScheme(codeEdit):
+    """
+    Set a dark scheme on a :class:`pyqode.core.QCodeEdit`.
+
+    The color scheme is similar to pycharm's darcula color scheme.
+
+    .. note:: This function will work only if a
+              :class:`pyqode.python.PyHighlighterMode` has been installed on the
+              codeEdit instance
+
+    :param codeEdit: QCodeEdit instance
+    :type codeEdit: pyqode.core.QCodeEdit
+    """
+    style = codeEdit.style.clone()
+    for k, v in DEFAULT_DARK_STYLES.items():
+        style.setValue(k, v, "Python")
+    style.setValue("background", QtGui.QColor("#252525"))
+    style.setValue("foreground", QtGui.QColor("#A9B7C6"))
+    style.setValue("caretLineBackground", QtGui.QColor("#2d2d2d"))
+    style.setValue("whiteSpaceForeground", QtGui.QColor('#404040'))
+    style.setValue("matchedBraceBackground", None)
+    style.setValue("matchedBraceForeground", QtGui.QColor("#FF8647"))
+    codeEdit.style = style
+
+
+def setLightColorScheme(codeEdit):
+    """
+    Set a light scheme on a :class:`pyqode.core.QCodeEdit`.
+
+    The color scheme is similar to the qt creator's default color scheme.
+
+    .. note:: This function will work only if a
+              :class:`pyqode.python.PyHighlighterMode` has been installed on the
+              codeEdit instance
+
+    :param codeEdit: QCodeEdit instance
+    :type codeEdit: pyqode.core.QCodeEdit
+    """
+    style = codeEdit.style.clone()
+    for k, v in DEFAULT_LIGHT_STYLES.items():
+        style.setValue(k, v, "Python")
+    style.setValue("background", QtGui.QColor("#FFFFFF"))
+    style.setValue("foreground", QtGui.QColor("#000000"))
+    style.setValue("caretLineBackground", QtGui.QColor("#E4EDF8"))
+    style.setValue("whiteSpaceForeground",
+                   pyqode.core.constants.EDITOR_WS_FOREGROUND)
+    style.setValue("matchedBraceBackground", QtGui.QColor("#B4EEB4"))
+    style.setValue("matchedBraceForeground", QtGui.QColor("#FF0000"))
+    codeEdit.style = style
+
+
 __all__ = ["PEP8CheckerMode", 'PyHighlighterMode', 'PyAutoIndentMode',
-           "__version__", "QPythonCodeEdit"]
+           "CalltipsMode", "JediCompletionProvider", "PyFlakesCheckerMode",
+           "PyIndenterMode", "PreLoadPanel", "__version__", "QPythonCodeEdit",
+           "setLightColorScheme", "setDarkColorScheme",
+           "DEFAULT_LIGHT_STYLES", "DEFAULT_DARK_STYLES"]

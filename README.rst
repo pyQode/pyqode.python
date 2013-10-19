@@ -1,11 +1,17 @@
-Python support for pyQode
+Add python support to pyQode
 ========================================
-
-*version 1.0b3*
 
 .. image:: https://travis-ci.org/ColinDuquesnoy/pyqode.python.png?branch=master
     :target: https://travis-ci.org/ColinDuquesnoy/pyqode.python
     :alt: Travis-CI build status
+
+.. image:: https://pypip.in/d/pyqode.python/badge.png
+    :target: https://crate.io/packages/pyqode.python/
+    :alt: Number of PyPI downloads
+
+.. image:: https://pypip.in/v/pyqode.python/badge.png
+    :target: https://crate.io/packages/pyqode.python/
+    :alt: Latest PyPI version
 
 What is pyqode.python?
 -----------------------
@@ -26,7 +32,7 @@ Features:
 License
 -------
 
-pyQode is licensed under the LGPL v3.
+pyQode is licensed under the MIT license.
 
 Requirements
 ------------
@@ -80,6 +86,7 @@ Resources
 -  `Downloads`_
 -  `Source repository`_
 -  `Wiki`_
+-  `Documentation`_
 
 .. _Downloads: https://github.com/ColinDuquesnoy/pyqode.python/releases
 .. _Source repository: https://github.com/ColinDuquesnoy/pyqode.python/
@@ -87,8 +94,9 @@ Resources
 
 
 .. _official pyqode extension package: https://github.com/ColinDuquesnoy/pyqode.core/wiki/Extensions#official-packages
-.. _pyQode: https://github.com/ColinDuquesnoy/pyqode.core
+.. _pyQode: https://github.com/ColinDuquesnoy/pyqode.python
 .. _Jedi: https://github.com/davidhalter/jedi
+.. _`Documentation`: http://pyqodepython.readthedocs.org/en/latest/
 
 
 Change log
