@@ -27,7 +27,6 @@
 Contains the JediCompletionProvider class implementation.
 """
 import os
-import jedi
 import sys
 
 from pyqode.core import CompletionProvider, logger
@@ -72,6 +71,7 @@ class JediCompletionProvider(CompletionProvider):
         parent directory to :py:attr:`sys.path` (if addToPath is True)
         """
         try:
+            import jedi
             if self.addToPath:
                 dir = os.path.dirname(filePath)
                 sys.path.append(dir)
@@ -87,6 +87,7 @@ class JediCompletionProvider(CompletionProvider):
         Completes python code using `jedi`_.
         """
         try:
+            import jedi
             retVal = []
             script = jedi.Script(code, line, column,
                                  "", fileEncoding)

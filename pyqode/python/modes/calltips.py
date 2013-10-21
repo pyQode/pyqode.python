@@ -27,7 +27,6 @@
 Contains the JediCompletionProvider class implementation.
 """
 import os
-import jedi
 from pyqode.core import Mode, DelayJobRunner, logger, constants
 from pyqode.core import CodeCompletionMode
 from pyqode.qt import QtCore, QtGui
@@ -42,6 +41,7 @@ class CalltipsWorker(object):
         self.encoding = encoding
 
     def __call__(self, *args, **kwargs):
+        import jedi
         script = jedi.Script(self.code, self.line, self.col, self.path,
                              self.encoding)
         signatures = script.call_signatures()
