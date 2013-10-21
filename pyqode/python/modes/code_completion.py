@@ -86,6 +86,7 @@ class JediCompletionProvider(CompletionProvider):
         """
         Completes python code using `jedi`_.
         """
+        retVal = []
         try:
             import jedi
             retVal = []
@@ -114,6 +115,8 @@ class JediCompletionProvider(CompletionProvider):
                                    suggestionType)
                 retVal.append(Completion(completion.name, icon=icon,
                                          tooltip=desc.split(':')[1]))
+        except ImportError:
+            logger.error("Failed to import jedi. Check your jedi installation")
         except Exception as e:
             logger.error("Jedi failed to provide completions. Error: %s" % e)
         return retVal
