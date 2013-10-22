@@ -141,37 +141,40 @@ class JediCompletionProvider(CompletionProvider):
         """
         retVal = []
         try:
-            import jedi
-            retVal = []
-            script = jedi.Script(code, line, column,
-                                 "", fileEncoding)
-            logger.debug("Running Jedi")
-            completions = script.completions()
-            logger.debug("Jedi finished")
-            for completion in completions:
-                # get type from description
-                desc = completion.description
-                suggestionType = desc.split(':')[0].upper()
-                # get the associated icon if any
-                icon = None
-                if (suggestionType == "FORFLOW" or
-                        suggestionType == "STATEMENT"):
-                    suggestionType = "PARAM"
-                if suggestionType == "PARAM" or suggestionType == "FUNCTION":
-                    if completion.name.startswith("__"):
-                        suggestionType += "-PRIV"
-                    elif completion.name.startswith("_"):
-                        suggestionType += "-PROT"
-                # print(completion, desc)
-                if suggestionType in ICONS:
-                    icon = ICONS[suggestionType]
-                else:
-                    logger.warning("Unimplemented completion type: %s" %
-                                   suggestionType)
-                retVal.append(Completion(completion.name, icon=icon,
-                                         tooltip=desc.split(':')[1]))
-        except ImportError:
-            logger.error("Failed to import jedi. Check your jedi installation")
+            try:
+                import jedi
+            except ImportError:
+                logger.error("Failed to import jedi. Check your jedi "
+                             "installation")
+            else:
+                retVal = []
+                script = jedi.Script(code, line, column,
+                                     "", fileEncoding)
+                logger.debug("Running Jedi")
+                completions = script.completions()
+                logger.debug("Jedi finished")
+                for completion in completions:
+                    # get type from description
+                    desc = completion.description
+                    suggestionType = desc.split(':')[0].upper()
+                    # get the associated icon if any
+                    icon = None
+                    if (suggestionType == "FORFLOW" or
+                            suggestionType == "STATEMENT"):
+                        suggestionType = "PARAM"
+                    if suggestionType == "PARAM" or suggestionType == "FUNCTION":
+                        if completion.name.startswith("__"):
+                            suggestionType += "-PRIV"
+                        elif completion.name.startswith("_"):
+                            suggestionType += "-PROT"
+                    # print(completion, desc)
+                    if suggestionType in ICONS:
+                        icon = ICONS[suggestionType]
+                    else:
+                        logger.warning("Unimplemented completion type: %s" %
+                                       suggestionType)
+                    retVal.append(Completion(completion.name, icon=icon,
+                                             tooltip=desc.split(':')[1]))
         except Exception as e:
             logger.error("Jedi failed to provide completions. Error: %s" % e)
         return retVal
