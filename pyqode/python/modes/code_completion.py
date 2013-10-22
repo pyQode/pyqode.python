@@ -30,7 +30,7 @@ import os
 import sys
 
 from pyqode.core import CompletionProvider, logger
-from pyqode.core import Completion
+from pyqode.core import Completion, CodeCompletionMode
 
 
 #: Default icons
@@ -46,6 +46,59 @@ ICONS = {'CLASS': ':/pyqode_python_icons/rc/class.png',
          'FUNCTION': ':/pyqode_python_icons/rc/func.png',
          'FUNCTION-PRIV': ':/pyqode_python_icons/rc/func_priv.png',
          'FUNCTION-PROT': ':/pyqode_python_icons/rc/func_prot.png'}
+
+
+class AddSysPathWorker(object):
+    def __init__(self, path):
+        self.path = path
+
+    def __call__(self, *args, **kwargs):
+        import sys
+        sys.path.insert(0, self.path)
+
+class RemoveSysPathWorker(object):
+    def __init__(self, path):
+        self.path = path
+
+    def __call__(self, *args, **kwargs):
+        import sys
+        sys.path.remove(self.path)
+
+
+class PrintSysPathWorker(object):
+    def __call__(self, *args, **kwargs):
+        import sys
+        print(sys.path)
+
+
+class PyCodeCompletionMode(CodeCompletionMode):
+    """
+    Extends CodeCompletionMode to add a few utility methods to easily
+    interoperates with the code completion subprocess.
+    """
+    @classmethod
+    def appendToSrvSysPath(cls, path):
+        """
+        Inserts a path in sys.modules on the server subprocess.
+        """
+        w = AddSysPathWorker(path)
+        cls.SERVER.requestWork(w, w)
+
+    @classmethod
+    def removeFromSrvSysPath(cls, path):
+        """
+        Removes the path from sys.path on the server subprocess.
+        """
+        w = RemoveSysPathWorker(path)
+        cls.SERVER.requestWork(w, w)
+
+    @classmethod
+    def printSrvSysPath(cls, path):
+        """
+        Prints the subprocess sys.path
+        """
+        w = PrintSysPathWorker()
+        cls.SERVER.requestWork(w, w)
 
 
 class JediCompletionProvider(CompletionProvider):
@@ -92,7 +145,9 @@ class JediCompletionProvider(CompletionProvider):
             retVal = []
             script = jedi.Script(code, line, column,
                                  "", fileEncoding)
+            logger.debug("Running Jedi")
             completions = script.completions()
+            logger.debug("Jedi finished")
             for completion in completions:
                 # get type from description
                 desc = completion.description

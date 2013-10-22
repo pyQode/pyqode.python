@@ -33,7 +33,7 @@ from pyqode.qt import QtCore, QtGui
 
 # public API
 from pyqode.python.modes import CalltipsMode
-from pyqode.python.modes import JediCompletionProvider
+from pyqode.python.modes import PyCodeCompletionMode, JediCompletionProvider
 from pyqode.python.modes import PEP8CheckerMode
 from pyqode.python.modes import PyAutoIndentMode
 from pyqode.python.modes import PyFlakesCheckerMode
@@ -104,7 +104,7 @@ class QPythonCodeEdit(pyqode.core.QCodeEdit):
         #self.preLoadPanel.setVisible(False)
         self.installMode(pyqode.core.CaretLineHighlighterMode())
         self.installMode(pyqode.core.RightMarginMode())
-        self.installMode(pyqode.core.CodeCompletionMode())
+        self.installMode(PyCodeCompletionMode())
         self.codeCompletionMode.addCompletionProvider(
             JediCompletionProvider(addToPath=addToPath))
         self.codeCompletionMode.addCompletionProvider(
@@ -205,7 +205,8 @@ def setLightColorScheme(codeEdit):
     codeEdit.style = style
 
 
-__all__ = ["PEP8CheckerMode", 'PyHighlighterMode', 'PyAutoIndentMode',
+__all__ = ["PyCodeCompletionMode", "PEP8CheckerMode", 'PyHighlighterMode',
+           'PyAutoIndentMode',
            "CalltipsMode", "JediCompletionProvider", "PyFlakesCheckerMode",
            "PyIndenterMode", "PreLoadPanel", "__version__", "QPythonCodeEdit",
            "setLightColorScheme", "setDarkColorScheme",

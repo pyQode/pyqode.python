@@ -27,6 +27,7 @@
 Contains python specific modes
 """
 from pyqode.python.modes.calltips import CalltipsMode
+from pyqode.python.modes.code_completion import PyCodeCompletionMode
 from pyqode.python.modes.code_completion import JediCompletionProvider
 from pyqode.python.modes.pep8_checker import PEP8CheckerMode
 from pyqode.python.modes.autoindent import PyAutoIndentMode
@@ -37,6 +38,7 @@ from pyqode.python.modes.syntax_highlighter import DEFAULT_DARK_STYLES
 from pyqode.python.modes.syntax_highlighter import DEFAULT_LIGHT_STYLES
 
 
-__all__ = ["CalltipsMode", "JediCompletionProvider", "PEP8CheckerMode",
+__all__ = ["CalltipsMode", "PyCodeCompletionMode",
+           "JediCompletionProvider", "PEP8CheckerMode",
            "PyAutoIndentMode", "PyFlakesCheckerMode", "PyIndenterMode"
            "PyHighlighterMode", "DEFAULT_DARK_STYLES", "DEFAULT_LIGHT_STYLES"]
