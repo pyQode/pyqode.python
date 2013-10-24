@@ -32,6 +32,7 @@ import pyqode.core
 from pyqode.qt import QtCore, QtGui
 
 # public API
+from pyqode.python.modes import PyAutoCompleteMode
 from pyqode.python.modes import CalltipsMode
 from pyqode.python.modes import PyCodeCompletionMode, JediCompletionProvider
 from pyqode.python.modes import PEP8CheckerMode
@@ -68,6 +69,7 @@ class QPythonCodeEdit(pyqode.core.QCodeEdit):
         * :class:`pyqode.core.CodeCompletionMode` + :class:`pyqode.python.JediCompletionProvider` and :class:`pyqode.core.DocumentWordCompletionProvider`
         * :class:`pyqode.core.ZoomMode`
         * :class:`pyqode.core.SymbolMatcherMode`
+        * :class:`pyqode.python.PyAutoCompleteMode`
         * :class:`pyqode.python.PyHighlighterMode`
         * :class:`pyqode.python.PyAutoIndentMode`
         * :class:`pyqode.python.PyFlakesCheckerMode`
@@ -113,6 +115,7 @@ class QPythonCodeEdit(pyqode.core.QCodeEdit):
         #self.installMode(pyqode.core.FileWatcherMode())
         self.installMode(pyqode.core.SymbolMatcherMode())
         self.installMode(PyHighlighterMode(self.document()))
+        self.installMode(PyAutoCompleteMode())
         self.installMode(PyAutoIndentMode())
         self.installMode(PyFlakesCheckerMode())
         self.installMode(PEP8CheckerMode())
