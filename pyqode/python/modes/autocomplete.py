@@ -45,12 +45,10 @@ class PyAutoCompleteMode(AutoCompleteMode):
         parameters = ""
         l = self.editor.cursorPosition[0] - 1
         c = indent + len("def ") + 1
-        print("D:", l, c)
         script = jedi.Script(self.editor.toPlainText(), l, c,
                              self.editor.filePath,
                              self.editor.fileEncoding)
         definition = script.goto_definitions()[0]
-        print(definition)
         for defined_name in definition.defined_names():
             if defined_name.name != "self":
                 parameters += "\n{1}:param {0}:".format(
