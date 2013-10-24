@@ -80,9 +80,10 @@ class CalltipsMode(Mode, QtCore.QObject):
             if state:
                 self.editor.keyReleased.connect(self.__onKeyReleased)
 
-                CodeCompletionMode.SERVER.signals.workCompleted.connect(
-                    self.__onWorkFinished)
-            else:
+                if CodeCompletionMode.SERVER:
+                    CodeCompletionMode.SERVER.signals.workCompleted.connect(
+                        self.__onWorkFinished)
+            elif CodeCompletionMode.SERVER:
                 CodeCompletionMode.SERVER.signals.workCompleted.disconnect(
                     self.__onWorkFinished)
 
