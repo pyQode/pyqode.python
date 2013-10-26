@@ -42,6 +42,7 @@ from pyqode.python.modes import PyHighlighterMode
 from pyqode.python.modes import PyIndenterMode
 from pyqode.python.modes import DEFAULT_DARK_STYLES
 from pyqode.python.modes import DEFAULT_LIGHT_STYLES
+from pyqode.python.modes import GoToAssignmentsMode
 from pyqode.python.panels import PreLoadPanel
 
 
@@ -114,6 +115,7 @@ class QPythonCodeEdit(pyqode.core.QCodeEdit):
         self.installMode(pyqode.core.ZoomMode())
         #self.installMode(pyqode.core.FileWatcherMode())
         self.installMode(pyqode.core.SymbolMatcherMode())
+        self.installMode(pyqode.core.WordClickMode())
         self.installMode(PyHighlighterMode(self.document()))
         self.installMode(PyAutoCompleteMode())
         self.installMode(PyAutoIndentMode())
@@ -121,6 +123,7 @@ class QPythonCodeEdit(pyqode.core.QCodeEdit):
         self.installMode(PEP8CheckerMode())
         self.installMode(CalltipsMode())
         self.installMode(PyIndenterMode())
+        self.installMode(GoToAssignmentsMode())
 
     @QtCore.Slot()
     def useDarkStyle(self, use=True):
@@ -209,7 +212,7 @@ def setLightColorScheme(codeEdit):
 
 
 __all__ = ["PyCodeCompletionMode", "PEP8CheckerMode", 'PyHighlighterMode',
-           'PyAutoIndentMode',
+           'PyAutoIndentMode', "GoToAssignmentsMode",
            "CalltipsMode", "JediCompletionProvider", "PyFlakesCheckerMode",
            "PyIndenterMode", "PreLoadPanel", "__version__", "QPythonCodeEdit",
            "setLightColorScheme", "setDarkColorScheme",

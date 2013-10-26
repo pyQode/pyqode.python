@@ -37,9 +37,10 @@ from pyqode.python.modes.pyflakes_checker import PyFlakesCheckerMode
 from pyqode.python.modes.syntax_highlighter import PyHighlighterMode
 from pyqode.python.modes.syntax_highlighter import DEFAULT_DARK_STYLES
 from pyqode.python.modes.syntax_highlighter import DEFAULT_LIGHT_STYLES
+from pyqode.python.modes.gotoassignements import GoToAssignmentsMode
 
 
 __all__ = ["PyAutoCompleteMode", "CalltipsMode", "PyCodeCompletionMode",
-           "JediCompletionProvider", "PEP8CheckerMode",
+           "JediCompletionProvider", "PEP8CheckerMode", "GoToAssignmentsMode",
            "PyAutoIndentMode", "PyFlakesCheckerMode", "PyIndenterMode"
            "PyHighlighterMode", "DEFAULT_DARK_STYLES", "DEFAULT_LIGHT_STYLES"]
