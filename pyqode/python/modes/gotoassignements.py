@@ -67,7 +67,6 @@ class _Worker(object):
                 ret_val = [Definition(d.module_path, d.line, d.column,
                                       d.full_name)
                            for d in definitions]
-                logger.error("Send %r" % ret_val)
                 return ret_val
 
 
@@ -149,7 +148,6 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
 
     def _onWorkFinished(self, caller_id, worker, definitions):
         if caller_id == id(self) and isinstance(worker, _Worker):
-            logger.error("Got results")
             self.editor.setCursor(QtCore.Qt.IBeamCursor)
             self._pending = False
             definitions = self._makeUnique(definitions)
