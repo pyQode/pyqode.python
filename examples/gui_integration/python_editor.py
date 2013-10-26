@@ -51,12 +51,20 @@ class PythonEditorWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.setupStylesMenu()
         self.setupModesMenu()
         self.setupPanelsMenu()
+        self.editor.gotoAssignmentsMode.outOfDocument.connect(
+            self.onOutOfDocument)
         try:
             self.editor.openFile(__file__)
         except (OSError, IOError):
             pass
         except AttributeError:
             pass
+
+    def onOutOfDocument(self, definition):
+        QtGui.QMessageBox.warning(self, "Out of document",
+                                  "%s is defined out of the current document. "
+                                  "An IDE will typically open a new tab." %
+                                  definition.full_name)
 
     def setupStylesMenu(self):
         group = QtGui.QActionGroup(self)
