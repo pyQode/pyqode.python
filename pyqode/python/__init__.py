@@ -34,6 +34,7 @@ from pyqode.qt import QtCore, QtGui
 # public API
 from pyqode.python.modes import PyAutoCompleteMode
 from pyqode.python.modes import CalltipsMode
+from pyqode.python.modes import CommentsMode
 from pyqode.python.modes import PyCodeCompletionMode, JediCompletionProvider
 from pyqode.python.modes import PEP8CheckerMode
 from pyqode.python.modes import PyAutoIndentMode
@@ -124,6 +125,7 @@ class QPythonCodeEdit(pyqode.core.QCodeEdit):
         self.installMode(CalltipsMode())
         self.installMode(PyIndenterMode())
         self.installMode(GoToAssignmentsMode())
+        self.installMode(CommentsMode())
 
     @QtCore.Slot()
     def useDarkStyle(self, use=True):
@@ -212,7 +214,7 @@ def setLightColorScheme(codeEdit):
 
 
 __all__ = ["PyCodeCompletionMode", "PEP8CheckerMode", 'PyHighlighterMode',
-           'PyAutoIndentMode', "GoToAssignmentsMode",
+           'PyAutoIndentMode', "GoToAssignmentsMode", "CommentsMode",
            "CalltipsMode", "JediCompletionProvider", "PyFlakesCheckerMode",
            "PyIndenterMode", "PreLoadPanel", "__version__", "QPythonCodeEdit",
            "setLightColorScheme", "setDarkColorScheme",

@@ -30,6 +30,7 @@ from pyqode.python.modes.autocomplete import PyAutoCompleteMode
 from pyqode.python.modes.calltips import CalltipsMode
 from pyqode.python.modes.code_completion import PyCodeCompletionMode
 from pyqode.python.modes.code_completion import JediCompletionProvider
+from pyqode.python.modes.comments import CommentsMode
 from pyqode.python.modes.pep8_checker import PEP8CheckerMode
 from pyqode.python.modes.autoindent import PyAutoIndentMode
 from pyqode.python.modes.indenter import PyIndenterMode
@@ -42,5 +43,6 @@ from pyqode.python.modes.gotoassignements import GoToAssignmentsMode
 
 __all__ = ["PyAutoCompleteMode", "CalltipsMode", "PyCodeCompletionMode",
            "JediCompletionProvider", "PEP8CheckerMode", "GoToAssignmentsMode",
-           "PyAutoIndentMode", "PyFlakesCheckerMode", "PyIndenterMode"
-           "PyHighlighterMode", "DEFAULT_DARK_STYLES", "DEFAULT_LIGHT_STYLES"]
+           "PyAutoIndentMode", "PyFlakesCheckerMode", "PyIndenterMode",
+           "CommentsMode", "PyHighlighterMode", "DEFAULT_DARK_STYLES",
+           "DEFAULT_LIGHT_STYLES"]
