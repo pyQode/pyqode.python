@@ -26,6 +26,7 @@
 """
 Contains the go to assignments mode.
 """
+import os
 import jedi
 from  pyqode.qt import QtCore, QtGui
 from pyqode.core import Mode, CodeCompletionMode, logger
@@ -33,7 +34,7 @@ from pyqode.core import Mode, CodeCompletionMode, logger
 
 class Definition(object):
     def __init__(self, path, line, column, full_name):
-        self.module_path = path
+        self.module_path = path.replace(".pyc", ".py")
         self.line = line
         self.column = column
         self.full_name = full_name
@@ -120,8 +121,9 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
 
 
     def _goToDefinition(self, definition):
-        pth = definition.module_path
-        if definition.module_path == self.editor.filePath:
+        pth = os.path.normpath(definition.module_path)
+        fp = os.path.normpath(self.editor.filePath.replace(".pyc", ".py"))
+        if definition.module_path == fp:
             line = definition.line
             col = definition.column
             logger.debug("Go to %s" % definition)
