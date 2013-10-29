@@ -33,6 +33,7 @@ import pyqode.core
 from pyqode.qt import QtCore, QtGui
 
 # public API
+from pyqode.python.bootstrapper import Bootstrapper
 from pyqode.python.modes import PyAutoCompleteMode
 from pyqode.python.modes import CalltipsMode
 from pyqode.python.modes import CommentsMode
@@ -230,5 +231,5 @@ __all__ = ["PyCodeCompletionMode", "PEP8CheckerMode", 'PyHighlighterMode',
            'PyAutoIndentMode', "GoToAssignmentsMode", "CommentsMode",
            "CalltipsMode", "JediCompletionProvider", "PyFlakesCheckerMode",
            "PyIndenterMode", "PreLoadPanel", "__version__", "QPythonCodeEdit",
-           "setLightColorScheme", "setDarkColorScheme",
+           "setLightColorScheme", "setDarkColorScheme", "Bootstrapper",
            "DEFAULT_LIGHT_STYLES", "DEFAULT_DARK_STYLES"]
