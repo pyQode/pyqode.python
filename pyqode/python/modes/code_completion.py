@@ -184,5 +184,5 @@ class JediCompletionProvider(CompletionProvider):
                     retVal.append(Completion(completion.name, icon=icon,
                                              tooltip=desc.split(':')[1]))
         except Exception as e:
-            logger.error("Jedi failed to provide completions. Error: %s" % e)
+            logger.exception("JediCompletionProvider: ")
         return retVal
