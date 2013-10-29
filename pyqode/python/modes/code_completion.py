@@ -48,6 +48,25 @@ ICONS = {'CLASS': ':/pyqode_python_icons/rc/class.png',
          'FUNCTION-PROT': ':/pyqode_python_icons/rc/func_prot.png'}
 
 
+def iconFromType(completion, suggestionType):
+        if (suggestionType == "FORFLOW" or
+                    suggestionType == "STATEMENT"):
+            suggestionType = "PARAM"
+        if suggestionType == "PARAM" or suggestionType == "FUNCTION":
+            if completion.name.startswith("__"):
+                suggestionType += "-PRIV"
+            elif completion.name.startswith("_"):
+                suggestionType += "-PROT"
+            # print(completion, desc)
+        if suggestionType in ICONS:
+            icon = ICONS[suggestionType]
+        else:
+            logger.warning("Unimplemented completion type: %s" %
+                           suggestionType)
+            icon = None
+        return icon
+
+
 class AddSysPathWorker(object):
     def __init__(self, path):
         self.path = path
@@ -175,20 +194,7 @@ class JediCompletionProvider(CompletionProvider):
                     suggestionType = desc.split(':')[0].upper()
                     # get the associated icon if any
                     icon = None
-                    if (suggestionType == "FORFLOW" or
-                            suggestionType == "STATEMENT"):
-                        suggestionType = "PARAM"
-                    if suggestionType == "PARAM" or suggestionType == "FUNCTION":
-                        if completion.name.startswith("__"):
-                            suggestionType += "-PRIV"
-                        elif completion.name.startswith("_"):
-                            suggestionType += "-PROT"
-                    # print(completion, desc)
-                    if suggestionType in ICONS:
-                        icon = ICONS[suggestionType]
-                    else:
-                        logger.warning("Unimplemented completion type: %s" %
-                                       suggestionType)
+                    icon = iconFromType(completion, suggestionType)
                     retVal.append(Completion(completion.name, icon=icon,
                                              tooltip=desc.split(':')[1]))
         except Exception as e:
