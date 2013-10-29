@@ -28,6 +28,7 @@ This package contains python specific modes, panels and editor.
 """
 import re
 import sys
+import weakref
 import pyqode.core
 from pyqode.qt import QtCore, QtGui
 
@@ -90,10 +91,12 @@ class QPythonCodeEdit(pyqode.core.QCodeEdit):
     DARK_STYLE = 0
     LIGHT_STYLE = 1
 
-    def __init__(self, parent=None, addToPath=True):
+    def __init__(self, parent=None, addToPath=True, modulesToPreload=None):
         """
         :param addToPath: True to add the open file's parent directory to
                           sys.path so that jedi can complete sibling modules.
+
+        :param modulesToPreload: The list of modules to preload.
         """
         super(QPythonCodeEdit, self).__init__(parent)
         self.setLineWrapMode(self.NoWrap)
@@ -109,8 +112,10 @@ class QPythonCodeEdit(pyqode.core.QCodeEdit):
         self.installMode(pyqode.core.CaretLineHighlighterMode())
         self.installMode(pyqode.core.RightMarginMode())
         self.installMode(PyCodeCompletionMode())
-        self.codeCompletionMode.addCompletionProvider(
-            JediCompletionProvider(addToPath=addToPath))
+        provider = JediCompletionProvider(addToPath=addToPath,
+                                   modules=modulesToPreload)
+        self.codeCompletionMode.addCompletionProvider(provider)
+        self._cc_provider = weakref.ref(provider)
         self.codeCompletionMode.addCompletionProvider(
             pyqode.core.DocumentWordCompletionProvider())
         self.installMode(pyqode.core.ZoomMode())
@@ -126,6 +131,14 @@ class QPythonCodeEdit(pyqode.core.QCodeEdit):
         self.installMode(PyIndenterMode())
         self.installMode(GoToAssignmentsMode())
         self.installMode(CommentsMode())
+
+    def setModulesToPreload(self, modules=None):
+        """
+        Sets the list of modules to preload. This must be called before opening
+        the first file with pyqode. (you can also pass the list of modules to
+        the constructor using the modulesToPreload argument).
+        """
+        self._cc_provider().modules = modules
 
     @QtCore.Slot()
     def useDarkStyle(self, use=True):
