@@ -47,6 +47,7 @@ from pyqode.python.modes import DEFAULT_DARK_STYLES
 from pyqode.python.modes import DEFAULT_LIGHT_STYLES
 from pyqode.python.modes import GoToAssignmentsMode
 from pyqode.python.panels import PreLoadPanel
+from pyqode.python.panels import SymbolBrowserPanel
 
 
 #: pyqode-python version
@@ -108,6 +109,7 @@ class QPythonCodeEdit(pyqode.core.QCodeEdit):
         self.installPanel(pyqode.core.MarkerPanel())
         self.installPanel(pyqode.core.SearchAndReplacePanel(),
                           pyqode.core.PanelPosition.BOTTOM)
+        self.installPanel(SymbolBrowserPanel(), pyqode.core.PanelPosition.TOP)
         #self.installPanel(PreLoadPanel(), pyqode.core.PanelPosition.TOP)
         #self.preLoadPanel.setVisible(False)
         self.installMode(pyqode.core.CaretLineHighlighterMode())
@@ -232,4 +234,5 @@ __all__ = ["PyCodeCompletionMode", "PEP8CheckerMode", 'PyHighlighterMode',
            "CalltipsMode", "JediCompletionProvider", "PyFlakesCheckerMode",
            "PyIndenterMode", "PreLoadPanel", "__version__", "QPythonCodeEdit",
            "setLightColorScheme", "setDarkColorScheme", "Bootstrapper",
+           "SymbolBrowserPanel",
            "DEFAULT_LIGHT_STYLES", "DEFAULT_DARK_STYLES"]
