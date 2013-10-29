@@ -54,7 +54,11 @@ class AddSysPathWorker(object):
 
     def __call__(self, *args, **kwargs):
         import sys
-        sys.path.insert(0, self.path)
+        if isinstance(self.path, list):
+            for p in self.path:
+                sys.path.insert(0, p)
+        else:
+            sys.path.insert(0, self.path)
 
 class RemoveSysPathWorker(object):
     def __init__(self, path):
@@ -62,7 +66,11 @@ class RemoveSysPathWorker(object):
 
     def __call__(self, *args, **kwargs):
         import sys
-        sys.path.remove(self.path)
+        if isinstance(self.path, list):
+            for p in self.path:
+                sys.path.remove(p)
+        else:
+            sys.path.remove(self.path)
 
 
 class PrintSysPathWorker(object):
