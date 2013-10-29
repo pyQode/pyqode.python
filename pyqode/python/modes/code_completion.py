@@ -60,6 +60,7 @@ class AddSysPathWorker(object):
         else:
             sys.path.insert(0, self.path)
 
+
 class RemoveSysPathWorker(object):
     def __init__(self, path):
         self.path = path
@@ -84,6 +85,7 @@ class PyCodeCompletionMode(CodeCompletionMode):
     Extends CodeCompletionMode to add a few utility methods to easily
     interoperates with the code completion subprocess.
     """
+
     @classmethod
     def appendToSrvSysPath(cls, path):
         """
@@ -120,11 +122,13 @@ class JediCompletionProvider(CompletionProvider):
     # before the document words completions.
     PRIORITY = 1
 
-    def __init__(self, addToPath=True):
+    def __init__(self, addToPath=True, modules=None):
         CompletionProvider.__init__(self)
         #: True to add the parent directory of the python module to sys.path.
         #: Default is True.
         self.addToPath = addToPath
+        #: Modules to preload.
+        self.modules = modules
 
     def preload(self, code, filePath, fileEncoding):
         """
@@ -138,6 +142,10 @@ class JediCompletionProvider(CompletionProvider):
                 sys.path.append(dir)
             fn = os.path.splitext(os.path.basename(filePath))[0]
             jedi.api.preload_module(fn)
+            if self.modules and not "preloaded" in self.processDict:
+                logger.debug("Preloading modules %r" % self.modules)
+                jedi.api.preload_module(*self.modules)
+                self.processDict["preloaded"] = True
         except Exception as e:
             logger.error("JediCompletionProvider failed to preload: %s" % e)
         return None
