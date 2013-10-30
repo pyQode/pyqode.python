@@ -72,9 +72,8 @@ class Bootstrapper(QtCore.QObject):
         """
         server = CodeCompletionMode.startCompletionServer()
         server.signals.workCompleted.connect(self._onWorkFinished)
-        if self.modules:
-            server.requestWork(self, PreloadWorker(self.modules))
-            self._start = time.time()
+        server.requestWork(self, PreloadWorker(self.modules))
+        self._start = time.time()
 
     def _onWorkFinished(self, caller_id, worker):
         if caller_id == id(self) and isinstance(worker, PreloadWorker):
