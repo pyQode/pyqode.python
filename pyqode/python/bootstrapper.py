@@ -32,11 +32,20 @@ class PreloadWorker(object):
     def __init__(self, modules):
         self.modules = modules
 
-    def __call__(self, *args, **kwargs):
-        import jedi
+    def __call__(self, conn, *args, **kwargs):
         logger.debug("Boostrapper.preload started: %r" % self.modules)
-        jedi.api.preload_module(*self.modules)
+        for m in self.modules:
+            conn.send("Preloading module %s" % m)
+            self.preload(m)
         logger.debug("Boostrapper.preload finished")
+
+    def preload(self, m):
+        import jedi
+        try:
+            s = "import %s as x; x." % m
+            jedi.Script(s, 1, len(s), None).completions()
+        except :
+            logger.exception("Failed to preload %s" % m)
 
 
 class Bootstrapper(QtCore.QObject):
