@@ -57,7 +57,7 @@ class _Worker(object):
             self.path = path
             self.encoding = encoding
 
-        def __call__(self):
+        def __call__(self, *args):
             script = jedi.Script(self.code, self.line, self.col, self.path,
                                  self.encoding)
             try:
