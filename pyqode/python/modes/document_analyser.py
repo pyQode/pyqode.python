@@ -82,6 +82,8 @@ class DefinedNamesWorker(object):
             d_line, d_column = d.start_pos
             definition = Definition(d.name, iconFromType(d.name, d.type),
                                     d_line, d_column, d.full_name)
+            if d.type.upper() == "IMPORT":
+                definition.name = definition.full_name
             if d.type == "class":
                 sub_definitions = d.defined_names()
                 for sub_d in sub_definitions:
@@ -89,8 +91,8 @@ class DefinedNamesWorker(object):
                     line, column = sub_d.start_pos
                     sub_definition = Definition(
                         sub_d.name, icon, line, column, sub_d.full_name)
-                    if sub_d.full_name == "":
-                        sub_d.full_name = sub_d.name
+                    if sub_definition.full_name == "":
+                        sub_definition.full_name = sub_d.name
                     definition.add_child(sub_definition)
             ret_val.append(definition)
 
@@ -116,18 +118,18 @@ class DocumentAnalyserMode(pyqode.core.Mode, QtCore.QObject):
     whenever the document structure changed.
 
     To keep good performances, the analysis task is run when the application is
-    idle for more than 2 seconds.
+    idle for more than 1 second (by default).
     """
     IDENTIFIER = "documentAnalyserMode"
     DESCRIPTION = "Analysis the document structure on the fly"
 
     documentChanged = QtCore.Signal()
 
-    def __init__(self):
+    def __init__(self, delay=1000):
         pyqode.core.Mode.__init__(self)
         QtCore.QObject.__init__(self)
         self._jobRunner = pyqode.core.DelayJobRunner(self, nbThreadsMax=1,
-                                                     delay=2000)
+                                                     delay=delay)
 
     def _onStateChanged(self, state):
         if state:
