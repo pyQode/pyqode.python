@@ -46,6 +46,7 @@ from pyqode.python.modes import PyIndenterMode
 from pyqode.python.modes import DEFAULT_DARK_STYLES
 from pyqode.python.modes import DEFAULT_LIGHT_STYLES
 from pyqode.python.modes import GoToAssignmentsMode
+from pyqode.python.modes import DocumentAnalyserMode
 from pyqode.python.panels import PreLoadPanel
 from pyqode.python.panels import SymbolBrowserPanel
 
@@ -112,6 +113,7 @@ class QPythonCodeEdit(pyqode.core.QCodeEdit):
         self.installPanel(SymbolBrowserPanel(), pyqode.core.PanelPosition.TOP)
         #self.installPanel(PreLoadPanel(), pyqode.core.PanelPosition.TOP)
         #self.preLoadPanel.setVisible(False)
+        self.installMode(DocumentAnalyserMode())
         self.installMode(pyqode.core.CaretLineHighlighterMode())
         self.installMode(pyqode.core.RightMarginMode())
         self.installMode(PyCodeCompletionMode())
@@ -134,6 +136,7 @@ class QPythonCodeEdit(pyqode.core.QCodeEdit):
         self.installMode(PyIndenterMode())
         self.installMode(GoToAssignmentsMode())
         self.installMode(CommentsMode())
+
 
     def setModulesToPreload(self, modules=None):
         """

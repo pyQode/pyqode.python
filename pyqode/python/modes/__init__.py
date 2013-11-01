@@ -39,6 +39,7 @@ from pyqode.python.modes.syntax_highlighter import PyHighlighterMode
 from pyqode.python.modes.syntax_highlighter import DEFAULT_DARK_STYLES
 from pyqode.python.modes.syntax_highlighter import DEFAULT_LIGHT_STYLES
 from pyqode.python.modes.goto_assignements import GoToAssignmentsMode
+from pyqode.python.modes.document_analyser import DocumentAnalyserMode
 
 
 __all__ = ["PyAutoCompleteMode", "CalltipsMode", "PyCodeCompletionMode",
