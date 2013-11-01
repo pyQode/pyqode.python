@@ -12,7 +12,7 @@ class Definition(object):
         - class
         - method/function
     """
-    def __init__(self, name, icon, line, column):
+    def __init__(self, name, icon, line, column, full_name):
         #: Icon resource name ssociated with the definition, can be None
         self.icon = icon
         #: Definition name (name of the class, method, variable)
@@ -22,15 +22,16 @@ class Definition(object):
         #: The column of the definition in the current editor text
         self.column = column
         #: Symbol name + parent name (for methods and class variables)
-        self.full_name = name
+        self.full_name = full_name
         #: Possible list of children (only classes have children)
         self.children = []
+        if self.full_name == "":
+            self.full_name = self.name
 
     def add_child(self, definition):
         """
         Adds a child definition
         """
-        definition.full_name = "%s.%s" % (self.name, definition.name)
         self.children.append(definition)
 
     def __repr__(self):
@@ -78,15 +79,18 @@ class DefinedNamesWorker(object):
         toplvl_definitions = jedi.defined_names(self.code, self.path,
                                                 self.encoding)
         for d in toplvl_definitions:
+            d_line, d_column = d.start_pos
             definition = Definition(d.name, iconFromType(d.name, d.type),
-                                    d.line, d.column)
+                                    d_line, d_column, d.full_name)
             if d.type == "class":
                 sub_definitions = d.defined_names()
                 for sub_d in sub_definitions:
                     icon = iconFromType(sub_d.name, sub_d.type)
                     line, column = sub_d.start_pos
                     sub_definition = Definition(
-                        sub_d.name, icon, line, column)
+                        sub_d.name, icon, line, column, sub_d.full_name)
+                    if sub_d.full_name == "":
+                        sub_d.full_name = sub_d.name
                     definition.add_child(sub_definition)
             ret_val.append(definition)
 
@@ -99,11 +103,11 @@ class DefinedNamesWorker(object):
             ret_val = None
         else:
             self.processDict["definitions"] = ret_val
-        logger.debug(ret_val)
+            logger.debug("Document structure %r" % ret_val)
         return ret_val
 
 
-class DocumentAnalyserMode(pyqode.core.Mode):
+class DocumentAnalyserMode(pyqode.core.Mode, QtCore.QObject):
     """
     This mode analysis the structure of a document (a tree of
     :class:`pyqode.python.Definition`).
@@ -114,13 +118,14 @@ class DocumentAnalyserMode(pyqode.core.Mode):
     To keep good performances, the analysis task is run when the application is
     idle for more than 2 seconds.
     """
-    IDENTIFIER = "DocumentAnalyserMode"
+    IDENTIFIER = "documentAnalyserMode"
     DESCRIPTION = "Analysis the document structure on the fly"
 
     documentChanged = QtCore.Signal()
 
     def __init__(self):
-        super(DocumentAnalyserMode, self).__init__()
+        pyqode.core.Mode.__init__(self)
+        QtCore.QObject.__init__(self)
         self._jobRunner = pyqode.core.DelayJobRunner(self, nbThreadsMax=1,
                                                      delay=2000)
 
@@ -129,20 +134,20 @@ class DocumentAnalyserMode(pyqode.core.Mode):
             self.editor.textChanged.connect(self._onTextChanged)
             self.editor.newTextSet.connect(self._runAnalysis)
             try:
-                srv = self.editor.codeCompletionMode.SERVER
-            except AttributeError:
-                pass
-            else:
+                srv = pyqode.core.CodeCompletionMode.SERVER
+                if not srv:
+                    srv = pyqode.core.CodeCompletionMode.startCompletionServer()
                 srv.signals.workCompleted.connect(self._onWorkCompleted)
+            except TypeError:
+                pass
         else:
             self.editor.textChanged.disconnect(self._onTextChanged)
             self.editor.newTextSet.disconnect(self._runAnalysis)
             try:
-                srv = self.editor.codeCompletionMode.SERVER
-            except AttributeError:
-                pass
-            else:
+                srv = pyqode.core.CodeCompletionMode.SERVER
                 srv.signals.workCompleted.disconnect(self._onWorkCompleted)
+            except TypeError:
+                pass
 
     def _onTextChanged(self, *args):
         self._jobRunner.requestJob(self._runAnalysis, False)
@@ -160,6 +165,7 @@ class DocumentAnalyserMode(pyqode.core.Mode):
         if caller_id == id(self) and isinstance(worker, DefinedNamesWorker):
             if results is not None:
                 self.results = results
+                logger.debug("Document structure changed")
                 self.documentChanged.emit()
 
     @property
@@ -167,6 +173,10 @@ class DocumentAnalyserMode(pyqode.core.Mode):
         ret_val = []
         for d in self.results:
             ret_val.append(d)
-            for sub_d in d:
-                ret_val.append(sub_d)
+            for sub_d in d.children:
+                nd = Definition(sub_d.name, sub_d.icon, sub_d.line,
+                                sub_d.column, sub_d.full_name)
+                nd.name = "  " + nd.name
+                nd.full_name = "  " + nd.full_name
+                ret_val.append(nd)
         return ret_val
