@@ -173,6 +173,8 @@ class JediCompletionProvider(CompletionProvider):
                 logger.debug("Preloading modules %r" % self.modules)
                 jedi.api.preload_module(*self.modules)
                 self.processDict["preloaded"] = True
+        logger.debug("Preload finished")
+        return []
 
     def complete(self, code, line, column, completionPrefix,
             filePath, fileEncoding):
