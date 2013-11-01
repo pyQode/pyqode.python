@@ -44,10 +44,9 @@ class SymbolBrowserPanel(pyqode.core.Panel):
         self.comboBox.clear()
         self.comboBox.addItem(" < Select a symbol >")
         for d in definitions:
-            if isinstance(d.full_name, list):
-                d.full_name = d.name
-            self.comboBox.addItem(QtGui.QIcon(d.icon), d.full_name, d)
+            self.comboBox.addItem(QtGui.QIcon(d.icon), d.name, d)
         self._definitions = definitions
+        self._syncComboBox(self.editor.cursorPosition[0])
 
     @QtCore.Slot(int)
     def _onDefinitionActivated(self, index):
@@ -55,13 +54,17 @@ class SymbolBrowserPanel(pyqode.core.Panel):
         if definition:
             self.editor.gotoLine(definition.line, column=definition.column)
 
+    def _syncComboBox(self, line):
+        i = -1
+        for i, d in enumerate(reversed(self._definitions)):
+            if d.line <= line:
+                break
+        if i >= 0:
+            index = len(self._definitions) - i
+            self.comboBox.setCurrentIndex(index)
+
     def _onCursorPositionChanged(self):
         line = self.editor.cursorPosition[0]
         if self._prevLine != line:
-            i = -1
-            for i, d in enumerate(reversed(self._definitions)):
-                if d.line <= line:
-                    break
-            if i >= 0:
-                self.comboBox.setCurrentIndex(len(self._definitions) - i)
+            self._syncComboBox(line)
         self._prevLine = line
