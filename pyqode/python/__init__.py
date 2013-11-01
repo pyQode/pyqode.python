@@ -104,6 +104,10 @@ class QPythonCodeEdit(pyqode.core.QCodeEdit):
         super(QPythonCodeEdit, self).__init__(parent)
         self.setLineWrapMode(self.NoWrap)
         self.setWindowTitle("pyQode - Python Editor")
+
+        # install those modes first as they are required by other modes/panels
+        self.installMode(DocumentAnalyserMode())
+
         self.installPanel(pyqode.core.FoldingPanel())
         self.installPanel(pyqode.core.LineNumberPanel(),
                           pyqode.core.PanelPosition.LEFT)
@@ -113,7 +117,6 @@ class QPythonCodeEdit(pyqode.core.QCodeEdit):
         self.installPanel(SymbolBrowserPanel(), pyqode.core.PanelPosition.TOP)
         #self.installPanel(PreLoadPanel(), pyqode.core.PanelPosition.TOP)
         #self.preLoadPanel.setVisible(False)
-        self.installMode(DocumentAnalyserMode())
         self.installMode(pyqode.core.CaretLineHighlighterMode())
         self.installMode(pyqode.core.RightMarginMode())
         self.installMode(PyCodeCompletionMode())
