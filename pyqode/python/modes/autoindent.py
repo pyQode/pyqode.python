@@ -58,6 +58,18 @@ class PyAutoIndentMode(AutoIndentMode):
                 indent += 4 * " "
             elif last_word in ["return", "pass"]:
                 indent = indent[4:]
+            if line.startswith("#"):
+                indent = "#" + indent
+            data = tc.block().userData()
+            nb_open = 0
+            nb_closed = 0
+            for paren in data.parentheses:
+                if paren.character == "(":
+                    nb_open += 1
+                if paren.character == ")":
+                    nb_closed += 1
+            if nb_open > nb_closed:
+                indent += 4 * " "
             tc.setPosition(pos)
             return indent
         return ""
