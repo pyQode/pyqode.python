@@ -59,7 +59,7 @@ class PyAutoIndentMode(AutoIndentMode):
             elif last_word in ["return", "pass"]:
                 indent = indent[4:]
             if line.startswith("#"):
-                indent = "#" + indent
+                indent += "# "
             data = tc.block().userData()
             nb_open = 0
             nb_closed = 0
