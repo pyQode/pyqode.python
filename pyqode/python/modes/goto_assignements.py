@@ -94,6 +94,9 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
         Mode.__init__(self)
         QtCore.QObject.__init__(self)
         self._pending = False
+        self.actionGotoAssignments = QtGui.QAction("Go to assignments", self)
+        self.actionGotoAssignments.setShortcut("F2")
+        self.actionGotoAssignments.triggered.connect(self._onWordClicked)
 
     def _onInstall(self, editor):
         Mode._onInstall(self, editor)
@@ -105,10 +108,16 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
         if state:
             assert hasattr(self.editor, "wordClickMode")
             self.editor.wordClickMode.wordClicked.connect(self._onWordClicked)
+            self.sep = self.editor.addSeparator()
+            self.editor.addAction(self.actionGotoAssignments)
         else:
             self.editor.wordClickMode.wordClicked.disconnect(self._onWordClicked)
+            self.editor.removeAction(self.actionGotoAssignments)
+            self.editor.removeAction(self.sep)
 
-    def _onWordClicked(self, tc):
+    def _onWordClicked(self, tc=None):
+        if not tc:
+            tc = self.editor.selectWordUnderCursor()
         if CodeCompletionMode.SERVER:
             self.editor.setCursor(QtCore.Qt.WaitCursor)
             if not self._pending:
