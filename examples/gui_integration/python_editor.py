@@ -57,13 +57,6 @@ class PythonEditorWindow(QtGui.QMainWindow, Ui_MainWindow):
         # handle assignement that are out of the current document
         self.editor.gotoAssignmentsMode.outOfDocument.connect(
             self.onOutOfDocument)
-        # preload a set of modules and show the preload operation in the
-        # PreLoadPanel
-        self.editor.installPanel(pyqode.python.PreLoadPanel(),
-                                 pyqode.core.PanelPosition.TOP)
-        self.editor.setModulesToPreload(["sys", "os", "pyqode.qt.QtGui",
-                                         "pyqode.qt.QtCore",
-                                         "pyqode.qt.QtGui.QMainWindow"])
         try:
             self.editor.openFile(__file__)
         except (OSError, IOError):
