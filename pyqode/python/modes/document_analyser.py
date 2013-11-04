@@ -134,7 +134,7 @@ class DocumentAnalyserMode(pyqode.core.Mode, QtCore.QObject):
 
     def _onStateChanged(self, state):
         if state:
-            self.editor.textChanged.connect(self._onTextChanged)
+            self.editor.keyPressed.connect(self._onKeyPressed)
             self.editor.newTextSet.connect(self._runAnalysis)
             try:
                 srv = pyqode.core.CodeCompletionMode.SERVER
@@ -144,7 +144,7 @@ class DocumentAnalyserMode(pyqode.core.Mode, QtCore.QObject):
             except TypeError:
                 pass
         else:
-            self.editor.textChanged.disconnect(self._onTextChanged)
+            self.editor.textChanged.disconnect(self._onKeyPressed)
             self.editor.newTextSet.disconnect(self._runAnalysis)
             try:
                 srv = pyqode.core.CodeCompletionMode.SERVER
@@ -152,8 +152,9 @@ class DocumentAnalyserMode(pyqode.core.Mode, QtCore.QObject):
             except TypeError:
                 pass
 
-    def _onTextChanged(self, *args):
-        self._jobRunner.requestJob(self._runAnalysis, False)
+    def _onKeyPressed(self, e):
+        if e.text():
+            self._jobRunner.requestJob(self._runAnalysis, False)
 
     def _runAnalysis(self):
         try:
