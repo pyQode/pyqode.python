@@ -71,27 +71,27 @@ class Bootstrapper(QtCore.QObject):
         """
         Bootstraps code completion.
         """
-        server = CodeCompletionMode.startCompletionServer()
-
         try:
             l = Listener(("localhost", port))
-            l.accept()
         except Exception:
-            finished = True
+            already_running = True
         else:
-            finished = False
+            already_running = False
             l.close()
 
-        if not server:
-            logger.warning("Failed to start completion server")
-            self.preLoadFinished.emit()
-        else:
-            if not finished:
+        print("Finished", already_running)
+
+        if not already_running:
+            server = CodeCompletionMode.startCompletionServer()
+            if not server:
+                logger.warning("Failed to start completion server")
+                self.preLoadFinished.emit()
+            else:
                 server.signals.workCompleted.connect(self._onWorkFinished)
                 server.requestWork(self, PreloadWorker(self.modules))
                 self._start = time.time()
-            else:
-                QtCore.QTimer.singleShot(500, self.preLoadFinished.emit)
+        else:
+            QtCore.QTimer.singleShot(500, self.preLoadFinished.emit)
 
     def _onWorkFinished(self, caller_id, worker):
         if caller_id == id(self) and isinstance(worker, PreloadWorker):
