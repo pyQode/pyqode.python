@@ -49,6 +49,7 @@ from pyqode.python.modes import GoToAssignmentsMode
 from pyqode.python.modes import DocumentAnalyserMode
 from pyqode.python.panels import PreLoadPanel
 from pyqode.python.panels import SymbolBrowserPanel
+from pyqode.python.panels import QuickDocPanel
 
 
 #: pyqode-python version
@@ -138,6 +139,7 @@ class QPythonCodeEdit(pyqode.core.QCodeEdit):
         self.installMode(CalltipsMode())
         self.installMode(PyIndenterMode())
         self.installMode(GoToAssignmentsMode())
+        self.installPanel(QuickDocPanel(), pyqode.core.PanelPosition.BOTTOM)
         self.installMode(CommentsMode())
 
 
