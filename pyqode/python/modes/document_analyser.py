@@ -73,7 +73,7 @@ class DefinedNamesWorker(object):
         self.path = path
         self.encoding = encoding
 
-    def __call__(self, *args, **kwargs):
+    def __call__(self, client, caller_id, **kwargs):
         import jedi
         ret_val = []
         toplvl_definitions = jedi.defined_names(self.code, self.path,
@@ -97,14 +97,15 @@ class DefinedNamesWorker(object):
             ret_val.append(definition)
 
         try:
-            old_definitions = self.processDict["%d_definitions" % id(self)]
+            old_definitions = self.processDict["%d_definitions" % caller_id]
         except KeyError:
             old_definitions = []
 
         if not _compare_definitions(ret_val, old_definitions):
             ret_val = None
+            logger.debug("No changes detected")
         else:
-            self.processDict["%d_definitions" % id(self)] = ret_val
+            self.processDict["%d_definitions" % caller_id] = ret_val
             logger.debug("Document structure %r" % ret_val)
         return ret_val
 
