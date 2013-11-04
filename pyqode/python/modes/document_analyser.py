@@ -97,14 +97,14 @@ class DefinedNamesWorker(object):
             ret_val.append(definition)
 
         try:
-            old_definitions = self.processDict["definitions"]
+            old_definitions = self.processDict["%d_definitions" % id(self)]
         except KeyError:
             old_definitions = []
 
         if not _compare_definitions(ret_val, old_definitions):
             ret_val = None
         else:
-            self.processDict["definitions"] = ret_val
+            self.processDict["%d_definitions" % id(self)] = ret_val
             logger.debug("Document structure %r" % ret_val)
         return ret_val
 
