@@ -24,6 +24,7 @@
 #THE SOFTWARE.
 #
 import time
+from multiprocessing.connection import Listener
 from pyqode.core import CodeCompletionMode, logger
 from pyqode.qt import QtCore
 
@@ -66,14 +67,31 @@ class Bootstrapper(QtCore.QObject):
         super(Bootstrapper, self).__init__()
         self.modules = modules
 
-    def bootstrap(self):
+    def bootstrap(self, port=8080):
         """
         Bootstraps code completion.
         """
         server = CodeCompletionMode.startCompletionServer()
-        server.signals.workCompleted.connect(self._onWorkFinished)
-        server.requestWork(self, PreloadWorker(self.modules))
-        self._start = time.time()
+
+        try:
+            l = Listener(("localhost", port))
+            l.accept()
+        except Exception:
+            finished = True
+        else:
+            finished = False
+            l.close()
+
+        if not server:
+            logger.warning("Failed to start completion server")
+            self.preLoadFinished.emit()
+        else:
+            if not finished:
+                server.signals.workCompleted.connect(self._onWorkFinished)
+                server.requestWork(self, PreloadWorker(self.modules))
+                self._start = time.time()
+            else:
+                QtCore.QTimer.singleShot(500, self.preLoadFinished.emit)
 
     def _onWorkFinished(self, caller_id, worker):
         if caller_id == id(self) and isinstance(worker, PreloadWorker):
