@@ -134,7 +134,7 @@ class DocumentAnalyserMode(pyqode.core.Mode, QtCore.QObject):
 
     def _onStateChanged(self, state):
         if state:
-            self.editor.keyPressed.connect(self._onKeyPressed)
+            self.editor.blockCountChanged.connect(self._onLineCountChanged)
             self.editor.newTextSet.connect(self._runAnalysis)
             try:
                 srv = pyqode.core.CodeCompletionMode.SERVER
@@ -152,9 +152,8 @@ class DocumentAnalyserMode(pyqode.core.Mode, QtCore.QObject):
             except TypeError:
                 pass
 
-    def _onKeyPressed(self, e):
-        if e.text():
-            self._jobRunner.requestJob(self._runAnalysis, False)
+    def _onLineCountChanged(self, e):
+        self._jobRunner.requestJob(self._runAnalysis, False)
 
     def _runAnalysis(self):
         try:
