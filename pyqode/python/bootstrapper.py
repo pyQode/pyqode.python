@@ -79,8 +79,6 @@ class Bootstrapper(QtCore.QObject):
             already_running = False
             l.close()
 
-        print("Finished", already_running)
-
         if not already_running:
             server = CodeCompletionMode.startCompletionServer()
             if not server:
