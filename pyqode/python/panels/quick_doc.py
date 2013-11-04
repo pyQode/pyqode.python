@@ -96,15 +96,18 @@ class QuickDocPanel(pyqode.core.Panel):
 
         self.aQuickDoc.triggered.connect(self._onQuickDoc_triggered)
 
-    def _onInstall(self, editor):
-        super(QuickDocPanel, self)._onInstall(editor)
-        highlight = driftColor(editor.palette().window().color())
+    def _resetStylesheet(self):
+        highlight = driftColor(self.editor.palette().window().color())
         stylesheet = self.STYLESHEET % {
             "tooltip": self.editor.palette().toolTipBase().color().name(),
             "bck": self.editor.palette().window().color().name(),
             "color": self.editor.palette().windowText().color().name(),
             "highlight": highlight.name()}
         self.setStyleSheet(stylesheet)
+
+    def _onInstall(self, editor):
+        super(QuickDocPanel, self)._onInstall(editor)
+        self._resetStylesheet()
         self.setVisible(False)
 
     def _onStateChanged(self, state):
@@ -123,7 +126,7 @@ class QuickDocPanel(pyqode.core.Panel):
     def _onStyleChanged(self, section, key):
         super(QuickDocPanel, self)._onStyleChanged(section, key)
         if key in self._KEYS or not key:
-            self.__resetStylesheet()
+            self._resetStylesheet()
 
     def _onQuickDoc_triggered(self):
         tc = self.editor.selectWordUnderCursor(selectWholeWord=True)
