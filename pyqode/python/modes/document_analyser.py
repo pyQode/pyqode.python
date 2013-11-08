@@ -13,7 +13,7 @@ class Definition(object):
         - method/function
     """
     def __init__(self, name, icon, line, column, full_name):
-        #: Icon resource name ssociated with the definition, can be None
+        #: Icon resource name associated with the definition, can be None
         self.icon = icon
         #: Definition name (name of the class, method, variable)
         self.name = name

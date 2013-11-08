@@ -48,7 +48,7 @@ class CalltipsWorker(object):
         for c in signatures:
             results = [str(c.module.name), str(c.call_name),
                        [str(p.token_list[0]) for p in c.params], c.index,
-                       c.bracket_start]
+                       c.bracket_start, self.col]
             # seems like len of signatures is always 1 when getting calltips
             return results
         return []
@@ -115,7 +115,7 @@ class CalltipsMode(Mode, QtCore.QObject):
                         "call.params": results[2],
                         "call.index": results[3],
                         "call.bracket_start": results[4]}
-                self.tooltipDisplayRequested.emit(call, worker.col)
+                self.tooltipDisplayRequested.emit(call, results[5])
 
     def __isLastCharEndOfWord(self):
         try:
