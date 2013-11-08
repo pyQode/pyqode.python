@@ -36,7 +36,7 @@ class PreloadWorker(object):
     def __call__(self, conn, *args, **kwargs):
         logger.debug("Boostrapper.preload started: %r" % self.modules)
         for m in self.modules:
-            conn.send("Preloading module %s" % m)
+            logger.debug("Preloading module %s" % m)
             self.preload(m)
         logger.debug("Boostrapper.preload finished")
 
