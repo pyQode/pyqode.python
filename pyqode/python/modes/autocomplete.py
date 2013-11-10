@@ -25,6 +25,7 @@
 #
 """ Contains the python autocomplete mode """
 import jedi
+from pyqode.qt import QtGui
 from pyqode.core import AutoCompleteMode
 
 
@@ -82,7 +83,7 @@ class PyAutoCompleteMode(AutoCompleteMode):
 
     def _handleFctDef(self):
         if self._inMethodCall():
-            txt = "self, ):"
+            txt = "self):"
         else:
             txt = "):"
         tc = self.editor.textCursor()
@@ -90,7 +91,7 @@ class PyAutoCompleteMode(AutoCompleteMode):
         tc.movePosition(tc.Left, tc.MoveAnchor, 2)
         self.editor.setTextCursor(tc)
 
-    def _onKeyPressed(self, e):
+    def _onPostKeyPressed(self, e):
         prevLine = self.editor.lineText(self.editor.cursorPosition[0] - 1)
         isBelowFuncOrClassDef = "def" in prevLine or "class" in prevLine
         if (e.text() == '"' and '"""' == self.editor.currentLineText.strip()
@@ -99,4 +100,4 @@ class PyAutoCompleteMode(AutoCompleteMode):
         elif e.text() == "(" and "def" in self.editor.currentLineText:
             self._handleFctDef()
         else:
-            super(PyAutoCompleteMode, self)._onKeyPressed(e)
+            super(PyAutoCompleteMode, self)._onPostKeyPressed(e)
