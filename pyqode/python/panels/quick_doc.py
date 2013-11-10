@@ -24,7 +24,6 @@ class JediDocWorker(object):
             return []
         else:
             ret_val = [d.doc for d in definitions]
-            print(ret_val)
             return ret_val
 
 

@@ -357,8 +357,6 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
             prevState = 0
             wasDocstring = 0
 
-        #print(text, self.previousBlockState(), prevState, wasDocstring)
-
         # single quoted
         if text.startswith("'''") or text.endswith("'''"):
             if prevState == 1:
