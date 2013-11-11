@@ -31,8 +31,6 @@ logging.basicConfig(level=logging.DEBUG)
 import os
 import sys
 from pyqode.qt import QtCore, QtGui
-import pyqode.core
-import pyqode.python
 from ui.python_editor_ui import Ui_MainWindow
 
 
@@ -78,7 +76,7 @@ class PythonEditorWindow(QtGui.QMainWindow, Ui_MainWindow):
         group.triggered.connect(self.changeStyle)
 
     def setupModesMenu(self):
-        for k, v in self.editor.modes().items():
+        for k, v in sorted(self.editor.modes().items()):
             a = QtGui.QAction(self.menuModes)
             a.setText(k)
             a.setCheckable(True)
@@ -88,7 +86,7 @@ class PythonEditorWindow(QtGui.QMainWindow, Ui_MainWindow):
             self.menuModes.addAction(a)
 
     def setupPanelsMenu(self):
-        for zones, panel_dic in self.editor.panels().items():
+        for zones, panel_dic in sorted(self.editor.panels().items()):
             for k, v in panel_dic.items():
                 a = QtGui.QAction(self.menuModes)
                 a.setText(k)
