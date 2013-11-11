@@ -336,12 +336,6 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
         if text.startswith("#"):
             return False
 
-        # check for mutli-line string that is not a docstring (a var)
-        docstring = 0x80
-        if "=" in text:
-            text = text.split("=")[1].strip()
-            docstring = 0
-
         # retrieve value from state, is the previous line a multi-line
         # string or docstring?
         # state is the stored in the two first bits
@@ -356,6 +350,12 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
         if self.previousBlockState() == -1:
             prevState = 0
             wasDocstring = 0
+
+        # check for mutli-line string that is not a docstring (a var)
+        docstring = 0x80
+        if prevState == 0 and "=" in text:
+            text = text.split("=")[1].strip()
+            docstring = 0
 
         # single quoted
         if text.startswith("'''") or text.endswith("'''"):
@@ -388,7 +388,6 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
                 # start of single quoted string/docstring
                 if text.startswith('"""') and text.endswith('"""') and len(text) > 6:
                     state = 0
-
             else:
                 multi = True
                 state = 1
