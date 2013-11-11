@@ -110,10 +110,26 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
             self.editor.wordClickMode.wordClicked.connect(self._onWordClicked)
             self.sep = self.editor.addSeparator()
             self.editor.addAction(self.actionGotoAssignments)
+            if hasattr(self.editor, "codeCompletionMode"):
+                self.editor.codeCompletionMode.preLoadStarted.connect(
+                    self._onPreloadStarted)
+                self.editor.codeCompletionMode.preLoadCompleted.connect(
+                    self._onPreloadCompleted)
         else:
             self.editor.wordClickMode.wordClicked.disconnect(self._onWordClicked)
             self.editor.removeAction(self.actionGotoAssignments)
             self.editor.removeAction(self.sep)
+            if hasattr(self.editor, "codeCompletionMode"):
+                self.editor.codeCompletionMode.preLoadStarted.disconnect(
+                    self._onPreloadStarted)
+                self.editor.codeCompletionMode.preLoadCompleted.disconnect(
+                    self._onPreloadCompleted)
+
+    def _onPreloadStarted(self):
+        self.actionGotoAssignments.setDisabled(True)
+
+    def _onPreloadCompleted(self):
+        self.actionGotoAssignments.setEnabled(True)
 
     def _onWordClicked(self, tc=None):
         if not tc:

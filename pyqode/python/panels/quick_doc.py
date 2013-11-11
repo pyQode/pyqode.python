@@ -114,13 +114,27 @@ class QuickDocPanel(pyqode.core.Panel):
         if state:
             if srv:
                 srv.signals.workCompleted.connect(self._onWorkCompleted)
-            #self.sep = self.editor.addSeparator()
+            if hasattr(self.editor, "codeCompletionMode"):
+                self.editor.codeCompletionMode.preLoadStarted.connect(
+                    self._onPreloadStarted)
+                self.editor.codeCompletionMode.preLoadCompleted.connect(
+                    self._onPreloadCompleted)
             self.editor.addAction(self.aQuickDoc)
         else:
             if srv:
                 srv.signals.workCompleted.discconnect(self._onWorkCompleted)
             self.editor.removeAction(self.aQuickDoc)
-            #self.editor.removeAction(self.sep)
+            if hasattr(self.editor, "codeCompletionMode"):
+                self.editor.codeCompletionMode.preLoadStarted.disconnect(
+                    self._onPreloadStarted)
+                self.editor.codeCompletionMode.preLoadCompleted.disconnect(
+                    self._onPreloadCompleted)
+
+    def _onPreloadStarted(self):
+        self.aQuickDoc.setDisabled(True)
+
+    def _onPreloadCompleted(self):
+        self.aQuickDoc.setEnabled(True)
 
     def _onStyleChanged(self, section, key):
         super(QuickDocPanel, self)._onStyleChanged(section, key)
