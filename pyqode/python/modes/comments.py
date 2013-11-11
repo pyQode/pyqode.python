@@ -33,19 +33,23 @@ class CommentsMode(Mode):
     IDENTIFIER = "commentsMode"
     DESCRIPTION = "Comments/uncomments a set of lines (Ctrl+/)"
 
+    def __init__(self):
+        super(CommentsMode, self).__init__()
+        self.action = QtGui.QAction("Comment/Uncomment", self.editor)
+        self.action.setShortcut("Ctrl+/")
+
     def _onStateChanged(self, state):
         """
         Called when the mode is activated/deactivated
         """
         if state:
-            self.action = QtGui.QAction("Comment/Uncomment", self.editor)
-            self.action.setShortcut("Ctrl+/")
             self.action.triggered.connect(self.comment)
             self.separator = self.editor.addSeparator()
             self.editor.addAction(self.action)
         else:
             self.editor.removeAction(self.action)
             self.editor.removeAction(self.separator)
+            self.action.triggered.disconnect(self.comment)
 
     def comment(self):
         cursor = self.editor.textCursor()

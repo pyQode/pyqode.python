@@ -6,6 +6,16 @@ from pyqode.qt import QtGui, QtCore
 
 
 class SymbolBrowserPanel(pyqode.core.Panel):
+    """
+    Show a combo box with the file definitions.
+    Allow quick navigation in the file and sync with the cursor
+    position.
+    """
+
+    IDENTIFIER = "symbolBrowserPanel"
+
+    DESCRIPTION = __doc__
+
     def __init__(self):
         super(SymbolBrowserPanel, self).__init__()
         self._prevLine = -1
@@ -20,6 +30,7 @@ class SymbolBrowserPanel(pyqode.core.Panel):
         self.comboBox.addItem("Loading symbols...")
 
     def _onStateChanged(self, state):
+        super(SymbolBrowserPanel, self)._onStateChanged(state)
         if state:
             self.editor.cursorPositionChanged.connect(
                 self._onCursorPositionChanged)

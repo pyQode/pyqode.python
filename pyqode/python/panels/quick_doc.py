@@ -66,6 +66,9 @@ class QuickDocPanel(pyqode.core.Panel):
     _KEYS = ["panelBackground", "background", "panelForeground",
              "panelHighlight"]
 
+    IDENTIFIER = "quickDocPanel"
+    DESCRIPTION = "Quickly show the documentation of the symbol under the cursor"
+
     def __init__(self):
         super(QuickDocPanel, self).__init__()
         # layouts
@@ -110,6 +113,7 @@ class QuickDocPanel(pyqode.core.Panel):
         self.setVisible(False)
 
     def _onStateChanged(self, state):
+        super(QuickDocPanel, self)._onStateChanged(state)
         srv = pyqode.core.CodeCompletionMode.SERVER
         if state:
             if srv:
@@ -122,7 +126,7 @@ class QuickDocPanel(pyqode.core.Panel):
             self.editor.addAction(self.aQuickDoc)
         else:
             if srv:
-                srv.signals.workCompleted.discconnect(self._onWorkCompleted)
+                srv.signals.workCompleted.disconnect(self._onWorkCompleted)
             self.editor.removeAction(self.aQuickDoc)
             if hasattr(self.editor, "codeCompletionMode"):
                 self.editor.codeCompletionMode.preLoadStarted.disconnect(

@@ -144,7 +144,7 @@ class DocumentAnalyserMode(pyqode.core.Mode, QtCore.QObject):
             except TypeError:
                 pass
         else:
-            self.editor.textChanged.disconnect(self._onKeyPressed)
+            self.editor.blockCountChanged.disconnect(self._onLineCountChanged)
             self.editor.newTextSet.disconnect(self._runAnalysis)
             try:
                 srv = pyqode.core.CodeCompletionMode.SERVER
