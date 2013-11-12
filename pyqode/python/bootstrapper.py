@@ -39,6 +39,7 @@ class PreloadWorker(object):
             logger.debug("Preloading module %s" % m)
             self.preload(m)
         logger.debug("Boostrapper.preload finished")
+        return []
 
     def preload(self, m):
         import jedi
