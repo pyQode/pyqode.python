@@ -53,7 +53,7 @@ from pyqode.python.panels import QuickDocPanel
 
 
 #: pyqode-python version
-__version__ = "1.0"
+__version__ = "1.1"
 
 
 import pyqode.python.ui.pyqode_python_icons_rc
