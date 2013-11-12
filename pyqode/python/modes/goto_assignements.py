@@ -32,11 +32,18 @@ from  pyqode.qt import QtCore, QtGui
 from pyqode.core import Mode, CodeCompletionMode, logger
 
 
-class Definition(object):
+class Assignment(object):
+    """
+    Assignment definition.
+    """
     def __init__(self, path, line, column, full_name):
+        #: Module path
         self.module_path = path.replace(".pyc", ".py")
+        #: Line number
         self.line = line
+        #: Column number
         self.column = column
+        #: Assignement full name
         self.full_name = full_name
 
     def __str__(self):
@@ -65,7 +72,7 @@ class _Worker(object):
             except jedi.api.NotFoundError:
                 return []
             else:
-                ret_val = [Definition(d.module_path, d.line, d.column,
+                ret_val = [Assignment(d.module_path, d.line, d.column,
                                       d.full_name)
                            for d in definitions]
                 return ret_val
@@ -74,18 +81,18 @@ class _Worker(object):
 class GoToAssignmentsMode(Mode, QtCore.QObject):
     """
     Goes to the assignments (using jedi.Script.goto_assignments). If there are
-    more than one assignements, an input dialog is used to ask the user to
-    choose the desired assignement.
+    more than one assignments, an input dialog is used to ask the user to
+    choose the desired assignment.
 
     This mode will emit :attr:`pyqode.python.GoToAssignmentsMode.outOfDocument`
-    if the definition can not be reached in the current document. IDE will
-    typically open a new editor path and go to the definition.
+    if the definition can not be reached in the current document. IDEs will
+    typically open a new editor tab and go to the definition.
     """
     IDENTIFIER = "gotoAssignmentsMode"
     DESCRIPTION = "Move the text cursor to the symbol assignments/definitions"
 
     #: Signal emitted when the definition cannot be reached in the current edit.
-    outOfDocument = QtCore.Signal(Definition)
+    outOfDocument = QtCore.Signal(Assignment)
 
     #: Signal emitted when no results could be found.
     noResultsFound = QtCore.Signal()
@@ -96,7 +103,7 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
         self._pending = False
         self.actionGotoAssignments = QtGui.QAction("Go to assignments", self)
         self.actionGotoAssignments.setShortcut("F2")
-        self.actionGotoAssignments.triggered.connect(self._onWordClicked)
+        self.actionGotoAssignments.triggered.connect(self.requestGoTo)
 
     def _onInstall(self, editor):
         Mode._onInstall(self, editor)
@@ -107,7 +114,7 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
     def _onStateChanged(self, state):
         if state:
             assert hasattr(self.editor, "wordClickMode")
-            self.editor.wordClickMode.wordClicked.connect(self._onWordClicked)
+            self.editor.wordClickMode.wordClicked.connect(self.requestGoTo)
             self.sep = self.editor.addSeparator()
             self.editor.addAction(self.actionGotoAssignments)
             if hasattr(self.editor, "codeCompletionMode"):
@@ -116,7 +123,7 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
                 self.editor.codeCompletionMode.preLoadCompleted.connect(
                     self._onPreloadCompleted)
         else:
-            self.editor.wordClickMode.wordClicked.disconnect(self._onWordClicked)
+            self.editor.wordClickMode.wordClicked.disconnect(self.requestGoTo)
             self.editor.removeAction(self.actionGotoAssignments)
             self.editor.removeAction(self.sep)
             if hasattr(self.editor, "codeCompletionMode"):
@@ -131,7 +138,15 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
     def _onPreloadCompleted(self):
         self.actionGotoAssignments.setEnabled(True)
 
-    def _onWordClicked(self, tc=None):
+    def requestGoTo(self, tc=None):
+        """
+        Request a go to assignment.
+
+        :param tc: Text cursor which contains the text that we must look for
+                   its assignment. Can be None to go to the text that is under
+                   the text cursor.
+        :type tc: QtGui.QTextCursor
+        """
         if not tc:
             tc = self.editor.selectWordUnderCursor()
         if CodeCompletionMode.SERVER:
@@ -143,7 +158,6 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
                                   self.editor.filePath,
                                   self.editor.fileEncoding))
                 self._pending = True
-
 
     def _goToDefinition(self, definition):
         pth = os.path.normpath(definition.module_path)

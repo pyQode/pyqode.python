@@ -28,7 +28,7 @@ from pyqode.qt import QtGui, QtCore
 
 class CommentsMode(Mode):
     """
-    Mode that allow to comment/uncomment a set of lines.
+    Mode that allow to comment/uncomment a set of lines using Ctrl+/.
     """
     IDENTIFIER = "commentsMode"
     DESCRIPTION = "Comments/uncomments a set of lines (Ctrl+/)"
@@ -52,6 +52,10 @@ class CommentsMode(Mode):
             self.action.triggered.disconnect(self.comment)
 
     def comment(self):
+        """
+        Comments/Uncomments the selected lines or the current lines if there
+        is no selection.
+        """
         cursor = self.editor.textCursor()
         cursor.beginEditBlock()
         sel_start = cursor.selectionStart()

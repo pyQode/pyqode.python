@@ -8,12 +8,12 @@ from pyqode.qt import QtGui, QtCore
 class SymbolBrowserPanel(pyqode.core.Panel):
     """
     Show a combo box with the file definitions.
+
     Allow quick navigation in the file and sync with the cursor
     position.
     """
 
     IDENTIFIER = "symbolBrowserPanel"
-
     DESCRIPTION = __doc__
 
     def __init__(self):

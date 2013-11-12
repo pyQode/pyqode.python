@@ -28,6 +28,10 @@ class JediDocWorker(object):
 
 
 class QuickDocPanel(pyqode.core.Panel):
+    """
+    This panel quickly shows the documentation of the symbol under
+    cursor.
+    """
     STYLESHEET = """
 
     QTextEdit
@@ -66,8 +70,11 @@ class QuickDocPanel(pyqode.core.Panel):
     _KEYS = ["panelBackground", "background", "panelForeground",
              "panelHighlight"]
 
+    #: Mode identifier
     IDENTIFIER = "quickDocPanel"
-    DESCRIPTION = "Quickly show the documentation of the symbol under the cursor"
+
+    #: Mode description
+    DESCRIPTION = __doc__
 
     def __init__(self):
         super(QuickDocPanel, self).__init__()

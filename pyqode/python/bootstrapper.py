@@ -53,11 +53,12 @@ class PreloadWorker(object):
 class Bootstrapper(QtCore.QObject):
     """
     Utility class to help you bootstrap the code completion (if you don't want
-    to use the lazy bootstrap).
+    to use lazy bootstrap).
 
     The bootstrap consists of launching the code completion server and running
     a worker that will pre-load a list of modules.
     """
+
     #: Signal emitted when the preload worker has finished.
     preLoadFinished = QtCore.Signal()
 

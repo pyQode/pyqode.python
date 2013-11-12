@@ -31,15 +31,15 @@ from pyqode.core import AutoCompleteMode
 
 class PyAutoCompleteMode(AutoCompleteMode):
     """
-    Extends the AutoCompleteMode to add support for function docstring and
+    Extends :class:`pyqode.core.AutoCompleteMode` to add support for function docstring and
     method/function call.
 
-    Docstring completion add a `:param` sphinx tag foreach parameter in the
+    Docstring completion adds a `:param` sphinx tag foreach parameter in the
     above function.
 
     Function completion adds "):" to function definition.
 
-    Method completion adds "self, ):" to method definition.
+    Method completion adds "self):" to method definition.
     """
 
     def _formatFuncParams(self, indent):

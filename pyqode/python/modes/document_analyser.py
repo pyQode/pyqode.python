@@ -112,8 +112,8 @@ class DefinedNamesWorker(object):
 
 class DocumentAnalyserMode(pyqode.core.Mode, QtCore.QObject):
     """
-    This mode analysis the structure of a document (a tree of
-    :class:`pyqode.python.Definition`).
+    This mode analyses the structure of a document (a tree of
+    :class:`pyqode.python.modes.document_analyser.Definition`.
 
     :attr:pyqode.python.DocumentAnalyserMode.documentChanged` is emitted
     whenever the document structure changed.
@@ -124,6 +124,7 @@ class DocumentAnalyserMode(pyqode.core.Mode, QtCore.QObject):
     IDENTIFIER = "documentAnalyserMode"
     DESCRIPTION = "Analysis the document structure on the fly"
 
+    #: Signal emitted when the document structure changed.
     documentChanged = QtCore.Signal()
 
     def __init__(self, delay=1000):
@@ -131,6 +132,8 @@ class DocumentAnalyserMode(pyqode.core.Mode, QtCore.QObject):
         QtCore.QObject.__init__(self)
         self._jobRunner = pyqode.core.DelayJobRunner(self, nbThreadsMax=1,
                                                      delay=delay)
+        #: The list of results (elements might have children; this is actually a tree).
+        self.results = []
 
     def _onStateChanged(self, state):
         if state:
@@ -173,6 +176,9 @@ class DocumentAnalyserMode(pyqode.core.Mode, QtCore.QObject):
 
     @property
     def flattenedResults(self):
+        """
+        Flattens the document structure tree as a simple sequential list.
+        """
         ret_val = []
         for d in self.results:
             ret_val.append(d)
