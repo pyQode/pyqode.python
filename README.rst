@@ -104,48 +104,56 @@ Changelog
 
 1.1:
 ***********
-    - New: add the following new modes:
+
+    * **New**: add the following new modes:
+    
         - pyqode.python.PyAutoCompleteMode
+        
         - pyqode.python.CommentsMode
-        - pyqode.python.DocumentAnalyserMode
+        
+        - pyqode.python.DocumentAnalyserModeµ
+
         - pyqode.python.GoToAssignmentsMode
 
-    - New: add the following new panels:
+    * **New**: add the following new panels:
+    
         - pyqode.python.QuickDocPanel
+        
         - pyqode.python.SymbolBrowserPanel
 
-    - New: CodeCompletion: provides method to interact with the subprocess interpreter
+    * **New**: CodeCompletion: provides method to interact with the subprocess interpreter
 
-    - New: Add CodeCompletion preload hooks
+    * **New**: Add CodeCompletion preload hooks
 
-    - New: Add pyqode.python.Boostrapper class to help start the code completion with a list of modules to preload + example with a splash screen.
+    * **New**: Add pyqode.python.Boostrapper class to help start the code completion with a list of modules to preload + example with a splash screen.
 
-    - Fix: Disable actions which depends on preload
+    * **Fix**: Disable actions which depends on preload
 
-    - Fix: Disable code completion in commente and strings
+    * **Fix**: Disable code completion in commente and strings
 
-    - Fix: Better highlighting in docstrings (highlighting was lost when there was an ‘=’ in the docstring.
+    * **Fix**: Better highlighting in docstrings (highlighting was lost when there was an ‘=’ in the docstring.
 
 1.0:
 ***********
+
     Final 1.0 release, add documentation
 
 1.0b3:
 **********
 
-    - fix syntax highlighting bugs with triple quoted string inside comment or
+    * fix syntax highlighting bugs with triple quoted string inside comment or
       string literals
 
-    - fix bugs with designer plugins
+    * fix bugs with designer plugins
 
-    - update code completion provider to use jedi 0.7
+    * update code completion provider to use jedi 0.7
 
-    - many other bug fixes
+    * many other bug fixes
 
 1.0b2:
 ************
 
-    - fix code completion icons path
+    * fix code completion icons path
 
 1.0b:
 ************
