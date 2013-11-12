@@ -24,13 +24,24 @@
 #THE SOFTWARE.
 #
 """
-Integrates the generic editor using the pyQode qt designer plugin.
+Integrates the generic editor using the pyQode qt designer plugin and shows
+how to preload a list of modules and show the corresponding notification.
+
+Preload will speed up code completions with big modules but will take a few
+seconds. During this time, most of the operations are unavailable (
+code completion, go to assignment, doc,...)
+
+Note that this time may be multiplied by a factor of 10 the very first time
+you run a pyqode.python application (up to 1 or 2 minutes on a low performance
+netbook!)
 """
 import logging
 logging.basicConfig(level=logging.DEBUG)
 import os
 import sys
 from pyqode.qt import QtCore, QtGui
+import pyqode.core
+import pyqode.python
 from ui.python_editor_ui import Ui_MainWindow
 
 
@@ -55,6 +66,13 @@ class PythonEditorWindow(QtGui.QMainWindow, Ui_MainWindow):
         # handle assignement that are out of the current document
         self.editor.gotoAssignmentsMode.outOfDocument.connect(
             self.onOutOfDocument)
+        # preload a set of modules and show the preload operation in the
+        # PreLoadPanel
+        self.editor.installPanel(pyqode.python.PreLoadPanel(),
+                                 pyqode.core.PanelPosition.TOP)
+        self.editor.setModulesToPreload(["sys", "os", "pyqode.qt.QtGui",
+                                         "pyqode.qt.QtCore",
+                                         "pyqode.qt.QtGui.QMainWindow"])
         try:
             self.editor.openFile(__file__)
         except (OSError, IOError):

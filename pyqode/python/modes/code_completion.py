@@ -27,11 +27,10 @@
 Contains the JediCompletionProvider class implementation.
 """
 import os
-import jedi
 import sys
 
 from pyqode.core import CompletionProvider, logger
-from pyqode.core import Completion
+from pyqode.core import Completion, CodeCompletionMode
 
 
 #: Default icons
@@ -49,6 +48,90 @@ ICONS = {'CLASS': ':/pyqode_python_icons/rc/class.png',
          'FUNCTION-PROT': ':/pyqode_python_icons/rc/func_prot.png'}
 
 
+def iconFromType(name, type):
+    """
+    Returns the retVal that corresponds to the suggestion.
+    """
+    retVal = None
+    type = type.upper()
+    if type == "FORFLOW" or type == "STATEMENT":
+        type = "PARAM"
+    if type == "PARAM" or type == "FUNCTION":
+        if name.startswith("__"):
+            type += "-PRIV"
+        elif name.startswith("_"):
+            type += "-PROT"
+    if type in ICONS:
+        retVal = ICONS[type]
+    elif type:
+        logger.warning("Unimplemented completion type: %s" %
+                       type)
+    return retVal
+
+
+class AddSysPathWorker(object):
+    def __init__(self, path):
+        self.path = path
+
+    def __call__(self, *args, **kwargs):
+        import sys
+        if isinstance(self.path, list):
+            for p in self.path:
+                sys.path.insert(0, p)
+        else:
+            sys.path.insert(0, self.path)
+
+
+class RemoveSysPathWorker(object):
+    def __init__(self, path):
+        self.path = path
+
+    def __call__(self, *args, **kwargs):
+        import sys
+        if isinstance(self.path, list):
+            for p in self.path:
+                sys.path.remove(p)
+        else:
+            sys.path.remove(self.path)
+
+
+class PrintSysPathWorker(object):
+    def __call__(self, *args, **kwargs):
+        import sys
+        print(sys.path)
+
+
+class PyCodeCompletionMode(CodeCompletionMode):
+    """
+    Extends CodeCompletionMode to add a few utility methods to easily
+    interoperates with the code completion subprocess.
+    """
+
+    @classmethod
+    def appendToSrvSysPath(cls, path):
+        """
+        Inserts a path in sys.modules on the server subprocess.
+        """
+        w = AddSysPathWorker(path)
+        cls.SERVER.requestWork(w, w)
+
+    @classmethod
+    def removeFromSrvSysPath(cls, path):
+        """
+        Removes the path from sys.path on the server subprocess.
+        """
+        w = RemoveSysPathWorker(path)
+        cls.SERVER.requestWork(w, w)
+
+    @classmethod
+    def printSrvSysPath(cls):
+        """
+        Prints the subprocess sys.path
+        """
+        w = PrintSysPathWorker()
+        cls.SERVER.requestWork(w, w)
+
+
 class JediCompletionProvider(CompletionProvider):
     """
     Completion provider using the awesome `jedi`_  library
@@ -60,11 +143,13 @@ class JediCompletionProvider(CompletionProvider):
     # before the document words completions.
     PRIORITY = 1
 
-    def __init__(self, addToPath=True):
+    def __init__(self, addToPath=True, modules=None):
         CompletionProvider.__init__(self)
         #: True to add the parent directory of the python module to sys.path.
         #: Default is True.
         self.addToPath = addToPath
+        #: Modules to preload.
+        self.modules = modules
 
     def preload(self, code, filePath, fileEncoding):
         """
@@ -72,47 +157,48 @@ class JediCompletionProvider(CompletionProvider):
         parent directory to :py:attr:`sys.path` (if addToPath is True)
         """
         try:
+            import jedi
+        except ImportError:
+            logger.error("Failed to import jedi. Check your jedi "
+                         "installation")
+        else:
             if self.addToPath:
                 dir = os.path.dirname(filePath)
                 sys.path.append(dir)
+            # preloads the current file (the one open in the editor)
             fn = os.path.splitext(os.path.basename(filePath))[0]
             jedi.api.preload_module(fn)
-        except Exception as e:
-            logger.error("JediCompletionProvider failed to preload: %s" % e)
-        return None
+            # preloads user defined list of modules
+            if self.modules and not "preloaded" in self.processDict:
+                logger.debug("Preloading modules %r" % self.modules)
+                jedi.api.preload_module(*self.modules)
+                self.processDict["preloaded"] = True
+        logger.debug("Preload finished")
+        return []
 
     def complete(self, code, line, column, completionPrefix,
             filePath, fileEncoding):
         """
         Completes python code using `jedi`_.
         """
+        retVal = []
         try:
-            retVal = []
-            script = jedi.Script(code, line, column,
-                                 "", fileEncoding)
-            completions = script.completions()
+            import jedi
+        except ImportError:
+            logger.error("Failed to import jedi. Check your jedi "
+                         "installation")
+        else:
+            try:
+                script = jedi.Script(code, line, column, filePath, fileEncoding)
+                completions = script.completions()
+            except jedi.NotFoundError:
+                completions = []
             for completion in completions:
-                # get type from description
+                name = completion.name
                 desc = completion.description
-                suggestionType = desc.split(':')[0].upper()
-                # get the associated icon if any
-                icon = None
-                if (suggestionType == "FORFLOW" or
-                        suggestionType == "STATEMENT"):
-                    suggestionType = "PARAM"
-                if suggestionType == "PARAM" or suggestionType == "FUNCTION":
-                    if completion.name.startswith("__"):
-                        suggestionType += "-PRIV"
-                    elif completion.name.startswith("_"):
-                        suggestionType += "-PROT"
-                # print(completion, desc)
-                if suggestionType in ICONS:
-                    icon = ICONS[suggestionType]
-                else:
-                    logger.warning("Unimplemented completion type: %s" %
-                                   suggestionType)
-                retVal.append(Completion(completion.name, icon=icon,
-                                         tooltip=desc.split(':')[1]))
-        except Exception as e:
-            logger.error("Jedi failed to provide completions. Error: %s" % e)
+                # deduce type from description
+                type = desc.split(':')[0]
+                desc = desc.split(':')[1]
+                icon = iconFromType(name, type)
+                retVal.append(Completion(name, icon=icon, tooltip=desc))
         return retVal

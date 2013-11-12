@@ -1,7 +1,7 @@
 Contributing
 ==================
 
-pyqode.core is an open-source project, and it needs your help to go on growing
+pyqode.python is an open-source project, and it needs your help to go on growing
 and improving.
 
 You can contribute in many different ways:

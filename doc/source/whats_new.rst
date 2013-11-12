@@ -15,6 +15,12 @@ for it),...)
 Milestones
 -------------
 
+1.1:
++++++++++++
+
+    Add many new modes and panels and improve the user experience by adding more utility
+    methods and class.
+
 1.0:
 +++++++++++
 

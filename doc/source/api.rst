@@ -22,16 +22,63 @@ QPythonCodeEdit
         Changes the editor style to a dark color scheme similar to QtCreator's
         default color scheme.
 
+Bootstrapper
+-------------------
+
+.. autoclass:: pyqode.python.Bootstrapper
+    :members:
 
 Modes
 -----------
+
+AutoCompleteMode
++++++++++++++++++++
+
+.. autoclass:: pyqode.python.PyAutoCompleteMode
+    :members:
+
 CalltipsMode
 ++++++++++++++++
+
 .. autoclass:: pyqode.python.CalltipsMode
+    :members:
+
+CommentsMode
+++++++++++++++++
+
+.. autoclass:: pyqode.python.CommentsMode
+    :members:
+
+DocumentAnalyser
++++++++++++++++++++++++++
+
+Definition
+**************
+
+.. autoclass:: pyqode.python.modes.document_analyser.Definition
+    :members:
+
+DocumentAnalyserMode
+************************
+.. autoclass:: pyqode.python.DocumentAnalyserMode
+    :members:
+
+GoToAssignmentsMode
++++++++++++++++++++
+
+Assignment
+**************
+.. autoclass:: pyqode.python.modes.goto_assignements.Assignment
+    :members:
+
+GoToAssignmentsMode
+*********************
+.. autoclass:: pyqode.python.GoToAssignmentsMode
     :members:
 
 JediCompletionProvider
 +++++++++++++++++++++++++
+
 .. autoclass:: pyqode.python.JediCompletionProvider
     :members:
 
@@ -124,6 +171,16 @@ PreLoadPanel
 .. autoclass:: pyqode.python.PreLoadPanel
     :members:
 
+SymbolBrowserPanel
++++++++++++++++++++++++
+
+.. autoclass:: pyqode.python.SymbolBrowserPanel
+    :members:
+
+QuickDocPanel
++++++++++++++++
+.. autoclass:: pyqode.python.QuickDocPanel
+    :members:
 
 Utilities
 --------------

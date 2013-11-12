@@ -27,7 +27,6 @@
 Contains the JediCompletionProvider class implementation.
 """
 import os
-import jedi
 from pyqode.core import Mode, DelayJobRunner, logger, constants
 from pyqode.core import CodeCompletionMode
 from pyqode.qt import QtCore, QtGui
@@ -42,13 +41,14 @@ class CalltipsWorker(object):
         self.encoding = encoding
 
     def __call__(self, *args, **kwargs):
+        import jedi
         script = jedi.Script(self.code, self.line, self.col, self.path,
                              self.encoding)
         signatures = script.call_signatures()
         for c in signatures:
             results = [str(c.module.name), str(c.call_name),
                        [str(p.token_list[0]) for p in c.params], c.index,
-                       c.bracket_start]
+                       c.bracket_start, self.col]
             # seems like len of signatures is always 1 when getting calltips
             return results
         return []
@@ -80,9 +80,10 @@ class CalltipsMode(Mode, QtCore.QObject):
             if state:
                 self.editor.keyReleased.connect(self.__onKeyReleased)
 
-                CodeCompletionMode.SERVER.signals.workCompleted.connect(
-                    self.__onWorkFinished)
-            else:
+                if CodeCompletionMode.SERVER:
+                    CodeCompletionMode.SERVER.signals.workCompleted.connect(
+                        self.__onWorkFinished)
+            elif CodeCompletionMode.SERVER:
                 CodeCompletionMode.SERVER.signals.workCompleted.disconnect(
                     self.__onWorkFinished)
 
@@ -114,7 +115,7 @@ class CalltipsMode(Mode, QtCore.QObject):
                         "call.params": results[2],
                         "call.index": results[3],
                         "call.bracket_start": results[4]}
-                self.tooltipDisplayRequested.emit(call, worker.col)
+                self.tooltipDisplayRequested.emit(call, results[5])
 
     def __isLastCharEndOfWord(self):
         try:

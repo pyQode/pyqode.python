@@ -28,12 +28,16 @@ This package contains python specific modes, panels and editor.
 """
 import re
 import sys
+import weakref
 import pyqode.core
 from pyqode.qt import QtCore, QtGui
 
 # public API
+from pyqode.python.bootstrapper import Bootstrapper
+from pyqode.python.modes import PyAutoCompleteMode
 from pyqode.python.modes import CalltipsMode
-from pyqode.python.modes import JediCompletionProvider
+from pyqode.python.modes import CommentsMode
+from pyqode.python.modes import PyCodeCompletionMode, JediCompletionProvider
 from pyqode.python.modes import PEP8CheckerMode
 from pyqode.python.modes import PyAutoIndentMode
 from pyqode.python.modes import PyFlakesCheckerMode
@@ -41,11 +45,15 @@ from pyqode.python.modes import PyHighlighterMode
 from pyqode.python.modes import PyIndenterMode
 from pyqode.python.modes import DEFAULT_DARK_STYLES
 from pyqode.python.modes import DEFAULT_LIGHT_STYLES
+from pyqode.python.modes import GoToAssignmentsMode
+from pyqode.python.modes import DocumentAnalyserMode
 from pyqode.python.panels import PreLoadPanel
+from pyqode.python.panels import SymbolBrowserPanel
+from pyqode.python.panels import QuickDocPanel
 
 
 #: pyqode-python version
-__version__ = "1.0"
+__version__ = "1.1"
 
 
 import pyqode.python.ui.pyqode_python_icons_rc
@@ -68,6 +76,7 @@ class QPythonCodeEdit(pyqode.core.QCodeEdit):
         * :class:`pyqode.core.CodeCompletionMode` + :class:`pyqode.python.JediCompletionProvider` and :class:`pyqode.core.DocumentWordCompletionProvider`
         * :class:`pyqode.core.ZoomMode`
         * :class:`pyqode.core.SymbolMatcherMode`
+        * :class:`pyqode.python.PyAutoCompleteMode`
         * :class:`pyqode.python.PyHighlighterMode`
         * :class:`pyqode.python.PyAutoIndentMode`
         * :class:`pyqode.python.PyFlakesCheckerMode`
@@ -86,38 +95,61 @@ class QPythonCodeEdit(pyqode.core.QCodeEdit):
     DARK_STYLE = 0
     LIGHT_STYLE = 1
 
-    def __init__(self, parent=None, addToPath=True):
+    def __init__(self, parent=None, addToPath=True, modulesToPreload=None):
         """
         :param addToPath: True to add the open file's parent directory to
                           sys.path so that jedi can complete sibling modules.
+
+        :param modulesToPreload: The list of modules to preload.
         """
         super(QPythonCodeEdit, self).__init__(parent)
         self.setLineWrapMode(self.NoWrap)
         self.setWindowTitle("pyQode - Python Editor")
+
+        # install those modes first as they are required by other modes/panels
+        self.installMode(DocumentAnalyserMode())
+
         self.installPanel(pyqode.core.FoldingPanel())
         self.installPanel(pyqode.core.LineNumberPanel(),
                           pyqode.core.PanelPosition.LEFT)
         self.installPanel(pyqode.core.MarkerPanel())
         self.installPanel(pyqode.core.SearchAndReplacePanel(),
                           pyqode.core.PanelPosition.BOTTOM)
+        self.installPanel(SymbolBrowserPanel(), pyqode.core.PanelPosition.TOP)
         #self.installPanel(PreLoadPanel(), pyqode.core.PanelPosition.TOP)
         #self.preLoadPanel.setVisible(False)
         self.installMode(pyqode.core.CaretLineHighlighterMode())
         self.installMode(pyqode.core.RightMarginMode())
-        self.installMode(pyqode.core.CodeCompletionMode())
-        self.codeCompletionMode.addCompletionProvider(
-            JediCompletionProvider(addToPath=addToPath))
+        self.installMode(PyCodeCompletionMode())
+        provider = JediCompletionProvider(addToPath=addToPath,
+                                   modules=modulesToPreload)
+        self.codeCompletionMode.addCompletionProvider(provider)
+        self._cc_provider = weakref.ref(provider)
         self.codeCompletionMode.addCompletionProvider(
             pyqode.core.DocumentWordCompletionProvider())
         self.installMode(pyqode.core.ZoomMode())
         #self.installMode(pyqode.core.FileWatcherMode())
         self.installMode(pyqode.core.SymbolMatcherMode())
+        self.installMode(pyqode.core.WordClickMode())
         self.installMode(PyHighlighterMode(self.document()))
+        self.installMode(PyAutoCompleteMode())
         self.installMode(PyAutoIndentMode())
         self.installMode(PyFlakesCheckerMode())
         self.installMode(PEP8CheckerMode())
         self.installMode(CalltipsMode())
         self.installMode(PyIndenterMode())
+        self.installMode(GoToAssignmentsMode())
+        self.installPanel(QuickDocPanel(), pyqode.core.PanelPosition.BOTTOM)
+        self.installMode(CommentsMode())
+
+
+    def setModulesToPreload(self, modules=None):
+        """
+        Sets the list of modules to preload. This must be called before opening
+        the first file with pyqode. (you can also pass the list of modules to
+        the constructor using the modulesToPreload argument).
+        """
+        self._cc_provider().modules = modules
 
     @QtCore.Slot()
     def useDarkStyle(self, use=True):
@@ -205,8 +237,10 @@ def setLightColorScheme(codeEdit):
     codeEdit.style = style
 
 
-__all__ = ["PEP8CheckerMode", 'PyHighlighterMode', 'PyAutoIndentMode',
+__all__ = ["PyCodeCompletionMode", "PEP8CheckerMode", 'PyHighlighterMode',
+           'PyAutoIndentMode', "GoToAssignmentsMode", "CommentsMode",
            "CalltipsMode", "JediCompletionProvider", "PyFlakesCheckerMode",
            "PyIndenterMode", "PreLoadPanel", "__version__", "QPythonCodeEdit",
-           "setLightColorScheme", "setDarkColorScheme",
+           "setLightColorScheme", "setDarkColorScheme", "Bootstrapper",
+           "SymbolBrowserPanel",
            "DEFAULT_LIGHT_STYLES", "DEFAULT_DARK_STYLES"]
