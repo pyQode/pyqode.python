@@ -190,3 +190,9 @@ Here are a few screenshots to illustrate the python specific features *(all the 
 
 .. image:: https://raw.github.com/ColinDuquesnoy/pyqode.python/master/screenshots/dark_style.png
     :alt: Dark style
+
+
+.. image:: https://d2weczhvl823v0.cloudfront.net/ColinDuquesnoy/pyqode.python/trend.png
+   :alt: Bitdeli badge
+   :target: https://bitdeli.com/free
+
