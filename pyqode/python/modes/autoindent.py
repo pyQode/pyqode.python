@@ -54,7 +54,7 @@ class PyAutoIndentMode(AutoIndentMode):
             full_line = tc.selectedText()
             line = full_line[:col]
             full_line.lstrip()
-            line.lstrip()
+            line = line.lstrip()
             tc.movePosition(QTextCursor.Left, QTextCursor.KeepAnchor, 1)
             if full_line.endswith(":"):
                 kw = ["if", "def", "while", "for", "else", "elif", "except", "finally"]
@@ -101,8 +101,12 @@ class PyAutoIndentMode(AutoIndentMode):
                     indent += 4 * " "
             elif ((nb_open == nb_closed or nb_open == 0) and
                   (len(full_line) - len(line) > 0)):
-                if not "\\" in full_line:
+                if (not "\\" in full_line and not "#" in full_line and
+                        (last_word == " " or last_word == "." or
+                                 last_word == "" or last_word == "and" or
+                                 last_word == "or" or last_word == "in")):
                     pre = "\\"
+                    indent += 4 * " "
             tc.setPosition(pos)
             return pre, indent
         return "", ""
