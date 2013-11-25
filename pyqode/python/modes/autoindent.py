@@ -46,6 +46,15 @@ class PyAutoIndentMode(AutoIndentMode):
         operators = ['.', ',', '+', '-', '/', '*', 'or', 'and']
         return word == " " or word == "" or word in operators
 
+    def inStringDef(self, full_line, column):
+        count = 0
+        last = ""
+        for i in range(column):
+            if full_line[i] == "'" or full_line[i] == '"':
+                count += 1
+                last = full_line[i]
+        return count % 2 != 0, last
+
     def _getIndent(self, tc):
         col = self.editor.cursorPosition[1]
         pos = tc.position()
@@ -74,6 +83,7 @@ class PyAutoIndentMode(AutoIndentMode):
                     l = self.editor.lineText(ln)
                 indent = (len(l) - len(l.lstrip())) * " "
                 indent += 4 * " "
+            # si dans un string
             if line.endswith("\\"):
                 indent += 4 * " "
             elif last_word in ["return", "pass"]:
@@ -109,8 +119,17 @@ class PyAutoIndentMode(AutoIndentMode):
                   (len(full_line) - len(line) > 0)):
                 if (not "\\" in full_line and not "#" in full_line and
                         self.isOperatorOrEmpty(last_word)):
-                    pre = "\\"
+                    pre += "\\"
                     indent += 4 * " "
+
+            inString, lastChar = self.inStringDef(full_line, col)
+            if inString:
+                if ((nb_open == nb_closed or nb_open == 0 or nb_closed == 0)
+                    and (len(full_line) - len(line) > 0)):
+                    pre += "\\"
+                    indent += 4 * " "
+                pre = lastChar + pre
+                indent = indent + lastChar
             tc.setPosition(pos)
             return pre, indent
         return "", ""
