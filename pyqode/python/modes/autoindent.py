@@ -42,6 +42,10 @@ class PyAutoIndentMode(AutoIndentMode):
     def __init__(self):
         super(PyAutoIndentMode, self).__init__()
 
+    def isOperatorOrEmpty(self, word):
+        operators = ['.', ',', '+', '-', '/', '*', 'or', 'and']
+        return word == " " or word == "" or word in operators
+
     def _getIndent(self, tc):
         col = self.editor.cursorPosition[1]
         pos = tc.position()
@@ -95,16 +99,16 @@ class PyAutoIndentMode(AutoIndentMode):
                 if paren.character == ")":
                     nb_closed += 1
             if nb_open > nb_closed:
-                if nb_open - nb_closed <= 1 and ("," in line or last_word == "%"):
+                # align with first parameter
+                if nb_open - nb_closed != 0 and ("," in line or last_word == "%"):
                     indent = (data.parentheses[0].position + 1) * " "
+                # no parameters declare, indent normally
                 else:
                     indent += 4 * " "
-            elif ((nb_open == nb_closed or nb_open == 0) and
+            elif ((nb_open == nb_closed or nb_open == 0 or nb_closed == 0) and
                   (len(full_line) - len(line) > 0)):
                 if (not "\\" in full_line and not "#" in full_line and
-                        (last_word == " " or last_word == "." or
-                                 last_word == "" or last_word == "and" or
-                                 last_word == "or" or last_word == "in")):
+                        self.isOperatorOrEmpty(last_word)):
                     pre = "\\"
                     indent += 4 * " "
             tc.setPosition(pos)
