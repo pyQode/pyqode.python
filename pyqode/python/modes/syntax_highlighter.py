@@ -302,6 +302,8 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
             index = self.docstringPattern.indexIn(text, index + length)
 
     def doHighlightBlock(self, text):
+        usd = self.currentBlock().userData()
+        usd.cc_disabled_zones[:] = []
         if self.match_multiline(text):
             self.highlightSpaces(text)
             self.highlightDocstringTags(text)
@@ -317,9 +319,11 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
                     toApply = self.formatFromWord(word)
                 if toApply:
                     self.setFormat(index, l, self.format(toApply, self.__bck))
+                if fmt == "string":
+                    usd.cc_disabled_zones.append((index, index + l))
+                elif fmt == "comment":
+                    usd.cc_disabled_zones.append((index, pow(2, 32)))
                 index = expression.indexIn(text, index + l)
-                if fmt == "string" or fmt == "comment":
-                    self.setCurrentBlockState(4)
         #Spaces
         self.highlightSpaces(text)
 
@@ -403,6 +407,9 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
                 fmt = "string"
             self.setFormat(len(original_text) - len(text),
                            len(text), self.format(fmt, self.__bck))
+            usd = self.currentBlock().userData()
+            usd.cc_disabled_zones.append((len(original_text) - len(text),
+                                          len(original_text)))
         # takes multi-line type into account
         state |= docstring
         self.setCurrentBlockState(state)
