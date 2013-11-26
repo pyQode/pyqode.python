@@ -92,6 +92,12 @@ class PyAutoCompleteMode(AutoCompleteMode):
         self.editor.setTextCursor(tc)
 
     def _onPostKeyPressed(self, e):
+        # if we are in disabled cc, use the parent implementation
+        column = self.editor.cursorPosition[1]
+        usd = self.editor.textCursor().block().userData()
+        for start, end in usd.cc_disabled_zones:
+            if start <= column < end:
+                return
         prevLine = self.editor.lineText(self.editor.cursorPosition[0] - 1)
         isBelowFuncOrClassDef = "def" in prevLine or "class" in prevLine
         if (e.text() == '"' and '"""' == self.editor.currentLineText.strip()
