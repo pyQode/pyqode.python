@@ -105,7 +105,8 @@ class PyAutoCompleteMode(AutoCompleteMode):
         if (e.text() == '"' and '"""' == self.editor.currentLineText.strip()
                 and isBelowFuncOrClassDef):
             self._insertDocstring(prevLine)
-        elif e.text() == "(" and "def" in self.editor.currentLineText:
+        elif (e.text() == "(" and
+                  self.editor.currentLineText.lstrip().startswith("def ")):
             self._handleFctDef()
         else:
             super(PyAutoCompleteMode, self)._onPostKeyPressed(e)
