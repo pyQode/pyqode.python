@@ -96,7 +96,9 @@ class PyAutoCompleteMode(AutoCompleteMode):
         column = self.editor.cursorPosition[1]
         usd = self.editor.textCursor().block().userData()
         for start, end in usd.cc_disabled_zones:
-            if start <= column < end:
+            if (start <= column < end-1 and
+                    not self.editor.currentLineText.lstrip().startswith(
+                            '"""')):
                 return
         prevLine = self.editor.lineText(self.editor.cursorPosition[0] - 1)
         isBelowFuncOrClassDef = "def" in prevLine or "class" in prevLine
