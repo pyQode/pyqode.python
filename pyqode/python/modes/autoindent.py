@@ -42,9 +42,10 @@ class PyAutoIndentMode(AutoIndentMode):
     def __init__(self):
         super(PyAutoIndentMode, self).__init__()
 
-    def isOperatorOrEmpty(self, word):
-        operators = ['.', ',', '+', '-', '/', '*', 'or', 'and']
-        return word == " " or word == "" or word in operators
+    def isOperator(self, word):
+        operators = ['.', ',', '+', '-', '/', '*', 'or', 'and', "=", "%",
+                     "=="]
+        return word in operators
 
     def inStringDef(self, full_line, column):
         count = 0
@@ -53,9 +54,19 @@ class PyAutoIndentMode(AutoIndentMode):
             if full_line[i] == "'" or full_line[i] == '"':
                 count += 1
                 last = full_line[i]
-        return count % 2 != 0, last
+        count_after_col = 0
+        for i in range(column, len(full_line)):
+            if full_line[i] == "'" or full_line[i] == '"':
+                count_after_col += 1
+        return count % 2 != 0 and count_after_col == 1, last
 
     def _getIndent(self, tc):
+        # if we are in disabled cc, use the parent implementation
+        column = self.editor.cursorPosition[1]
+        usd = self.editor.textCursor().block().userData()
+        for start, end in usd.cc_disabled_zones:
+            if start <= column < end:
+                return super(PyAutoIndentMode, self)._getIndent(tc)
         col = self.editor.cursorPosition[1]
         pos = tc.position()
         if pos != 0 and col != 0:
@@ -102,7 +113,7 @@ class PyAutoIndentMode(AutoIndentMode):
             nb_open = 0
             nb_closed = 0
             for paren in data.parentheses:
-                if paren.position > col - 1:
+                if paren.position >= col and nb_open:
                     break
                 if paren.character == "(":
                     nb_open += 1
@@ -115,16 +126,16 @@ class PyAutoIndentMode(AutoIndentMode):
                 # no parameters declare, indent normally
                 else:
                     indent += 4 * " "
-            elif ((nb_open == nb_closed or nb_open == 0 or nb_closed == 0) and
+            elif ((nb_open == nb_closed or nb_closed == 0) and
                   (len(full_line) - len(line) > 0)):
                 if (not "\\" in full_line and not "#" in full_line and
-                        self.isOperatorOrEmpty(last_word)):
+                        self.isOperator(last_word)):
                     pre += "\\"
                     indent += 4 * " "
 
             inString, lastChar = self.inStringDef(full_line, col)
             if inString:
-                if ((nb_open == nb_closed or nb_open == 0 or nb_closed == 0)
+                if ((nb_open == nb_closed)
                     and (len(full_line) - len(line) > 0)):
                     pre += "\\"
                     indent += 4 * " "
