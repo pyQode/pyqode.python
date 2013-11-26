@@ -408,8 +408,11 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
             self.setFormat(len(original_text) - len(text),
                            len(text), self.format(fmt, self.__bck))
             usd = self.currentBlock().userData()
+            end = pow(2, 32)
+            if not state:
+                end = len(text)
             usd.cc_disabled_zones.append((len(original_text) - len(text),
-                                          len(original_text)))
+                                          end))
         # takes multi-line type into account
         state |= docstring
         self.setCurrentBlockState(state)
