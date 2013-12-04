@@ -44,7 +44,7 @@ else()
     set(DEPENDS "python-pip, python-pyqode.core")
     find_package(PythonInterp 2.7)
     set(CPACK_TARGET_INTERPRETER_VERSION "python")
-    set(PIP "pip-2.7")
+    set(PIP "pip")
 endif()
 
 configure_file(
@@ -86,13 +86,14 @@ if(CMAKE_CPACK_COMMAND AND UNIX)
     set(CPACK_PACKAGE_VENDOR "Colin Duquesnoy")
     set(CPACK_PACKAGE_DISPLAY_NAME "pyqode.core ${VERSION}")
     set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Python extension for pyQode")
-    set(CPACK_PACKAGE_VERSION "${VERSION}")
+    set(CPACK_PACKAGE_VERSION "${VERSION}.4")
     set(CPACK_PACKAGE_VERSION_MAJOR ${VERSION_MAJOR})
     set(CPACK_PACKAGE_VERSION_MINOR ${VERSION_MINOR})
     set(CPACK_PACKAGE_VERSION_PATCH ${VERSION_PATCH})
     set(DEB_LONG_DESCRIPTION
         " DESCRIPION\n ===========\n pyqode.python adds python support to pyQode")
     set(CPACK_RESOURCE_FILE_LICENSE ${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.txt)
+    set(CPACK_DEBIAN_CMAKE_OPTIONS "-DTARGET_PYTHON_3=${TARGET_PYTHON_3}")
 
     # base
     set(CPACK_DEBIAN_BUILD_DEPENDS_UBUNTU debhelper cmake ${CPACK_TARGET_INTERPRETER_VERSION})
