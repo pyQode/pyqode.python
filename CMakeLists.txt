@@ -36,22 +36,24 @@ set( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_LIST_DIR}/cmake )
 # ##############################################################
 
 if(${TARGET_PYTHON_3})
-    set(DEPENDS "python3-pip, python3-pyqode.core")
+    set(DEPENDS "python3-pyqode.core")
     find_package(PythonInterp 3)
     set(CPACK_TARGET_INTERPRETER_VERSION "python3")
     set(PIP "pip-3.3")
+    set(PREDEPENDS "python3-pip")
 else()
-    set(DEPENDS "python-pip, python-pyqode.core")
+    set(DEPENDS "python-pyqode.core")
     find_package(PythonInterp 2.7)
     set(CPACK_TARGET_INTERPRETER_VERSION "python")
     set(PIP "pip")
+    set(PREDEPENDS "python-pip")
 endif()
 
 configure_file(
-  "${PROJECT_SOURCE_DIR}/cmake/postinst.in"
-  "${PROJECT_BINARY_DIR}/postinst"
+  "${PROJECT_SOURCE_DIR}/cmake/preinst.in"
+  "${PROJECT_BINARY_DIR}/preinst"
   )
-execute_process(COMMAND chmod 0755 ${PROJECT_BINARY_DIR}/postinst)
+execute_process(COMMAND chmod 0755 ${PROJECT_BINARY_DIR}/preinst)
 
 # jedi, pyflakes and pep8 are not available as a debian package, we install
 # them using pip as a post install script
@@ -86,7 +88,7 @@ if(CMAKE_CPACK_COMMAND AND UNIX)
     set(CPACK_PACKAGE_VENDOR "Colin Duquesnoy")
     set(CPACK_PACKAGE_DISPLAY_NAME "pyqode.core ${VERSION}")
     set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Python extension for pyQode")
-    set(CPACK_PACKAGE_VERSION "${VERSION}.4")
+    set(CPACK_PACKAGE_VERSION "${VERSION}.10")
     set(CPACK_PACKAGE_VERSION_MAJOR ${VERSION_MAJOR})
     set(CPACK_PACKAGE_VERSION_MINOR ${VERSION_MINOR})
     set(CPACK_PACKAGE_VERSION_PATCH ${VERSION_PATCH})
@@ -125,7 +127,7 @@ if(CMAKE_CPACK_COMMAND AND UNIX)
     endif()
     # The debian generator does not seem to use a correct name for the debian packages
     set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}_${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}_${CPACK_DEBIAN_PACKAGE_ARCHITECTURE}")
-    set(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA "${PROJECT_BINARY_DIR}/postinst;")
+    set(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA "${PROJECT_BINARY_DIR}/preinst;")
 
     include(CPack)
     include(DebSourcePPA)

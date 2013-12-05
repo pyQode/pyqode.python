@@ -123,6 +123,7 @@ foreach(RELEASE ${CPACK_DEBIAN_DISTRIBUTION_RELEASES})
     "\n"
     "Package: ${CPACK_DEBIAN_PACKAGE_NAME}\n"
     "Architecture: any\n"
+    "Pre-Depends: ${PREDEPENDS}\n"
     "Depends: "
     )
 
@@ -250,6 +251,14 @@ foreach(RELEASE ${CPACK_DEBIAN_DISTRIBUTION_RELEASES})
     )
 
   ##############################################################################
+  # preinst
+  set(preinst ${DEBIAN_SOURCE_DIR}/debian/preinst)
+  file(WRITE  ${preinst}
+       "sudo ${PIP} install jedi pep8 pyflakes"
+      )
+  execute_process(COMMAND chmod +x ${preinst})
+
+  ##############################################################################
   # debian/rules
   set(DEBIAN_RULES ${DEBIAN_SOURCE_DIR}/debian/rules)
   file(WRITE ${DEBIAN_RULES}
@@ -270,6 +279,7 @@ foreach(RELEASE ${CPACK_DEBIAN_DISTRIBUTION_RELEASES})
     "binary-arch: build\n"
     "	cd $(BUILDDIR); cmake -DCOMPONENT=Unspecified -DCMAKE_INSTALL_PREFIX=../debian/tmp/usr -P cmake_install.cmake\n"
     "	mkdir -p debian/tmp/DEBIAN\n"
+    "	cp $(BUILDDIR)/preinst debian/tmp/DEBIAN\n"
     "	dpkg-gensymbols -p${CPACK_DEBIAN_PACKAGE_NAME}\n"
     )
 
