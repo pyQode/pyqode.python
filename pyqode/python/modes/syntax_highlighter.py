@@ -303,7 +303,10 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
 
     def doHighlightBlock(self, text):
         usd = self.currentBlock().userData()
-        usd.cc_disabled_zones[:] = []
+        if hasattr(usd, "cc_disabled_zones"):
+            usd.cc_disabled_zones[:] = []
+        else:
+            usd.cc_disabled_zones = []
         if self.match_multiline(text):
             self.highlightSpaces(text)
             self.highlightDocstringTags(text)
