@@ -144,7 +144,7 @@ class DocumentAnalyserMode(pyqode.core.Mode, QtCore.QObject):
                 if not srv:
                     srv = pyqode.core.CodeCompletionMode.startCompletionServer()
                 srv.signals.workCompleted.connect(self._onWorkCompleted)
-            except TypeError:
+            except (TypeError, AttributeError):
                 pass
         else:
             self.editor.blockCountChanged.disconnect(self._onLineCountChanged)
@@ -152,7 +152,7 @@ class DocumentAnalyserMode(pyqode.core.Mode, QtCore.QObject):
             try:
                 srv = pyqode.core.CodeCompletionMode.SERVER
                 srv.signals.workCompleted.disconnect(self._onWorkCompleted)
-            except TypeError:
+            except (TypeError, AttributeError):
                 pass
 
     def _onLineCountChanged(self, e):

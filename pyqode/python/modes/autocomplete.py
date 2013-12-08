@@ -92,12 +92,21 @@ class PyAutoCompleteMode(AutoCompleteMode):
         self.editor.setTextCursor(tc)
 
     def _onPostKeyPressed(self, e):
+        # if we are in disabled cc, use the parent implementation
+        column = self.editor.cursorPosition[1]
+        usd = self.editor.textCursor().block().userData()
+        for start, end in usd.cc_disabled_zones:
+            if (start <= column < end-1 and
+                    not self.editor.currentLineText.lstrip().startswith(
+                            '"""')):
+                return
         prevLine = self.editor.lineText(self.editor.cursorPosition[0] - 1)
         isBelowFuncOrClassDef = "def" in prevLine or "class" in prevLine
         if (e.text() == '"' and '"""' == self.editor.currentLineText.strip()
                 and isBelowFuncOrClassDef):
             self._insertDocstring(prevLine)
-        elif e.text() == "(" and "def" in self.editor.currentLineText:
+        elif (e.text() == "(" and
+                  self.editor.currentLineText.lstrip().startswith("def ")):
             self._handleFctDef()
         else:
             super(PyAutoCompleteMode, self)._onPostKeyPressed(e)

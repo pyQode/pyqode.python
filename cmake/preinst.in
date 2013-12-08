@@ -1,0 +1,9 @@
+#!/bin/sh
+# postinst script for pyqode.python
+# install non debian dependencies
+# using pip
+set -e
+
+sudo @PIP@ install jedi pep8 pyflakes
+
+exit 0
