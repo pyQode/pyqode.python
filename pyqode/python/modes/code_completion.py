@@ -32,6 +32,9 @@ import sys
 from pyqode.core import CompletionProvider, logger
 from pyqode.core import Completion, CodeCompletionMode
 
+from pyqode.core.modes.code_completion import CompletionWorker, PreLoadWorker
+CompletionWorker._slot = "jedi"
+PreLoadWorker._slot = "jedi"
 
 #: Default icons
 from pyqode.core import get_server
@@ -171,10 +174,10 @@ class JediCompletionProvider(CompletionProvider):
             fn = os.path.splitext(os.path.basename(filePath))[0]
             jedi.api.preload_module(fn)
             # preloads user defined list of modules
-            if self.modules and not "preloaded" in self.processDict:
-                logger.debug("Preloading modules %r" % self.modules)
+            if self.modules and not "preloaded" in self.slotDict:
+                logger.info("Preloading modules %r" % self.modules)
                 jedi.api.preload_module(*self.modules)
-                self.processDict["preloaded"] = True
+                self.slotDict["preloaded"] = True
         logger.debug("Preload finished")
         return []
 

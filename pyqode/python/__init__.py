@@ -102,6 +102,7 @@ class QPythonCodeEdit(pyqode.core.QCodeEdit):
 
         :param modulesToPreload: The list of modules to preload.
         """
+        pyqode.core.start_server(slots=["default", "__server__", "jedi"])
         super(QPythonCodeEdit, self).__init__(parent)
         self.setLineWrapMode(self.NoWrap)
         self.setWindowTitle("pyQode - Python Editor")

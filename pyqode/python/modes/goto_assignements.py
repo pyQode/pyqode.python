@@ -28,7 +28,7 @@ Contains the go to assignments mode.
 """
 import os
 import jedi
-from pyqode.core import get_server
+from pyqode.core import get_server, Worker
 from  pyqode.qt import QtCore, QtGui
 from pyqode.core import Mode, CodeCompletionMode, logger
 
@@ -57,26 +57,28 @@ class Assignment(object):
                                                self.column, self.full_name)
 
 
-class _Worker(object):
-        def __init__(self, code, line, column, path, encoding):
-            self.code = code
-            self.line = line
-            self.col = column
-            self.path = path
-            self.encoding = encoding
+class _Worker(Worker):
+    _slot = "jedi"
 
-        def __call__(self, *args):
-            script = jedi.Script(self.code, self.line, self.col, self.path,
-                                 self.encoding)
-            try:
-                definitions = script.goto_assignments()
-            except jedi.api.NotFoundError:
-                return []
-            else:
-                ret_val = [Assignment(d.module_path, d.line, d.column,
-                                      d.full_name)
-                           for d in definitions]
-                return ret_val
+    def __init__(self, code, line, column, path, encoding):
+        self.code = code
+        self.line = line
+        self.col = column
+        self.path = path
+        self.encoding = encoding
+
+    def __call__(self, *args):
+        script = jedi.Script(self.code, self.line, self.col, self.path,
+                             self.encoding)
+        try:
+            definitions = script.goto_assignments()
+        except jedi.api.NotFoundError:
+            return []
+        else:
+            ret_val = [Assignment(d.module_path, d.line, d.column,
+                                  d.full_name)
+                       for d in definitions]
+            return ret_val
 
 
 class GoToAssignmentsMode(Mode, QtCore.QObject):

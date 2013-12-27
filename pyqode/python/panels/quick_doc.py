@@ -9,6 +9,8 @@ from pyqode.qt import QtGui
 
 
 class JediDocWorker(object):
+    _slot = "jedi"
+
     def __init__(self, code, line, col, path, encoding):
         self.code = code
         self.line = line

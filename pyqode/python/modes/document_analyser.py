@@ -1,6 +1,6 @@
 import pyqode.core
 from pyqode.core import logger
-from pyqode.core import get_server, start_server
+from pyqode.core import get_server, start_server, Worker
 from pyqode.python.modes.code_completion import iconFromType
 from pyqode.qt import QtCore
 
@@ -65,10 +65,12 @@ def _compare_definitions(a, b):
         return False
 
 
-class DefinedNamesWorker(object):
+class DefinedNamesWorker(Worker):
     """
     Subprocess worker that analyses the document using *jedi.defined_names()*.
     """
+    _slot = "jedi"
+
     def __init__(self, code, path, encoding):
         self.code = code
         self.path = path
@@ -98,7 +100,7 @@ class DefinedNamesWorker(object):
             ret_val.append(definition)
 
         try:
-            old_definitions = self.processDict["%d_definitions" % caller_id]
+            old_definitions = self.slotDict["%d_definitions" % caller_id]
         except KeyError:
             old_definitions = []
 
@@ -106,7 +108,7 @@ class DefinedNamesWorker(object):
             ret_val = None
             logger.debug("No changes detected")
         else:
-            self.processDict["%d_definitions" % caller_id] = ret_val
+            self.slotDict["%d_definitions" % caller_id] = ret_val
             logger.debug("Document structure %r" % ret_val)
         return ret_val
 

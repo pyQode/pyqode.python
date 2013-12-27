@@ -29,6 +29,7 @@ show a splash screen while preloading.
 """
 import sys
 import logging
+logging.basicConfig(level=logging.INFO)
 import pyqode.core
 import pyqode.python
 from pyqode.qt import QtGui
@@ -60,5 +61,4 @@ def main():
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.DEBUG)
     main()

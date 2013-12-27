@@ -36,7 +36,7 @@ you run a pyqode.python application (up to 1 or 2 minutes on a low performance
 netbook!)
 """
 import logging
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 import os
 import sys
 from pyqode.qt import QtCore, QtGui

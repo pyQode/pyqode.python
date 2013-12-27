@@ -28,12 +28,14 @@ Contains the JediCompletionProvider class implementation.
 """
 import os
 from pyqode.core import Mode, DelayJobRunner, logger, constants
-from pyqode.core import CodeCompletionMode
 from pyqode.core import get_server
+from pyqode.core import Worker
 from pyqode.qt import QtCore, QtGui
 
 
-class CalltipsWorker(object):
+class CalltipsWorker(Worker):
+    _slot = "jedi"
+
     def __init__(self, code, line, col, path, encoding):
         self.code = code
         self.line = line

@@ -25,19 +25,20 @@
 #
 import time
 from multiprocessing.connection import Listener
-from pyqode.core import CodeCompletionMode, logger
-from pyqode.core import start_server, get_server
+from pyqode.core import logger
+from pyqode.core import start_server, get_server, Worker
 from pyqode.qt import QtCore
 
 
-class PreloadWorker(object):
+class PreloadWorker(Worker):
+    _slot = "jedi"
     def __init__(self, modules):
         self.modules = modules
 
     def __call__(self, conn, *args, **kwargs):
         logger.debug("Boostrapper.preload started: %r" % self.modules)
         for m in self.modules:
-            logger.debug("Preloading module %s" % m)
+            logger.info("Preloading module %s" % m)
             self.preload(m)
         logger.debug("Boostrapper.preload finished")
         return []
@@ -63,12 +64,15 @@ class Bootstrapper(QtCore.QObject):
     #: Signal emitted when the preload worker has finished.
     preLoadFinished = QtCore.Signal()
 
-    def __init__(self, modules):
+    def __init__(self, modules, slots=None):
         """
         :param modules: List of modules (strings) to preload.
         """
         super(Bootstrapper, self).__init__()
         self.modules = modules
+        if slots is None:
+            slots = ["default", "__server__", "jedi"]
+        self._slots = slots
 
     def bootstrap(self, port=8080):
         """
@@ -83,7 +87,7 @@ class Bootstrapper(QtCore.QObject):
             l.close()
 
         if not already_running:
-            start_server()
+            start_server(slots=self._slots)
             server = get_server()
             if not server:
                 logger.warning("Failed to start completion server")
