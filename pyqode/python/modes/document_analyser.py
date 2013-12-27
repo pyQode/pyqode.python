@@ -1,5 +1,6 @@
 import pyqode.core
 from pyqode.core import logger
+from pyqode.core.server import get_server, start_server
 from pyqode.python.modes.code_completion import iconFromType
 from pyqode.qt import QtCore
 
@@ -140,9 +141,9 @@ class DocumentAnalyserMode(pyqode.core.Mode, QtCore.QObject):
             self.editor.blockCountChanged.connect(self._onLineCountChanged)
             self.editor.newTextSet.connect(self._runAnalysis)
             try:
-                srv = pyqode.core.CodeCompletionMode.SERVER
+                srv = get_server()
                 if not srv:
-                    srv = pyqode.core.CodeCompletionMode.startCompletionServer()
+                    srv = start_server()
                 srv.signals.workCompleted.connect(self._onWorkCompleted)
             except (TypeError, AttributeError):
                 pass
@@ -150,7 +151,7 @@ class DocumentAnalyserMode(pyqode.core.Mode, QtCore.QObject):
             self.editor.blockCountChanged.disconnect(self._onLineCountChanged)
             self.editor.newTextSet.disconnect(self._runAnalysis)
             try:
-                srv = pyqode.core.CodeCompletionMode.SERVER
+                srv = get_server()
                 srv.signals.workCompleted.disconnect(self._onWorkCompleted)
             except (TypeError, AttributeError):
                 pass
@@ -160,7 +161,7 @@ class DocumentAnalyserMode(pyqode.core.Mode, QtCore.QObject):
 
     def _runAnalysis(self):
         try:
-            srv = self.editor.codeCompletionMode.SERVER
+            srv = get_server()
         except AttributeError:
             pass
         else:

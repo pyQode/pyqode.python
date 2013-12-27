@@ -72,6 +72,7 @@ class PythonEditorWindow(QtGui.QMainWindow, Ui_MainWindow):
         group = QtGui.QActionGroup(self)
         group.addAction(self.actionLight)
         self.actionLight.setChecked(True)
+        self.acceptDrops()
         group.addAction(self.actionDark)
         group.triggered.connect(self.changeStyle)
 

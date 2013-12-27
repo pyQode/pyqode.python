@@ -28,6 +28,7 @@ Contains the go to assignments mode.
 """
 import os
 import jedi
+from pyqode.core.server import get_server
 from  pyqode.qt import QtCore, QtGui
 from pyqode.core import Mode, CodeCompletionMode, logger
 
@@ -107,9 +108,8 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
 
     def _onInstall(self, editor):
         Mode._onInstall(self, editor)
-        if CodeCompletionMode.SERVER:
-            CodeCompletionMode.SERVER.signals.workCompleted.connect(
-                self._onWorkFinished)
+        if get_server():
+            get_server().signals.workCompleted.connect(self._onWorkFinished)
 
     def _onStateChanged(self, state):
         if state:
@@ -149,10 +149,10 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
         """
         if not tc:
             tc = self.editor.selectWordUnderCursor()
-        if CodeCompletionMode.SERVER:
+        if get_server():
             self.editor.setCursor(QtCore.Qt.WaitCursor)
             if not self._pending:
-                CodeCompletionMode.SERVER.requestWork(
+                get_server().requestWork(
                     self, _Worker(self.editor.toPlainText(),
                                   tc.blockNumber()+1, tc.columnNumber(),
                                   self.editor.filePath,

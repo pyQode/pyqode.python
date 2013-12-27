@@ -2,6 +2,7 @@
 Contains the quick documentation panel
 """
 import jedi
+from pyqode.core.server import get_server
 from pyqode.core.system import driftColor
 import pyqode.core
 from pyqode.qt import QtGui
@@ -121,7 +122,7 @@ class QuickDocPanel(pyqode.core.Panel):
 
     def _onStateChanged(self, state):
         super(QuickDocPanel, self)._onStateChanged(state)
-        srv = pyqode.core.CodeCompletionMode.SERVER
+        srv = get_server()
         if state:
             if srv:
                 srv.signals.workCompleted.connect(self._onWorkCompleted)
@@ -157,7 +158,7 @@ class QuickDocPanel(pyqode.core.Panel):
         assert isinstance(tc, QtGui.QTextCursor)
         w = JediDocWorker(self.editor.toPlainText(), tc.blockNumber() + 1,
                     tc.columnNumber(), self.editor.filePath, self.editor.fileEncoding)
-        pyqode.core.CodeCompletionMode.SERVER.requestWork(self, w)
+        get_server().requestWork(self, w)
 
     def _onWorkCompleted(self, caller_id, worker, results):
         if caller_id == id(self) and isinstance(worker, JediDocWorker):

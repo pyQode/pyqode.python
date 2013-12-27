@@ -34,6 +34,8 @@ from pyqode.core import Completion, CodeCompletionMode
 
 
 #: Default icons
+from pyqode.core.server import get_server
+
 ICONS = {'CLASS': ':/pyqode_python_icons/rc/class.png',
          'IMPORT': ':/pyqode_python_icons/rc/namespace.png',
          'STATEMENT': ':/pyqode_python_icons/rc/var.png',
@@ -113,7 +115,7 @@ class PyCodeCompletionMode(CodeCompletionMode):
         Inserts a path in sys.modules on the server subprocess.
         """
         w = AddSysPathWorker(path)
-        cls.SERVER.requestWork(w, w)
+        get_server().requestWork(w, w)
 
     @classmethod
     def removeFromSrvSysPath(cls, path):
@@ -121,7 +123,7 @@ class PyCodeCompletionMode(CodeCompletionMode):
         Removes the path from sys.path on the server subprocess.
         """
         w = RemoveSysPathWorker(path)
-        cls.SERVER.requestWork(w, w)
+        get_server().requestWork(w, w)
 
     @classmethod
     def printSrvSysPath(cls):
@@ -129,7 +131,7 @@ class PyCodeCompletionMode(CodeCompletionMode):
         Prints the subprocess sys.path
         """
         w = PrintSysPathWorker()
-        cls.SERVER.requestWork(w, w)
+        get_server().requestWork(w, w)
 
 
 class JediCompletionProvider(CompletionProvider):

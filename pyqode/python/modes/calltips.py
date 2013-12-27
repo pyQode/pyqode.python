@@ -29,6 +29,7 @@ Contains the JediCompletionProvider class implementation.
 import os
 from pyqode.core import Mode, DelayJobRunner, logger, constants
 from pyqode.core import CodeCompletionMode
+from pyqode.core.server import get_server
 from pyqode.qt import QtCore, QtGui
 
 
@@ -80,11 +81,11 @@ class CalltipsMode(Mode, QtCore.QObject):
             if state:
                 self.editor.keyReleased.connect(self.__onKeyReleased)
 
-                if CodeCompletionMode.SERVER:
-                    CodeCompletionMode.SERVER.signals.workCompleted.connect(
+                if get_server():
+                    get_server().signals.workCompleted.connect(
                         self.__onWorkFinished)
-            elif CodeCompletionMode.SERVER:
-                CodeCompletionMode.SERVER.signals.workCompleted.disconnect(
+            elif get_server():
+                get_server().signals.workCompleted.disconnect(
                     self.__onWorkFinished)
 
     def __onKeyReleased(self, event):
@@ -103,7 +104,7 @@ class CalltipsMode(Mode, QtCore.QObject):
             self.__requestCnt += 1
             logger.debug("Calltip requested")
             worker = CalltipsWorker(*args)
-            CodeCompletionMode.SERVER.requestWork(self, worker)
+            get_server().requestWork(self, worker)
 
     def __onWorkFinished(self, caller_id, worker, results):
         if caller_id == id(self) and isinstance(worker, CalltipsWorker):
