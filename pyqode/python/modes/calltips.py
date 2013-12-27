@@ -29,7 +29,7 @@ Contains the JediCompletionProvider class implementation.
 import os
 from pyqode.core import Mode, DelayJobRunner, logger, constants
 from pyqode.core import CodeCompletionMode
-from pyqode.core.server import get_server
+from pyqode.core import get_server
 from pyqode.qt import QtCore, QtGui
 
 

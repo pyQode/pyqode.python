@@ -34,7 +34,7 @@ from pyqode.core import Completion, CodeCompletionMode
 
 
 #: Default icons
-from pyqode.core.server import get_server
+from pyqode.core import get_server
 
 ICONS = {'CLASS': ':/pyqode_python_icons/rc/class.png',
          'IMPORT': ':/pyqode_python_icons/rc/namespace.png',

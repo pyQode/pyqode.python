@@ -28,7 +28,7 @@ Contains the go to assignments mode.
 """
 import os
 import jedi
-from pyqode.core.server import get_server
+from pyqode.core import get_server
 from  pyqode.qt import QtCore, QtGui
 from pyqode.core import Mode, CodeCompletionMode, logger
 

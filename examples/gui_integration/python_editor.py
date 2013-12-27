@@ -27,7 +27,7 @@
 Integrates the generic editor using the pyQode qt designer plugin.
 """
 import logging
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 import os
 import sys
 from pyqode.qt import QtCore, QtGui

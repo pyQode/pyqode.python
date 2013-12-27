@@ -1,6 +1,6 @@
 import pyqode.core
 from pyqode.core import logger
-from pyqode.core.server import get_server, start_server
+from pyqode.core import get_server, start_server
 from pyqode.python.modes.code_completion import iconFromType
 from pyqode.qt import QtCore
 

@@ -26,7 +26,7 @@
 import time
 from multiprocessing.connection import Listener
 from pyqode.core import CodeCompletionMode, logger
-from pyqode.core.server import start_server, get_server
+from pyqode.core import start_server, get_server
 from pyqode.qt import QtCore
 
 

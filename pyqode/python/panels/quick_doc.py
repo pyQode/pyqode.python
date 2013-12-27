@@ -2,7 +2,7 @@
 Contains the quick documentation panel
 """
 import jedi
-from pyqode.core.server import get_server
+from pyqode.core import get_server
 from pyqode.core.system import driftColor
 import pyqode.core
 from pyqode.qt import QtGui
