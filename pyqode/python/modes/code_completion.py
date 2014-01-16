@@ -49,6 +49,7 @@ ICONS = {'CLASS': ':/pyqode_python_icons/rc/class.png',
          'PARAM-PRIV': ':/pyqode_python_icons/rc/var.png',
          'PARAM-PROT': ':/pyqode_python_icons/rc/var.png',
          'FUNCTION': ':/pyqode_python_icons/rc/func.png',
+         'DEF': ':/pyqode_python_icons/rc/func.png',
          'FUNCTION-PRIV': ':/pyqode_python_icons/rc/func_priv.png',
          'FUNCTION-PROT': ':/pyqode_python_icons/rc/func_prot.png'}
 
