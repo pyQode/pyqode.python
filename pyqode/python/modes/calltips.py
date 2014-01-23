@@ -153,7 +153,7 @@ class CalltipsMode(Mode, QtCore.QObject):
         w_offset = (col - call['call.bracket_start'][1]) * charWidth
         position = QtCore.QPoint(
             self.editor.cursorRect().x() - w_offset,
-            self.editor.cursorRect().y())
+            self.editor.cursorRect().y() + 35)
         position = self.editor.mapToGlobal(position)
         # show tooltip
         QtGui.QToolTip.showText(position, calltip, self.editor)
