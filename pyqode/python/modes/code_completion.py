@@ -76,6 +76,7 @@ def iconFromType(name, type):
 
 
 class AddSysPathWorker(object):
+    _slot = "simple"
     def __init__(self, path):
         self.path = path
 
@@ -89,6 +90,7 @@ class AddSysPathWorker(object):
 
 
 class RemoveSysPathWorker(object):
+    _slot = "simple"
     def __init__(self, path):
         self.path = path
 
@@ -102,6 +104,7 @@ class RemoveSysPathWorker(object):
 
 
 class PrintSysPathWorker(object):
+    _slot = "simple"
     def __call__(self, *args, **kwargs):
         import sys
         print(sys.path)
