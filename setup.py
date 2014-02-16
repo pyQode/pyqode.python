@@ -56,7 +56,7 @@ setup(
     version=read_version(),
     packages=find_packages(),
     keywords=["QCodeEditor PySide PyQt code editor widget python"],
-    package_data={'pyqode.python.ui': ['*.ui', 'rc/*']},
+    # package_data={'pyqode.python.ui': ['*.ui', 'rc/*']},
     package_dir={'pyqode': 'pyqode'},
     url='https://github.com/ColinDuquesnoy/pyqode.python',
     license='MIT',
