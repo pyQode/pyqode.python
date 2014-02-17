@@ -33,6 +33,9 @@ from pyqode.core import CompletionProvider, logger
 from pyqode.core import Completion, CodeCompletionMode
 
 from pyqode.core.modes.code_completion import CompletionWorker, PreLoadWorker
+
+# Modify slots for python workers that needs to interact in jedi in a thread
+# safe way.
 CompletionWorker._slot = "jedi"
 PreLoadWorker._slot = "jedi"
 
