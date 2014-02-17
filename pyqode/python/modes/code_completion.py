@@ -37,7 +37,7 @@ CompletionWorker._slot = "jedi"
 PreLoadWorker._slot = "jedi"
 
 #: Default icons
-from pyqode.core import get_server
+from pyqode.core import get_server, Worker
 
 ICONS = {'CLASS': ':/pyqode_python_icons/rc/class.png',
          'IMPORT': ':/pyqode_python_icons/rc/namespace.png',
@@ -75,8 +75,7 @@ def iconFromType(name, type):
     return retVal
 
 
-class AddSysPathWorker(object):
-    _slot = "simple"
+class AddSysPathWorker(Worker):
     def __init__(self, path):
         self.path = path
 
@@ -89,8 +88,7 @@ class AddSysPathWorker(object):
             sys.path.insert(0, self.path)
 
 
-class RemoveSysPathWorker(object):
-    _slot = "simple"
+class RemoveSysPathWorker(Worker):
     def __init__(self, path):
         self.path = path
 
@@ -103,8 +101,7 @@ class RemoveSysPathWorker(object):
             sys.path.remove(self.path)
 
 
-class PrintSysPathWorker(object):
-    _slot = "simple"
+class PrintSysPathWorker(Worker):
     def __call__(self, *args, **kwargs):
         import sys
         print(sys.path)
