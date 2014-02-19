@@ -186,7 +186,7 @@ class JediCompletionProvider(CompletionProvider):
         return []
 
     def complete(self, code, line, column, completionPrefix,
-            filePath, fileEncoding):
+                 filePath, fileEncoding):
         """
         Completes python code using `jedi`_.
         """
@@ -198,7 +198,9 @@ class JediCompletionProvider(CompletionProvider):
                          "installation")
         else:
             try:
-                script = jedi.Script(code, line, column, filePath, fileEncoding)
+                script = jedi.Script(code, line, column, filePath,
+                                     fileEncoding)
+                
                 completions = script.completions()
             except jedi.NotFoundError:
                 completions = []
