@@ -121,7 +121,8 @@ class PyAutoIndentMode(AutoIndentMode):
                     nb_closed += 1
             if nb_open > nb_closed:
                 # align with first parameter
-                if nb_open - nb_closed != 0 and ("," in line or last_word == "%"):
+                if nb_open - nb_closed != 0 and ("," in line or "=" in line
+                                                 or last_word == "%"):
                     indent = (data.parentheses[0].position + 1) * " "
                 # no parameters declare, indent normally
                 else:
