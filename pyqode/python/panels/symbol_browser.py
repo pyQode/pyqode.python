@@ -55,7 +55,12 @@ class SymbolBrowserPanel(pyqode.core.Panel):
         self.comboBox.clear()
         self.comboBox.addItem(" < Select a symbol >")
         for d in definitions:
-            self.comboBox.addItem(QtGui.QIcon(d.icon), d.name, d)
+            try:
+                self.comboBox.addItem(QtGui.QIcon(d.icon), d.name, d)
+            except TypeError:
+                pass  # skip anonym elements, sometimes jedi fail to
+                      # to get a variable name and return a list instead
+                      # of a string.
         self._definitions = definitions
         self._syncComboBox(self.editor.cursorPosition[0])
 
