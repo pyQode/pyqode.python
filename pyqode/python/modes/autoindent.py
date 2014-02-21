@@ -65,7 +65,7 @@ class PyAutoIndentMode(AutoIndentMode):
         column = self.editor.cursorPosition[1]
         usd = self.editor.textCursor().block().userData()
         for start, end in usd.cc_disabled_zones:
-            if start <= column < end:
+            if start < column < end:
                 return super(PyAutoIndentMode, self)._getIndent(tc)
         col = self.editor.cursorPosition[1]
         pos = tc.position()
