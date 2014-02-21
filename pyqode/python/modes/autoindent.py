@@ -60,6 +60,25 @@ class PyAutoIndentMode(AutoIndentMode):
                 count_after_col += 1
         return count % 2 != 0 and count_after_col == 1, last
 
+    def getLastOpenParenPos(self, user_data, cursor_pos):
+        lists = [user_data.parentheses, user_data.braces,
+                 user_data.squareBrackets]
+        for symbols in lists:
+            for p in reversed(symbols):
+                if p.position >= cursor_pos:
+                    continue
+                if self.isOpenParen(p):
+                    return p.position
+        return 0
+
+    def isOpenParen(self, paren):
+        return (paren.character == "(" or paren.character == "["
+                or paren.character == '{')
+
+    def isClosedParen(self, paren):
+        return (paren.character == ")" or paren.character == "]"
+                or paren.character == '}')
+
     def _getIndent(self, tc):
         # if we are in disabled cc, use the parent implementation
         column = self.editor.cursorPosition[1]
@@ -112,18 +131,22 @@ class PyAutoIndentMode(AutoIndentMode):
             data = tc.block().userData()
             nb_open = 0
             nb_closed = 0
-            for paren in data.parentheses:
-                if paren.position >= col and nb_open:
-                    break
-                if paren.character == "(":
-                    nb_open += 1
-                if paren.character == ")":
-                    nb_closed += 1
+            lists = [data.parentheses, data.braces, data.squareBrackets]
+            for symbols in lists:
+                for paren in symbols:
+                    if paren.position >= col:
+                        break
+                    if self.isOpenParen(paren):
+                        nb_open += 1
+                    if self.isClosedParen(paren):
+                        nb_closed += 1
             if nb_open > nb_closed:
                 # align with first parameter
                 if nb_open - nb_closed != 0 and ("," in line or "=" in line
                                                  or last_word == "%"):
-                    indent = (data.parentheses[0].position + 1) * " "
+
+                    indent = (self.getLastOpenParenPos(
+                        data, col) + 1) * " "
                 # no parameters declare, indent normally
                 else:
                     indent += 4 * " "
