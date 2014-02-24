@@ -83,18 +83,25 @@ class PyAutoIndentMode(AutoIndentMode):
         # if we are in disabled cc, use the parent implementation
         column = self.editor.cursorPosition[1]
         usd = self.editor.textCursor().block().userData()
+        pos = tc.position()
+        tc2 = QTextCursor(tc)
+        tc2.select(QTextCursor.LineUnderCursor)
+        full_line = tc2.selectedText()
         for start, end in usd.cc_disabled_zones:
             if start < column < end:
-                return super(PyAutoIndentMode, self)._getIndent(tc)
+                string = full_line[start:end]
+                if not ((string.startswith("'") or string.startswith('"')) and
+                        (string.endswith("'") or string.endswith('"'))):
+                    return super(PyAutoIndentMode, self)._getIndent(tc)
         col = self.editor.cursorPosition[1]
-        pos = tc.position()
+
         if pos != 0 and col != 0:
-            pre, indent = AutoIndentMode._getIndent(self, tc)
             tc.movePosition(QTextCursor.WordLeft)
             tc.select(QTextCursor.WordUnderCursor)
             last_word = tc.selectedText().strip()
             tc.select(QTextCursor.LineUnderCursor)
             full_line = tc.selectedText()
+            pre, indent = AutoIndentMode._getIndent(self, tc)
             line = full_line[:col]
             full_line.lstrip()
             line = line.lstrip()
@@ -103,11 +110,13 @@ class PyAutoIndentMode(AutoIndentMode):
                 kw = ["if", "def", "while", "for", "else", "elif", "except", "finally"]
                 l = full_line
                 ln = tc.blockNumber() + 1
+
                 def check_kw_in_line(kws, l):
                     for kw in kws:
                         if kw in l:
                             return True
                     return False
+
                 while not check_kw_in_line(kw, l) and ln:
                     ln -= 1
                     l = self.editor.lineText(ln)
@@ -144,9 +153,11 @@ class PyAutoIndentMode(AutoIndentMode):
                 # align with first parameter
                 if nb_open - nb_closed != 0 and ("," in line or "=" in line
                                                  or last_word == "%"):
-
-                    indent = (self.getLastOpenParenPos(
-                        data, col) + 1) * " "
+                    paren_pos = self.getLastOpenParenPos(data, col)
+                    if ',' in line and paren_pos > line.rfind(","):
+                        indent += 4 * " "
+                    else:
+                        indent = (paren_pos + 1) * " "
                 # no parameters declare, indent normally
                 else:
                     indent += 4 * " "
@@ -157,10 +168,13 @@ class PyAutoIndentMode(AutoIndentMode):
                     pre += "\\"
                     indent += 4 * " "
 
+            for symbols in lists:
+                for paren in symbols:
+                    if self.isClosedParen(paren):
+                        nb_closed += 1
             inString, lastChar = self.inStringDef(full_line, col)
             if inString:
-                if ((nb_open == nb_closed)
-                    and (len(full_line) - len(line) > 0)):
+                if nb_open == 0 and nb_closed == 0:
                     pre += "\\"
                     indent += 4 * " "
                 pre = lastChar + pre
