@@ -5,7 +5,7 @@ python:
 virtualenv:
   system_site_packages: true
 before_install:
- - git clone https://github.com/ColinDuquesnoy/pyqode.core.git
+ - git clone https://github.com/pyQode/pyqode.core.git
  - cd pyqode.core
  - git checkout origin/develop
  - python setup.py install

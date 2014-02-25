@@ -44,5 +44,5 @@ Alternatively you can clone the repository using git:
     $ cd pyqode.python
     $ python setup.py install
 
-.. _source archive: https://github.com/ColinDuquesnoy/pyqode.python/archive/master.zip
-.. _github repository: https://github.com/ColinDuquesnoy/pyqode.python
+.. _source archive: https://github.com/pyQode/pyqode.python/archive/master.zip
+.. _github repository: https://github.com/pyQode/pyqode.python

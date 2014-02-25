@@ -29,4 +29,4 @@ Milestones
 
 
 .. _`jedi`: https://github.com/davidhalter/jedi
-.. _`issues page on github`: https://github.com/ColinDuquesnoy/pyqode.python
+.. _`issues page on github`: https://github.com/pyQode/pyqode.python
