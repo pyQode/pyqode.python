@@ -26,12 +26,7 @@
 """
 This setup script packages pyqode.python
 """
-try:
-    from setuptools import setup, find_packages
-except ImportError:
-    import ez_setup
-    ez_setup.use_setuptools()
-    from setuptools import setup, find_packages
+from setuptools import setup, find_packages
 
 
 def read_version():
