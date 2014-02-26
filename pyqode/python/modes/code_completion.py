@@ -63,6 +63,10 @@ def iconFromType(name, type):
     """
     retVal = None
     type = type.upper()
+    # jedi 0.8 introduced NamedPart class, which have a string instead of being
+    # one
+    if hasattr(name, "string"):
+        name = name.string
     if type == "FORFLOW" or type == "STATEMENT":
         type = "PARAM"
     if type == "PARAM" or type == "FUNCTION":

@@ -41,6 +41,8 @@ class Definition(object):
         #: Icon resource name associated with the definition, can be None
         self.icon = icon
         #: Definition name (name of the class, method, variable)
+        if hasattr(name, "string"):
+            name = name.string
         self.name = name
         #: The line of the definition in the current editor text
         self.line = line
