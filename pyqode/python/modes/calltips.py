@@ -99,6 +99,13 @@ class CalltipsMode(Mode, QtCore.QObject):
             fn = self.editor.filePath
             encoding = self.editor.fileEncoding
             source = self.editor.toPlainText()
+            # jedi has a bug if the statement has a closing parenthesis
+            # remove it!
+            lines = source.splitlines()
+            l = lines[line - 1].rstrip()
+            if l.endswith(")"):
+                lines[line - 1] = l[:-1]
+            source = "\n".join(lines)
             self.__requestCalltip(source, line, col, fn, encoding)
 
     def __requestCalltip(self, *args):
