@@ -77,7 +77,10 @@ class SymbolBrowserPanel(pyqode.core.Panel):
     def _onDocumentChanged(self):
         definitions = self.editor.documentAnalyserMode.flattenedResults
         self.comboBox.clear()
-        self.comboBox.addItem(" < Select a symbol >")
+        if definitions:
+            self.comboBox.addItem(" < Select a symbol >")
+        else:
+            self.comboBox.addItem("No symbols")
         for d in definitions:
             try:
                 self.comboBox.addItem(QtGui.QIcon(d.icon), d.name, d)

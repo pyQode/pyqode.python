@@ -130,12 +130,13 @@ class DefinedNamesWorker(Worker):
         except KeyError:
             old_definitions = []
 
-        if not _compare_definitions(ret_val, old_definitions):
-            ret_val = None
-            logger.debug("No changes detected")
-        else:
-            self.slotDict["%d_definitions" % caller_id] = ret_val
-            logger.debug("Document structure %r" % ret_val)
+        if ret_val:
+            if not _compare_definitions(ret_val, old_definitions):
+                ret_val = None
+                logger.debug("No changes detected")
+            else:
+                self.slotDict["%d_definitions" % caller_id] = ret_val
+                logger.debug("Document structure %r" % ret_val)
         return ret_val
 
 
@@ -193,15 +194,23 @@ class DocumentAnalyserMode(pyqode.core.Mode, QtCore.QObject):
         except AttributeError:
             pass
         else:
-            worker = DefinedNamesWorker(self.editor.toPlainText(), "", "")
-            srv.requestWork(self, worker)
+            if self.editor.toPlainText():
+                worker = DefinedNamesWorker(self.editor.toPlainText(), "", "")
+                srv.requestWork(self, worker)
+            else:
+                self.results = []
+                self.documentChanged.emit()
 
     def _onWorkCompleted(self, caller_id, worker, results):
+        print("Workd completed", caller_id, worker, results)
         if caller_id == id(self) and isinstance(worker, DefinedNamesWorker):
+            print("Workd completed", results)
             if results is not None:
                 self.results = results
                 logger.debug("Document structure changed")
-                self.documentChanged.emit()
+            else:
+                self.results = []
+            self.documentChanged.emit()
 
     @property
     def flattenedResults(self):
