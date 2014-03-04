@@ -22,6 +22,7 @@ Bug fixes release:
     - more fixes to auto completion
     - fixes for auto indentation mode
     - fix type error in document layout parser.
+    - fix call-tips when there is a closing parenthesis
 
 
 1.2.0
@@ -29,10 +30,9 @@ Bug fixes release:
 
 Bug fixes release:
 
-    - Fix various bugs with auto complete
+    - Fix a few bugs with auto complete
     - Fix bugs with code completion in comments and strings
     - Fix for designer plugin
-
 
 
 1.1.0

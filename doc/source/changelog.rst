@@ -13,6 +13,7 @@ Fixed bugs:
     - more fixes to auto completion
     - fixes for auto indentation mode
     - fix type error in document layout parser.
+    - Fix calltips when there is a closing parenthesis
 
 
 1.2.0
