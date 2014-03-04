@@ -102,7 +102,6 @@ class PyAutoCompleteMode(AutoCompleteMode):
                 return
         prevLine = self.editor.lineText(self.editor.cursorPosition[0] - 1)
         isBelowFuncOrClassDef = "def" in prevLine or "class" in prevLine
-        print(isBelowFuncOrClassDef)
         if (e.text() == '"' and '""' == self.editor.currentLineText.strip()
                 and (isBelowFuncOrClassDef or column == 2)):
             self._insertDocstring(prevLine, isBelowFuncOrClassDef)
