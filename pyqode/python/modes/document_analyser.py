@@ -202,9 +202,7 @@ class DocumentAnalyserMode(pyqode.core.Mode, QtCore.QObject):
                 self.documentChanged.emit()
 
     def _onWorkCompleted(self, caller_id, worker, results):
-        print("Workd completed", caller_id, worker, results)
         if caller_id == id(self) and isinstance(worker, DefinedNamesWorker):
-            print("Workd completed", results)
             if results is not None:
                 self.results = results
                 logger.debug("Document structure changed")
