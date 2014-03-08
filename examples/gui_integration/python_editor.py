@@ -3,7 +3,7 @@
 #
 #The MIT License (MIT)
 #
-#Copyright (c) <2013> <Colin Duquesnoy and others, see AUTHORS.txt>
+#Copyright (c) <2013-2014> <Colin Duquesnoy and others, see AUTHORS.txt>
 #
 #Permission is hereby granted, free of charge, to any person obtaining a copy
 #of this software and associated documentation files (the "Software"), to deal
@@ -27,7 +27,7 @@
 Integrates the generic editor using the pyQode qt designer plugin.
 """
 import logging
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 import os
 import sys
 from pyqode.qt import QtCore, QtGui
@@ -72,6 +72,7 @@ class PythonEditorWindow(QtGui.QMainWindow, Ui_MainWindow):
         group = QtGui.QActionGroup(self)
         group.addAction(self.actionLight)
         self.actionLight.setChecked(True)
+        self.acceptDrops()
         group.addAction(self.actionDark)
         group.triggered.connect(self.changeStyle)
 

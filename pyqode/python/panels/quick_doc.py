@@ -1,13 +1,40 @@
+# -*- coding: utf-8 -*-
+#
+#The MIT License (MIT)
+#
+#Copyright (c) <2013-2014> <Colin Duquesnoy and others, see AUTHORS.txt>
+#
+#Permission is hereby granted, free of charge, to any person obtaining a copy
+#of this software and associated documentation files (the "Software"), to deal
+#in the Software without restriction, including without limitation the rights
+#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+#copies of the Software, and to permit persons to whom the Software is
+#furnished to do so, subject to the following conditions:
+#
+#The above copyright notice and this permission notice shall be included in
+#all copies or substantial portions of the Software.
+#
+#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+#AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+#OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+#THE SOFTWARE.
+#
 """
 Contains the quick documentation panel
 """
 import jedi
+from pyqode.core import get_server
 from pyqode.core.system import driftColor
 import pyqode.core
 from pyqode.qt import QtGui
 
 
 class JediDocWorker(object):
+    _slot = "jedi"
+
     def __init__(self, code, line, col, path, encoding):
         self.code = code
         self.line = line
@@ -121,7 +148,7 @@ class QuickDocPanel(pyqode.core.Panel):
 
     def _onStateChanged(self, state):
         super(QuickDocPanel, self)._onStateChanged(state)
-        srv = pyqode.core.CodeCompletionMode.SERVER
+        srv = get_server()
         if state:
             if srv:
                 srv.signals.workCompleted.connect(self._onWorkCompleted)
@@ -157,7 +184,7 @@ class QuickDocPanel(pyqode.core.Panel):
         assert isinstance(tc, QtGui.QTextCursor)
         w = JediDocWorker(self.editor.toPlainText(), tc.blockNumber() + 1,
                     tc.columnNumber(), self.editor.filePath, self.editor.fileEncoding)
-        pyqode.core.CodeCompletionMode.SERVER.requestWork(self, w)
+        get_server().requestWork(self, w)
 
     def _onWorkCompleted(self, caller_id, worker, results):
         if caller_id == id(self) and isinstance(worker, JediDocWorker):

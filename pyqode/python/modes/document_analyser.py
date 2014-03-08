@@ -1,5 +1,30 @@
+# -*- coding: utf-8 -*-
+#
+#The MIT License (MIT)
+#
+#Copyright (c) <2013-2014> <Colin Duquesnoy and others, see AUTHORS.txt>
+#
+#Permission is hereby granted, free of charge, to any person obtaining a copy
+#of this software and associated documentation files (the "Software"), to deal
+#in the Software without restriction, including without limitation the rights
+#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+#copies of the Software, and to permit persons to whom the Software is
+#furnished to do so, subject to the following conditions:
+#
+#The above copyright notice and this permission notice shall be included in
+#all copies or substantial portions of the Software.
+#
+#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+#AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+#OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+#THE SOFTWARE.
+#
 import pyqode.core
 from pyqode.core import logger
+from pyqode.core import get_server, start_server, Worker
 from pyqode.python.modes.code_completion import iconFromType
 from pyqode.qt import QtCore
 
@@ -16,6 +41,8 @@ class Definition(object):
         #: Icon resource name associated with the definition, can be None
         self.icon = icon
         #: Definition name (name of the class, method, variable)
+        if hasattr(name, "string"):
+            name = name.string
         self.name = name
         #: The line of the definition in the current editor text
         self.line = line
@@ -64,10 +91,12 @@ def _compare_definitions(a, b):
         return False
 
 
-class DefinedNamesWorker(object):
+class DefinedNamesWorker(Worker):
     """
     Subprocess worker that analyses the document using *jedi.defined_names()*.
     """
+    _slot = "jedi"
+
     def __init__(self, code, path, encoding):
         self.code = code
         self.path = path
@@ -97,16 +126,17 @@ class DefinedNamesWorker(object):
             ret_val.append(definition)
 
         try:
-            old_definitions = self.processDict["%d_definitions" % caller_id]
+            old_definitions = self.slotDict["%d_definitions" % caller_id]
         except KeyError:
             old_definitions = []
 
-        if not _compare_definitions(ret_val, old_definitions):
-            ret_val = None
-            logger.debug("No changes detected")
-        else:
-            self.processDict["%d_definitions" % caller_id] = ret_val
-            logger.debug("Document structure %r" % ret_val)
+        if ret_val:
+            if not _compare_definitions(ret_val, old_definitions):
+                ret_val = None
+                logger.debug("No changes detected")
+            else:
+                self.slotDict["%d_definitions" % caller_id] = ret_val
+                logger.debug("Document structure %r" % ret_val)
         return ret_val
 
 
@@ -140,9 +170,9 @@ class DocumentAnalyserMode(pyqode.core.Mode, QtCore.QObject):
             self.editor.blockCountChanged.connect(self._onLineCountChanged)
             self.editor.newTextSet.connect(self._runAnalysis)
             try:
-                srv = pyqode.core.CodeCompletionMode.SERVER
+                srv = get_server()
                 if not srv:
-                    srv = pyqode.core.CodeCompletionMode.startCompletionServer()
+                    srv = start_server()
                 srv.signals.workCompleted.connect(self._onWorkCompleted)
             except (TypeError, AttributeError):
                 pass
@@ -150,7 +180,7 @@ class DocumentAnalyserMode(pyqode.core.Mode, QtCore.QObject):
             self.editor.blockCountChanged.disconnect(self._onLineCountChanged)
             self.editor.newTextSet.disconnect(self._runAnalysis)
             try:
-                srv = pyqode.core.CodeCompletionMode.SERVER
+                srv = get_server()
                 srv.signals.workCompleted.disconnect(self._onWorkCompleted)
             except (TypeError, AttributeError):
                 pass
@@ -160,19 +190,25 @@ class DocumentAnalyserMode(pyqode.core.Mode, QtCore.QObject):
 
     def _runAnalysis(self):
         try:
-            srv = self.editor.codeCompletionMode.SERVER
+            srv = get_server()
         except AttributeError:
             pass
         else:
-            worker = DefinedNamesWorker(self.editor.toPlainText(), "", "")
-            srv.requestWork(self, worker)
+            if self.editor.toPlainText():
+                worker = DefinedNamesWorker(self.editor.toPlainText(), "", "")
+                srv.requestWork(self, worker)
+            else:
+                self.results = []
+                self.documentChanged.emit()
 
     def _onWorkCompleted(self, caller_id, worker, results):
         if caller_id == id(self) and isinstance(worker, DefinedNamesWorker):
             if results is not None:
                 self.results = results
                 logger.debug("Document structure changed")
-                self.documentChanged.emit()
+            else:
+                self.results = []
+            self.documentChanged.emit()
 
     @property
     def flattenedResults(self):

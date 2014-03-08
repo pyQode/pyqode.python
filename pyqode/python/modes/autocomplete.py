@@ -3,7 +3,7 @@
 #
 #The MIT License (MIT)
 #
-#Copyright (c) <2013> <Colin Duquesnoy and others, see AUTHORS.txt>
+#Copyright (c) <2013-2014> <Colin Duquesnoy and others, see AUTHORS.txt>
 #
 #Permission is hereby granted, free of charge, to any person obtaining a copy
 #of this software and associated documentation files (the "Software"), to deal
@@ -54,13 +54,13 @@ class PyAutoCompleteMode(AutoCompleteMode):
             if defined_name.name != "self":
                 parameters += "\n{1}:param {0}:".format(
                     defined_name.name, indent * " ")
-        toInsert = '"\n{0}{1}\n{0}""'.format(indent * " ", parameters)
+        toInsert = '"\n{0}{1}\n{0}"""'.format(indent * " ", parameters)
         return toInsert
 
-    def _insertDocstring(self, prevLine):
+    def _insertDocstring(self, prevLine, belowFct):
         indent = self.editor.getLineIndent()
-        if "class" in prevLine:
-            toInsert = '"\n{0}\n{0}""'.format(indent * " ")
+        if "class" in prevLine or not belowFct:
+            toInsert = '"\n{0}\n{0}"""'.format(indent * " ")
         else:
             toInsert = self._formatFuncParams(indent)
         tc = self.editor.textCursor()
@@ -102,9 +102,9 @@ class PyAutoCompleteMode(AutoCompleteMode):
                 return
         prevLine = self.editor.lineText(self.editor.cursorPosition[0] - 1)
         isBelowFuncOrClassDef = "def" in prevLine or "class" in prevLine
-        if (e.text() == '"' and '"""' == self.editor.currentLineText.strip()
-                and isBelowFuncOrClassDef):
-            self._insertDocstring(prevLine)
+        if (e.text() == '"' and '""' == self.editor.currentLineText.strip()
+                and (isBelowFuncOrClassDef or column == 2)):
+            self._insertDocstring(prevLine, isBelowFuncOrClassDef)
         elif (e.text() == "(" and
                   self.editor.currentLineText.lstrip().startswith("def ")):
             self._handleFctDef()

@@ -3,7 +3,7 @@
 #
 #The MIT License (MIT)
 #
-#Copyright (c) <2013> <Colin Duquesnoy and others, see AUTHORS.txt>
+#Copyright (c) <2013-2014> <Colin Duquesnoy and others, see AUTHORS.txt>
 #
 #Permission is hereby granted, free of charge, to any person obtaining a copy
 #of this software and associated documentation files (the "Software"), to deal
@@ -32,8 +32,16 @@ import sys
 from pyqode.core import CompletionProvider, logger
 from pyqode.core import Completion, CodeCompletionMode
 
+from pyqode.core.modes.code_completion import CompletionWorker, PreLoadWorker
+
+# Modify slots for python workers that needs to interact in jedi in a thread
+# safe way.
+CompletionWorker._slot = "jedi"
+PreLoadWorker._slot = "jedi"
 
 #: Default icons
+from pyqode.core import get_server, Worker
+
 ICONS = {'CLASS': ':/pyqode_python_icons/rc/class.png',
          'IMPORT': ':/pyqode_python_icons/rc/namespace.png',
          'STATEMENT': ':/pyqode_python_icons/rc/var.png',
@@ -44,6 +52,7 @@ ICONS = {'CLASS': ':/pyqode_python_icons/rc/class.png',
          'PARAM-PRIV': ':/pyqode_python_icons/rc/var.png',
          'PARAM-PROT': ':/pyqode_python_icons/rc/var.png',
          'FUNCTION': ':/pyqode_python_icons/rc/func.png',
+         'DEF': ':/pyqode_python_icons/rc/func.png',
          'FUNCTION-PRIV': ':/pyqode_python_icons/rc/func_priv.png',
          'FUNCTION-PROT': ':/pyqode_python_icons/rc/func_prot.png'}
 
@@ -54,6 +63,10 @@ def iconFromType(name, type):
     """
     retVal = None
     type = type.upper()
+    # jedi 0.8 introduced NamedPart class, which have a string instead of being
+    # one
+    if hasattr(name, "string"):
+        name = name.string
     if type == "FORFLOW" or type == "STATEMENT":
         type = "PARAM"
     if type == "PARAM" or type == "FUNCTION":
@@ -69,7 +82,7 @@ def iconFromType(name, type):
     return retVal
 
 
-class AddSysPathWorker(object):
+class AddSysPathWorker(Worker):
     def __init__(self, path):
         self.path = path
 
@@ -82,7 +95,7 @@ class AddSysPathWorker(object):
             sys.path.insert(0, self.path)
 
 
-class RemoveSysPathWorker(object):
+class RemoveSysPathWorker(Worker):
     def __init__(self, path):
         self.path = path
 
@@ -95,7 +108,7 @@ class RemoveSysPathWorker(object):
             sys.path.remove(self.path)
 
 
-class PrintSysPathWorker(object):
+class PrintSysPathWorker(Worker):
     def __call__(self, *args, **kwargs):
         import sys
         print(sys.path)
@@ -113,7 +126,7 @@ class PyCodeCompletionMode(CodeCompletionMode):
         Inserts a path in sys.modules on the server subprocess.
         """
         w = AddSysPathWorker(path)
-        cls.SERVER.requestWork(w, w)
+        get_server().requestWork(w, w)
 
     @classmethod
     def removeFromSrvSysPath(cls, path):
@@ -121,7 +134,7 @@ class PyCodeCompletionMode(CodeCompletionMode):
         Removes the path from sys.path on the server subprocess.
         """
         w = RemoveSysPathWorker(path)
-        cls.SERVER.requestWork(w, w)
+        get_server().requestWork(w, w)
 
     @classmethod
     def printSrvSysPath(cls):
@@ -129,7 +142,7 @@ class PyCodeCompletionMode(CodeCompletionMode):
         Prints the subprocess sys.path
         """
         w = PrintSysPathWorker()
-        cls.SERVER.requestWork(w, w)
+        get_server().requestWork(w, w)
 
 
 class JediCompletionProvider(CompletionProvider):
@@ -169,15 +182,15 @@ class JediCompletionProvider(CompletionProvider):
             fn = os.path.splitext(os.path.basename(filePath))[0]
             jedi.api.preload_module(fn)
             # preloads user defined list of modules
-            if self.modules and not "preloaded" in self.processDict:
-                logger.debug("Preloading modules %r" % self.modules)
+            if self.modules and not "preloaded" in self.slotDict:
+                logger.info("Preloading modules %r" % self.modules)
                 jedi.api.preload_module(*self.modules)
-                self.processDict["preloaded"] = True
+                self.slotDict["preloaded"] = True
         logger.debug("Preload finished")
         return []
 
     def complete(self, code, line, column, completionPrefix,
-            filePath, fileEncoding):
+                 filePath, fileEncoding):
         """
         Completes python code using `jedi`_.
         """
@@ -189,7 +202,9 @@ class JediCompletionProvider(CompletionProvider):
                          "installation")
         else:
             try:
-                script = jedi.Script(code, line, column, filePath, fileEncoding)
+                script = jedi.Script(code, line, column, filePath,
+                                     fileEncoding)
+                
                 completions = script.completions()
             except jedi.NotFoundError:
                 completions = []

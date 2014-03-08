@@ -1,8 +1,8 @@
 Add python support to pyQode
 ========================================
 
-.. image:: https://travis-ci.org/ColinDuquesnoy/pyqode.python.png?branch=master
-    :target: https://travis-ci.org/ColinDuquesnoy/pyqode.python
+.. image:: https://travis-ci.org/pyQode/pyqode.python.png?branch=master
+    :target: https://travis-ci.org/pyQode/pyqode.python
     :alt: Travis-CI build status
 
 .. image:: https://pypip.in/d/pyqode.python/badge.png
@@ -88,13 +88,13 @@ Resources
 -  `Wiki`_
 -  `Documentation`_
 
-.. _Downloads: https://github.com/ColinDuquesnoy/pyqode.python/releases
-.. _Source repository: https://github.com/ColinDuquesnoy/pyqode.python/
-.. _Wiki: https://github.com/ColinDuquesnoy/pyqode.core/wiki
+.. _Downloads: https://github.com/pyQode/pyqode.python/releases
+.. _Source repository: https://github.com/pyQode/pyqode.python/
+.. _Wiki: https://github.com/pyQode/pyqode.core/wiki
 
 
-.. _official pyqode extension package: https://github.com/ColinDuquesnoy/pyqode.core/wiki/Extensions#official-packages
-.. _pyQode: https://github.com/ColinDuquesnoy/pyqode.python
+.. _official pyqode extension package: https://github.com/pyQode/pyqode.core/wiki/Extensions#official-packages
+.. _pyQode: https://github.com/pyQode
 .. _Jedi: https://github.com/davidhalter/jedi
 .. _`Documentation`: http://pyqodepython.readthedocs.org/en/latest/
 
@@ -190,9 +190,3 @@ Here are a few screenshots to illustrate the python specific features *(all the 
 
 .. image:: https://raw.github.com/ColinDuquesnoy/pyqode.python/master/screenshots/dark_style.png
     :alt: Dark style
-
-
-.. image:: https://d2weczhvl823v0.cloudfront.net/ColinDuquesnoy/pyqode.python/trend.png
-   :alt: Bitdeli badge
-   :target: https://bitdeli.com/free
-

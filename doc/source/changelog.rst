@@ -5,8 +5,28 @@ Change Log
 
     These lists are not exhaustive.
 
-1.1
------------
+1.3.0
+-----
+
+Fixed bugs:
+
+    - more fixes to auto completion
+    - fixes for auto indentation mode
+    - fix type error in document layout parser.
+    - Fix calltips when there is a closing parenthesis
+
+
+1.2.0
+-----
+
+Fixed bugs:
+
+    - Fix various bugs with auto complete
+    - Fix bugs with code completion in comments and strings
+    - Fix for designer plugin
+
+1.1.0
+-----
 
 New features:
     - add the following new modes:
@@ -22,12 +42,12 @@ New features:
     - Add :class:`pyqode.python.Boostrapper` class to help start the code completion with a list of modules to
       preload + example with a splash screen.
 
-Bug fixed:
+Fixed bugs:
     - Disable actions which depends on preload
     - Disable code completion in commente and strings
     - Fix highlighting in docstrings (highlighting was lost when there was an '=' in the docstring.
 
-1.0
-----------
+1.0.0
+-----
 
 Initial development.

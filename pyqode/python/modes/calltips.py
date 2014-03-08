@@ -3,7 +3,7 @@
 #
 #The MIT License (MIT)
 #
-#Copyright (c) <2013> <Colin Duquesnoy and others, see AUTHORS.txt>
+#Copyright (c) <2013-2014> <Colin Duquesnoy and others, see AUTHORS.txt>
 #
 #Permission is hereby granted, free of charge, to any person obtaining a copy
 #of this software and associated documentation files (the "Software"), to deal
@@ -28,11 +28,14 @@ Contains the JediCompletionProvider class implementation.
 """
 import os
 from pyqode.core import Mode, DelayJobRunner, logger, constants
-from pyqode.core import CodeCompletionMode
+from pyqode.core import get_server
+from pyqode.core import Worker
 from pyqode.qt import QtCore, QtGui
 
 
-class CalltipsWorker(object):
+class CalltipsWorker(Worker):
+    _slot = "jedi"
+
     def __init__(self, code, line, col, path, encoding):
         self.code = code
         self.line = line
@@ -80,11 +83,11 @@ class CalltipsMode(Mode, QtCore.QObject):
             if state:
                 self.editor.keyReleased.connect(self.__onKeyReleased)
 
-                if CodeCompletionMode.SERVER:
-                    CodeCompletionMode.SERVER.signals.workCompleted.connect(
+                if get_server():
+                    get_server().signals.workCompleted.connect(
                         self.__onWorkFinished)
-            elif CodeCompletionMode.SERVER:
-                CodeCompletionMode.SERVER.signals.workCompleted.disconnect(
+            elif get_server():
+                get_server().signals.workCompleted.disconnect(
                     self.__onWorkFinished)
 
     def __onKeyReleased(self, event):
@@ -96,6 +99,13 @@ class CalltipsMode(Mode, QtCore.QObject):
             fn = self.editor.filePath
             encoding = self.editor.fileEncoding
             source = self.editor.toPlainText()
+            # jedi has a bug if the statement has a closing parenthesis
+            # remove it!
+            lines = source.splitlines()
+            l = lines[line - 1].rstrip()
+            if l.endswith(")"):
+                lines[line - 1] = l[:-1]
+            source = "\n".join(lines)
             self.__requestCalltip(source, line, col, fn, encoding)
 
     def __requestCalltip(self, *args):
@@ -103,7 +113,7 @@ class CalltipsMode(Mode, QtCore.QObject):
             self.__requestCnt += 1
             logger.debug("Calltip requested")
             worker = CalltipsWorker(*args)
-            CodeCompletionMode.SERVER.requestWork(self, worker)
+            get_server().requestWork(self, worker)
 
     def __onWorkFinished(self, caller_id, worker, results):
         if caller_id == id(self) and isinstance(worker, CalltipsWorker):
@@ -150,7 +160,7 @@ class CalltipsMode(Mode, QtCore.QObject):
         w_offset = (col - call['call.bracket_start'][1]) * charWidth
         position = QtCore.QPoint(
             self.editor.cursorRect().x() - w_offset,
-            self.editor.cursorRect().y())
+            self.editor.cursorRect().y() + 35)
         position = self.editor.mapToGlobal(position)
         # show tooltip
         QtGui.QToolTip.showText(position, calltip, self.editor)

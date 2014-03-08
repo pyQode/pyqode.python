@@ -3,7 +3,7 @@
 #
 #The MIT License (MIT)
 #
-#Copyright (c) <2013> <Colin Duquesnoy and others, see AUTHORS.txt>
+#Copyright (c) <2013-2014> <Colin Duquesnoy and others, see AUTHORS.txt>
 #
 #Permission is hereby granted, free of charge, to any person obtaining a copy
 #of this software and associated documentation files (the "Software"), to deal
@@ -53,7 +53,7 @@ from pyqode.python.panels import QuickDocPanel
 
 
 #: pyqode-python version
-__version__ = "1.2"
+__version__ = "1.3.0"
 
 
 import pyqode.python.ui.pyqode_python_icons_rc
@@ -102,6 +102,7 @@ class QPythonCodeEdit(pyqode.core.QCodeEdit):
 
         :param modulesToPreload: The list of modules to preload.
         """
+        pyqode.core.start_server(slots=["default", "__server__", "jedi"])
         super(QPythonCodeEdit, self).__init__(parent)
         self.setLineWrapMode(self.NoWrap)
         self.setWindowTitle("pyQode - Python Editor")

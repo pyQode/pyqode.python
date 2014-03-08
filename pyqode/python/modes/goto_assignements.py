@@ -3,7 +3,7 @@
 #
 #The MIT License (MIT)
 #
-#Copyright (c) <2013> <Colin Duquesnoy and others, see AUTHORS.txt>
+#Copyright (c) <2013-2014> <Colin Duquesnoy and others, see AUTHORS.txt>
 #
 #Permission is hereby granted, free of charge, to any person obtaining a copy
 #of this software and associated documentation files (the "Software"), to deal
@@ -28,6 +28,7 @@ Contains the go to assignments mode.
 """
 import os
 import jedi
+from pyqode.core import get_server, Worker
 from  pyqode.qt import QtCore, QtGui
 from pyqode.core import Mode, CodeCompletionMode, logger
 
@@ -56,26 +57,28 @@ class Assignment(object):
                                                self.column, self.full_name)
 
 
-class _Worker(object):
-        def __init__(self, code, line, column, path, encoding):
-            self.code = code
-            self.line = line
-            self.col = column
-            self.path = path
-            self.encoding = encoding
+class _Worker(Worker):
+    _slot = "jedi"
 
-        def __call__(self, *args):
-            script = jedi.Script(self.code, self.line, self.col, self.path,
-                                 self.encoding)
-            try:
-                definitions = script.goto_assignments()
-            except jedi.api.NotFoundError:
-                return []
-            else:
-                ret_val = [Assignment(d.module_path, d.line, d.column,
-                                      d.full_name)
-                           for d in definitions]
-                return ret_val
+    def __init__(self, code, line, column, path, encoding):
+        self.code = code
+        self.line = line
+        self.col = column
+        self.path = path
+        self.encoding = encoding
+
+    def __call__(self, *args):
+        script = jedi.Script(self.code, self.line, self.col, self.path,
+                             self.encoding)
+        try:
+            definitions = script.goto_assignments()
+        except jedi.api.NotFoundError:
+            return []
+        else:
+            ret_val = [Assignment(d.module_path, d.line, d.column,
+                                  d.full_name)
+                       for d in definitions]
+            return ret_val
 
 
 class GoToAssignmentsMode(Mode, QtCore.QObject):
@@ -107,9 +110,8 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
 
     def _onInstall(self, editor):
         Mode._onInstall(self, editor)
-        if CodeCompletionMode.SERVER:
-            CodeCompletionMode.SERVER.signals.workCompleted.connect(
-                self._onWorkFinished)
+        if get_server():
+            get_server().signals.workCompleted.connect(self._onWorkFinished)
 
     def _onStateChanged(self, state):
         if state:
@@ -149,10 +151,10 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
         """
         if not tc:
             tc = self.editor.selectWordUnderCursor()
-        if CodeCompletionMode.SERVER:
+        if get_server():
             self.editor.setCursor(QtCore.Qt.WaitCursor)
             if not self._pending:
-                CodeCompletionMode.SERVER.requestWork(
+                get_server().requestWork(
                     self, _Worker(self.editor.toPlainText(),
                                   tc.blockNumber()+1, tc.columnNumber(),
                                   self.editor.filePath,

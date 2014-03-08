@@ -13,20 +13,40 @@ auto complete, go to definition, basic refactoring (when `jedi`_ is ready
 for it),...)
 
 Milestones
--------------
+----------
 
-1.1:
-+++++++++++
+1.3.0
++++++
+
+Bug fixes release:
+    - more fixes to auto completion
+    - fixes for auto indentation mode
+    - fix type error in document layout parser.
+    - fix call-tips when there is a closing parenthesis
+
+
+1.2.0
++++++
+
+Bug fixes release:
+
+    - Fix a few bugs with auto complete
+    - Fix bugs with code completion in comments and strings
+    - Fix for designer plugin
+
+
+1.1.0
++++++
 
     Add many new modes and panels and improve the user experience by adding more utility
     methods and class.
 
-1.0:
-+++++++++++
+1.0.0
++++++
 
     Initial development of pyqode.python, based on the python features of
     pcef (the old pyqode library).
 
 
 .. _`jedi`: https://github.com/davidhalter/jedi
-.. _`issues page on github`: https://github.com/ColinDuquesnoy/pyqode.python
+.. _`issues page on github`: https://github.com/pyQode/pyqode.python

@@ -3,7 +3,7 @@
 #
 #The MIT License (MIT)
 #
-#Copyright (c) <2013> <Colin Duquesnoy and others, see AUTHORS.txt>
+#Copyright (c) <2013-2014> <Colin Duquesnoy and others, see AUTHORS.txt>
 #
 #Permission is hereby granted, free of charge, to any person obtaining a copy
 #of this software and associated documentation files (the "Software"), to deal
@@ -26,12 +26,7 @@
 """
 This setup script packages pyqode.python
 """
-try:
-    from setuptools import setup, find_packages
-except ImportError:
-    import ez_setup
-    ez_setup.use_setuptools()
-    from setuptools import setup, find_packages
+from setuptools import setup, find_packages
 
 
 def read_version():
@@ -47,7 +42,7 @@ def readme():
 
 
 # get requirements
-requirements = ['pyqode.core', 'jedi', 'pep8', 'pyflakes']
+requirements = ['pyqode.core>=1.3.0', 'jedi>=0.7', 'pep8', 'pyflakes']
 
 
 setup(
@@ -56,9 +51,9 @@ setup(
     version=read_version(),
     packages=find_packages(),
     keywords=["QCodeEditor PySide PyQt code editor widget python"],
-    package_data={'pyqode.python.ui': ['*.ui', 'rc/*']},
+    # package_data={'pyqode.python.ui': ['*.ui', 'rc/*']},
     package_dir={'pyqode': 'pyqode'},
-    url='https://github.com/ColinDuquesnoy/pyqode.python',
+    url='https://github.com/pyQode/pyqode.python',
     license='MIT',
     author='Colin Duquesnoy',
     author_email='colin.duquesnoy@gmail.com',
