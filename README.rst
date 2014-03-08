@@ -1,8 +1,8 @@
 Add python support to pyQode
 ========================================
 
-.. image:: https://travis-ci.org/ColinDuquesnoy/pyqode.python.png?branch=master
-    :target: https://travis-ci.org/ColinDuquesnoy/pyqode.python
+.. image:: https://travis-ci.org/pyQode/pyqode.python.png?branch=master
+    :target: https://travis-ci.org/pyQode/pyqode.python
     :alt: Travis-CI build status
 
 .. image:: https://pypip.in/d/pyqode.python/badge.png
