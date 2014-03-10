@@ -46,7 +46,7 @@ class JediDocWorker(object):
         script = jedi.Script(self.code, self.line, self.col, self.path,
                              self.encoding)
         try:
-            definitions = script.goto_assignments()
+            definitions = script.goto_definitions()
         except jedi.api.NotFoundError:
             return []
         else:
