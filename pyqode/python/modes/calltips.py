@@ -50,7 +50,7 @@ class CalltipsWorker(Worker):
         signatures = script.call_signatures()
         for c in signatures:
             results = [str(c.module.name), str(c.call_name),
-                       [str(p.token_list[0]) for p in c.params], c.index,
+                       [str(p.get_name()) for p in c.params], c.index,
                        c.bracket_start, self.col]
             # seems like len of signatures is always 1 when getting calltips
             return results
