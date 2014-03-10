@@ -142,7 +142,7 @@ class QPythonCodeEdit(pyqode.core.QCodeEdit):
         self.installMode(GoToAssignmentsMode())
         self.installPanel(QuickDocPanel(), pyqode.core.PanelPosition.BOTTOM)
         self.installMode(CommentsMode())
-
+        self.installMode(pyqode.core.FileWatcherMode())
 
     def setModulesToPreload(self, modules=None):
         """
