@@ -242,9 +242,24 @@ class PyAutoIndentMode(AutoIndentMode):
                     pre = '" \\'
                     post += 4 * ' ' + '"'
             elif fullLine.endswith(":"):
-                indent = self.getIndentOfOpeningParen(tc, column) + 4
-                if indent:
-                    post = indent * " "
+                try:
+                    indent = self.getIndentOfOpeningParen(tc, column) + 4
+                    if indent:
+                        post = indent * " "
+                except TypeError:
+                    kw = ["if", "def", "while", "for", "else", "elif", "except", "finally"]
+                    l = fullLine
+                    ln = tc.blockNumber() + 1
+                    def check_kw_in_line(kws, l):
+                        for kw in kws:
+                            if kw in l:
+                                return True
+                        return False
+                    while not check_kw_in_line(kw, l) and ln:
+                        ln -= 1
+                        l = self.editor.lineText(ln)
+                    indent = (len(l) - len(l.lstrip())) * " "
+                    post = indent + 4 * " "
             elif fullLine.endswith("\\"):
                 # increment indent
                 post = post + 4 * " "
