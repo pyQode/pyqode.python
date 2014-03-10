@@ -247,9 +247,10 @@ class PyAutoIndentMode(AutoIndentMode):
                     if indent:
                         post = indent * " "
                 except TypeError:
-                    kw = ["if", "def", "while", "for", "else", "elif", "except", "finally"]
+                    kw = ["if", "class", "def", "while", "for", "else", "elif", "except", "finally"]
                     l = fullLine
-                    ln = tc.blockNumber() + 1
+                    print(fullLine)
+                    ln = tc.blockNumber()
                     def check_kw_in_line(kws, l):
                         for kw in kws:
                             if kw in l:
@@ -258,8 +259,10 @@ class PyAutoIndentMode(AutoIndentMode):
                     while not check_kw_in_line(kw, l) and ln:
                         ln -= 1
                         l = self.editor.lineText(ln)
+                    print(l)
                     indent = (len(l) - len(l.lstrip())) * " "
                     post = indent + 4 * " "
+                    print(len(post))
             elif fullLine.endswith("\\"):
                 # increment indent
                 post = post + 4 * " "
