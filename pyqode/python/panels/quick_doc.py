@@ -25,10 +25,11 @@
 """
 Contains the quick documentation panel
 """
+from docutils.core import publish_parts
 import jedi
+import pyqode.core
 from pyqode.core import get_server
 from pyqode.core.system import driftColor
-import pyqode.core
 from pyqode.qt import QtGui
 
 
@@ -192,8 +193,16 @@ class QuickDocPanel(pyqode.core.Panel):
             if results:
                 if len(results) and results[0] != "":
                     string = "\n\n".join(results)
+                    string = publish_parts(
+                        string, writer_name='html',
+                        settings_overrides={'output_encoding': 'unicode'})['html_body']
+                    string = string.replace('colspan="2"', 'colspan="0"')
+                    string = string.replace("<th ", '<th align="left" ')
+                    string = string.replace('</tr>\n<tr class="field"><td>&nbsp;</td>',
+                                            '')
                     if string:
                         self.textEdit.setText(string)
+
                 else:
                     self.textEdit.setText("Documentation not found")
             else:
