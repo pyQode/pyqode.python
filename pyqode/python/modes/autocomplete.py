@@ -51,7 +51,7 @@ class PyAutoCompleteMode(AutoCompleteMode):
                              self.editor.fileEncoding)
         definition = script.goto_definitions()[0]
         for defined_name in definition.defined_names():
-            if defined_name.name != "self":
+            if defined_name.name != "self" and defined_name.type == 'param':
                 parameters += "\n{1}:param {0}:".format(
                     defined_name.name, indent * " ")
         toInsert = '"\n{0}{1}\n{0}"""'.format(indent * " ", parameters)
