@@ -247,7 +247,7 @@ class PyAutoIndentMode(AutoIndentMode):
                     if indent:
                         post = indent * " "
                 except TypeError:
-                    kw = ["if", "class", "def", "while", "for", "else", "elif", "except", "finally"]
+                    kw = ["if", "class", "def", "while", "for", "else", "elif", "except", "finally", "try"]
                     l = fullLine
                     print(fullLine)
                     ln = tc.blockNumber()
