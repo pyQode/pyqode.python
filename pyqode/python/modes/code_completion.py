@@ -219,8 +219,10 @@ class JediCompletionProvider(CompletionProvider):
                     try:
                         definition = completion.follow_definition()[0]
                         type = definition.type
-                    except IndexError:
-                        pass  # no definition
+                    except (IndexError, AttributeError):
+                        # no definition
+                        # AttributeError is raised for GlobalNamespace
+                        pass
                 desc = completion.full_name
                 icon = iconFromType(name, type)
                 retVal.append(Completion(name, icon=icon, tooltip=desc))
