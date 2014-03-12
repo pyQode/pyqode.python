@@ -282,7 +282,8 @@ class PyAutoIndentMode(AutoIndentMode):
                 if indent:
                     post = indent * " "
             elif (not "\\" in fullLine and not "#" in fullLine and
-                      fullLine.strip() and not fullLine.endswith(')')):
+                      fullLine.strip() and not fullLine.endswith(')') and
+                      not tc.atBlockEnd()):
                 if lastWord and lastWord[-1] != " ":
                     pre += " \\"
                 else:
