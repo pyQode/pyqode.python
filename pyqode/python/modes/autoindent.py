@@ -223,6 +223,22 @@ class PyAutoIndentMode(AutoIndentMode):
             post += char
         return pre, post
 
+    def atBlockStart(self, tc, line):
+        """
+        Improve QTextCursor.atBlockStart to ignore spaces
+        """
+        if tc.atBlockStart():
+            return True
+        column = tc.columnNumber()
+        indentation = len(line) - len(line.lstrip())
+        return column <= indentation
+
+    def atBlockEnd(self, tc, fullLine):
+        if tc.atBlockEnd():
+            return True
+        column = tc.columnNumber()
+        return column >= len(fullLine.rstrip()) - 1
+
     def _getIndent(self, tc):
         pos = tc.position()
         ln, column = self.editor.cursorPosition
@@ -231,6 +247,8 @@ class PyAutoIndentMode(AutoIndentMode):
         if pos == 0 or column == 0:
             return "", ""
         pre, post = AutoIndentMode._getIndent(self, tc)
+        if self.atBlockStart(tc, line):
+            return pre, post
         lastWord = self.getLastWord(tc)
         if self.inComment(column, tc, fullLine):
             if line.strip().startswith("#") and column != len(fullLine):
@@ -252,7 +270,9 @@ class PyAutoIndentMode(AutoIndentMode):
                 if fullLine.endswith(':'):
                     post += 4 * " "
                 post += char
-            elif fullLine.endswith(":") and lastWord.endswith(':'):
+            elif fullLine.rstrip().endswith(":") and \
+                    lastWord.rstrip().endswith(':') and self.atBlockEnd(
+                    tc, fullLine):
                 try:
                     indent = self.getIndentOfOpeningParen(tc, column) + 4
                     if indent:
@@ -283,7 +303,7 @@ class PyAutoIndentMode(AutoIndentMode):
                     post = indent * " "
             elif (not "\\" in fullLine and not "#" in fullLine and
                       fullLine.strip() and not fullLine.endswith(')') and
-                      not tc.atBlockEnd()):
+                      not self.atBlockEnd(tc, fullLine)):
                 if lastWord and lastWord[-1] != " ":
                     pre += " \\"
                 else:
