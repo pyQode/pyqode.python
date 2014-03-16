@@ -32,7 +32,7 @@ from pyqode.python.modes.comments import CommentsMode
 from pyqode.python.modes.pep8_checker import PEP8CheckerMode
 from pyqode.python.modes.autoindent import PyAutoIndentMode
 from pyqode.python.modes.indenter import PyIndenterMode
-from pyqode.python.modes.pyflakes_checker import PyFlakesCheckerMode
+from pyqode.python.modes.frosted_checker import FrostedCheckerMode
 from pyqode.python.modes.syntax_highlighter import PyHighlighterMode
 from pyqode.python.modes.syntax_highlighter import DEFAULT_DARK_STYLES
 from pyqode.python.modes.syntax_highlighter import DEFAULT_LIGHT_STYLES
@@ -41,6 +41,6 @@ from pyqode.python.modes.document_analyser import DocumentAnalyserMode
 
 
 __all__ = ["PyAutoCompleteMode", "CalltipsMode", "PEP8CheckerMode",
-           "GoToAssignmentsMode", "PyAutoIndentMode", "PyFlakesCheckerMode",
+           "GoToAssignmentsMode", "PyAutoIndentMode", "FrostedCheckerMode",
            "PyIndenterMode", "CommentsMode", "PyHighlighterMode",
            "DEFAULT_DARK_STYLES", "DEFAULT_LIGHT_STYLES"]

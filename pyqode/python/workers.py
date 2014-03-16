@@ -1,6 +1,7 @@
 """
 Contains the worker classes/functions executed on the server side.
 """
+import os
 from pyqode.core import logger
 from pyqode.core.api.constants import CheckerMessages
 from pyqode.python.code_completion import icon_from_typename
@@ -259,9 +260,10 @@ def run_pep8(request_data):
     return True, messages
 
 
-def run_pyflakes(request_data):
+def run_frosted(request_data):
     """
-    Worker that run a pyflakes code analysis on the current editor text
+    Worker that run a frosted (the fork of pyflakes) code analysis on the
+    current editor text.
     """
     import _ast
     ret_val = []
@@ -284,29 +286,17 @@ def run_pyflakes(request_data):
             # file declared was unknown.s
             logger.warning("%s: problem decoding source" % path)
         else:
-            ret_val.append((msg, CheckerMessages.WARNING, lineno))
+            ret_val.append((msg, CheckerMessages.ERROR, lineno))
     else:
         # Okay, it's syntactically valid.  Now check it.
-        from pyflakes import checker, messages
-        msg_types = {messages.UnusedImport: CheckerMessages.WARNING,
-                     messages.RedefinedWhileUnused: CheckerMessages.WARNING,
-                     messages.RedefinedInListComp: CheckerMessages.WARNING,
-                     messages.ImportShadowedByLoopVar: CheckerMessages.WARNING,
-                     messages.ImportStarUsed: CheckerMessages.WARNING,
-                     messages.UndefinedName: CheckerMessages.ERROR,
-                     messages.DoctestSyntaxError: CheckerMessages.ERROR,
-                     messages.UndefinedExport: CheckerMessages.ERROR,
-                     messages.UndefinedLocal:  CheckerMessages.ERROR,
-                     messages.DuplicateArgument: CheckerMessages.WARNING,
-                     messages.Redefined: CheckerMessages.WARNING,
-                     messages.LateFutureImport: CheckerMessages.WARNING,
-                     messages.UnusedVariable: CheckerMessages.WARNING}
-        w = checker.Checker(tree, path)
+        from frosted import checker
+        w = checker.Checker(tree, os.path.split(path)[1])
         w.messages.sort(key=lambda m: m.lineno)
         for warning in w.messages:
-            msg = warning.message % warning.message_args
+            msg = "%s: %s" % (warning.type.error_code, warning.message)
             line = warning.lineno
-            status = msg_types[type(warning)]
+            status = (CheckerMessages.WARNING
+                      if warning.type.error_code.startswith('W')
+                      else CheckerMessages.ERROR)
             ret_val.append((msg, status, line))
-    print("MESSAGES: %r" % ret_val)
     return True, ret_val

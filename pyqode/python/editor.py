@@ -42,7 +42,7 @@ from pyqode.python.modes import CalltipsMode
 from pyqode.python.modes import CommentsMode
 from pyqode.python.modes import PEP8CheckerMode
 from pyqode.python.modes import PyAutoIndentMode
-from pyqode.python.modes import PyFlakesCheckerMode
+from pyqode.python.modes import FrostedCheckerMode
 from pyqode.python.modes import PyHighlighterMode
 from pyqode.python.modes import PyIndenterMode
 from pyqode.python.modes import DEFAULT_DARK_STYLES
@@ -119,7 +119,7 @@ class QPythonCodeEdit(QCodeEdit):
         self.installMode(PyHighlighterMode(self.document()))
         self.installMode(PyAutoCompleteMode())
         self.installMode(PyAutoIndentMode())
-        self.installMode(PyFlakesCheckerMode())
+        self.installMode(FrostedCheckerMode())
         self.installMode(PEP8CheckerMode())
         self.installMode(CalltipsMode())
         self.installMode(PyIndenterMode())

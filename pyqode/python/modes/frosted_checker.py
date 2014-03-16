@@ -27,16 +27,16 @@
 This module contains the pyFlakes checker mode
 """
 from pyqode.core.modes import CheckerMode
-from pyqode.python.workers import run_pyflakes
+from pyqode.python.workers import run_frosted
 
 
-class PyFlakesCheckerMode(CheckerMode):
+class FrostedCheckerMode(CheckerMode):
     """
     This checker mode runs pyflakes on the fly to check your python syntax.
     """
-    DESCRIPTION = "Check python code using pyFlakes"
-    IDENTIFIER = "pyFlakesCheckerMode"
+    DESCRIPTION = "Check python code using frosted (pyFlakes)"
+    IDENTIFIER = "frostedCheckerMode"
 
     def __init__(self):
-        super().__init__(run_pyflakes, delay=1200,
+        super().__init__(run_frosted, delay=1200,
                          clearOnRequest=False)

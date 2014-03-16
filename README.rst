@@ -25,7 +25,7 @@ Features:
   * code completion provider (using `Jedi`_)
   * code folding mode
   * auto indent mode
-  * on the fly code checkers (PyFlakes, PEP8)
+  * on the fly code checkers (frosted (fork of PyFlakes), PEP8)
   * a customisable python specific syntax highlighter
   * a pre-configured QPythonCodeEdit (with the corresponding Qt Designer plugin)
 
@@ -42,7 +42,7 @@ pyqode.python depends on the following libraries:
  - pyqode.core
  - jedi
  - pep8
- - pyflakes
+ - frosted
 
 Installation
 ------------
