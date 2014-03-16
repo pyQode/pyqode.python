@@ -119,7 +119,7 @@ class QPythonCodeEdit(QCodeEdit):
         self.installMode(PyHighlighterMode(self.document()))
         self.installMode(PyAutoCompleteMode())
         self.installMode(PyAutoIndentMode())
-        # self.installMode(PyFlakesCheckerMode())
+        self.installMode(PyFlakesCheckerMode())
         self.installMode(PEP8CheckerMode())
         self.installMode(CalltipsMode())
         self.installMode(PyIndenterMode())
