@@ -128,6 +128,9 @@ def main():
     print(win.editor.settings.dump())
     print(win.editor.style.dump())
     app.exec_()
+    win.editor.stop_server()
+    del win
+    del app
 
 if __name__ == "__main__":
     main()
