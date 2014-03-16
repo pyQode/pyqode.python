@@ -264,7 +264,7 @@ def run_pyflakes(request_data):
     Worker that run a pyflakes code analysis on the current editor text
     """
     import _ast
-    messages = []
+    ret_val = []
     code = request_data['code']
     path = request_data['path']
     encoding = request_data['encoding']
@@ -284,7 +284,7 @@ def run_pyflakes(request_data):
             # file declared was unknown.s
             logger.warning("%s: problem decoding source" % path)
         else:
-            messages.append((msg, CheckerMessages.WARNING, lineno))
+            ret_val.append((msg, CheckerMessages.WARNING, lineno))
     else:
         # Okay, it's syntactically valid.  Now check it.
         from pyflakes import checker, messages
@@ -307,5 +307,6 @@ def run_pyflakes(request_data):
             msg = warning.message % warning.message_args
             line = warning.lineno
             status = msg_types[type(warning)]
-            messages.append((msg, status, line))
-    return messages
+            ret_val.append((msg, status, line))
+    print("MESSAGES: %r" % ret_val)
+    return True, ret_val
