@@ -27,34 +27,12 @@
 Contains the JediCompletionProvider class implementation.
 """
 import os
-from pyqode.core import Mode, DelayJobRunner, logger, constants
-from pyqode.core import get_server
-from pyqode.core import Worker
-from pyqode.qt import QtCore, QtGui
-
-
-class CalltipsWorker(Worker):
-    _slot = "jedi"
-
-    def __init__(self, code, line, col, path, encoding):
-        self.code = code
-        self.line = line
-        self.col = col
-        self.path = path
-        self.encoding = encoding
-
-    def __call__(self, *args, **kwargs):
-        import jedi
-        script = jedi.Script(self.code, self.line, self.col, self.path,
-                             self.encoding)
-        signatures = script.call_signatures()
-        for c in signatures:
-            results = [str(c.module.name), str(c.call_name),
-                       [str(p.get_name()) for p in c.params], c.index,
-                       c.bracket_start, self.col]
-            # seems like len of signatures is always 1 when getting calltips
-            return results
-        return []
+from pyqode.core import logger
+from pyqode.core.api import constants
+from pyqode.core.editor import Mode
+from pyqode.core.api.system import DelayJobRunner
+from pyqode.python import workers
+from PyQt4 import QtCore, QtGui
 
 
 class CalltipsMode(Mode, QtCore.QObject):
@@ -67,8 +45,8 @@ class CalltipsMode(Mode, QtCore.QObject):
     #: Mode description
     DESCRIPTION = "Provides functions calltips using the jedi library"
 
-    tooltipDisplayRequested = QtCore.Signal(object, int)
-    tooltipHideRequested = QtCore.Signal()
+    tooltipDisplayRequested = QtCore.pyqtSignal(object, int)
+    tooltipHideRequested = QtCore.pyqtSignal()
 
     def __init__(self):
         Mode.__init__(self)
@@ -82,13 +60,6 @@ class CalltipsMode(Mode, QtCore.QObject):
         if not "PYQODE_NO_COMPLETION_SERVER" in os.environ:
             if state:
                 self.editor.keyReleased.connect(self.__onKeyReleased)
-
-                if get_server():
-                    get_server().signals.workCompleted.connect(
-                        self.__onWorkFinished)
-            elif get_server():
-                get_server().signals.workCompleted.disconnect(
-                    self.__onWorkFinished)
 
     def __onKeyReleased(self, event):
         if (event.key() == QtCore.Qt.Key_ParenLeft or
@@ -108,15 +79,17 @@ class CalltipsMode(Mode, QtCore.QObject):
             source = "\n".join(lines)
             self.__requestCalltip(source, line, col, fn, encoding)
 
-    def __requestCalltip(self, *args):
+    def __requestCalltip(self, source, line, col, fn, encoding):
         if self.__requestCnt == 0:
             self.__requestCnt += 1
             logger.debug("Calltip requested")
-            worker = CalltipsWorker(*args)
-            get_server().requestWork(self, worker)
+            self.editor.request_work(
+                workers.calltips,
+                {'code': source, 'line': line, 'column': col, 'path': None,
+                 'encoding': encoding}, on_receive=self.__onWorkFinished)
 
-    def __onWorkFinished(self, caller_id, worker, results):
-        if caller_id == id(self) and isinstance(worker, CalltipsWorker):
+    def __onWorkFinished(self, status, results):
+        if status:
             logger.debug("Calltip request finished")
             self.__requestCnt -= 1
             if results:

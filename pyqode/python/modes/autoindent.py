@@ -25,7 +25,7 @@
 #
 """ Contains smart indent modes """
 import re
-from pyqode.qt.QtGui import QTextCursor
+from PyQt4.QtGui import QTextCursor
 from pyqode.core.modes.autoindent import AutoIndentMode
 
 

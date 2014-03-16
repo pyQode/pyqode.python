@@ -26,9 +26,8 @@
 """
 Contains python specific panels
 """
-from pyqode.python.panels.preload import PreLoadPanel
 from pyqode.python.panels.quick_doc import QuickDocPanel
 from pyqode.python.panels.symbol_browser import SymbolBrowserPanel
 
 
-__all__ = ["PreLoadPanel", "SymbolBrowserPanel", "QuickDocPanel"]
+__all__ = ["SymbolBrowserPanel", "QuickDocPanel"]

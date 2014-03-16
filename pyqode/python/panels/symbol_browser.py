@@ -25,11 +25,11 @@
 """
 SymbolBrowserPanel
 """
-import pyqode.core
-from pyqode.qt import QtGui, QtCore
+from pyqode.core.editor import Panel
+from PyQt4 import QtGui, QtCore
 
 
-class SymbolBrowserPanel(pyqode.core.Panel):
+class SymbolBrowserPanel(Panel):
     """
     Show a combo box with the file definitions.
 
@@ -91,7 +91,7 @@ class SymbolBrowserPanel(pyqode.core.Panel):
         self._definitions = definitions
         self._syncComboBox(self.editor.cursorPosition[0])
 
-    @QtCore.Slot(int)
+    @QtCore.pyqtSlot(int)
     def _onDefinitionActivated(self, index):
         definition = self.comboBox.itemData(index)
         if definition:

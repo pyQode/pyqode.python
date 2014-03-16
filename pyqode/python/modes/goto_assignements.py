@@ -27,10 +27,10 @@
 Contains the go to assignments mode.
 """
 import os
-import jedi
-from pyqode.core import get_server, Worker
-from  pyqode.qt import QtCore, QtGui
-from pyqode.core import Mode, CodeCompletionMode, logger
+from PyQt4 import QtCore, QtGui
+from pyqode.core import  logger
+from pyqode.core.editor import Mode
+from pyqode.python import workers
 
 
 class Assignment(object):
@@ -57,30 +57,6 @@ class Assignment(object):
                                                self.column, self.full_name)
 
 
-class _Worker(Worker):
-    _slot = "jedi"
-
-    def __init__(self, code, line, column, path, encoding):
-        self.code = code
-        self.line = line
-        self.col = column
-        self.path = path
-        self.encoding = encoding
-
-    def __call__(self, *args):
-        script = jedi.Script(self.code, self.line, self.col, self.path,
-                             self.encoding)
-        try:
-            definitions = script.goto_assignments()
-        except jedi.api.NotFoundError:
-            return []
-        else:
-            ret_val = [Assignment(d.module_path, d.line, d.column,
-                                  d.full_name)
-                       for d in definitions]
-            return ret_val
-
-
 class GoToAssignmentsMode(Mode, QtCore.QObject):
     """
     Goes to the assignments (using jedi.Script.goto_assignments). If there are
@@ -95,10 +71,10 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
     DESCRIPTION = "Move the text cursor to the symbol assignments/definitions"
 
     #: Signal emitted when the definition cannot be reached in the current edit.
-    outOfDocument = QtCore.Signal(Assignment)
+    outOfDocument = QtCore.pyqtSignal(Assignment)
 
     #: Signal emitted when no results could be found.
-    noResultsFound = QtCore.Signal()
+    noResultsFound = QtCore.pyqtSignal()
 
     def __init__(self):
         Mode.__init__(self)
@@ -109,9 +85,7 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
         self.actionGotoAssignments.triggered.connect(self.requestGoTo)
 
     def _onInstall(self, editor):
-        Mode._onInstall(self, editor)
-        if get_server():
-            get_server().signals.workCompleted.connect(self._onWorkFinished)
+        super()._onInstall(editor)
 
     def _onStateChanged(self, state):
         if state:
@@ -151,15 +125,19 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
         """
         if not tc:
             tc = self.editor.selectWordUnderCursor()
-        if get_server():
-            self.editor.setCursor(QtCore.Qt.WaitCursor)
-            if not self._pending:
-                get_server().requestWork(
-                    self, _Worker(self.editor.toPlainText(),
-                                  tc.blockNumber()+1, tc.columnNumber(),
-                                  self.editor.filePath,
-                                  self.editor.fileEncoding))
-                self._pending = True
+        if not self._pending:
+            request_data = {
+                'code': self.editor.toPlainText(),
+                'line': tc.blockNumber() + 1,
+                'column': tc.columnNumber(),
+                'path': self.editor.filePath,
+                'encoding': self.editor.fileEncoding
+            }
+            self.editor.request_work(workers.goto_assignments, request_data,
+                                     on_receive=self._onWorkFinished)
+            self._pending = True
+        self.editor.setCursor(QtCore.Qt.WaitCursor)
+
 
     def _goToDefinition(self, definition):
         pth = os.path.normpath(definition.module_path)
@@ -189,10 +167,12 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
                 checked.append(e)
         return checked
 
-    def _onWorkFinished(self, caller_id, worker, definitions):
-        if caller_id == id(self) and isinstance(worker, _Worker):
+    def _onWorkFinished(self, status, definitions):
+        if status:
             self.editor.setCursor(QtCore.Qt.IBeamCursor)
             self._pending = False
+            definitions = [Assignment(path, line, col, full_name)
+                           for path, line, col, full_name in definitions]
             definitions = self._makeUnique(definitions)
             logger.debug("Got %r" % definitions)
             if len(definitions) == 1:

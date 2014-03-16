@@ -25,8 +25,8 @@
 #
 """ Contains the python autocomplete mode """
 import jedi
-from pyqode.qt import QtGui
-from pyqode.core import AutoCompleteMode
+from PyQt4 import QtGui
+from pyqode.core.modes import AutoCompleteMode
 
 
 class PyAutoCompleteMode(AutoCompleteMode):

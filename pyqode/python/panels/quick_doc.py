@@ -26,36 +26,15 @@
 Contains the quick documentation panel
 """
 from docutils.core import publish_parts
-import jedi
-import pyqode.core
-from pyqode.core import get_server
-from pyqode.core.system import driftColor
-from pyqode.qt import QtGui
+from PyQt4 import QtGui
+from pyqode.core.editor import Panel
+from pyqode.core.api.system import driftColor
+from pyqode.python.workers import quick_doc
 
 
-class JediDocWorker(object):
-    _slot = "jedi"
-
-    def __init__(self, code, line, col, path, encoding):
-        self.code = code
-        self.line = line
-        self.col = col
-        self.path = path
-        self.encoding = encoding
-
-    def __call__(self, client, caller_id, *args, **kwargs):
-        script = jedi.Script(self.code, self.line, self.col, self.path,
-                             self.encoding)
-        try:
-            definitions = script.goto_definitions()
-        except jedi.api.NotFoundError:
-            return []
-        else:
-            ret_val = [d.doc for d in definitions]
-            return ret_val
 
 
-class QuickDocPanel(pyqode.core.Panel):
+class QuickDocPanel(Panel):
     """
     This panel quickly shows the documentation of the symbol under
     cursor.
@@ -149,31 +128,10 @@ class QuickDocPanel(pyqode.core.Panel):
 
     def _onStateChanged(self, state):
         super(QuickDocPanel, self)._onStateChanged(state)
-        srv = get_server()
         if state:
-            if srv:
-                srv.signals.workCompleted.connect(self._onWorkCompleted)
-            if hasattr(self.editor, "codeCompletionMode"):
-                self.editor.codeCompletionMode.preLoadStarted.connect(
-                    self._onPreloadStarted)
-                self.editor.codeCompletionMode.preLoadCompleted.connect(
-                    self._onPreloadCompleted)
             self.editor.addAction(self.aQuickDoc)
         else:
-            if srv:
-                srv.signals.workCompleted.disconnect(self._onWorkCompleted)
             self.editor.removeAction(self.aQuickDoc)
-            if hasattr(self.editor, "codeCompletionMode"):
-                self.editor.codeCompletionMode.preLoadStarted.disconnect(
-                    self._onPreloadStarted)
-                self.editor.codeCompletionMode.preLoadCompleted.disconnect(
-                    self._onPreloadCompleted)
-
-    def _onPreloadStarted(self):
-        self.aQuickDoc.setDisabled(True)
-
-    def _onPreloadCompleted(self):
-        self.aQuickDoc.setEnabled(True)
 
     def _onStyleChanged(self, section, key):
         super(QuickDocPanel, self)._onStyleChanged(section, key)
@@ -182,13 +140,18 @@ class QuickDocPanel(pyqode.core.Panel):
 
     def _onQuickDoc_triggered(self):
         tc = self.editor.selectWordUnderCursor(selectWholeWord=True)
-        assert isinstance(tc, QtGui.QTextCursor)
-        w = JediDocWorker(self.editor.toPlainText(), tc.blockNumber() + 1,
-                    tc.columnNumber(), self.editor.filePath, self.editor.fileEncoding)
-        get_server().requestWork(self, w)
+        request_data = {
+            'code': self.editor.toPlainText(),
+            'line': tc.blockNumber() + 1,
+            'column': tc.columnNumber(),
+            'path': self.editor.filePath,
+            'encoding': self.editor.fileEncoding
+        }
+        self.editor.request_work(quick_doc, request_data,
+                                 on_receive=self._onWorkCompleted)
 
-    def _onWorkCompleted(self, caller_id, worker, results):
-        if caller_id == id(self) and isinstance(worker, JediDocWorker):
+    def _onWorkCompleted(self, status, results):
+        if status:
             self.setVisible(True)
             if results:
                 if len(results) and results[0] != "":

@@ -30,7 +30,7 @@ import logging
 logging.basicConfig(level=logging.INFO)
 import os
 import sys
-from pyqode.qt import QtCore, QtGui
+from PyQt4 import QtCore, QtGui
 from ui.python_editor_ui import Ui_MainWindow
 
 
@@ -39,6 +39,7 @@ class PythonEditorWindow(QtGui.QMainWindow, Ui_MainWindow):
         QtGui.QMainWindow.__init__(self)
         Ui_MainWindow.__init__(self)
         self.setupUi(self)
+        self.editor.start_server()
         self.actionOpen.setIcon(
             QtGui.QIcon.fromTheme("document-open", QtGui.QIcon(
                 ":/example_icons/rc/folder.png")))
@@ -93,6 +94,7 @@ class PythonEditorWindow(QtGui.QMainWindow, Ui_MainWindow):
                 a.setText(k)
                 a.setCheckable(True)
                 a.setChecked(True)
+
                 a.changed.connect(self.onPanelCheckStateChanged)
                 a.panel = v
                 self.menuPanels.addAction(a)
@@ -103,16 +105,12 @@ class PythonEditorWindow(QtGui.QMainWindow, Ui_MainWindow):
         elif action == self.actionDark:
             self.editor.useDarkStyle()
 
-    @QtCore.Slot()
+    @QtCore.pyqtSlot()
     def on_actionOpen_triggered(self):
         filePath = QtGui.QFileDialog.getOpenFileName(
             self, "Choose a file", os.path.expanduser("~"))
-        if os.environ['QT_API'] == 'PySide':
-            if filePath[0]:
-                self.editor.openFile(filePath[0])
-        else:
-            if filePath:
-                self.editor.openFile(filePath)
+        if filePath:
+            self.editor.openFile(filePath)
 
     def onPanelCheckStateChanged(self):
         action = self.sender()

@@ -167,7 +167,7 @@
   <customwidget>
    <class>QPythonCodeEdit</class>
    <extends>QCodeEdit</extends>
-   <header>pyqode.python.editor</header>
+   <header>pyqode.python</header>
   </customwidget>
  </customwidgets>
  <resources>

@@ -22,8 +22,8 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #THE SOFTWARE.
 #
-from pyqode.core import Mode
-from pyqode.qt import QtGui, QtCore
+from pyqode.core.editor import Mode
+from PyQt4 import QtGui, QtCore
 
 
 class CommentsMode(Mode):

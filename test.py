@@ -31,7 +31,7 @@ version (2.7, 3.2, 3.3).
 It runs a QApplication and shows a QPythonCodeEdit for 500ms.
 """
 import sys
-from pyqode.qt import QtCore, QtGui
+from PyQt4 import QtCore, QtGui
 from pyqode.python import QPythonCodeEdit
 
 

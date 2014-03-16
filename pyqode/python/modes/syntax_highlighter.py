@@ -27,10 +27,13 @@
 """ This module contains the python specific syntax highlighter
 """
 import sys
-from pyqode.core import TextStyle, SyntaxHighlighter
-from pyqode.core.system import memoized
-from pyqode.qt import QtGui, QtCore
-from pyqode.core import Mode, IndentBasedFoldDetector
+from PyQt4 import QtGui, QtCore
+
+from pyqode.core.api.syntax_highlighter import SyntaxHighlighter
+from pyqode.core.api.syntax_highlighter import IndentBasedFoldDetector
+from pyqode.core.api.system import TextStyle
+from pyqode.core.api.system import memoized
+from pyqode.core.editor import Mode
 
 
 #: Default (white) color scheme for :class:`pyqode.python.PyHighlighterMode`

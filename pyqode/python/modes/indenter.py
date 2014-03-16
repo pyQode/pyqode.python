@@ -26,8 +26,8 @@
 """
 Contains the python indenter.
 """
-from pyqode.core import IndenterMode
-from pyqode.qt import QtGui
+from pyqode.core.modes import IndenterMode
+from PyQt4 import QtGui
 
 
 class PyIndenterMode(IndenterMode):
