@@ -32,7 +32,7 @@ It runs a QApplication and shows a QPythonCodeEdit for 500ms.
 """
 import sys
 from PyQt4 import QtCore, QtGui
-from pyqode.python import QPythonCodeEdit
+from pyqode.python.editor import QPythonCodeEdit
 
 
 def leave():
@@ -44,9 +44,13 @@ def main():
     app = QtGui.QApplication(sys.argv)
     editor = QPythonCodeEdit()
     editor.show()
+    editor.start_server()
     editor.openFile(__file__)
-    QtCore.QTimer.singleShot(7000, leave)
-    return app.exec_()
+    QtCore.QTimer.singleShot(500, leave)
+    app.exec_()
+    editor.stop_server()
+    del editor
+    del app
 
 
 if __name__ == "__main__":
