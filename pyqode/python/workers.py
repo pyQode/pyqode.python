@@ -248,12 +248,12 @@ def run_pep8(request_data):
     import pep8
 
     code = request_data['code']
-    filePath = request_data['path']
+    path = request_data['path']
     # setup our custom style guide with our custom checker which returns a list
     # of strings instread of spitting the results at stdout
     pep8style = pep8.StyleGuide(parse_argv=False, config_file=True,
                                 checker_class=CustomChecker)
-    results = pep8style.input_file(filePath, lines=code.splitlines(True))
+    results = pep8style.input_file(path, lines=code.splitlines(True))
     messages = []
     for line_number, offset, code, text, doc in results:
         messages.append((text, CheckerMessages.WARNING, line_number))

@@ -84,35 +84,19 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
         self.actionGotoAssignments.setShortcut("F2")
         self.actionGotoAssignments.triggered.connect(self.requestGoTo)
 
-    def _onInstall(self, editor):
-        super()._onInstall(editor)
+    def _on_install(self, editor):
+        super()._on_install(editor)
 
-    def _onStateChanged(self, state):
+    def _on_state_changed(self, state):
         if state:
             assert hasattr(self.editor, "wordClickMode")
             self.editor.wordClickMode.wordClicked.connect(self.requestGoTo)
-            self.sep = self.editor.addSeparator()
-            self.editor.addAction(self.actionGotoAssignments)
-            if hasattr(self.editor, "codeCompletionMode"):
-                self.editor.codeCompletionMode.preLoadStarted.connect(
-                    self._onPreloadStarted)
-                self.editor.codeCompletionMode.preLoadCompleted.connect(
-                    self._onPreloadCompleted)
+            self.sep = self.editor.add_separator()
+            self.editor.add_action(self.actionGotoAssignments)
         else:
             self.editor.wordClickMode.wordClicked.disconnect(self.requestGoTo)
-            self.editor.removeAction(self.actionGotoAssignments)
-            self.editor.removeAction(self.sep)
-            if hasattr(self.editor, "codeCompletionMode"):
-                self.editor.codeCompletionMode.preLoadStarted.disconnect(
-                    self._onPreloadStarted)
-                self.editor.codeCompletionMode.preLoadCompleted.disconnect(
-                    self._onPreloadCompleted)
-
-    def _onPreloadStarted(self):
-        self.actionGotoAssignments.setDisabled(True)
-
-    def _onPreloadCompleted(self):
-        self.actionGotoAssignments.setEnabled(True)
+            self.editor.remove_action(self.actionGotoAssignments)
+            self.editor.remove_action(self.sep)
 
     def requestGoTo(self, tc=None):
         """
@@ -124,29 +108,29 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
         :type tc: QtGui.QTextCursor
         """
         if not tc:
-            tc = self.editor.selectWordUnderCursor()
+            tc = self.editor.select_word_under_cursor()
         if not self._pending:
             request_data = {
                 'code': self.editor.toPlainText(),
                 'line': tc.blockNumber() + 1,
                 'column': tc.columnNumber(),
-                'path': self.editor.filePath,
-                'encoding': self.editor.fileEncoding
+                'path': self.editor.file_path,
+                'encoding': self.editor.file_encoding
             }
             self.editor.request_work(workers.goto_assignments, request_data,
                                      on_receive=self._onWorkFinished)
             self._pending = True
-        self.editor.setCursor(QtCore.Qt.WaitCursor)
+        self.editor.set_cursor(QtCore.Qt.WaitCursor)
 
 
     def _goToDefinition(self, definition):
         pth = os.path.normpath(definition.module_path)
-        fp = os.path.normpath(self.editor.filePath.replace(".pyc", ".py"))
+        fp = os.path.normpath(self.editor.file_path.replace(".pyc", ".py"))
         if definition.module_path == fp:
             line = definition.line
             col = definition.column
             logger.debug("Go to %s" % definition)
-            self.editor.gotoLine(line, move=True, column=col)
+            self.editor.goto_line(line, move=True, column=col)
         else:
             logger.debug("Out of doc: %s" % definition)
             self.outOfDocument.emit(definition)
@@ -169,7 +153,7 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
 
     def _onWorkFinished(self, status, definitions):
         if status:
-            self.editor.setCursor(QtCore.Qt.IBeamCursor)
+            self.editor.set_cursor(QtCore.Qt.IBeamCursor)
             self._pending = False
             definitions = [Assignment(path, line, col, full_name)
                            for path, line, col, full_name in definitions]

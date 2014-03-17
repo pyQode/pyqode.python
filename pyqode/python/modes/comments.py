@@ -38,17 +38,17 @@ class CommentsMode(Mode):
         self.action = QtGui.QAction("Comment/Uncomment", self.editor)
         self.action.setShortcut("Ctrl+/")
 
-    def _onStateChanged(self, state):
+    def _on_state_changed(self, state):
         """
         Called when the mode is activated/deactivated
         """
         if state:
             self.action.triggered.connect(self.comment)
-            self.separator = self.editor.addSeparator()
-            self.editor.addAction(self.action)
+            self.separator = self.editor.add_separator()
+            self.editor.add_action(self.action)
         else:
-            self.editor.removeAction(self.action)
-            self.editor.removeAction(self.separator)
+            self.editor.remove_action(self.action)
+            self.editor.remove_action(self.separator)
             self.action.triggered.disconnect(self.comment)
 
     def comment(self):
@@ -72,8 +72,8 @@ class CommentsMode(Mode):
         for i in range(nb_lines):
             cursor.movePosition(QtGui.QTextCursor.StartOfLine)
             cursor.movePosition(QtGui.QTextCursor.EndOfLine, cursor.KeepAnchor)
-            line = cursor.selectedText().lstrip()
-            indent = len(cursor.selectedText()) - len(line)
+            line = cursor.selected_text().lstrip()
+            indent = len(cursor.selected_text()) - len(line)
             if not line.startswith("#"):
                 comment = True
                 break
@@ -84,7 +84,7 @@ class CommentsMode(Mode):
         for i in range(nb_lines):
             cursor.movePosition(QtGui.QTextCursor.StartOfLine)
             cursor.movePosition(QtGui.QTextCursor.EndOfLine, cursor.KeepAnchor)
-            line = cursor.selectedText().lstrip()
+            line = cursor.selected_text().lstrip()
             if line != "":
                 cursor.movePosition(QtGui.QTextCursor.StartOfLine)
                 # Uncomment

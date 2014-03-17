@@ -57,7 +57,7 @@ class PythonEditorWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.editor.gotoAssignmentsMode.outOfDocument.connect(
             self.onOutOfDocument)
         try:
-            self.editor.openFile(__file__)
+            self.editor.open_file(__file__)
         except (OSError, IOError):
             pass
         except AttributeError:
@@ -110,7 +110,7 @@ class PythonEditorWindow(QtGui.QMainWindow, Ui_MainWindow):
         filePath = QtGui.QFileDialog.getOpenFileName(
             self, "Choose a file", os.path.expanduser("~"))
         if filePath:
-            self.editor.openFile(filePath)
+            self.editor.open_file(filePath)
 
     def onPanelCheckStateChanged(self):
         action = self.sender()
@@ -125,8 +125,8 @@ def main():
     app = QtGui.QApplication(sys.argv)
     win = PythonEditorWindow()
     win.show()
-    print(win.editor.settings.dump())
-    print(win.editor.style.dump())
+    print(win.editor.settings.dumps())
+    print(win.editor.style.dumps())
     app.exec_()
     win.editor.stop_server()
     del win

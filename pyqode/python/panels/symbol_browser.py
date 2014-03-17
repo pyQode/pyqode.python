@@ -53,8 +53,8 @@ class SymbolBrowserPanel(Panel):
         self.setLayout(layout)
         self.comboBox.addItem("Loading symbols...")
 
-    def _onStateChanged(self, state):
-        super(SymbolBrowserPanel, self)._onStateChanged(state)
+    def _on_state_changed(self, state):
+        super(SymbolBrowserPanel, self)._on_state_changed(state)
         if state:
             self.editor.cursorPositionChanged.connect(
                 self._onCursorPositionChanged)
@@ -89,13 +89,13 @@ class SymbolBrowserPanel(Panel):
                       # to get a variable name and return a list instead
                       # of a string.
         self._definitions = definitions
-        self._syncComboBox(self.editor.cursorPosition[0])
+        self._syncComboBox(self.editor.cursor_position[0])
 
     @QtCore.pyqtSlot(int)
     def _onDefinitionActivated(self, index):
         definition = self.comboBox.itemData(index)
         if definition:
-            self.editor.gotoLine(definition.line, column=definition.column)
+            self.editor.goto_line(definition.line, column=definition.column)
 
     def _syncComboBox(self, line):
         i = -1
@@ -107,7 +107,7 @@ class SymbolBrowserPanel(Panel):
             self.comboBox.setCurrentIndex(index)
 
     def _onCursorPositionChanged(self):
-        line = self.editor.cursorPosition[0]
+        line = self.editor.cursor_position[0]
         if self._prevLine != line:
             self._syncComboBox(line)
         self._prevLine = line

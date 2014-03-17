@@ -39,4 +39,4 @@ class FrostedCheckerMode(CheckerMode):
 
     def __init__(self):
         super().__init__(run_frosted, delay=1200,
-                         clearOnRequest=False)
+                         clear_on_request=False)

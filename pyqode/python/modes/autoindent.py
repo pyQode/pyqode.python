@@ -51,7 +51,7 @@ class PyAutoIndentMode(AutoIndentMode):
         ln = tc.blockNumber()
         limit = ln - 1
         while ln > limit:
-            if self.editor.lineText(ln).strip() != "":
+            if self.editor.line_text(ln).strip() != "":
                 return False
             ln -= 1
         return True
@@ -59,7 +59,7 @@ class PyAutoIndentMode(AutoIndentMode):
     def isStringBetweenParams(self, tc):
         ln = tc.blockNumber()
         while ln >= 0:
-            line = self.editor.lineText(ln)
+            line = self.editor.line_text(ln)
             if line.count("(") > line.count(")"):
                 return True
             ln -= 1
@@ -97,7 +97,7 @@ class PyAutoIndentMode(AutoIndentMode):
         data = tc.block().userData()
         nb_open = 0
         nb_closed = 0
-        lists = [data.parentheses, data.braces, data.squareBrackets]
+        lists = [data.parentheses, data.braces, data.square_brackets]
         for symbols in lists:
             for paren in symbols:
                 if paren.position >= col:
@@ -144,9 +144,9 @@ class PyAutoIndentMode(AutoIndentMode):
         if pos:
             tc2 = QTextCursor(tc)
             tc2.setPosition(pos)
-            oL, oC = self.editor.symbolMatcherMode.getSymbolPos(
+            oL, oC = self.editor.symbolMatcherMode.symbol_pos(
                 tc2, '(', 0)
-            line = self.editor.lineText(oL)
+            line = self.editor.line_text(oL)
             return len(line) - len(line.lstrip())
         return None
 
@@ -157,7 +157,7 @@ class PyAutoIndentMode(AutoIndentMode):
         pos = None
         char = None
         data = tc.block().userData()
-        lists = [data.parentheses, data.braces, data.squareBrackets]
+        lists = [data.parentheses, data.braces, data.square_brackets]
         for symbols in lists:
             for paren in reversed(symbols):
                 if paren.position < column:
@@ -171,7 +171,7 @@ class PyAutoIndentMode(AutoIndentMode):
                             # same line
                             tc3 = QTextCursor(tc)
                             tc3.setPosition(pos)
-                            l, c = self.editor.symbolMatcherMode.getSymbolPos(
+                            l, c = self.editor.symbolMatcherMode.symbol_pos(
                                 tc3, ')')
                             if l == ln and c < column:
                                 continue
@@ -191,17 +191,17 @@ class PyAutoIndentMode(AutoIndentMode):
             closingChar = '}'
         tc2 = QTextCursor(tc)
         tc2.setPosition(pos)
-        oL, oC = self.editor.symbolMatcherMode.getSymbolPos(
+        oL, oC = self.editor.symbolMatcherMode.symbol_pos(
             tc2, char, pType)
-        cL, cC = self.editor.symbolMatcherMode.getSymbolPos(
+        cL, cC = self.editor.symbolMatcherMode.symbol_pos(
             tc2, closingChar, pType)
         return (oL, oC), (cL, cC)
 
     def handleIndentAfterParen(self, column, line, fullLine, tc):
         # elements might be separated by ',' 'or' 'and'
         (oL, oC), (cL, cC) = self.getParenPos(tc, column)
-        closingLine = self.editor.lineText(cL)
-        openingLine = self.editor.lineText(oL)
+        closingLine = self.editor.line_text(cL)
+        openingLine = self.editor.line_text(oL)
         openingIndent = len(openingLine) - len(openingLine.lstrip())
         tokens = [t.strip() for t in re.split(', |and |or ',
                                               line[oC:column]) if t]
@@ -239,14 +239,14 @@ class PyAutoIndentMode(AutoIndentMode):
         column = tc.columnNumber()
         return column >= len(fullLine.rstrip()) - 1
 
-    def _getIndent(self, tc):
+    def _get_indent(self, tc):
         pos = tc.position()
-        ln, column = self.editor.cursorPosition
+        ln, column = self.editor.cursor_position
         fullLine = self.getfullLine(tc)
         line = fullLine[:column]
         if pos == 0 or column == 0:
             return "", ""
-        pre, post = AutoIndentMode._getIndent(self, tc)
+        pre, post = AutoIndentMode._get_indent(self, tc)
         if self.atBlockStart(tc, line):
             return pre, post
         lastWord = self.getLastWord(tc)
@@ -288,7 +288,7 @@ class PyAutoIndentMode(AutoIndentMode):
                         return False
                     while not check_kw_in_line(kw, l) and ln:
                         ln -= 1
-                        l = self.editor.lineText(ln)
+                        l = self.editor.line_text(ln)
                     indent = (len(l) - len(l.lstrip())) * " "
                     indent += 4 * " "
                     post = indent

@@ -173,7 +173,7 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
 
     def __init__(self, document=None):
         SyntaxHighlighter.__init__(self, document,
-                                   foldDetector=IndentBasedFoldDetector())
+                                   fold_detector=IndentBasedFoldDetector())
         self.__doc = document
         Mode.__init__(self)
         self.tri_single = (QtCore.QRegExp("'''"), 1, 'docstring')
@@ -240,21 +240,21 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
                 _format.setFontUnderline(True)
         return _format
 
-    def _onInstall(self, editor):
-        Mode._onInstall(self, editor)
+    def _on_install(self, editor):
+        Mode._on_install(self, editor)
         for k, v in DEFAULT_LIGHT_STYLES.items():
-            self.editor.style.addProperty(k, v, "Python")
+            self.editor.style.add_property(k, v, "Python")
         self.__foreground = self.editor.style.value(
             "whiteSpaceForeground")
         self.__bck = self.editor.style.value("background").name()
 
-    def _onStateChanged(self, state):
+    def _on_state_changed(self, state):
         if state:
             self.setDocument(self.editor.document())
         else:
             self.setDocument(None)
 
-    def _onStyleChanged(self, section, key):
+    def _on_style_changed(self, section, key):
         if not key:
             self.__foreground = self.editor.style.value(
                 "whiteSpaceForeground")
@@ -304,7 +304,7 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
                                                       self.__bck))
             index = self.docstringPattern.indexIn(text, index + length)
 
-    def doHighlightBlock(self, text):
+    def highlight_block(self, text):
         usd = self.currentBlock().userData()
         if hasattr(usd, "cc_disabled_zones"):
             usd.cc_disabled_zones[:] = []

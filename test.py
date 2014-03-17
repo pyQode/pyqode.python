@@ -45,7 +45,7 @@ def main():
     editor = QPythonCodeEdit()
     editor.show()
     editor.start_server()
-    editor.openFile(__file__)
+    editor.open_file(__file__)
     QtCore.QTimer.singleShot(500, leave)
     app.exec_()
     editor.stop_server()

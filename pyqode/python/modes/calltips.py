@@ -51,12 +51,12 @@ class CalltipsMode(Mode, QtCore.QObject):
     def __init__(self):
         Mode.__init__(self)
         QtCore.QObject.__init__(self)
-        self.__jobRunner = DelayJobRunner(self, nbThreadsMax=1, delay=700)
+        self.__jobRunner = DelayJobRunner(self, nb_threads_max=1, delay=700)
         self.tooltipDisplayRequested.connect(self.__displayTooltip)
         self.tooltipHideRequested.connect(QtGui.QToolTip.hideText)
         self.__requestCnt = 0
 
-    def _onStateChanged(self, state):
+    def _on_state_changed(self, state):
         if not "PYQODE_NO_COMPLETION_SERVER" in os.environ:
             if state:
                 self.editor.keyReleased.connect(self.__onKeyReleased)
@@ -67,8 +67,8 @@ class CalltipsMode(Mode, QtCore.QObject):
             tc = self.editor.textCursor()
             line = tc.blockNumber() + 1
             col = tc.columnNumber()
-            fn = self.editor.filePath
-            encoding = self.editor.fileEncoding
+            fn = self.editor.file_path
+            encoding = self.editor.file_encoding
             source = self.editor.toPlainText()
             # jedi has a bug if the statement has a closing parenthesis
             # remove it!
@@ -102,7 +102,7 @@ class CalltipsMode(Mode, QtCore.QObject):
 
     def __isLastCharEndOfWord(self):
         try:
-            tc = self.editor.selectWordUnderCursor()
+            tc = self.editor.select_word_under_cursor()
             tc.setPosition(tc.position())
             tc.movePosition(tc.StartOfLine, tc.KeepAnchor)
             l = tc.selectedText()

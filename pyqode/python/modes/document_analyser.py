@@ -51,12 +51,12 @@ class DocumentAnalyserMode(Mode, QtCore.QObject):
     def __init__(self, delay=1000):
         Mode.__init__(self)
         QtCore.QObject.__init__(self)
-        self._jobRunner = DelayJobRunner(self, nbThreadsMax=1,
+        self._jobRunner = DelayJobRunner(self, nb_threads_max=1,
                                                      delay=delay)
         #: The list of results (elements might have children; this is actually a tree).
         self.results = []
 
-    def _onStateChanged(self, state):
+    def _on_state_changed(self, state):
         if state:
             self.editor.blockCountChanged.connect(self._onLineCountChanged)
             self.editor.newTextSet.connect(self._runAnalysis)
@@ -65,14 +65,14 @@ class DocumentAnalyserMode(Mode, QtCore.QObject):
             self.editor.newTextSet.disconnect(self._runAnalysis)
 
     def _onLineCountChanged(self, e):
-        self._jobRunner.requestJob(self._runAnalysis, False)
+        self._jobRunner.request_job(self._runAnalysis, False)
 
     def _runAnalysis(self):
         if self.editor.toPlainText():
             request_data = {
                 'code': self.editor.toPlainText(),
-                'path': self.editor.filePath,
-                'encoding': self.editor.fileEncoding
+                'path': self.editor.file_path,
+                'encoding': self.editor.file_encoding
             }
             try:
                 self.editor.request_work(defined_names, request_data,

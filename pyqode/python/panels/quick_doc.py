@@ -28,7 +28,7 @@ Contains the quick documentation panel
 from docutils.core import publish_parts
 from PyQt4 import QtGui
 from pyqode.core.editor import Panel
-from pyqode.core.api.system import driftColor
+from pyqode.core.api.system import drift_color
 from pyqode.python.workers import quick_doc
 
 
@@ -113,7 +113,7 @@ class QuickDocPanel(Panel):
         self.aQuickDoc.triggered.connect(self._onQuickDoc_triggered)
 
     def _resetStylesheet(self):
-        highlight = driftColor(self.editor.palette().window().color())
+        highlight = drift_color(self.editor.palette().window().color())
         stylesheet = self.STYLESHEET % {
             "tooltip": self.editor.palette().toolTipBase().color().name(),
             "bck": self.editor.palette().window().color().name(),
@@ -121,31 +121,31 @@ class QuickDocPanel(Panel):
             "highlight": highlight.name()}
         self.setStyleSheet(stylesheet)
 
-    def _onInstall(self, editor):
-        super(QuickDocPanel, self)._onInstall(editor)
+    def _on_install(self, editor):
+        super(QuickDocPanel, self)._on_install(editor)
         self._resetStylesheet()
         self.setVisible(False)
 
-    def _onStateChanged(self, state):
-        super(QuickDocPanel, self)._onStateChanged(state)
+    def _on_state_changed(self, state):
+        super(QuickDocPanel, self)._on_state_changed(state)
         if state:
-            self.editor.addAction(self.aQuickDoc)
+            self.editor.add_action(self.aQuickDoc)
         else:
-            self.editor.removeAction(self.aQuickDoc)
+            self.editor.remove_action(self.aQuickDoc)
 
-    def _onStyleChanged(self, section, key):
-        super(QuickDocPanel, self)._onStyleChanged(section, key)
+    def _on_style_changed(self, section, key):
+        super(QuickDocPanel, self)._on_style_changed(section, key)
         if key in self._KEYS or not key:
             self._resetStylesheet()
 
     def _onQuickDoc_triggered(self):
-        tc = self.editor.selectWordUnderCursor(selectWholeWord=True)
+        tc = self.editor.select_word_under_cursor(select_whole_word=True)
         request_data = {
             'code': self.editor.toPlainText(),
             'line': tc.blockNumber() + 1,
             'column': tc.columnNumber(),
-            'path': self.editor.filePath,
-            'encoding': self.editor.fileEncoding
+            'path': self.editor.file_path,
+            'encoding': self.editor.file_encoding
         }
         self.editor.request_work(quick_doc, request_data,
                                  on_receive=self._onWorkCompleted)

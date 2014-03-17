@@ -44,11 +44,11 @@ class PyAutoCompleteMode(AutoCompleteMode):
 
     def _formatFuncParams(self, indent):
         parameters = ""
-        l = self.editor.cursorPosition[0] - 1
+        l = self.editor.cursor_position[0] - 1
         c = indent + len("def ") + 1
         script = jedi.Script(self.editor.toPlainText(), l, c,
-                             self.editor.filePath,
-                             self.editor.fileEncoding)
+                             self.editor.file_path,
+                             self.editor.file_encoding)
         definition = script.goto_definitions()[0]
         for defined_name in definition.defined_names():
             if defined_name.name != "self" and defined_name.type == 'param':
@@ -58,7 +58,7 @@ class PyAutoCompleteMode(AutoCompleteMode):
         return toInsert
 
     def _insertDocstring(self, prevLine, belowFct):
-        indent = self.editor.getLineIndent()
+        indent = self.editor.line_indent()
         if "class" in prevLine or not belowFct:
             toInsert = '"\n{0}\n{0}"""'.format(indent * " ")
         else:
@@ -71,10 +71,10 @@ class PyAutoCompleteMode(AutoCompleteMode):
         self.editor.setTextCursor(tc)
 
     def _inMethodCall(self):
-        l = self.editor.cursorPosition[0] - 1
-        expected_indent = self.editor.getLineIndent() - 4
+        l = self.editor.cursor_position[0] - 1
+        expected_indent = self.editor.line_indent() - 4
         while l >= 0:
-            text = self.editor.lineText(l)
+            text = self.editor.line_text(l)
             indent = len(text) - len(text.lstrip())
             if indent == expected_indent and 'class' in text:
                 return True
@@ -91,22 +91,22 @@ class PyAutoCompleteMode(AutoCompleteMode):
         tc.movePosition(tc.Left, tc.MoveAnchor, 2)
         self.editor.setTextCursor(tc)
 
-    def _onPostKeyPressed(self, e):
+    def _on_post_key_pressed(self, e):
         # if we are in disabled cc, use the parent implementation
-        column = self.editor.cursorPosition[1]
+        column = self.editor.cursor_position[1]
         usd = self.editor.textCursor().block().userData()
         for start, end in usd.cc_disabled_zones:
             if (start <= column < end-1 and
-                    not self.editor.currentLineText.lstrip().startswith(
+                    not self.editor.current_line_text.lstrip().startswith(
                             '"""')):
                 return
-        prevLine = self.editor.lineText(self.editor.cursorPosition[0] - 1)
+        prevLine = self.editor.line_text(self.editor.cursor_position[0] - 1)
         isBelowFuncOrClassDef = "def" in prevLine or "class" in prevLine
-        if (e.text() == '"' and '""' == self.editor.currentLineText.strip()
+        if (e.text() == '"' and '""' == self.editor.current_line_text.strip()
                 and (isBelowFuncOrClassDef or column == 2)):
             self._insertDocstring(prevLine, isBelowFuncOrClassDef)
         elif (e.text() == "(" and
-                  self.editor.currentLineText.lstrip().startswith("def ")):
+                  self.editor.current_line_text.lstrip().startswith("def ")):
             self._handleFctDef()
         else:
-            super(PyAutoCompleteMode, self)._onPostKeyPressed(e)
+            super(PyAutoCompleteMode, self)._on_post_key_pressed(e)

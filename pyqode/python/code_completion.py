@@ -61,7 +61,7 @@ class JediProvider(code_completion.Provider):
     .. _`jedi`: https://github.com/davidhalter/jedi
     """
 
-    def complete(self, code, line, column, prefix, path, encoding):
+    def complete(self, code, line, column, path, encoding):
         """
         Completes python code using `jedi`_.
 

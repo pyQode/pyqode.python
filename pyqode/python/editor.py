@@ -97,35 +97,35 @@ class QPythonCodeEdit(QCodeEdit):
         self.setWindowTitle("pyQode - Python Editor")
 
         # install those modes first as they are required by other modes/panels
-        self.installMode(DocumentAnalyserMode())
+        self.install_mode(DocumentAnalyserMode())
 
         # panels
-        self.installPanel(panels.LineNumberPanel())
-        self.installPanel(panels.MarkerPanel())
-        self.installPanel(panels.SearchAndReplacePanel(),
+        self.install_panel(panels.LineNumberPanel())
+        self.install_panel(panels.MarkerPanel())
+        self.install_panel(panels.SearchAndReplacePanel(),
                           Panel.Position.BOTTOM)
-        self.installPanel(SymbolBrowserPanel(), Panel.Position.TOP)
+        self.install_panel(SymbolBrowserPanel(), Panel.Position.TOP)
 
         # modes
         # generic
-        self.installMode(modes.CaretLineHighlighterMode())
-        self.installMode(modes.FileWatcherMode())
-        self.installMode(modes.RightMarginMode())
-        self.installMode(modes.ZoomMode())
-        self.installMode(modes.SymbolMatcherMode())
-        self.installMode(modes.WordClickMode())
-        self.installMode(modes.CodeCompletionMode())
+        self.install_mode(modes.CaretLineHighlighterMode())
+        self.install_mode(modes.FileWatcherMode())
+        self.install_mode(modes.RightMarginMode())
+        self.install_mode(modes.ZoomMode())
+        self.install_mode(modes.SymbolMatcherMode())
+        self.install_mode(modes.WordClickMode())
+        self.install_mode(modes.CodeCompletionMode())
         # python specifics
-        self.installMode(PyHighlighterMode(self.document()))
-        self.installMode(PyAutoCompleteMode())
-        self.installMode(PyAutoIndentMode())
-        self.installMode(FrostedCheckerMode())
-        self.installMode(PEP8CheckerMode())
-        self.installMode(CalltipsMode())
-        self.installMode(PyIndenterMode())
-        self.installMode(GoToAssignmentsMode())
-        self.installPanel(QuickDocPanel(), Panel.Position.BOTTOM)
-        self.installMode(CommentsMode())
+        self.install_mode(PyHighlighterMode(self.document()))
+        self.install_mode(PyAutoCompleteMode())
+        self.install_mode(PyAutoIndentMode())
+        self.install_mode(FrostedCheckerMode())
+        self.install_mode(PEP8CheckerMode())
+        self.install_mode(CalltipsMode())
+        self.install_mode(PyIndenterMode())
+        self.install_mode(GoToAssignmentsMode())
+        self.install_panel(QuickDocPanel(), Panel.Position.BOTTOM)
+        self.install_mode(CommentsMode())
 
     def start_server(self, script=None, interpreter=sys.executable, args=None):
         """
@@ -165,11 +165,11 @@ class QPythonCodeEdit(QCodeEdit):
             return
         setLightColorScheme(self)
 
-    def detectEncoding(self, data):
+    def detect_encoding(self, data):
         """
         Detects encoding based on PEP 0263
         """
-        encoding = self.getDefaultEncoding()
+        encoding = self.default_encoding()
         if sys.version_info[0] == 3:
             data = str(data.decode("utf-8"))
         for l in data.splitlines():
@@ -195,13 +195,13 @@ def setDarkColorScheme(codeEdit):
     """
     style = codeEdit.style.clone()
     for k, v in DEFAULT_DARK_STYLES.items():
-        style.setValue(k, v, "Python")
-    style.setValue("background", QtGui.QColor("#252525"))
-    style.setValue("foreground", QtGui.QColor("#A9B7C6"))
-    style.setValue("caretLineBackground", QtGui.QColor("#2d2d2d"))
-    style.setValue("whiteSpaceForeground", QtGui.QColor('#404040'))
-    style.setValue("matchedBraceBackground", None)
-    style.setValue("matchedBraceForeground", QtGui.QColor("#FF8647"))
+        style.set_value(k, v, "Python")
+    style.set_value("background", QtGui.QColor("#252525"))
+    style.set_value("foreground", QtGui.QColor("#A9B7C6"))
+    style.set_value("caretLineBackground", QtGui.QColor("#2d2d2d"))
+    style.set_value("whiteSpaceForeground", QtGui.QColor('#404040'))
+    style.set_value("matchedBraceBackground", None)
+    style.set_value("matchedBraceForeground", QtGui.QColor("#FF8647"))
     codeEdit.style = style
 
 
@@ -220,12 +220,12 @@ def setLightColorScheme(codeEdit):
     """
     style = codeEdit.style.clone()
     for k, v in DEFAULT_LIGHT_STYLES.items():
-        style.setValue(k, v, "Python")
-    style.setValue("background", QtGui.QColor("#FFFFFF"))
-    style.setValue("foreground", QtGui.QColor("#000000"))
-    style.setValue("caretLineBackground", QtGui.QColor("#E4EDF8"))
-    style.setValue("whiteSpaceForeground",
+        style.set_value(k, v, "Python")
+    style.set_value("background", QtGui.QColor("#FFFFFF"))
+    style.set_value("foreground", QtGui.QColor("#000000"))
+    style.set_value("caretLineBackground", QtGui.QColor("#E4EDF8"))
+    style.set_value("whiteSpaceForeground",
                    constants.EDITOR_WS_FOREGROUND)
-    style.setValue("matchedBraceBackground", QtGui.QColor("#B4EEB4"))
-    style.setValue("matchedBraceForeground", QtGui.QColor("#FF0000"))
+    style.set_value("matchedBraceBackground", QtGui.QColor("#B4EEB4"))
+    style.set_value("matchedBraceForeground", QtGui.QColor("#FF0000"))
     codeEdit.style = style

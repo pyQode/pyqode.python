@@ -40,4 +40,4 @@ class PEP8CheckerMode(CheckerMode):
     IDENTIFIER = "pep8CheckerMode"
 
     def __init__(self):
-        CheckerMode.__init__(self, run_pep8, clearOnRequest=False)
+        CheckerMode.__init__(self, run_pep8, clear_on_request=False)

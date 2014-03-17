@@ -42,11 +42,11 @@ class PyIndenterMode(IndenterMode):
         assert isinstance(cursor, QtGui.QTextCursor)
         if not cursor.hasSelection():
             cursor.select(cursor.LineUnderCursor)
-        self.indentSelection(cursor)
+        self.indent_selection(cursor)
 
-    def unIndent(self):
+    def unindent(self):
         cursor = self.editor.textCursor()
         assert isinstance(cursor, QtGui.QTextCursor)
         if not cursor.hasSelection():
             cursor.select(cursor.LineUnderCursor)
-        self.unIndentSelection(cursor)
+        self.unindent_selection(cursor)
