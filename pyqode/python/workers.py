@@ -45,7 +45,7 @@ def calltips(request_data):
         for c in signatures:
             for par in c.params:
                 print(dir(par))
-            results = (str(c.module.name), str(c.call_name),
+            results = (str(c.module_name), str(c.call_name),
                        [param_name(p) for p in c.params], c.index,
                        c.bracket_start, column)
             # todo: add support for multiple signatures
