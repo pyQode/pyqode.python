@@ -39,7 +39,9 @@ class Assignment(object):
     """
     def __init__(self, path, line, column, full_name):
         #: Module path
-        self.module_path = path.replace(".pyc", ".py")
+        if path:
+            path = path.replace(".pyc", ".py")
+        self.module_path = path
         #: Line number
         self.line = line
         #: Column number
