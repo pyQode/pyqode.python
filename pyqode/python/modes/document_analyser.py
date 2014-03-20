@@ -59,10 +59,10 @@ class DocumentAnalyserMode(Mode, QtCore.QObject):
     def _on_state_changed(self, state):
         if state:
             self.editor.blockCountChanged.connect(self._onLineCountChanged)
-            self.editor.newTextSet.connect(self._runAnalysis)
+            self.editor.new_text_set.connect(self._runAnalysis)
         else:
             self.editor.blockCountChanged.disconnect(self._onLineCountChanged)
-            self.editor.newTextSet.disconnect(self._runAnalysis)
+            self.editor.new_text_set.disconnect(self._runAnalysis)
 
     def _onLineCountChanged(self, e):
         self._jobRunner.request_job(self._runAnalysis, False)

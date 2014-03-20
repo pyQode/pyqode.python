@@ -92,11 +92,11 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
     def _on_state_changed(self, state):
         if state:
             assert hasattr(self.editor, "wordClickMode")
-            self.editor.wordClickMode.wordClicked.connect(self.requestGoTo)
+            self.editor.wordClickMode.word_clicked.connect(self.requestGoTo)
             self.sep = self.editor.add_separator()
             self.editor.add_action(self.actionGotoAssignments)
         else:
-            self.editor.wordClickMode.wordClicked.disconnect(self.requestGoTo)
+            self.editor.wordClickMode.word_clicked.disconnect(self.requestGoTo)
             self.editor.remove_action(self.actionGotoAssignments)
             self.editor.remove_action(self.sep)
 
@@ -124,9 +124,7 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
             self._pending = True
         self.editor.set_cursor(QtCore.Qt.WaitCursor)
 
-
     def _goToDefinition(self, definition):
-        pth = os.path.normpath(definition.module_path)
         fp = os.path.normpath(self.editor.file_path.replace(".pyc", ".py"))
         if definition.module_path == fp:
             line = definition.line
@@ -163,7 +161,8 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
             logger.debug("Got %r" % definitions)
             if len(definitions) == 1:
                 definition = definitions[0]
-                self._goToDefinition(definition)
+                if definition:
+                    self._goToDefinition(definition)
             elif len(definitions) > 1:
                 logger.debug(
                     "More than 1 assignments in different modules, user "
@@ -174,7 +173,7 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
                     [str(d) for d in definitions])
                 if result:
                     for definition in definitions:
-                        if str(definition) == def_str:
+                        if definition and str(definition) == def_str:
                             self._goToDefinition(definition)
                             return
             else:

@@ -59,7 +59,7 @@ class CalltipsMode(Mode, QtCore.QObject):
     def _on_state_changed(self, state):
         if not "PYQODE_NO_COMPLETION_SERVER" in os.environ:
             if state:
-                self.editor.keyReleased.connect(self.__onKeyReleased)
+                self.editor.key_released.connect(self.__onKeyReleased)
 
     def __onKeyReleased(self, event):
         if (event.key() == QtCore.Qt.Key_ParenLeft or
