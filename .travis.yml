@@ -13,4 +13,4 @@ install:
  - sudo apt-get install -qq python3-pyqt4 --fix-missing
  - pip install tox
 script:
-  - tox
+ - tox
