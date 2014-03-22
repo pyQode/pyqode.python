@@ -114,4 +114,3 @@ class Ui_MainWindow(object):
         self.actionDark.setText(_translate("MainWindow", "Dark", None))
 
 from pyqode.python.editor import QPythonCodeEdit
-from . import editor_rc

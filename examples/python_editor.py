@@ -31,7 +31,7 @@ logging.basicConfig(level=logging.INFO)
 import os
 import sys
 from PyQt4 import QtCore, QtGui
-from ui.python_editor_ui import Ui_MainWindow
+from examples.ui.python_editor_ui import Ui_MainWindow
 
 
 class PythonEditorWindow(QtGui.QMainWindow, Ui_MainWindow):
@@ -39,7 +39,7 @@ class PythonEditorWindow(QtGui.QMainWindow, Ui_MainWindow):
         QtGui.QMainWindow.__init__(self)
         Ui_MainWindow.__init__(self)
         self.setupUi(self)
-        self.editor.start_server()
+        self.editor.start_server(args=['-s', os.getcwd()])
         self.actionOpen.setIcon(
             QtGui.QIcon.fromTheme("document-open", QtGui.QIcon(
                 ":/example_icons/rc/folder.png")))
@@ -56,12 +56,9 @@ class PythonEditorWindow(QtGui.QMainWindow, Ui_MainWindow):
         # handle assignement that are out of the current document
         self.editor.gotoAssignmentsMode.outOfDocument.connect(
             self.onOutOfDocument)
-        try:
-            self.editor.open_file(__file__)
-        except (OSError, IOError):
-            pass
-        except AttributeError:
-            pass
+
+        # open ourself
+        self.editor.open_file(__file__)
 
     def onOutOfDocument(self, definition):
         QtGui.QMessageBox.warning(self, "Out of document",
