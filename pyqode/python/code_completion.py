@@ -70,6 +70,7 @@ class JediProvider(code_completion.Provider):
         retVal = []
         try:
             import jedi
+            from jedi.evaluate.imports import ModuleNotFound
         except ImportError:
             logger.error("Failed to import jedi. Check your jedi "
                          "installation")
@@ -81,6 +82,8 @@ class JediProvider(code_completion.Provider):
                 completions = script.completions()
             except jedi.NotFoundError:
                 completions = []
+            txt = code.splitlines()[line-1].strip()
+            follow_definitions = txt != 'from' and txt != 'import'
             for completion in completions:
                 name = completion.name
                 # desc = completion.description
@@ -88,11 +91,11 @@ class JediProvider(code_completion.Provider):
                 type = completion.type
                 if "getset_descriptor" in completion.description:
                     type = 'STATEMENT'
-                if type.lower() == 'import':
+                if type.lower() == 'import' and follow_definitions:
                     try:
                         definition = completion.follow_definition()[0]
                         type = definition.type
-                    except (IndexError, AttributeError):
+                    except (IndexError, ModuleNotFound):
                         # no definition
                         # AttributeError is raised for GlobalNamespace
                         pass
