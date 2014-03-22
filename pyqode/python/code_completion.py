@@ -61,7 +61,7 @@ class JediProvider(code_completion.Provider):
     .. _`jedi`: https://github.com/davidhalter/jedi
     """
 
-    def complete(self, code, line, column, path, encoding):
+    def complete(self, code, line, column, path, encoding, prefix):
         """
         Completes python code using `jedi`_.
 
@@ -82,8 +82,8 @@ class JediProvider(code_completion.Provider):
                 completions = script.completions()
             except jedi.NotFoundError:
                 completions = []
-            txt = code.splitlines()[line-1].strip()
-            follow_definitions = txt != 'from' and txt != 'import'
+            prefix = prefix.strip()
+            follow_definitions = prefix != 'from' and prefix != 'import'
             for completion in completions:
                 name = completion.name
                 # desc = completion.description
