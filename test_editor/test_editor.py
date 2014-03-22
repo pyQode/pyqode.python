@@ -40,7 +40,7 @@ def leave():
     app.exit(0)
 
 
-def main():
+def test_editor():
     app = QtGui.QApplication(sys.argv)
     editor = QPythonCodeEdit()
     editor.show()
@@ -51,7 +51,3 @@ def main():
     editor.stop_server()
     del editor
     del app
-
-
-if __name__ == "__main__":
-    sys.exit(main())
