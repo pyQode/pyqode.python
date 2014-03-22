@@ -69,7 +69,7 @@ class QPythonCodeEdit(QCodeEdit):
     **Modes:**
         * :class:`pyqode.core.CaretLineHighlighterMode`
         * :class:`pyqode.core.RightMarginMode`
-        * :class:`pyqode.core.CodeCompletionMode` + :class:`pyqode.python.JediCompletionProvider` and :class:`pyqode.core.DocumentWordCompletionProvider`
+        * :class:`pyqode.core.CodeCompletionMode`
         * :class:`pyqode.core.ZoomMode`
         * :class:`pyqode.core.SymbolMatcherMode`
         * :class:`pyqode.python.PyAutoCompleteMode`
@@ -103,7 +103,7 @@ class QPythonCodeEdit(QCodeEdit):
         self.install_panel(panels.LineNumberPanel())
         self.install_panel(panels.MarkerPanel())
         self.install_panel(panels.SearchAndReplacePanel(),
-                          Panel.Position.BOTTOM)
+                           Panel.Position.BOTTOM)
         self.install_panel(SymbolBrowserPanel(), Panel.Position.TOP)
 
         # modes
@@ -187,8 +187,8 @@ def setDarkColorScheme(codeEdit):
     The color scheme is similar to pycharm's darcula color scheme.
 
     .. note:: This function will work only if a
-              :class:`pyqode.python.PyHighlighterMode` has been installed on the
-              codeEdit instance
+        :class:`pyqode.python.PyHighlighterMode` has been installed on the
+        QCodeEdit instance
 
     :param codeEdit: QCodeEdit instance
     :type codeEdit: pyqode.core.QCodeEdit
@@ -212,8 +212,8 @@ def setLightColorScheme(codeEdit):
     The color scheme is similar to the qt creator's default color scheme.
 
     .. note:: This function will work only if a
-              :class:`pyqode.python.PyHighlighterMode` has been installed on the
-              codeEdit instance
+        :class:`pyqode.python.PyHighlighterMode` has been installed on the
+        codeEdit instance
 
     :param codeEdit: QCodeEdit instance
     :type codeEdit: pyqode.core.QCodeEdit
@@ -225,7 +225,7 @@ def setLightColorScheme(codeEdit):
     style.set_value("foreground", QtGui.QColor("#000000"))
     style.set_value("caretLineBackground", QtGui.QColor("#E4EDF8"))
     style.set_value("whiteSpaceForeground",
-                   constants.EDITOR_WS_FOREGROUND)
+                    constants.EDITOR_WS_FOREGROUND)
     style.set_value("matchedBraceBackground", QtGui.QColor("#B4EEB4"))
     style.set_value("matchedBraceForeground", QtGui.QColor("#FF0000"))
     codeEdit.style = style

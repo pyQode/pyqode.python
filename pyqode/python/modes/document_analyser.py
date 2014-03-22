@@ -51,9 +51,9 @@ class DocumentAnalyserMode(Mode, QtCore.QObject):
     def __init__(self, delay=1000):
         Mode.__init__(self)
         QtCore.QObject.__init__(self)
-        self._jobRunner = DelayJobRunner(self, nb_threads_max=1,
-                                                     delay=delay)
-        #: The list of results (elements might have children; this is actually a tree).
+        self._jobRunner = DelayJobRunner(self, nb_threads_max=1, delay=delay)
+        #: The list of results (elements might have children; this is actually
+        #: a tree).
         self.results = []
 
     def _on_state_changed(self, state):

@@ -252,7 +252,7 @@ class PyAutoIndentMode(AutoIndentMode):
         lastWord = self.getLastWord(tc)
         if self.inComment(column, tc, fullLine):
             if line.strip().startswith("#") and column != len(fullLine):
-                post = post + '#'
+                post += '#'
             return pre, post
         elif self.betweenParen(tc, column):
             pre, post = self.handleIndentAfterParen(column, line, fullLine, tc)
@@ -263,7 +263,7 @@ class PyAutoIndentMode(AutoIndentMode):
                 # check if there a at least a non closed paren on the previous
                 # lines
                 if self.isStringBetweenParams(tc):
-                    pre =  char
+                    pre = char
                 else:
                     pre = '" \\'
                     post += 4 * ' '
@@ -278,14 +278,17 @@ class PyAutoIndentMode(AutoIndentMode):
                     if indent:
                         post = indent * " "
                 except TypeError:
-                    kw = ["if", "class", "def", "while", "for", "else", "elif", "except", "finally", "try"]
+                    kw = ["if", "class", "def", "while", "for", "else", "elif",
+                          "except", "finally", "try"]
                     l = fullLine
                     ln = tc.blockNumber()
-                    def check_kw_in_line(kws, l):
-                        for kw in kws:
-                            if kw in l:
+
+                    def check_kw_in_line(kwds, lparam):
+                        for kwd in kwds:
+                            if kwd in lparam:
                                 return True
                         return False
+
                     while not check_kw_in_line(kw, l) and ln:
                         ln -= 1
                         l = self.editor.line_text(ln)
@@ -294,7 +297,7 @@ class PyAutoIndentMode(AutoIndentMode):
                     post = indent
             elif fullLine.endswith("\\"):
                 # increment indent
-                post = post + 4 * " "
+                post += 4 * " "
             elif fullLine.endswith(")") and lastWord.endswith(')'):
                 # find line where the open braces can be found and align with
                 # that line

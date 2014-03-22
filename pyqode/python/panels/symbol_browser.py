@@ -47,7 +47,8 @@ class SymbolBrowserPanel(Panel):
         layout = QtGui.QHBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         self.comboBox = QtGui.QComboBox()
-        self.comboBox.setSizeAdjustPolicy(self.comboBox.AdjustToMinimumContentsLength)
+        self.comboBox.setSizeAdjustPolicy(
+            self.comboBox.AdjustToMinimumContentsLength)
         self.comboBox.activated.connect(self._onDefinitionActivated)
         layout.addWidget(self.comboBox)
         self.setLayout(layout)

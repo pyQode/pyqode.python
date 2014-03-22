@@ -32,8 +32,6 @@ from pyqode.core.api.system import drift_color
 from pyqode.python.workers import quick_doc
 
 
-
-
 class QuickDocPanel(Panel):
     """
     This panel quickly shows the documentation of the symbol under
@@ -158,11 +156,12 @@ class QuickDocPanel(Panel):
                     string = "\n\n".join(results)
                     string = publish_parts(
                         string, writer_name='html',
-                        settings_overrides={'output_encoding': 'unicode'})['html_body']
+                        settings_overrides=
+                        {'output_encoding': 'unicode'})['html_body']
                     string = string.replace('colspan="2"', 'colspan="0"')
                     string = string.replace("<th ", '<th align="left" ')
-                    string = string.replace('</tr>\n<tr class="field"><td>&nbsp;</td>',
-                                            '')
+                    string = string.replace(
+                        '</tr>\n<tr class="field"><td>&nbsp;</td>', '')
                     if string:
                         self.textEdit.setText(string)
 

@@ -81,7 +81,8 @@ DEFAULT_DARK_STYLES = {
 
 class PyHighlighterMode(SyntaxHighlighter, Mode):
     """
-    Syntax highlighter specifically crafted for the Python programming language.
+    Syntax highlighter specifically crafted for the Python programming
+    language.
 
     Contrarily to :class:`pyqode.core.PygmentsSyntaxHighlighter` this syntax
     highlighter highlights multi-line comments and docstrings properly.
@@ -92,15 +93,16 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
               :attr:`QtGui.QTextBlock.userState` which is a bitmask combination
               that store two information:
 
-                  * the 7 first **bits** are used to store the following states:
+                  * the 7 first **bits** are used to store the following
+                    states:
 
                       - 0: not a multi-line string/docstring
                       - 1: start of multi-line string/docstring
                       - 2: multi-line string/docstring
 
                   * the 8th **bit** is used to make the difference between a
-                    docstring and a string which are highlighted with a different
-                    color.
+                    docstring and a string which are highlighted with a
+                    different color.
     """
     _DESCRIPTION = "Custom QtGui.QSyntaxHighlighter to highlight python syntax"
 
@@ -377,7 +379,8 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
             elif prevState == 0 or prevState == -1:
                 state = 1
                 # start of single quoted comment
-                if text.startswith("'''") and text.endswith("'''") and len(text) > 6:
+                if (text.startswith("'''") and text.endswith("'''") and
+                        len(text) > 6):
                     state = 0
                 multi = True
             else:
@@ -396,7 +399,8 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
                 multi = True
                 state = 2
                 # start of single quoted string/docstring
-                if text.startswith('"""') and text.endswith('"""') and len(text) > 6:
+                if (text.startswith('"""') and text.endswith('"""') and
+                        len(text) > 6):
                     state = 0
             else:
                 multi = True

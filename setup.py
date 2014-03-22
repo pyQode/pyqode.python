@@ -62,20 +62,22 @@ setup(
     long_description=readme(),
     install_requires=requirements,
     entry_points={'pyqode_plugins':
-                 ['pyqode_python = pyqode.python.plugins.pyqode_python_plugin']},
+                 ['pyqode_python = '
+                  'pyqode.python.plugins.pyqode_python_plugin']},
     zip_safe=False,
     classifiers=[
-          'Development Status :: 5 - Production/Stable',
-          'Environment :: X11 Applications :: Qt',
-          'Environment :: Win32 (MS Windows)',
-          'Intended Audience :: Developers',
-          'License :: OSI Approved :: MIT License',
-          'Operating System :: Microsoft :: Windows',
-          'Operating System :: POSIX :: Linux',
-          'Programming Language :: Python :: 2.7',
-          'Programming Language :: Python :: 3.2',
-          'Programming Language :: Python :: 3.3',
-          'Topic :: Software Development :: Libraries :: Application Frameworks',
-          'Topic :: Software Development :: Widget Sets',
-          'Topic :: Text Editors :: Integrated Development Environments (IDE)']
+        'Development Status :: 5 - Production/Stable',
+        'Environment :: X11 Applications :: Qt',
+        'Environment :: Win32 (MS Windows)',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: MIT License',
+        'Operating System :: Microsoft :: Windows',
+        'Operating System :: POSIX :: Linux',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.2',
+        'Programming Language :: Python :: 3.3',
+        'Topic :: Software Development :: Libraries :: Application Frameworks',
+        'Topic :: Software Development :: Widget Sets',
+        'Topic :: Text Editors :: Integrated Development Environments (IDE)'
+    ]
 )

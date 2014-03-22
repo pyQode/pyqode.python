@@ -31,8 +31,8 @@ from pyqode.core.modes import AutoCompleteMode
 
 class PyAutoCompleteMode(AutoCompleteMode):
     """
-    Extends :class:`pyqode.core.AutoCompleteMode` to add support for function docstring and
-    method/function call.
+    Extends :class:`pyqode.core.AutoCompleteMode` to add support for function
+    docstring and method/function call.
 
     Docstring completion adds a `:param` sphinx tag foreach parameter in the
     above function.
@@ -96,9 +96,9 @@ class PyAutoCompleteMode(AutoCompleteMode):
         column = self.editor.cursor_position[1]
         usd = self.editor.textCursor().block().userData()
         for start, end in usd.cc_disabled_zones:
-            if (start <= column < end-1 and
+            if (start <= column < end - 1 and
                     not self.editor.current_line_text.lstrip().startswith(
-                            '"""')):
+                    '"""')):
                 return
         prevLine = self.editor.line_text(self.editor.cursor_position[0] - 1)
         isBelowFuncOrClassDef = "def" in prevLine or "class" in prevLine
@@ -106,7 +106,7 @@ class PyAutoCompleteMode(AutoCompleteMode):
                 and (isBelowFuncOrClassDef or column == 2)):
             self._insertDocstring(prevLine, isBelowFuncOrClassDef)
         elif (e.text() == "(" and
-                  self.editor.current_line_text.lstrip().startswith("def ")):
+                self.editor.current_line_text.lstrip().startswith("def ")):
             self._handleFctDef()
         else:
             super(PyAutoCompleteMode, self)._on_post_key_pressed(e)

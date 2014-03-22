@@ -28,7 +28,7 @@ Contains the go to assignments mode.
 """
 import os
 from PyQt4 import QtCore, QtGui
-from pyqode.core import  logger
+from pyqode.core import logger
 from pyqode.core.editor import Mode
 from pyqode.python import workers
 
@@ -72,7 +72,8 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
     IDENTIFIER = "gotoAssignmentsMode"
     DESCRIPTION = "Move the text cursor to the symbol assignments/definitions"
 
-    #: Signal emitted when the definition cannot be reached in the current edit.
+    #: Signal emitted when the definition cannot be reached in the current
+    #: document
     outOfDocument = QtCore.pyqtSignal(Assignment)
 
     #: Signal emitted when no results could be found.
