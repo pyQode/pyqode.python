@@ -34,6 +34,9 @@ import sys
 from PyQt4 import QtCore, QtGui
 from pyqode.python.editor import QPythonCodeEdit
 
+import logging
+logging.basicConfig(level=True)
+
 
 def leave():
     app = QtGui.QApplication.instance()
