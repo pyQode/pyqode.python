@@ -137,33 +137,25 @@ class QPythonCodeEdit(QCodeEdit):
             script = server.__file__
         super().start_server(script, interpreter=interpreter, args=args)
 
-    def setModulesToPreload(self, modules=None):
-        """
-        Sets the list of modules to preload. This must be called before opening
-        the first file with pyqode. (you can also pass the list of modules to
-        the constructor using the modulesToPreload argument).
-        """
-        self._cc_provider().modules = modules
-
     @QtCore.pyqtSlot()
-    def useDarkStyle(self, use=True):
+    def use_dark_style(self, use=True):
         """
         Changes the editor style to a dark color scheme similar to pycharm's
         darcula color scheme.
         """
         if not use:
             return
-        setDarkColorScheme(self)
+        set_dark_color_scheme(self)
 
     @QtCore.pyqtSlot()
-    def useLightStyle(self, use=True):
+    def use_white_style(self, use=True):
         """
         Changes the editor style to a dark color scheme similar to QtCreator's
         default color scheme.
         """
         if not use:
             return
-        setLightColorScheme(self)
+        set_white_color_scheme(self)
 
     def detect_encoding(self, data):
         """
@@ -180,7 +172,7 @@ class QPythonCodeEdit(QCodeEdit):
         return encoding
 
 
-def setDarkColorScheme(codeEdit):
+def set_dark_color_scheme(code_edit):
     """
     Set a dark scheme on a :class:`pyqode.core.QCodeEdit`.
 
@@ -190,10 +182,10 @@ def setDarkColorScheme(codeEdit):
         :class:`pyqode.python.PyHighlighterMode` has been installed on the
         QCodeEdit instance
 
-    :param codeEdit: QCodeEdit instance
-    :type codeEdit: pyqode.core.QCodeEdit
+    :param code_edit: QCodeEdit instance
+    :type code_edit: pyqode.core.QCodeEdit
     """
-    style = codeEdit.style.clone()
+    style = code_edit.style.clone()
     for k, v in DEFAULT_DARK_STYLES.items():
         style.set_value(k, v, "Python")
     style.set_value("background", QtGui.QColor("#252525"))
@@ -202,10 +194,10 @@ def setDarkColorScheme(codeEdit):
     style.set_value("whiteSpaceForeground", QtGui.QColor('#404040'))
     style.set_value("matchedBraceBackground", None)
     style.set_value("matchedBraceForeground", QtGui.QColor("#FF8647"))
-    codeEdit.style = style
+    code_edit.style = style
 
 
-def setLightColorScheme(codeEdit):
+def set_white_color_scheme(code_edit):
     """
     Set a light scheme on a :class:`pyqode.core.QCodeEdit`.
 
@@ -215,10 +207,10 @@ def setLightColorScheme(codeEdit):
         :class:`pyqode.python.PyHighlighterMode` has been installed on the
         codeEdit instance
 
-    :param codeEdit: QCodeEdit instance
-    :type codeEdit: pyqode.core.QCodeEdit
+    :param code_edit: QCodeEdit instance
+    :type code_edit: pyqode.core.QCodeEdit
     """
-    style = codeEdit.style.clone()
+    style = code_edit.style.clone()
     for k, v in DEFAULT_LIGHT_STYLES.items():
         style.set_value(k, v, "Python")
     style.set_value("background", QtGui.QColor("#FFFFFF"))
@@ -228,4 +220,4 @@ def setLightColorScheme(codeEdit):
                     constants.EDITOR_WS_FOREGROUND)
     style.set_value("matchedBraceBackground", QtGui.QColor("#B4EEB4"))
     style.set_value("matchedBraceForeground", QtGui.QColor("#FF0000"))
-    codeEdit.style = style
+    code_edit.style = style

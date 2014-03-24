@@ -120,7 +120,7 @@ class CommentsMode(Mode):
             cursor.movePosition(cursor.Down, cursor.MoveAnchor, 1)
         self.editor.setTextCursor(cursor)
 
-    def __on_keyPressed(self, event):
+    def _on_key_pressed(self, event):
         if(event.modifiers() & QtCore.Qt.ControlModifier and
            event.key() == QtCore.Qt.Key_Slash):
             event.accept()

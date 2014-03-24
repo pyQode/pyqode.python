@@ -98,9 +98,9 @@ class PythonEditorWindow(QtGui.QMainWindow, Ui_MainWindow):
 
     def changeStyle(self, action):
         if action == self.actionLight:
-            self.editor.useLightStyle()
+            self.editor.use_white_style()
         elif action == self.actionDark:
-            self.editor.useDarkStyle()
+            self.editor.use_dark_style()
 
     @QtCore.pyqtSlot()
     def on_actionOpen_triggered(self):

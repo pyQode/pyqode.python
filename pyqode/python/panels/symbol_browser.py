@@ -25,6 +25,7 @@
 """
 SymbolBrowserPanel
 """
+from pyqode.core import logger
 from pyqode.core.editor import Panel
 from PyQt4 import QtGui, QtCore
 
@@ -46,69 +47,69 @@ class SymbolBrowserPanel(Panel):
         self._definitions = []
         layout = QtGui.QHBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
-        self.comboBox = QtGui.QComboBox()
-        self.comboBox.setSizeAdjustPolicy(
-            self.comboBox.AdjustToMinimumContentsLength)
-        self.comboBox.activated.connect(self._onDefinitionActivated)
-        layout.addWidget(self.comboBox)
+        self.combo_box = QtGui.QComboBox()
+        self.combo_box.setSizeAdjustPolicy(
+            self.combo_box.AdjustToMinimumContentsLength)
+        self.combo_box.activated.connect(self._on_definition_activated)
+        layout.addWidget(self.combo_box)
         self.setLayout(layout)
-        self.comboBox.addItem("Loading symbols...")
+        self.combo_box.addItem("Loading symbols...")
 
     def _on_state_changed(self, state):
         super(SymbolBrowserPanel, self)._on_state_changed(state)
         if state:
             self.editor.cursorPositionChanged.connect(
-                self._onCursorPositionChanged)
+                self._on_cursor_pos_changed)
             try:
                 self.editor.documentAnalyserMode.documentChanged.connect(
-                    self._onDocumentChanged)
+                    self._on_document_changed)
             except AttributeError:
-                pyqode.core.logger.warning("DocumentAnalyserMode, install it "
-                                           "before SymbolBrowserPanel!")
+                logger.warning("DocumentAnalyserMode, install it "
+                               "before SymbolBrowserPanel!")
         else:
             self.editor.cursorPositionChanged.disconnect(
-                self._onCursorPositionChanged)
+                self._on_cursor_pos_changed)
             try:
                 self.editor.documentAnalyserMode.documentChanged.disconnect(
-                    self._onDocumentChanged)
+                    self._on_document_changed)
             except AttributeError:
-                pyqode.core.logger.warning("DocumentAnalyserMode, install it "
-                                           "before SymbolBrowserPanel!")
+                logger.warning("DocumentAnalyserMode, install it "
+                               "before SymbolBrowserPanel!")
 
-    def _onDocumentChanged(self):
-        definitions = self.editor.documentAnalyserMode.flattenedResults
-        self.comboBox.clear()
+    def _on_document_changed(self):
+        definitions = self.editor.documentAnalyserMode.flattend_results
+        self.combo_box.clear()
         if definitions:
-            self.comboBox.addItem(" < Select a symbol >")
+            self.combo_box.addItem(" < Select a symbol >")
         else:
-            self.comboBox.addItem("No symbols")
+            self.combo_box.addItem("No symbols")
         for d in definitions:
             try:
-                self.comboBox.addItem(QtGui.QIcon(d.icon), d.name, d)
+                self.combo_box.addItem(QtGui.QIcon(d.icon), d.name, d)
             except TypeError:
                 pass  # skip anonym elements, sometimes jedi fail to
                       # to get a variable name and return a list instead
                       # of a string.
         self._definitions = definitions
-        self._syncComboBox(self.editor.cursor_position[0])
+        self._sync_combo_box(self.editor.cursor_position[0])
 
     @QtCore.pyqtSlot(int)
-    def _onDefinitionActivated(self, index):
-        definition = self.comboBox.itemData(index)
+    def _on_definition_activated(self, index):
+        definition = self.combo_box.itemData(index)
         if definition:
             self.editor.goto_line(definition.line, column=definition.column)
 
-    def _syncComboBox(self, line):
+    def _sync_combo_box(self, line):
         i = -1
         for i, d in enumerate(reversed(self._definitions)):
             if d.line <= line:
                 break
         if i >= 0:
             index = len(self._definitions) - i
-            self.comboBox.setCurrentIndex(index)
+            self.combo_box.setCurrentIndex(index)
 
-    def _onCursorPositionChanged(self):
+    def _on_cursor_pos_changed(self):
         line = self.editor.cursor_position[0]
         if self._prevLine != line:
-            self._syncComboBox(line)
+            self._sync_combo_box(line)
         self._prevLine = line

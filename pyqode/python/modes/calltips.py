@@ -52,16 +52,16 @@ class CalltipsMode(Mode, QtCore.QObject):
         Mode.__init__(self)
         QtCore.QObject.__init__(self)
         self.__jobRunner = DelayJobRunner(self, nb_threads_max=1, delay=700)
-        self.tooltipDisplayRequested.connect(self.__displayTooltip)
+        self.tooltipDisplayRequested.connect(self._display_tooltip)
         self.tooltipHideRequested.connect(QtGui.QToolTip.hideText)
         self.__requestCnt = 0
 
     def _on_state_changed(self, state):
         if not "PYQODE_NO_COMPLETION_SERVER" in os.environ:
             if state:
-                self.editor.key_released.connect(self.__onKeyReleased)
+                self.editor.key_released.connect(self._on_key_released)
 
-    def __onKeyReleased(self, event):
+    def _on_key_released(self, event):
         if (event.key() == QtCore.Qt.Key_ParenLeft or
                 event.key() == QtCore.Qt.Key_Comma):
             tc = self.editor.textCursor()
@@ -77,18 +77,18 @@ class CalltipsMode(Mode, QtCore.QObject):
             if l.endswith(")"):
                 lines[line - 1] = l[:-1]
             source = "\n".join(lines)
-            self.__requestCalltip(source, line, col, fn, encoding)
+            self._request_calltip(source, line, col, fn, encoding)
 
-    def __requestCalltip(self, source, line, col, fn, encoding):
+    def _request_calltip(self, source, line, col, fn, encoding):
         if self.__requestCnt == 0:
             self.__requestCnt += 1
             logger.debug("Calltip requested")
             self.editor.request_work(
                 workers.calltips,
                 {'code': source, 'line': line, 'column': col, 'path': None,
-                 'encoding': encoding}, on_receive=self.__onWorkFinished)
+                 'encoding': encoding}, on_receive=self._on_results_available)
 
-    def __onWorkFinished(self, status, results):
+    def _on_results_available(self, status, results):
         if status:
             logger.debug("Calltip request finished")
             self.__requestCnt -= 1
@@ -100,21 +100,21 @@ class CalltipsMode(Mode, QtCore.QObject):
                         "call.bracket_start": results[4]}
                 self.tooltipDisplayRequested.emit(call, results[5])
 
-    def __isLastCharEndOfWord(self):
+    def _is_last_chard_end_of_word(self):
         try:
             tc = self.editor.select_word_under_cursor()
             tc.setPosition(tc.position())
             tc.movePosition(tc.StartOfLine, tc.KeepAnchor)
             l = tc.selectedText()
-            lastChar = l[len(l) - 1]
+            last_char = l[len(l) - 1]
             seps = constants.WORD_SEPARATORS
             symbols = [",", " ", "("]
-            return lastChar in seps and not lastChar in symbols
+            return last_char in seps and not last_char in symbols
         except IndexError:
             return False
 
-    def __displayTooltip(self, call, col):
-        if not call or self.__isLastCharEndOfWord():
+    def _display_tooltip(self, call, col):
+        if not call or self._is_last_chard_end_of_word():
             return
         # create a formatted calltip (current index appear in bold)
         calltip = "<nobr>{0}.{1}(".format(call['call.module.name'],
@@ -129,8 +129,8 @@ class CalltipsMode(Mode, QtCore.QObject):
                 calltip += "</b>"
         calltip += ')</nobr>'
         # set tool tip position at the start of the bracket
-        charWidth = self.editor.fontMetrics().width('A')
-        w_offset = (col - call['call.bracket_start'][1]) * charWidth
+        char_width = self.editor.fontMetrics().width('A')
+        w_offset = (col - call['call.bracket_start'][1]) * char_width
         position = QtCore.QPoint(
             self.editor.cursorRect().x() - w_offset,
             self.editor.cursorRect().y() + 35)

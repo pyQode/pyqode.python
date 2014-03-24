@@ -58,16 +58,16 @@ class DocumentAnalyserMode(Mode, QtCore.QObject):
 
     def _on_state_changed(self, state):
         if state:
-            self.editor.blockCountChanged.connect(self._onLineCountChanged)
-            self.editor.new_text_set.connect(self._runAnalysis)
+            self.editor.blockCountChanged.connect(self._on_line_count_changed)
+            self.editor.new_text_set.connect(self._run_analysis)
         else:
-            self.editor.blockCountChanged.disconnect(self._onLineCountChanged)
-            self.editor.new_text_set.disconnect(self._runAnalysis)
+            self.editor.blockCountChanged.disconnect(self._on_line_count_changed)
+            self.editor.new_text_set.disconnect(self._run_analysis)
 
-    def _onLineCountChanged(self, e):
-        self._jobRunner.request_job(self._runAnalysis, False)
+    def _on_line_count_changed(self, e):
+        self._jobRunner.request_job(self._run_analysis, False)
 
-    def _runAnalysis(self):
+    def _run_analysis(self):
         if self.editor.toPlainText():
             request_data = {
                 'code': self.editor.toPlainText(),
@@ -76,14 +76,14 @@ class DocumentAnalyserMode(Mode, QtCore.QObject):
             }
             try:
                 self.editor.request_work(defined_names, request_data,
-                                         on_receive=self._onWorkCompleted)
+                                         on_receive=self._on_results_available)
             except client.NotConnectedError:
                 pass
         else:
             self.results = []
             self.documentChanged.emit()
 
-    def _onWorkCompleted(self, status, results):
+    def _on_results_available(self, status, results):
         if status:
             if results is not None:
                 results = [Definition().from_dict(ddict) for ddict in results]
@@ -94,7 +94,7 @@ class DocumentAnalyserMode(Mode, QtCore.QObject):
             self.documentChanged.emit()
 
     @property
-    def flattenedResults(self):
+    def flattend_results(self):
         """
         Flattens the document structure tree as a simple sequential list.
         """

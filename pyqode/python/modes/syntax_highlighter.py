@@ -185,9 +185,9 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
 
         rules = []
 
-        self.spacesPattern = QtCore.QRegExp(r'\s+')
-        self.wordsPattern = QtCore.QRegExp(r'\s+')
-        self.docstringPattern = QtCore.QRegExp(r"(:|@)\w+")
+        self.space_ptrn = QtCore.QRegExp(r'\s+')
+        self.words_ptrn = QtCore.QRegExp(r'\s+')
+        self.docstring_ptrn = QtCore.QRegExp(r"(:|@)\w+")
 
         # All other rules
         rules += [
@@ -271,11 +271,11 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
             self.rehighlight()
 
     def rehighlight(self, *args, **kwargs):
-        self.__cancelMemoizeCache()
+        self._purge_mem_cache()
         SyntaxHighlighter.rehighlight(self)
 
     @memoized
-    def formatFromWord(self, word):
+    def format_from_word(self, word):
         if word in self.keywords:
             return "keyword"
         if word in self.builtins:
@@ -288,8 +288,8 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
             return word
         return None
 
-    def highlightSpaces(self, text):
-        expression = self.spacesPattern
+    def highlight_spaces(self, text):
+        expression = self.space_ptrn
         index = expression.indexIn(text, 0)
         while index >= 0:
             index = expression.pos(0)
@@ -298,13 +298,13 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
                                                       self.__bck))
             index = expression.indexIn(text, index + length)
 
-    def highlightDocstringTags(self, text):
-        index = self.docstringPattern.indexIn(text, 0)
+    def highlight_sphinx_tags(self, text):
+        index = self.docstring_ptrn.indexIn(text, 0)
         while index >= 0:
-            length = self.docstringPattern.matchedLength()
+            length = self.docstring_ptrn.matchedLength()
             self.setFormat(index, length, self.format("docstringTag",
                                                       self.__bck))
-            index = self.docstringPattern.indexIn(text, index + length)
+            index = self.docstring_ptrn.indexIn(text, index + length)
 
     def highlight_block(self, text):
         usd = self.currentBlock().userData()
@@ -313,27 +313,27 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
         else:
             usd.cc_disabled_zones = []
         if self.match_multiline(text):
-            self.highlightSpaces(text)
-            self.highlightDocstringTags(text)
+            self.highlight_spaces(text)
+            self.highlight_sphinx_tags(text)
             return
         for expression, fmt in self.rules:
             index = expression.indexIn(text)
             # used = False
-            toApply = fmt
+            to_apply = fmt
             while index >= 0:
                 l = expression.matchedLength()
                 if fmt == "word":
                     word = text[index:index + l]
-                    toApply = self.formatFromWord(word)
-                if toApply:
-                    self.setFormat(index, l, self.format(toApply, self.__bck))
+                    to_apply = self.format_from_word(word)
+                if to_apply:
+                    self.setFormat(index, l, self.format(to_apply, self.__bck))
                 if fmt == "string":
                     usd.cc_disabled_zones.append((index, index + l))
                 elif fmt == "comment":
                     usd.cc_disabled_zones.append((index, pow(2, 32)))
                 index = expression.indexIn(text, index + l)
         #Spaces
-        self.highlightSpaces(text)
+        self.highlight_spaces(text)
 
     def match_multiline(self, text):
         #
@@ -354,29 +354,29 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
         # 0: not a multi-line comment or the last line
         # 1: start of multi-line comment
         # 2: multi-line comment (not start nor end)
-        prevState = self.previousBlockState() & 0x2
+        prev_state = self.previousBlockState() & 0x2
         # docstring or string is stored in bit 8
         # 0: string
         # 1: docstring
-        wasDocstring = self.previousBlockState() & 0x80
+        was_docstring = self.previousBlockState() & 0x80
         if self.previousBlockState() == -1:
-            prevState = 0
-            wasDocstring = 0
+            prev_state = 0
+            was_docstring = 0
 
         # check for mutli-line string that is not a docstring (a var)
         docstring = 0x80
-        if prevState == 0 and "=" in text:
+        if prev_state == 0 and "=" in text:
             text = text.split("=")[1].strip()
             docstring = 0
 
         # single quoted
         if text.startswith("'''") or text.endswith("'''"):
-            if prevState == 1:
+            if prev_state == 1:
                 # end of comment
                 multi = True
                 state = 0
-                docstring = wasDocstring
-            elif prevState == 0 or prevState == -1:
+                docstring = was_docstring
+            elif prev_state == 0 or prev_state == -1:
                 state = 1
                 # start of single quoted comment
                 if (text.startswith("'''") and text.endswith("'''") and
@@ -387,14 +387,14 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
                 # in single quoted docstring/string
                 multi = True
                 state = 2
-                docstring = wasDocstring
+                docstring = was_docstring
         elif text.startswith('"""') or text.endswith('"""'):
-            if prevState == 2:
+            if prev_state == 2:
                 # end of comment
                 multi = True
                 state = 0
-                docstring = wasDocstring
-            elif prevState == 0 or prevState == -1:
+                docstring = was_docstring
+            elif prev_state == 0 or prev_state == -1:
                 # start of comment
                 multi = True
                 state = 2
@@ -405,12 +405,12 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
             else:
                 multi = True
                 state = 1
-                docstring = wasDocstring
+                docstring = was_docstring
         else:
-            if prevState > 0:
+            if prev_state > 0:
                 multi = True
-                state = prevState
-                docstring = wasDocstring
+                state = prev_state
+                docstring = was_docstring
         if multi:
             fmt = "docstring"
             if not docstring:
@@ -429,9 +429,9 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
         # print("State:", state)
         return multi
 
-    def __cancelMemoizeCache(self):
-        def nextInt():
+    def _purge_mem_cache(self):
+        def next_int():
             for i in range(sys.maxsize):
                 yield i
 
-        self.__bck = nextInt()
+        self.__bck = next_int()

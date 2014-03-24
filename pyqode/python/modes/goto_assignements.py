@@ -83,9 +83,9 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
         Mode.__init__(self)
         QtCore.QObject.__init__(self)
         self._pending = False
-        self.actionGotoAssignments = QtGui.QAction("Go to assignments", self)
-        self.actionGotoAssignments.setShortcut("F2")
-        self.actionGotoAssignments.triggered.connect(self.requestGoTo)
+        self.action_goto = QtGui.QAction("Go to assignments", self)
+        self.action_goto.setShortcut("F2")
+        self.action_goto.triggered.connect(self.request_goto)
 
     def _on_install(self, editor):
         super()._on_install(editor)
@@ -93,15 +93,15 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
     def _on_state_changed(self, state):
         if state:
             assert hasattr(self.editor, "wordClickMode")
-            self.editor.wordClickMode.word_clicked.connect(self.requestGoTo)
+            self.editor.wordClickMode.word_clicked.connect(self.request_goto)
             self.sep = self.editor.add_separator()
-            self.editor.add_action(self.actionGotoAssignments)
+            self.editor.add_action(self.action_goto)
         else:
-            self.editor.wordClickMode.word_clicked.disconnect(self.requestGoTo)
-            self.editor.remove_action(self.actionGotoAssignments)
+            self.editor.wordClickMode.word_clicked.disconnect(self.request_goto)
+            self.editor.remove_action(self.action_goto)
             self.editor.remove_action(self.sep)
 
-    def requestGoTo(self, tc=None):
+    def request_goto(self, tc=None):
         """
         Request a go to assignment.
 
@@ -121,11 +121,11 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
                 'encoding': self.editor.file_encoding
             }
             self.editor.request_work(workers.goto_assignments, request_data,
-                                     on_receive=self._onWorkFinished)
+                                     on_receive=self._on_results_available)
             self._pending = True
         self.editor.set_cursor(QtCore.Qt.WaitCursor)
 
-    def _goToDefinition(self, definition):
+    def _goto(self, definition):
         fp = os.path.normpath(self.editor.file_path.replace(".pyc", ".py"))
         if definition.module_path == fp:
             line = definition.line
@@ -136,7 +136,7 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
             logger.debug("Out of doc: %s" % definition)
             self.outOfDocument.emit(definition)
 
-    def _makeUnique(self, seq):
+    def _unique(self, seq):
         """
         Not performant but works.
         """
@@ -152,18 +152,18 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
                 checked.append(e)
         return checked
 
-    def _onWorkFinished(self, status, definitions):
+    def _on_results_available(self, status, definitions):
         if status:
             self.editor.set_cursor(QtCore.Qt.IBeamCursor)
             self._pending = False
             definitions = [Assignment(path, line, col, full_name)
                            for path, line, col, full_name in definitions]
-            definitions = self._makeUnique(definitions)
+            definitions = self._unique(definitions)
             logger.debug("Got %r" % definitions)
             if len(definitions) == 1:
                 definition = definitions[0]
                 if definition:
-                    self._goToDefinition(definition)
+                    self._goto(definition)
             elif len(definitions) > 1:
                 logger.debug(
                     "More than 1 assignments in different modules, user "
@@ -175,7 +175,7 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
                 if result:
                     for definition in definitions:
                         if definition and str(definition) == def_str:
-                            self._goToDefinition(definition)
+                            self._goto(definition)
                             return
             else:
                 logger.info("GoToAssignments: No results found")

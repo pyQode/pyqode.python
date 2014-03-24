@@ -33,7 +33,7 @@ def icon_from_typename(name, type):
 
     :returns: The associate icon resource filename or None.
     """
-    retVal = None
+    ret_val = None
     type = type.upper()
     # jedi 0.8 introduced NamedPart class, which have a string instead of being
     # one
@@ -47,11 +47,11 @@ def icon_from_typename(name, type):
         elif name.startswith("_"):
             type += "-PROT"
     if type in ICONS:
-        retVal = ICONS[type]
+        ret_val = ICONS[type]
     elif type:
         logger.warning("Unimplemented completion type: %s" %
                        type)
-    return retVal
+    return ret_val
 
 
 class JediProvider(code_completion.Provider):
@@ -67,7 +67,7 @@ class JediProvider(code_completion.Provider):
 
         :returns: a list of completion.
         """
-        retVal = []
+        ret_val = []
         try:
             import jedi
             from jedi.evaluate.imports import ModuleNotFound
@@ -101,5 +101,5 @@ class JediProvider(code_completion.Provider):
                         pass
                 desc = completion.full_name
                 icon = icon_from_typename(name, type)
-                retVal.append({'name': name, 'icon': icon, 'tooltip': desc})
-        return retVal
+                ret_val.append({'name': name, 'icon': icon, 'tooltip': desc})
+        return ret_val

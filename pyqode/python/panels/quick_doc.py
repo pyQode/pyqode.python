@@ -89,28 +89,28 @@ class QuickDocPanel(Panel):
         child_layout = QtGui.QVBoxLayout()
 
         # A QTextEdit to show the doc
-        self.textEdit = QtGui.QTextEdit()
-        self.textEdit.setReadOnly(True)
-        self.textEdit.setAcceptRichText(True)
-        layout.addWidget(self.textEdit)
+        self.text_edit = QtGui.QTextEdit()
+        self.text_edit.setReadOnly(True)
+        self.text_edit.setAcceptRichText(True)
+        layout.addWidget(self.text_edit)
 
         # A QPushButton (inside a child layout for a better alignment)
         # to close the panel
-        self.btClose = QtGui.QPushButton()
-        self.btClose.setIcon(QtGui.QIcon.fromTheme(
+        self.bt_close = QtGui.QPushButton()
+        self.bt_close.setIcon(QtGui.QIcon.fromTheme(
             "application-exit", QtGui.QIcon(":/pyqode-icons/rc/close.png")))
-        self.btClose.clicked.connect(self.hide)
-        child_layout.addWidget(self.btClose)
+        self.bt_close.clicked.connect(self.hide)
+        child_layout.addWidget(self.bt_close)
         child_layout.addStretch()
         layout.addLayout(child_layout)
 
         # Action
-        self.aQuickDoc = QtGui.QAction("Show documentation", self)
-        self.aQuickDoc.setShortcut("Alt+Q")
+        self.action_quick_doc = QtGui.QAction("Show documentation", self)
+        self.action_quick_doc.setShortcut("Alt+Q")
 
-        self.aQuickDoc.triggered.connect(self._onQuickDoc_triggered)
+        self.action_quick_doc.triggered.connect(self._on_action_quick_doc_triggered)
 
-    def _resetStylesheet(self):
+    def _reset_stylesheet(self):
         highlight = drift_color(self.editor.palette().window().color())
         stylesheet = self.STYLESHEET % {
             "tooltip": self.editor.palette().toolTipBase().color().name(),
@@ -121,22 +121,22 @@ class QuickDocPanel(Panel):
 
     def _on_install(self, editor):
         super(QuickDocPanel, self)._on_install(editor)
-        self._resetStylesheet()
+        self._reset_stylesheet()
         self.setVisible(False)
 
     def _on_state_changed(self, state):
         super(QuickDocPanel, self)._on_state_changed(state)
         if state:
-            self.editor.add_action(self.aQuickDoc)
+            self.editor.add_action(self.action_quick_doc)
         else:
-            self.editor.remove_action(self.aQuickDoc)
+            self.editor.remove_action(self.action_quick_doc)
 
     def _on_style_changed(self, section, key):
         super(QuickDocPanel, self)._on_style_changed(section, key)
         if key in self._KEYS or not key:
-            self._resetStylesheet()
+            self._reset_stylesheet()
 
-    def _onQuickDoc_triggered(self):
+    def _on_action_quick_doc_triggered(self):
         tc = self.editor.select_word_under_cursor(select_whole_word=True)
         request_data = {
             'code': self.editor.toPlainText(),
@@ -146,9 +146,9 @@ class QuickDocPanel(Panel):
             'encoding': self.editor.file_encoding
         }
         self.editor.request_work(quick_doc, request_data,
-                                 on_receive=self._onWorkCompleted)
+                                 on_receive=self._on_results_available)
 
-    def _onWorkCompleted(self, status, results):
+    def _on_results_available(self, status, results):
         if status:
             self.setVisible(True)
             if results:
@@ -163,9 +163,9 @@ class QuickDocPanel(Panel):
                     string = string.replace(
                         '</tr>\n<tr class="field"><td>&nbsp;</td>', '')
                     if string:
-                        self.textEdit.setText(string)
+                        self.text_edit.setText(string)
 
                 else:
-                    self.textEdit.setText("Documentation not found")
+                    self.text_edit.setText("Documentation not found")
             else:
-                self.textEdit.setText("Documentation not found")
+                self.text_edit.setText("Documentation not found")
