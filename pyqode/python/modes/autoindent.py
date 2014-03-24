@@ -255,7 +255,8 @@ class PyAutoIndentMode(AutoIndentMode):
                 post += '#'
             return pre, post
         elif self.between_paren(tc, column):
-            pre, post = self.handle_indent_after_paren(column, line, fullline, tc)
+            pre, post = self.handle_indent_after_paren(column, line, fullline,
+                                                       tc)
         else:
             instringdef, char = self.is_in_string_def(fullline, column)
             if instringdef:

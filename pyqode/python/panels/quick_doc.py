@@ -108,7 +108,8 @@ class QuickDocPanel(Panel):
         self.action_quick_doc = QtGui.QAction("Show documentation", self)
         self.action_quick_doc.setShortcut("Alt+Q")
 
-        self.action_quick_doc.triggered.connect(self._on_action_quick_doc_triggered)
+        self.action_quick_doc.triggered.connect(
+            self._on_action_quick_doc_triggered)
 
     def _reset_stylesheet(self):
         highlight = drift_color(self.editor.palette().window().color())

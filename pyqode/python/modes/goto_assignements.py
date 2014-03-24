@@ -97,7 +97,8 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
             self.sep = self.editor.add_separator()
             self.editor.add_action(self.action_goto)
         else:
-            self.editor.wordClickMode.word_clicked.disconnect(self.request_goto)
+            self.editor.wordClickMode.word_clicked.disconnect(
+                self.request_goto)
             self.editor.remove_action(self.action_goto)
             self.editor.remove_action(self.sep)
 

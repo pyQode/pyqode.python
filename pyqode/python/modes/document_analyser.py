@@ -61,7 +61,8 @@ class DocumentAnalyserMode(Mode, QtCore.QObject):
             self.editor.blockCountChanged.connect(self._on_line_count_changed)
             self.editor.new_text_set.connect(self._run_analysis)
         else:
-            self.editor.blockCountChanged.disconnect(self._on_line_count_changed)
+            self.editor.blockCountChanged.disconnect(
+                self._on_line_count_changed)
             self.editor.new_text_set.disconnect(self._run_analysis)
 
     def _on_line_count_changed(self, e):
