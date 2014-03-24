@@ -75,12 +75,6 @@ class QuickDocPanel(Panel):
     _KEYS = ["panelBackground", "background", "panelForeground",
              "panelHighlight"]
 
-    #: Mode identifier
-    IDENTIFIER = "quickDocPanel"
-
-    #: Mode description
-    DESCRIPTION = __doc__
-
     def __init__(self):
         super(QuickDocPanel, self).__init__()
         # layouts

@@ -34,10 +34,5 @@ class PEP8CheckerMode(CheckerMode):
     """
     This checker mode runs pep8utils.py on the fly to check your python style.
     """
-    #: Mode description
-    DESCRIPTION = "Check python code for PEP8 issues"
-    #: Mode identifier
-    IDENTIFIER = "pep8CheckerMode"
-
     def __init__(self):
         CheckerMode.__init__(self, run_pep8, clear_on_request=False)

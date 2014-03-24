@@ -69,9 +69,6 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
     if the definition can not be reached in the current document. IDEs will
     typically open a new editor tab and go to the definition.
     """
-    IDENTIFIER = "gotoAssignmentsMode"
-    DESCRIPTION = "Move the text cursor to the symbol assignments/definitions"
-
     #: Signal emitted when the definition cannot be reached in the current
     #: document
     outOfDocument = QtCore.pyqtSignal(Assignment)
@@ -92,12 +89,12 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
 
     def _on_state_changed(self, state):
         if state:
-            assert hasattr(self.editor, "wordClickMode")
-            self.editor.wordClickMode.word_clicked.connect(self.request_goto)
+            self.editor.get_mode('WordClickMode').word_clicked.connect(
+                self.request_goto)
             self.sep = self.editor.add_separator()
             self.editor.add_action(self.action_goto)
         else:
-            self.editor.wordClickMode.word_clicked.disconnect(
+            self.editor.get_mode('WordClickMode').word_clicked.disconnect(
                 self.request_goto)
             self.editor.remove_action(self.action_goto)
             self.editor.remove_action(self.sep)

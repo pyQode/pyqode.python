@@ -42,9 +42,6 @@ class DocumentAnalyserMode(Mode, QtCore.QObject):
     To keep good performances, the analysis task is run when the application is
     idle for more than 1 second (by default).
     """
-    IDENTIFIER = "documentAnalyserMode"
-    DESCRIPTION = "Analysis the document structure on the fly"
-
     #: Signal emitted when the document structure changed.
     documentChanged = QtCore.pyqtSignal()
 
@@ -79,7 +76,7 @@ class DocumentAnalyserMode(Mode, QtCore.QObject):
                 self.editor.request_work(defined_names, request_data,
                                          on_receive=self._on_results_available)
             except client.NotConnectedError:
-                pass
+                QtCore.QTimer.singleShot(100, self._run_analysis)
         else:
             self.results = []
             self.documentChanged.emit()
@@ -95,7 +92,7 @@ class DocumentAnalyserMode(Mode, QtCore.QObject):
             self.documentChanged.emit()
 
     @property
-    def flattend_results(self):
+    def flattened_results(self):
         """
         Flattens the document structure tree as a simple sequential list.
         """

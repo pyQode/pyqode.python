@@ -34,9 +34,6 @@ class FrostedCheckerMode(CheckerMode):
     """
     This checker mode runs pyflakes on the fly to check your python syntax.
     """
-    DESCRIPTION = "Check python code using frosted (pyFlakes)"
-    IDENTIFIER = "frostedCheckerMode"
-
     def __init__(self):
         super().__init__(run_frosted, delay=1200,
                          clear_on_request=False)

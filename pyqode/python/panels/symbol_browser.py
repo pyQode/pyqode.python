@@ -38,9 +38,6 @@ class SymbolBrowserPanel(Panel):
     position.
     """
 
-    IDENTIFIER = "symbolBrowserPanel"
-    DESCRIPTION = __doc__
-
     def __init__(self):
         super(SymbolBrowserPanel, self).__init__()
         self._prevLine = -1
@@ -61,23 +58,30 @@ class SymbolBrowserPanel(Panel):
             self.editor.cursorPositionChanged.connect(
                 self._on_cursor_pos_changed)
             try:
-                self.editor.documentAnalyserMode.documentChanged.connect(
+                self.editor.get_mode(
+                    'DocumentAnalyserMode').documentChanged.connect(
                     self._on_document_changed)
-            except AttributeError:
-                logger.warning("DocumentAnalyserMode, install it "
+            except KeyError:
+                logger.warning("No DocumentAnalyserMode found, install it "
                                "before SymbolBrowserPanel!")
         else:
             self.editor.cursorPositionChanged.disconnect(
                 self._on_cursor_pos_changed)
             try:
-                self.editor.documentAnalyserMode.documentChanged.disconnect(
+                self.editor.get_mode(
+                    'DocumentAnalyserMode').documentChanged.disconnect(
                     self._on_document_changed)
-            except AttributeError:
-                logger.warning("DocumentAnalyserMode, install it "
+            except KeyError:
+                logger.warning("No DocumentAnalyserMode found, install it "
                                "before SymbolBrowserPanel!")
 
     def _on_document_changed(self):
-        definitions = self.editor.documentAnalyserMode.flattend_results
+        try:
+            mode = self.editor.get_mode('DocumentAnalyserMode')
+        except KeyError:
+            definitions = []
+        else:
+            definitions = mode.flattened_results
         self.combo_box.clear()
         if definitions:
             self.combo_box.addItem(" < Select a symbol >")

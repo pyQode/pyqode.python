@@ -35,11 +35,6 @@ class PyAutoIndentMode(AutoIndentMode):
     level is based on the previous line indent but is automatically incremented
     after a *:* and decremented after *pass* or *return*
     """
-    #: Mode identifier
-    IDENTIFIER = "pyAutoIndentMode"
-    #: Mode description
-    _DESCRIPTION = """ This mode provides python specific auto indentation. """
-
     def __init__(self):
         super(PyAutoIndentMode, self).__init__()
 
@@ -144,7 +139,7 @@ class PyAutoIndentMode(AutoIndentMode):
         if pos:
             tc2 = QTextCursor(tc)
             tc2.setPosition(pos)
-            ol, oc = self.editor.symbolMatcherMode.symbol_pos(
+            ol, oc = self.editor.get_mode("SymbolMatcherMode").symbol_pos(
                 tc2, '(', 0)
             line = self.editor.line_text(ol)
             return len(line) - len(line.lstrip())
@@ -171,8 +166,8 @@ class PyAutoIndentMode(AutoIndentMode):
                             # same line
                             tc3 = QTextCursor(tc)
                             tc3.setPosition(pos)
-                            l, c = self.editor.symbolMatcherMode.symbol_pos(
-                                tc3, ')')
+                            l, c = self.editor.get_mode(
+                                "SymbolMatcherMode").symbol_pos(tc3, ')')
                             if l == ln and c < column:
                                 continue
                             return pos, char
@@ -191,9 +186,9 @@ class PyAutoIndentMode(AutoIndentMode):
             closingchar = '}'
         tc2 = QTextCursor(tc)
         tc2.setPosition(pos)
-        ol, oc = self.editor.symbolMatcherMode.symbol_pos(
+        ol, oc = self.editor.get_mode("SymbolMatcherMode").symbol_pos(
             tc2, char, ptype)
-        cl, cc = self.editor.symbolMatcherMode.symbol_pos(
+        cl, cc = self.editor.get_mode("SymbolMatcherMode").symbol_pos(
             tc2, closingchar, ptype)
         return (ol, oc), (cl, cc)
 

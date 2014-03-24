@@ -30,9 +30,6 @@ class CommentsMode(Mode):
     """
     Mode that allow to comment/uncomment a set of lines using Ctrl+/.
     """
-    IDENTIFIER = "commentsMode"
-    DESCRIPTION = "Comments/uncomments a set of lines (Ctrl+/)"
-
     def __init__(self):
         super(CommentsMode, self).__init__()
         self.action = QtGui.QAction("Comment/Uncomment", self.editor)

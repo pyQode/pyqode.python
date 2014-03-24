@@ -40,11 +40,6 @@ class CalltipsMode(Mode, QtCore.QObject):
     This mode shows function/method call tips in a QToolTip using
     :meth:`jedi.Script.call_signatures`.
     """
-    #: Mode identifier
-    IDENTIFIER = "calltipsMode"
-    #: Mode description
-    DESCRIPTION = "Provides functions calltips using the jedi library"
-
     tooltipDisplayRequested = QtCore.pyqtSignal(object, int)
     tooltipHideRequested = QtCore.pyqtSignal()
 
