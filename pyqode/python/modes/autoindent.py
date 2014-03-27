@@ -98,6 +98,7 @@ class PyAutoIndentMode(AutoIndentMode):
         nb_open = 0
         nb_closed = 0
         lists = [data.parentheses, data.braces, data.squareBrackets]
+        # does it have an opened paren on the same line?
         for symbols in lists:
             for paren in symbols:
                 if paren.position >= col:
@@ -106,7 +107,26 @@ class PyAutoIndentMode(AutoIndentMode):
                     nb_open += 1
                 if self.isClosedParen(paren):
                     nb_closed += 1
-        return nb_open > nb_closed
+        block = tc.block()
+        # if not, is there an non closed paren on the next lines.
+        parens = {'(': 0, '{': 0, '[': 0}
+        matching = {')': '(', '}': '{', ']': '['}
+        if not nb_open > nb_closed:
+            while block.isValid():
+                data = block.userData()
+                lists = [data.parentheses, data.braces, data.squareBrackets]
+                for symbols in lists:
+                    for paren in symbols:
+                        if self.isOpenParen(paren):
+                            parens[paren.character] += 1
+                        if self.isClosedParen(paren):
+                            parens[matching[paren.character]] -= 1
+                            if parens[matching[paren.character]] < 0:
+                                return True
+                block = block.next()
+            return False
+        else:
+            return True
 
     def inComment(self, column, tc, fullLine):
         useParentImpl = False
@@ -151,31 +171,36 @@ class PyAutoIndentMode(AutoIndentMode):
         return None
 
     def getLastOpenParenPos(self, tc, column):
-        ln = tc.blockNumber() + 1
-        tc2 = QTextCursor(tc)
-        tc2.movePosition(tc2.StartOfLine, tc2.MoveAnchor)
         pos = None
         char = None
-        data = tc.block().userData()
-        lists = [data.parentheses, data.braces, data.squareBrackets]
-        for symbols in lists:
-            for paren in reversed(symbols):
-                if paren.position < column:
-                    if self.isOpenParen(paren):
-                        if paren.position > column:
-                            continue
-                        else:
-                            pos = tc2.position() + paren.position
-                            char = paren.character
-                            # ensure it does not have a closing paren on the
-                            # same line
-                            tc3 = QTextCursor(tc)
-                            tc3.setPosition(pos)
-                            l, c = self.editor.symbolMatcherMode.getSymbolPos(
-                                tc3, ')')
-                            if l == ln and c < column:
+        ln = tc.blockNumber() + 1
+        tc_trav = QTextCursor(tc)
+        while ln > 1:
+            tc_trav.movePosition(tc_trav.StartOfLine, tc_trav.MoveAnchor)
+            data = tc_trav.block().userData()
+            lists = [data.parentheses, data.braces, data.squareBrackets]
+            for symbols in lists:
+                for paren in reversed(symbols):
+                    if paren.position < column:
+                        if self.isOpenParen(paren):
+                            if paren.position > column:
                                 continue
-                            return pos, char
+                            else:
+                                pos = tc_trav.position() + paren.position
+                                char = paren.character
+                                # ensure it does not have a closing paren on the
+                                # same line
+                                tc3 = QTextCursor(tc)
+                                tc3.setPosition(pos)
+                                l, c = self.editor.symbolMatcherMode.getSymbolPos(
+                                    tc3, ')')
+                                if l == ln and c < column:
+                                    continue
+                                return pos, char
+            # check previous line
+            tc_trav.movePosition(tc_trav.Up, tc_trav.MoveAnchor)
+            ln = tc_trav.blockNumber() + 1
+            column = len(self.editor.lineText(ln))
         return pos, char
 
     def getParenPos(self, tc, column):
@@ -197,25 +222,43 @@ class PyAutoIndentMode(AutoIndentMode):
             tc2, closingChar, pType)
         return (oL, oC), (cL, cC)
 
+    def getNextChar(self, tc):
+        tc2 = QTextCursor(tc)
+        tc2.movePosition(QTextCursor.NextCharacter, QTextCursor.KeepAnchor)
+        char = tc2.selectedText()
+        return char
+
     def handleIndentAfterParen(self, column, line, fullLine, tc):
         # elements might be separated by ',' 'or' 'and'
+        nextChar = self.getNextChar(tc)
+        nextCharIsClosingSymbol = nextChar in [']', ')', '}']
         (oL, oC), (cL, cC) = self.getParenPos(tc, column)
         closingLine = self.editor.lineText(cL)
         openingLine = self.editor.lineText(oL)
         openingIndent = len(openingLine) - len(openingLine.lstrip())
         tokens = [t.strip() for t in re.split(', |and |or ',
                                               line[oC:column]) if t]
-        if tokens:
-            # align with first token pos
-            if len(closingLine) > cC and closingLine[cC] == ":":
-                post = openingIndent * " " + 8 * " "
-            else:
-                post = oC * " "
+
+        # align with first token pos
+        if len(closingLine) > cC and closingLine[cC] == ":":
+            post = openingIndent * " " + 8 * " "
         else:
-            if len(closingLine) > cC and closingLine[cC] == ":":
-                post = openingIndent * " " + 8 * " "
+            # press enter before a '}', ']', ')'
+            # which close an affectation (tuple, list , dict)
+            if nextCharIsClosingSymbol and re.match('.*=[\s][\W].*',
+                                                    openingLine):
+                post = openingIndent * " "
             else:
-                post = openingIndent * " " + 4 * " "
+                # align elems in list, tuple, dict
+                if re.match('.*=[\s][\W].*', openingLine):
+                    post = openingIndent * " " + 4 * " "
+                # align elems in fct declaration (we align with first
+                # token)
+                else:
+                    if len(tokens):
+                        post = oC * " "
+                    else:
+                        post = openingIndent * " " + 4 * " "
         pre = ""
         inStringDef, char = self.inStringDef(fullLine, column)
         if inStringDef:
@@ -244,12 +287,13 @@ class PyAutoIndentMode(AutoIndentMode):
         ln, column = self.editor.cursorPosition
         fullLine = self.getfullLine(tc)
         line = fullLine[:column]
+        # no indent
         if pos == 0 or column == 0:
             return "", ""
         pre, post = AutoIndentMode._getIndent(self, tc)
         if self.atBlockStart(tc, line):
             return pre, post
-        lastWord = self.getLastWord(tc)
+        # return pressed in comments
         if self.inComment(column, tc, fullLine):
             if line.strip().startswith("#") and column != len(fullLine):
                 post = post + '#'
@@ -257,6 +301,7 @@ class PyAutoIndentMode(AutoIndentMode):
         elif self.betweenParen(tc, column):
             pre, post = self.handleIndentAfterParen(column, line, fullLine, tc)
         else:
+            lastWord = self.getLastWord(tc)
             inStringDef, char = self.inStringDef(fullLine, column)
             if inStringDef:
                 # the string might be between paren if multiline
