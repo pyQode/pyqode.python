@@ -31,7 +31,7 @@ logging.basicConfig(level=logging.INFO)
 import os
 import sys
 from PyQt4 import QtCore, QtGui
-from examples.ui.python_editor_ui import Ui_MainWindow
+from ui.python_editor_ui import Ui_MainWindow
 
 
 class PythonEditorWindow(QtGui.QMainWindow, Ui_MainWindow):
@@ -41,8 +41,8 @@ class PythonEditorWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.editor.start_server(args=['-s', os.getcwd()])
         self.actionOpen.setIcon(
-            QtGui.QIcon.fromTheme("document-open", QtGui.QIcon(
-                ":/example_icons/rc/folder.png")))
+            QtGui.QIcon.fromTheme("document-open",
+                                  QtGui.QIcon(":/example_icons/rc/folder.png")))
         self.actionSave.setIcon(
             QtGui.QIcon.fromTheme("document-save", QtGui.QIcon(
                 ":/example_icons/rc/document-save.png")))
