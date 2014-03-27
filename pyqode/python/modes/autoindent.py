@@ -107,7 +107,7 @@ class PyAutoIndentMode(AutoIndentMode):
                     nb_open += 1
                 if self.isClosedParen(paren):
                     nb_closed += 1
-        block = tc.block()
+        block = tc.block().next()
         # if not, is there an non closed paren on the next lines.
         parens = {'(': 0, '{': 0, '[': 0}
         matching = {')': '(', '}': '{', ']': '['}
