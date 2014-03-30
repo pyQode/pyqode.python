@@ -308,7 +308,7 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
                 elif fmt == "comment":
                     usd.cc_disabled_zones.append((index, pow(2, 32)))
                 index = expression.indexIn(text, index + l)
-        #Spaces
+        # spaces
         self.highlight_spaces(text)
 
     def match_multiline(self, text):

@@ -323,9 +323,9 @@ class PyAutoIndentMode(AutoIndentMode):
                 indent = self.get_indent_of_opening_paren(tc, column)
                 if indent:
                     post = indent * " "
-            elif (not "\\" in fullline and not "#" in fullline and
-                      fullline.strip() and not fullline.endswith(')') and
-                      not self.at_block_end(tc, fullline)):
+            elif ("\\" not in fullline and "#" not in fullline and
+                    fullline.strip() and not fullline.endswith(')') and
+                    not self.at_block_end(tc, fullline)):
                 if lastword and lastword[-1] != " ":
                     pre += " \\"
                 else:

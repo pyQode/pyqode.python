@@ -28,7 +28,7 @@ class CalltipsMode(Mode, QtCore.QObject):
         self.__requestCnt = 0
 
     def _on_state_changed(self, state):
-        if not "PYQODE_NO_COMPLETION_SERVER" in os.environ:
+        if "PYQODE_NO_COMPLETION_SERVER" not in os.environ:
             if state:
                 self.editor.key_released.connect(self._on_key_released)
 
@@ -80,7 +80,7 @@ class CalltipsMode(Mode, QtCore.QObject):
             last_char = l[len(l) - 1]
             seps = constants.WORD_SEPARATORS
             symbols = [",", " ", "("]
-            return last_char in seps and not last_char in symbols
+            return last_char in seps and last_char not in symbols
         except IndexError:
             return False
 

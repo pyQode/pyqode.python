@@ -39,8 +39,8 @@ setup(
     long_description=readme(),
     install_requires=requirements,
     entry_points={'pyqode_plugins':
-                 ['pyqode_python = '
-                  'pyqode.python.plugins.pyqode_python_plugin']},
+                  ['pyqode_python = '
+                   'pyqode.python.plugins.pyqode_python_plugin']},
     zip_safe=False,
     classifiers=[
         'Development Status :: 5 - Production/Stable',

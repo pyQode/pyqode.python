@@ -68,9 +68,10 @@ class SymbolBrowserPanel(Panel):
             try:
                 self.combo_box.addItem(QtGui.QIcon(d.icon), d.name, d)
             except TypeError:
-                pass  # skip anonym elements, sometimes jedi fail to
-                      # to get a variable name and return a list instead
-                      # of a string.
+                # skip un-named elements, sometimes jedi fail to
+                # to get a variable name and return a list instead
+                # of a string.
+                pass
         self._definitions = definitions
         self._sync_combo_box(self.editor.cursor_position[0])
 
