@@ -5,7 +5,6 @@ Contains the worker classes/functions executed on the server side.
 """
 import os
 from pyqode.core import logger
-from pyqode.core.api.constants import CheckerMessages
 from pyqode.python.code_completion import icon_from_typename
 from pyqode.python.pep8utils import CustomChecker, CustomReport
 
@@ -245,6 +244,8 @@ def run_pep8(request_data):
 
     :returns a list of tuples (msg, msg_type, line_number)
     """
+    WARNING = 1
+
     import pep8
 
     code = request_data['code']
@@ -256,7 +257,7 @@ def run_pep8(request_data):
     results = pep8style.input_file(path, lines=code.splitlines(True))
     messages = []
     for line_number, offset, code, text, doc in results:
-        messages.append((text, CheckerMessages.WARNING, line_number))
+        messages.append((text, WARNING, line_number))
     return True, messages
 
 
@@ -266,6 +267,9 @@ def run_frosted(request_data):
     current editor text.
     """
     import _ast
+    WARNING = 1
+    ERROR = 2
+
     ret_val = []
     code = request_data['code']
     path = request_data['path']
@@ -286,7 +290,7 @@ def run_frosted(request_data):
             # file declared was unknown.s
             logger.warning("%s: problem decoding source" % path)
         else:
-            ret_val.append((msg, CheckerMessages.ERROR, lineno))
+            ret_val.append((msg, ERROR, lineno))
     else:
         # Okay, it's syntactically valid.  Now check it.
         from frosted import checker
@@ -295,8 +299,7 @@ def run_frosted(request_data):
         for warning in w.messages:
             msg = "%s: %s" % (warning.type.error_code, warning.message)
             line = warning.lineno
-            status = (CheckerMessages.WARNING
-                      if warning.type.error_code.startswith('W')
-                      else CheckerMessages.ERROR)
+            status = (WARNING if warning.type.error_code.startswith('W') else
+                      ERROR)
             ret_val.append((msg, status, line))
     return True, ret_val

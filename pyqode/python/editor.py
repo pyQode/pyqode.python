@@ -11,7 +11,6 @@ from pyqode.core.editor import QCodeEdit, Panel
 from pyqode.core import modes
 from pyqode.core import panels
 from pyqode.core import style as core_style
-from pyqode.core.api import constants
 from pyqode.python import style
 
 from pyqode.python.modes import PyAutoCompleteMode
