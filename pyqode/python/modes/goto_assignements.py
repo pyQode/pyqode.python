@@ -6,7 +6,7 @@ import os
 from PyQt4 import QtCore, QtGui
 from pyqode.core import logger
 from pyqode.core.editor import Mode
-from pyqode.core.modes import  WordClickMode
+from pyqode.core.modes import WordClickMode
 from pyqode.python import workers
 
 
