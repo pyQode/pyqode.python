@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 This module contains utility classes for interacting with the pep8 module
 using strings instread of files. This allow live checking on code without the

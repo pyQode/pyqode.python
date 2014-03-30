@@ -1,28 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-#The MIT License (MIT)
-#
-#Copyright (c) <2013-2014> <Colin Duquesnoy and others, see AUTHORS.txt>
-#
-#Permission is hereby granted, free of charge, to any person obtaining a copy
-#of this software and associated documentation files (the "Software"), to deal
-#in the Software without restriction, including without limitation the rights
-#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-#copies of the Software, and to permit persons to whom the Software is
-#furnished to do so, subject to the following conditions:
-#
-#The above copyright notice and this permission notice shall be included in
-#all copies or substantial portions of the Software.
-#
-#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-#FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-#AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-#LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-#OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-#THE SOFTWARE.
-#
 """
 Server main script customised for pyqode.python.
 
@@ -30,6 +7,15 @@ Users of pyqode.python can directly use this script. If you need to append
 directories to sys.path, use the '-s' command line arguments, e.g.::
 
     python server.py 8080 -s /home/your_name/MyProj /home/your_name/MyLib
+
+
+The server can be run with a custom python interpreter, this is needed if you
+want to support python 2 syntax or virtualenv. This means that pyqode.core,
+pyqode.python and all their pure python dependencies (not PyQt) must be
+installed in the targeted env (virtualenv or python2 site package). Another
+option is to bundle all dependencies in a zip archive that the server will
+append to sys path, that way you don't clutter the use1r env with IDE specific
+package but you have to write a new server to do that.
 
 """
 import sys

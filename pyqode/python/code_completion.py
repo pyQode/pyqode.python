@@ -1,6 +1,5 @@
 """
 This module contains the python code completion provider based on Jedi.
-
 """
 from pyqode.core import logger
 from pyqode.core.api import code_completion
