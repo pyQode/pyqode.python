@@ -10,8 +10,9 @@ from PyQt4 import QtCore, QtGui
 from pyqode.core.editor import QCodeEdit, Panel
 from pyqode.core import modes
 from pyqode.core import panels
+from pyqode.core import style as core_style
 from pyqode.core.api import constants
-
+from pyqode.python import style
 
 from pyqode.python.modes import PyAutoCompleteMode
 from pyqode.python.modes import CalltipsMode
@@ -161,16 +162,15 @@ def set_dark_color_scheme(code_edit):
     :param code_edit: QCodeEdit instance
     :type code_edit: pyqode.core.QCodeEdit
     """
-    style = code_edit.style.clone()
     for k, v in DEFAULT_DARK_STYLES.items():
-        style.set_value(k, v, "Python")
-    style.set_value("background", QtGui.QColor("#252525"))
-    style.set_value("foreground", QtGui.QColor("#A9B7C6"))
-    style.set_value("caretLineBackground", QtGui.QColor("#2d2d2d"))
-    style.set_value("whiteSpaceForeground", QtGui.QColor('#404040'))
-    style.set_value("matchedBraceBackground", None)
-    style.set_value("matchedBraceForeground", QtGui.QColor("#FF8647"))
-    code_edit.style = style
+        style.__dict__['py_'+k] = v
+    core_style.background = QtGui.QColor("#252525")
+    core_style.foreground = QtGui.QColor("#A9B7C6")
+    core_style.caretLineBackground = QtGui.QColor("#2d2d2d")
+    core_style.whiteSpaceForeground = QtGui.QColor('#404040')
+    core_style.matchedBraceBackground = None
+    core_style.matchedBraceForeground = QtGui.QColor("#FF8647")
+    code_edit.refresh_style()
 
 
 def set_white_color_scheme(code_edit):
@@ -186,14 +186,12 @@ def set_white_color_scheme(code_edit):
     :param code_edit: QCodeEdit instance
     :type code_edit: pyqode.core.QCodeEdit
     """
-    style = code_edit.style.clone()
     for k, v in DEFAULT_LIGHT_STYLES.items():
-        style.set_value(k, v, "Python")
-    style.set_value("background", QtGui.QColor("#FFFFFF"))
-    style.set_value("foreground", QtGui.QColor("#000000"))
-    style.set_value("caretLineBackground", QtGui.QColor("#E4EDF8"))
-    style.set_value("whiteSpaceForeground",
-                    constants.EDITOR_WS_FOREGROUND)
-    style.set_value("matchedBraceBackground", QtGui.QColor("#B4EEB4"))
-    style.set_value("matchedBraceForeground", QtGui.QColor("#FF0000"))
-    code_edit.style = style
+        style.__dict__[k] = v
+    core_style.background = QtGui.QColor("#FFFFFF")
+    core_style.foreground = QtGui.QColor("#000000")
+    core_style.caretLineBackground = QtGui.QColor("#E4EDF8")
+    core_style.whiteSpaceForeground = QtGui.QColor("#dddddd")
+    core_style.matchedBraceBackground = QtGui.QColor("#B4EEB4")
+    core_style.matchedBraceForeground = QtGui.QColor("#FF0000")
+    code_edit.refresh_style()

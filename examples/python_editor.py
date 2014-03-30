@@ -99,8 +99,6 @@ def main():
     app = QtGui.QApplication(sys.argv)
     win = PythonEditorWindow()
     win.show()
-    print(win.editor.settings.dumps())
-    print(win.editor.style.dumps())
     app.exec_()
     win.editor.stop_server()
     del win

@@ -4,6 +4,8 @@ This module contains the python specific syntax highlighter
 """
 import sys
 from PyQt4 import QtGui, QtCore
+from pyqode.core import style as core_style
+from pyqode.python import style
 
 from pyqode.core.api.syntax_highlighter import SyntaxHighlighter
 from pyqode.core.api.syntax_highlighter import IndentBasedFoldDetector
@@ -157,7 +159,7 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
         self.tri_single = (QtCore.QRegExp("'''"), 1, 'docstring')
         self.tri_double = (QtCore.QRegExp('"""'), 2, 'docstring')
 
-        self.cnt = 0
+        self._cache_version = -1
 
         rules = []
 
@@ -196,12 +198,46 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
         # Build a QtCore.QRegExp for each pattern
         self.rules = [(QtCore.QRegExp(pat), fmt) for (pat, fmt) in rules]
 
+        self._init_style()
+
+    def _init_style(self):
+        self.styles = {
+            'keyword': style.py_keyword,
+            'builtins': style.py_builtins,
+            'operator': style.py_operator,
+            'punctuation': style.py_punctuation,
+            'decorator': style.py_decorator,
+            'brace': style.py_brace,
+            'class': style.py_class,
+            'function': style.py_function,
+            'string': style.py_string,
+            'docstring': style.py_docstring,
+            'comment': style.py_comment,
+            'self': style.py_self,
+            'numbers': style.py_numbers,
+            'predefined': style.py_predefined,
+            'docstringTag': style.py_docstring_tag,
+        }
+
+    def refresh_style(self):
+        self.styles.clear()
+        del self.styles
+        self._init_style()
+        self._purge_mem_cache()
+        if self.editor:
+            self.rehighlight()
+
     @memoized
-    def format(self, style_key, current_style_bck):
+    def format(self, style_key, cache_version):
+        """
+        Returns a QTextCharFormat from a style key.
+
+        :param style_key: QColor or style key name.
+        """
         if isinstance(style_key, QtGui.QColor):
             value = style_key
         else:
-            value = self.editor.style.value(style_key, "Python")
+            value = self.styles[style_key]
         if isinstance(value, QtGui.QColor):
             _color = value
             _format = QtGui.QTextCharFormat()
@@ -220,11 +256,6 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
 
     def _on_install(self, editor):
         Mode._on_install(self, editor)
-        for k, v in DEFAULT_LIGHT_STYLES.items():
-            self.editor.style.add_property(k, v, "Python")
-        self.__foreground = self.editor.style.value(
-            "whiteSpaceForeground")
-        self.__bck = self.editor.style.value("background").name()
 
     def _on_state_changed(self, state):
         if state:
@@ -234,16 +265,12 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
 
     def _on_style_changed(self, section, key):
         if not key:
-            self.__foreground = self.editor.style.value(
-                "whiteSpaceForeground")
-            self.__bck = self.editor.style.value("background").name()
+            self._cache_version = self.editor.style.value("background").name()
             self.rehighlight()
         if key == "whiteSpaceForeground":
-            self.__foreground = self.editor.style.value(
-                "whiteSpaceForeground")
             self.rehighlight()
         elif key == "background":
-            self.__bck = self.editor.style.value("background").name()
+            self._cache_version = self.editor.style.value("background").name()
             self.rehighlight()
 
     def rehighlight(self, *args, **kwargs):
@@ -270,8 +297,8 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
         while index >= 0:
             index = expression.pos(0)
             length = len(expression.cap(0))
-            self.setFormat(index, length, self.format(self.__foreground,
-                                                      self.__bck))
+            self.setFormat(index, length, self.format(
+                core_style.whitespaces_foreground, self._cache_version))
             index = expression.indexIn(text, index + length)
 
     def highlight_sphinx_tags(self, text):
@@ -279,7 +306,7 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
         while index >= 0:
             length = self.docstring_ptrn.matchedLength()
             self.setFormat(index, length, self.format("docstringTag",
-                                                      self.__bck))
+                                                      self._cache_version))
             index = self.docstring_ptrn.indexIn(text, index + length)
 
     def highlight_block(self, text):
@@ -302,7 +329,8 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
                     word = text[index:index + l]
                     to_apply = self.format_from_word(word)
                 if to_apply:
-                    self.setFormat(index, l, self.format(to_apply, self.__bck))
+                    self.setFormat(index, l, self.format(to_apply,
+                                                         self._cache_version))
                 if fmt == "string":
                     usd.cc_disabled_zones.append((index, index + l))
                 elif fmt == "comment":
@@ -392,7 +420,7 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
             if not docstring:
                 fmt = "string"
             self.setFormat(len(original_text) - len(text),
-                           len(text), self.format(fmt, self.__bck))
+                           len(text), self.format(fmt, self._cache_version))
             usd = self.currentBlock().userData()
             end = pow(2, 32)
             if not state:
@@ -410,4 +438,4 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
             for i in range(sys.maxsize):
                 yield i
 
-        self.__bck = next_int()
+        self._cache_version = next_int()
