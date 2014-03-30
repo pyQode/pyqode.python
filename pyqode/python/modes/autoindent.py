@@ -3,6 +3,7 @@
 import re
 from PyQt4.QtGui import QTextCursor
 from pyqode.core.modes.autoindent import AutoIndentMode
+from pyqode.core.modes.matcher import SymbolMatcherMode
 
 
 class PyAutoIndentMode(AutoIndentMode):
@@ -134,7 +135,7 @@ class PyAutoIndentMode(AutoIndentMode):
         if pos:
             tc2 = QTextCursor(tc)
             tc2.setPosition(pos)
-            ol, oc = self.editor.get_mode("SymbolMatcherMode").symbol_pos(
+            ol, oc = self.editor.get_mode(SymbolMatcherMode).symbol_pos(
                 tc2, '(', 0)
             line = self.editor.line_text(ol)
             return len(line) - len(line.lstrip())
@@ -163,7 +164,7 @@ class PyAutoIndentMode(AutoIndentMode):
                                 tc3 = QTextCursor(tc)
                                 tc3.setPosition(pos)
                                 l, c = self.editor.get_mode(
-                                    "SymbolMatcherMode").symbol_pos(tc3, ')')
+                                    SymbolMatcherMode).symbol_pos(tc3, ')')
                                 if l == ln and c < column:
                                     continue
                                 return pos, char
@@ -186,9 +187,9 @@ class PyAutoIndentMode(AutoIndentMode):
             closingchar = '}'
         tc2 = QTextCursor(tc)
         tc2.setPosition(pos)
-        ol, oc = self.editor.get_mode("SymbolMatcherMode").symbol_pos(
+        ol, oc = self.editor.get_mode(SymbolMatcherMode).symbol_pos(
             tc2, char, ptype)
-        cl, cc = self.editor.get_mode("SymbolMatcherMode").symbol_pos(
+        cl, cc = self.editor.get_mode(SymbolMatcherMode).symbol_pos(
             tc2, closingchar, ptype)
         return (ol, oc), (cl, cc)
 

@@ -6,6 +6,7 @@ import os
 from PyQt4 import QtCore, QtGui
 from pyqode.core import logger
 from pyqode.core.editor import Mode
+from pyqode.core.modes import  WordClickMode
 from pyqode.python import workers
 
 
@@ -65,12 +66,12 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
 
     def _on_state_changed(self, state):
         if state:
-            self.editor.get_mode('WordClickMode').word_clicked.connect(
+            self.editor.get_mode(WordClickMode).word_clicked.connect(
                 self.request_goto)
             self.sep = self.editor.add_separator()
             self.editor.add_action(self.action_goto)
         else:
-            self.editor.get_mode('WordClickMode').word_clicked.disconnect(
+            self.editor.get_mode(WordClickMode).word_clicked.disconnect(
                 self.request_goto)
             self.editor.remove_action(self.action_goto)
             self.editor.remove_action(self.sep)
