@@ -28,6 +28,6 @@ def test_editor():
     editor.open_file(__file__)
     QtCore.QTimer.singleShot(500, leave)
     app.exec_()
-    client.stop_server()
+    client.stop_server(editor)
     del editor
     del app
