@@ -10,6 +10,8 @@ import sys
 from PyQt4 import QtCore, QtGui
 from ui.python_editor_ui import Ui_MainWindow
 
+from pyqode.core import client
+
 
 class PythonEditorWindow(QtGui.QMainWindow, Ui_MainWindow):
     def __init__(self):
@@ -100,7 +102,7 @@ def main():
     win = PythonEditorWindow()
     win.show()
     app.exec_()
-    win.editor.stop_server()
+    client.stop_server(win.editor)
     del win
     del app
 

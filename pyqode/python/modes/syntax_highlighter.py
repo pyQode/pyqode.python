@@ -7,10 +7,10 @@ from PyQt4 import QtGui, QtCore
 from pyqode.core import style as core_style
 from pyqode.python import style
 
-from pyqode.core.api.syntax_highlighter import SyntaxHighlighter
-from pyqode.core.api.syntax_highlighter import IndentBasedFoldDetector
-from pyqode.core.api.system import TextStyle
-from pyqode.core.api.system import memoized
+from pyqode.core.syntax_highlighter import SyntaxHighlighter
+from pyqode.core.syntax_highlighter import IndentBasedFoldDetector
+from pyqode.core.utils import TextStyle
+from pyqode.core.utils import memoized
 from pyqode.core.editor import Mode
 
 

@@ -5,6 +5,7 @@ Contains the go to assignments mode.
 import os
 from PyQt4 import QtCore, QtGui
 from pyqode.core import logger
+from pyqode.core import client
 from pyqode.core.editor import Mode
 from pyqode.core.modes import WordClickMode
 from pyqode.python import workers
@@ -95,8 +96,10 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
                 'path': self.editor.file_path,
                 'encoding': self.editor.file_encoding
             }
-            self.editor.request_work(workers.goto_assignments, request_data,
-                                     on_receive=self._on_results_available)
+            client.request_work(self.editor,
+                                workers.goto_assignments,
+                                request_data,
+                                on_receive=self._on_results_available)
             self._pending = True
         self.editor.set_cursor(QtCore.Qt.WaitCursor)
 

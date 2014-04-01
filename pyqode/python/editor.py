@@ -11,8 +11,9 @@ from pyqode.core.editor import QCodeEdit, Panel
 from pyqode.core import modes
 from pyqode.core import panels
 from pyqode.core import style as core_style
-from pyqode.python import style
+from pyqode.core import client
 
+from pyqode.python import style
 from pyqode.python.modes import PyAutoCompleteMode
 from pyqode.python.modes import CalltipsMode
 from pyqode.python.modes import CommentsMode
@@ -111,7 +112,7 @@ class QPythonCodeEdit(QCodeEdit):
         if script is None:
             from pyqode.python import server
             script = server.__file__
-        super().start_server(script, interpreter=interpreter, args=args)
+        client.start_server(self, script, interpreter=interpreter, args=args)
 
     @QtCore.pyqtSlot()
     def use_dark_style(self, use=True):

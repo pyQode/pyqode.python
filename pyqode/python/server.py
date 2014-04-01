@@ -19,10 +19,9 @@ package but you have to write a new server to do that.
 
 """
 import sys
-from pyqode.core.api import code_completion
-from pyqode.core.api import server
-from pyqode.core.api import workers
-from pyqode.python import code_completion as py_code_completion
+from pyqode.core import server
+from pyqode.core import workers
+from pyqode.python.workers import JediCompletionProvider
 
 
 if __name__ == '__main__':
@@ -37,9 +36,8 @@ if __name__ == '__main__':
             sys.path.insert(0, path)
 
     # setup completion providers
-    workers.CodeCompletion.providers.append(py_code_completion.JediProvider())
-    workers.CodeCompletion.providers.append(
-        code_completion.DocumentWordsProvider())
+    workers.CodeCompletion.providers.append(JediCompletionProvider())
+    workers.CodeCompletion.providers.append(workers.DocumentWordsProvider())
 
     # starts the server
     server.run(args)
