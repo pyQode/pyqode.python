@@ -104,16 +104,6 @@ class QPythonCodeEdit(QCodeEdit):
         self.install_panel(QuickDocPanel(), Panel.Position.BOTTOM)
         self.install_mode(CommentsMode())
 
-    def start_server(self, script=None, interpreter=sys.executable, args=None):
-        """
-        Overrides QCodeEdit.start_server to allow script to be None. In this
-        case QPythonCodeEdit will use its internal server.
-        """
-        if script is None:
-            from pyqode.python import server
-            script = server.__file__
-        client.start_server(self, script, interpreter=interpreter, args=args)
-
     @QtCore.pyqtSlot()
     def use_dark_style(self, use=True):
         """

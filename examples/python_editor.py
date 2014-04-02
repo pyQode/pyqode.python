@@ -4,6 +4,8 @@
 Integrates the generic editor using the pyQode qt designer plugin.
 """
 import logging
+from pyqode.python import server
+
 logging.basicConfig(level=logging.INFO)
 import os
 import sys
@@ -18,7 +20,10 @@ class PythonEditorWindow(QtGui.QMainWindow, Ui_MainWindow):
         QtGui.QMainWindow.__init__(self)
         Ui_MainWindow.__init__(self)
         self.setupUi(self)
-        self.editor.start_server(args=['-s', os.getcwd()])
+        # start the pyqode.python server and pass it additional paths to insert
+        # into sys.path
+        client.start_server(self.editor, server.__file__,
+                            args=['-s', os.getcwd()])
         self.actionOpen.setIcon(
             QtGui.QIcon.fromTheme(
                 "document-open", QtGui.QIcon(":/example_icons/rc/folder.png")))
