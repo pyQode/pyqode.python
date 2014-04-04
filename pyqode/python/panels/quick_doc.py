@@ -130,8 +130,8 @@ class QuickDocPanel(Panel):
                     string = "\n\n".join(results)
                     string = publish_parts(
                         string, writer_name='html',
-                        settings_overrides=
-                        {'output_encoding': 'unicode'})['html_body']
+                        settings_overrides={'output_encoding': 'unicode'})[
+                            'html_body']
                     string = string.replace('colspan="2"', 'colspan="0"')
                     string = string.replace("<th ", '<th align="left" ')
                     string = string.replace(
