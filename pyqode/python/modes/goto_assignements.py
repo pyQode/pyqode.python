@@ -97,9 +97,9 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
                 'encoding': self.editor.file_encoding
             }
             api.request_work(self.editor,
-                                workers.goto_assignments,
-                                request_data,
-                                on_receive=self._on_results_available)
+                             workers.goto_assignments,
+                             request_data,
+                             on_receive=self._on_results_available)
             self._pending = True
         self.editor.set_cursor(QtCore.Qt.WaitCursor)
 

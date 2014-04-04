@@ -164,7 +164,8 @@ class PyAutoIndentMode(AutoIndentMode):
                                 # the same line
                                 tc3 = QTextCursor(tc)
                                 tc3.setPosition(pos)
-                                l, c = api.get_mode(self.editor,
+                                l, c = api.get_mode(
+                                    self.editor,
                                     SymbolMatcherMode).symbol_pos(tc3, ')')
                                 if l == ln and c < column:
                                     continue

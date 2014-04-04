@@ -36,7 +36,8 @@ class SymbolBrowserPanel(Panel):
             self.editor.cursorPositionChanged.connect(
                 self._on_cursor_pos_changed)
             try:
-                api.get_mode(self.editor,
+                api.get_mode(
+                    self.editor,
                     'DocumentAnalyserMode').documentChanged.connect(
                     self._on_document_changed)
             except KeyError:
@@ -46,7 +47,8 @@ class SymbolBrowserPanel(Panel):
             self.editor.cursorPositionChanged.disconnect(
                 self._on_cursor_pos_changed)
             try:
-                api.get_mode(self.editor,
+                api.get_mode(
+                    self.editor,
                     'DocumentAnalyserMode').documentChanged.disconnect(
                     self._on_document_changed)
             except KeyError:
