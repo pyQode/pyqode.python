@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
-import pyqode.core
 from pyqode.core import logger
-from pyqode.core import client
-from pyqode.core.editor import Mode
+from pyqode.core import api
+from pyqode.core.api import Mode
 from pyqode.core.utils import DelayJobRunner
 from pyqode.python.workers import Definition, defined_names
 from PyQt4 import QtCore
@@ -50,9 +49,9 @@ class DocumentAnalyserMode(Mode, QtCore.QObject):
                 'encoding': self.editor.file_encoding
             }
             try:
-                client.request_work(self.editor, defined_names, request_data,
+                api.request_work(self.editor, defined_names, request_data,
                                     on_receive=self._on_results_available)
-            except client.NotConnectedError:
+            except api.NotConnectedError:
                 QtCore.QTimer.singleShot(100, self._run_analysis)
         else:
             self.results = []

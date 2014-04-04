@@ -2,6 +2,7 @@
 """ Contains the python autocomplete mode """
 import jedi
 from PyQt4 import QtGui
+from pyqode.core import api
 from pyqode.core.modes import AutoCompleteMode
 
 
@@ -20,7 +21,7 @@ class PyAutoCompleteMode(AutoCompleteMode):
 
     def _format_func_params(self, indent):
         parameters = ""
-        l = self.editor.cursor_position[0] - 1
+        l = api.cursor_line_nbr(self.editor) - 1
         c = indent + len("def ") + 1
         script = jedi.Script(self.editor.toPlainText(), l, c,
                              self.editor.file_path,
@@ -47,10 +48,10 @@ class PyAutoCompleteMode(AutoCompleteMode):
         self.editor.setTextCursor(tc)
 
     def _in_method_call(self):
-        l = self.editor.cursor_position[0] - 1
+        l = api.cursor_line_nbr(self.editor) - 1
         expected_indent = self.editor.line_indent() - 4
         while l >= 0:
-            text = self.editor.line_text(l)
+            text = api.line_text(self.editor, l)
             indent = len(text) - len(text.lstrip())
             if indent == expected_indent and 'class' in text:
                 return True
@@ -69,20 +70,23 @@ class PyAutoCompleteMode(AutoCompleteMode):
 
     def _on_post_key_pressed(self, e):
         # if we are in disabled cc, use the parent implementation
-        column = self.editor.cursor_position[1]
+        column = api.cursor_column_nbr(self.editor)
         usd = self.editor.textCursor().block().userData()
         for start, end in usd.cc_disabled_zones:
             if (start <= column < end - 1 and
-                    not self.editor.current_line_text.lstrip().startswith(
+                    not api.current_line_text(self.editor).lstrip().startswith(
                     '"""')):
                 return
-        prev_line = self.editor.line_text(self.editor.cursor_position[0] - 1)
+        prev_line = api.line_text(self.editor,
+                                  api.cursor_line_nbr(self.editor) - 1)
         is_below_fct_or_class = "def" in prev_line or "class" in prev_line
-        if (e.text() == '"' and '""' == self.editor.current_line_text.strip()
-                and (is_below_fct_or_class or column == 2)):
+        if (e.text() == '"' and
+                '""' == api.current_line_text(self.editor).strip() and
+                (is_below_fct_or_class or column == 2)):
             self._insert_docstring(prev_line, is_below_fct_or_class)
         elif (e.text() == "(" and
-                self.editor.current_line_text.lstrip().startswith("def ")):
+                api.current_line_text(self.editor).lstrip().startswith(
+                    "def ")):
             self._handle_fct_def()
         else:
             super(PyAutoCompleteMode, self)._on_post_key_pressed(e)

@@ -7,11 +7,11 @@ import sys
 import weakref
 from PyQt4 import QtCore, QtGui
 
-from pyqode.core.editor import QCodeEdit, Panel
+from pyqode.core.code_edit import QCodeEdit
+from pyqode.core import api
 from pyqode.core import modes
 from pyqode.core import panels
 from pyqode.core import style as core_style
-from pyqode.core import client
 
 from pyqode.python import style
 from pyqode.python.modes import PyAutoCompleteMode
@@ -74,35 +74,36 @@ class QPythonCodeEdit(QCodeEdit):
         self.setWindowTitle("pyQode - Python Editor")
 
         # install those modes first as they are required by other modes/panels
-        self.install_mode(DocumentAnalyserMode())
+        api.install_mode(self, DocumentAnalyserMode())
 
         # panels
-        self.install_panel(panels.LineNumberPanel())
-        self.install_panel(panels.MarkerPanel())
-        self.install_panel(panels.SearchAndReplacePanel(),
-                           Panel.Position.BOTTOM)
-        self.install_panel(SymbolBrowserPanel(), Panel.Position.TOP)
+        api.install_panel(self, panels.LineNumberPanel())
+        api.install_panel(self, panels.MarkerPanel())
+        api.install_panel(self, panels.SearchAndReplacePanel(),
+                          panels.SearchAndReplacePanel.Position.BOTTOM)
+        api.install_panel(self, SymbolBrowserPanel(),
+                          SymbolBrowserPanel.Position.TOP)
 
         # modes
         # generic
-        self.install_mode(modes.CaretLineHighlighterMode())
-        self.install_mode(modes.FileWatcherMode())
-        self.install_mode(modes.RightMarginMode())
-        self.install_mode(modes.ZoomMode())
-        self.install_mode(modes.SymbolMatcherMode())
-        self.install_mode(modes.WordClickMode())
-        self.install_mode(modes.CodeCompletionMode())
+        api.install_mode(self, modes.CaretLineHighlighterMode())
+        api.install_mode(self, modes.FileWatcherMode())
+        api.install_mode(self, modes.RightMarginMode())
+        api.install_mode(self, modes.ZoomMode())
+        api.install_mode(self, modes.SymbolMatcherMode())
+        api.install_mode(self, modes.WordClickMode())
+        api.install_mode(self, modes.CodeCompletionMode())
         # python specifics
-        self.install_mode(PyHighlighterMode(self.document()))
-        self.install_mode(PyAutoCompleteMode())
-        self.install_mode(PyAutoIndentMode())
-        self.install_mode(FrostedCheckerMode())
-        self.install_mode(PEP8CheckerMode())
-        self.install_mode(CalltipsMode())
-        self.install_mode(PyIndenterMode())
-        self.install_mode(GoToAssignmentsMode())
-        self.install_panel(QuickDocPanel(), Panel.Position.BOTTOM)
-        self.install_mode(CommentsMode())
+        api.install_mode(self, PyHighlighterMode(self.document()))
+        api.install_mode(self, PyAutoCompleteMode())
+        api.install_mode(self, PyAutoIndentMode())
+        api.install_mode(self, FrostedCheckerMode())
+        api.install_mode(self, PEP8CheckerMode())
+        api.install_mode(self, CalltipsMode())
+        api.install_mode(self, PyIndenterMode())
+        api.install_mode(self, GoToAssignmentsMode())
+        api.install_panel(self, QuickDocPanel(), api.Panel.Position.BOTTOM)
+        api.install_mode(self, CommentsMode())
 
     @QtCore.pyqtSlot()
     def use_dark_style(self, use=True):

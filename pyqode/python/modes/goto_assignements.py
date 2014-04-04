@@ -5,8 +5,8 @@ Contains the go to assignments mode.
 import os
 from PyQt4 import QtCore, QtGui
 from pyqode.core import logger
-from pyqode.core import client
-from pyqode.core.editor import Mode
+from pyqode.core import api
+from pyqode.core.api import Mode
 from pyqode.core.modes import WordClickMode
 from pyqode.python import workers
 
@@ -67,12 +67,12 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
 
     def _on_state_changed(self, state):
         if state:
-            self.editor.get_mode(WordClickMode).word_clicked.connect(
+            api.get_mode(self.editor, WordClickMode).word_clicked.connect(
                 self.request_goto)
             self.sep = self.editor.add_separator()
             self.editor.add_action(self.action_goto)
         else:
-            self.editor.get_mode(WordClickMode).word_clicked.disconnect(
+            api.get_mode(self.editor, WordClickMode).word_clicked.disconnect(
                 self.request_goto)
             self.editor.remove_action(self.action_goto)
             self.editor.remove_action(self.sep)
@@ -87,7 +87,7 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
         :type tc: QtGui.QTextCursor
         """
         if not tc:
-            tc = self.editor.select_word_under_cursor()
+            tc = api.word_under_cursor(self.editor)
         if not self._pending:
             request_data = {
                 'code': self.editor.toPlainText(),
@@ -96,7 +96,7 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
                 'path': self.editor.file_path,
                 'encoding': self.editor.file_encoding
             }
-            client.request_work(self.editor,
+            api.request_work(self.editor,
                                 workers.goto_assignments,
                                 request_data,
                                 on_receive=self._on_results_available)
@@ -109,7 +109,7 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
             line = definition.line
             col = definition.column
             logger.debug("Go to %s" % definition)
-            self.editor.goto_line(line, move=True, column=col)
+            api.goto_line(self.editor, line, move=True, column=col)
         else:
             logger.debug("Out of doc: %s" % definition)
             self.outOfDocument.emit(definition)

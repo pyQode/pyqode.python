@@ -11,7 +11,7 @@ from pyqode.core.syntax_highlighter import SyntaxHighlighter
 from pyqode.core.syntax_highlighter import IndentBasedFoldDetector
 from pyqode.core.utils import TextStyle
 from pyqode.core.utils import memoized
-from pyqode.core.editor import Mode
+from pyqode.core.api import Mode
 
 
 #: Default (white) color scheme for :class:`pyqode.python.PyHighlighterMode`

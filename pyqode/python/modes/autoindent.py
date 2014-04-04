@@ -2,6 +2,7 @@
 """ Contains smart indent modes """
 import re
 from PyQt4.QtGui import QTextCursor
+from pyqode.core import api
 from pyqode.core.modes.autoindent import AutoIndentMode
 from pyqode.core.modes.matcher import SymbolMatcherMode
 
@@ -23,7 +24,7 @@ class PyAutoIndentMode(AutoIndentMode):
         ln = tc.blockNumber()
         limit = ln - 1
         while ln > limit:
-            if self.editor.line_text(ln).strip() != "":
+            if api.line_text(self.editor, ln).strip() != "":
                 return False
             ln -= 1
         return True
@@ -31,7 +32,7 @@ class PyAutoIndentMode(AutoIndentMode):
     def has_unclosed_paren(self, tc):
         ln = tc.blockNumber()
         while ln >= 0:
-            line = self.editor.line_text(ln)
+            line = api.line_text(self.editor, ln)
             if line.count("(") > line.count(")"):
                 return True
             ln -= 1
@@ -135,9 +136,9 @@ class PyAutoIndentMode(AutoIndentMode):
         if pos:
             tc2 = QTextCursor(tc)
             tc2.setPosition(pos)
-            ol, oc = self.editor.get_mode(SymbolMatcherMode).symbol_pos(
+            ol, oc = api.get_mode(self.editor, SymbolMatcherMode).symbol_pos(
                 tc2, '(', 0)
-            line = self.editor.line_text(ol)
+            line = api.line_text(self.editor, ol)
             return len(line) - len(line.lstrip())
         return None
 
@@ -163,7 +164,7 @@ class PyAutoIndentMode(AutoIndentMode):
                                 # the same line
                                 tc3 = QTextCursor(tc)
                                 tc3.setPosition(pos)
-                                l, c = self.editor.get_mode(
+                                l, c = api.get_mode(self.editor,
                                     SymbolMatcherMode).symbol_pos(tc3, ')')
                                 if l == ln and c < column:
                                     continue
@@ -171,7 +172,7 @@ class PyAutoIndentMode(AutoIndentMode):
             # check previous line
             tc_trav.movePosition(tc_trav.Up, tc_trav.MoveAnchor)
             ln = tc_trav.blockNumber() + 1
-            column = len(self.editor.line_text(ln))
+            column = len(api.line_text(self.editor, ln))
         return pos, char
 
     def get_parent_pos(self, tc, column):
@@ -187,9 +188,9 @@ class PyAutoIndentMode(AutoIndentMode):
             closingchar = '}'
         tc2 = QTextCursor(tc)
         tc2.setPosition(pos)
-        ol, oc = self.editor.get_mode(SymbolMatcherMode).symbol_pos(
+        ol, oc = api.get_mode(self.editor, SymbolMatcherMode).symbol_pos(
             tc2, char, ptype)
-        cl, cc = self.editor.get_mode(SymbolMatcherMode).symbol_pos(
+        cl, cc = api.get_mode(self.editor, SymbolMatcherMode).symbol_pos(
             tc2, closingchar, ptype)
         return (ol, oc), (cl, cc)
 
@@ -207,8 +208,8 @@ class PyAutoIndentMode(AutoIndentMode):
         next_char = self.get_next_char(tc)
         nextcharisclosingsymbol = next_char in [']', ')', '}']
         (oL, oC), (cL, cC) = self.get_parent_pos(tc, column)
-        closingline = self.editor.line_text(cL)
-        openingline = self.editor.line_text(oL)
+        closingline = api.line_text(self.editor, cL)
+        openingline = api.line_text(self.editor, oL)
         openingindent = len(openingline) - len(openingline.lstrip())
         tokens = [t.strip() for t in re.split(', |and |or ',
                                               line[oC:column]) if t]
@@ -258,7 +259,7 @@ class PyAutoIndentMode(AutoIndentMode):
 
     def _get_indent(self, tc):
         pos = tc.position()
-        ln, column = self.editor.cursor_position
+        ln, column = api.cursor_position(self.editor)
         fullline = self.get_full_line(tc)
         line = fullline[:column]
         # no indent
@@ -311,7 +312,7 @@ class PyAutoIndentMode(AutoIndentMode):
 
                     while not check_kw_in_line(kw, l) and ln:
                         ln -= 1
-                        l = self.editor.line_text(ln)
+                        l = api.line_text(self.editor, ln)
                     indent = (len(l) - len(l.lstrip())) * " "
                     indent += 4 * " "
                     post = indent

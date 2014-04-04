@@ -12,7 +12,7 @@ import sys
 from PyQt4 import QtCore, QtGui
 from ui.python_editor_ui import Ui_MainWindow
 
-from pyqode.core import client
+from pyqode.core import api
 
 
 class PythonEditorWindow(QtGui.QMainWindow, Ui_MainWindow):
@@ -22,8 +22,8 @@ class PythonEditorWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         # start the pyqode.python server and pass it additional paths to insert
         # into sys.path
-        client.start_server(self.editor, server.__file__,
-                            args=['-s', os.getcwd()])
+        api.start_server(self.editor, server.__file__,
+                         args=['-s', os.getcwd()])
         self.actionOpen.setIcon(
             QtGui.QIcon.fromTheme(
                 "document-open", QtGui.QIcon(":/example_icons/rc/folder.png")))
@@ -36,10 +36,12 @@ class PythonEditorWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.setupStylesMenu()
         self.setupModesMenu()
         self.setupPanelsMenu()
+        self.setupPanelsMenu()
 
         # handle assignement that are out of the current document
-        self.editor.get_mode('GoToAssignmentsMode').outOfDocument.connect(
-            self.onOutOfDocument)
+        api.get_mode(
+            self.editor, 'GoToAssignmentsMode').outOfDocument.connect(
+                self.onOutOfDocument)
 
         # open ourself
         self.editor.open_file(__file__)
@@ -59,7 +61,7 @@ class PythonEditorWindow(QtGui.QMainWindow, Ui_MainWindow):
         group.triggered.connect(self.changeStyle)
 
     def setupModesMenu(self):
-        for k, v in sorted(self.editor.get_modes().items()):
+        for k, v in sorted(api.get_modes(self.editor).items()):
             a = QtGui.QAction(self.menuModes)
             a.setText(k)
             a.setCheckable(True)
@@ -69,7 +71,7 @@ class PythonEditorWindow(QtGui.QMainWindow, Ui_MainWindow):
             self.menuModes.addAction(a)
 
     def setupPanelsMenu(self):
-        for zones, panel_dic in sorted(self.editor.get_panels().items()):
+        for zones, panel_dic in sorted(api.get_panels(self.editor).items()):
             for k, v in panel_dic.items():
                 a = QtGui.QAction(self.menuModes)
                 a.setText(k)
@@ -107,7 +109,7 @@ def main():
     win = PythonEditorWindow()
     win.show()
     app.exec_()
-    client.stop_server(win.editor)
+    api.stop_server(win.editor)
     del win
     del app
 
