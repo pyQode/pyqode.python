@@ -53,7 +53,7 @@ from pyqode.python.panels import QuickDocPanel
 
 
 #: pyqode-python version
-__version__ = "1.3.0"
+__version__ = "1.3.1"
 
 
 import pyqode.python.ui.pyqode_python_icons_rc
@@ -142,7 +142,7 @@ class QPythonCodeEdit(pyqode.core.QCodeEdit):
         self.installMode(GoToAssignmentsMode())
         self.installPanel(QuickDocPanel(), pyqode.core.PanelPosition.BOTTOM)
         self.installMode(CommentsMode())
-
+        self.installMode(pyqode.core.FileWatcherMode())
 
     def setModulesToPreload(self, modules=None):
         """

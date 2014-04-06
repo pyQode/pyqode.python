@@ -57,24 +57,37 @@ class CommentsMode(Mode):
         is no selection.
         """
         cursor = self.editor.textCursor()
+        # make comment/uncomment a single operation for the undo stack
         cursor.beginEditBlock()
+        # did the user do a reversed selection (from bottom to top)?
         sel_start = cursor.selectionStart()
         sel_end = cursor.selectionEnd()
         reversed_selection = cursor.position() == sel_start
+        # were there any selected lines? If not select the current line
         has_selection = True
         if not cursor.hasSelection():
             cursor.select(QtGui.QTextCursor.LineUnderCursor)
             has_selection = False
+
+        # get selected lines
         lines = cursor.selection().toPlainText().splitlines()
         nb_lines = len(lines)
+
+        # move to first line
         cursor.setPosition(sel_start)
+
+        # we uncomment if all lines were commented, otherwise we comment all
+        # lines in selection
         comment = False
         for i in range(nb_lines):
             cursor.movePosition(QtGui.QTextCursor.StartOfLine)
             cursor.movePosition(QtGui.QTextCursor.EndOfLine, cursor.KeepAnchor)
             line = cursor.selectedText().lstrip()
+            if not line.strip():
+                # skips empty lines
+                continue
             indent = len(cursor.selectedText()) - len(line)
-            if not line.startswith("#"):
+            if not line.startswith("# "):
                 comment = True
                 break
             # next line
@@ -90,7 +103,7 @@ class CommentsMode(Mode):
                 # Uncomment
                 if not comment:
                     cursor.setPosition(cursor.position() + indent)
-                    cursor.movePosition(cursor.Right, cursor.KeepAnchor, 1)
+                    cursor.movePosition(cursor.Right, cursor.KeepAnchor, 2)
                     cursor.insertText("")
                     if i == 0:
                         sel_start -= 1
@@ -101,7 +114,7 @@ class CommentsMode(Mode):
                 else:
                     cursor.movePosition(QtGui.QTextCursor.StartOfLine)
                     cursor.setPosition(cursor.position() + indent)
-                    cursor.insertText("#")
+                    cursor.insertText("# ")
                     if i == 0:
                         sel_start += 1
                         sel_end += 1

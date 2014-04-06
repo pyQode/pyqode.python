@@ -194,6 +194,8 @@ class DocumentAnalyserMode(pyqode.core.Mode, QtCore.QObject):
         except AttributeError:
             pass
         else:
+            if not self.editor:
+                return
             if self.editor.toPlainText():
                 worker = DefinedNamesWorker(self.editor.toPlainText(), "", "")
                 srv.requestWork(self, worker)

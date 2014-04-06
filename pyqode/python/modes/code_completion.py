@@ -46,7 +46,7 @@ ICONS = {'CLASS': ':/pyqode_python_icons/rc/class.png',
          'IMPORT': ':/pyqode_python_icons/rc/namespace.png',
          'STATEMENT': ':/pyqode_python_icons/rc/var.png',
          'FORFLOW': ':/pyqode_python_icons/rc/var.png',
-         'MODULE': ':/pyqode_python_icons/rc/keyword.png',
+         'MODULE': ':/pyqode_python_icons/rc/namespace.png',
          'KEYWORD': ':/pyqode_python_icons/rc/keyword.png',
          'PARAM': ':/pyqode_python_icons/rc/var.png',
          'PARAM-PRIV': ':/pyqode_python_icons/rc/var.png',
@@ -204,16 +204,26 @@ class JediCompletionProvider(CompletionProvider):
             try:
                 script = jedi.Script(code, line, column, filePath,
                                      fileEncoding)
-                
+
                 completions = script.completions()
             except jedi.NotFoundError:
                 completions = []
             for completion in completions:
                 name = completion.name
-                desc = completion.description
+                # desc = completion.description
                 # deduce type from description
-                type = desc.split(':')[0]
-                desc = desc.split(':')[1]
+                type = completion.type
+                if "getset_descriptor" in completion.description:
+                    type = 'STATEMENT'
+                if type.lower() == 'import':
+                    try:
+                        definition = completion.follow_definition()[0]
+                        type = definition.type
+                    except (IndexError, AttributeError):
+                        # no definition
+                        # AttributeError is raised for GlobalNamespace
+                        pass
+                desc = completion.full_name
                 icon = iconFromType(name, type)
                 retVal.append(Completion(name, icon=icon, tooltip=desc))
         return retVal

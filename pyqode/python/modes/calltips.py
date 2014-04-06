@@ -49,8 +49,22 @@ class CalltipsWorker(Worker):
                              self.encoding)
         signatures = script.call_signatures()
         for c in signatures:
-            results = [str(c.module.name), str(c.call_name),
-                       [str(p.token_list[0]) for p in c.params], c.index,
+            try:
+                # jedi < 0.8
+                module_name = str(c.module.name)
+            except AttributeError:
+                module_name = c.module_name
+            try:
+                call_name = c.call_name
+            except AttributeError:
+                call_name = c.name
+            try:
+                params = [str(p.get_name()) for p in c.params]
+            except AttributeError:
+                params = [str(p.name) for p in c.params]
+
+            results = [str(module_name), str(call_name),
+                       params, c.index,
                        c.bracket_start, self.col]
             # seems like len of signatures is always 1 when getting calltips
             return results
