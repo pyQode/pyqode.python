@@ -5,15 +5,26 @@ developers. For more specific details about what is planned and what has been
 accomplished, please visit the `issues page on github`_ and the
 :doc:`changelog </changelog>`, respectively.
 
-Next Version
-------------
-
-Version **1.1** will focus on adding more python features (quick documentation,
-auto complete, go to definition, basic refactoring (when `jedi`_ is ready
-for it),...)
 
 Milestones
 ----------
+
+1.3.1
++++++
+
+New features:
+
+    - the comments mode is now PEP8 compliant
+    - the documentation panel now uses docutils to get an html representation
+      of docstrings
+    - QPythonCodeEdit now includes the file watcher mode
+    - lots of improvements to the auto indent mode
+
+Fixed bugs:
+
+    - Add support for jedi 0.8 (which has not been released yet, compatibility
+      with jedi 0.7 has been kept)
+    - many bug fixes to the auto indent mode
 
 1.3.0
 +++++
