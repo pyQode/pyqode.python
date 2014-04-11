@@ -3,8 +3,8 @@
 SymbolBrowserPanel
 """
 from pyqode.core import logger
-from pyqode.core.api import Panel
-from pyqode.core import api
+from pyqode.core.frontend import Panel
+from pyqode.core import frontend
 from PyQt4 import QtGui, QtCore
 
 
@@ -36,7 +36,7 @@ class SymbolBrowserPanel(Panel):
             self.editor.cursorPositionChanged.connect(
                 self._on_cursor_pos_changed)
             try:
-                api.get_mode(
+                frontend.get_mode(
                     self.editor,
                     'DocumentAnalyserMode').documentChanged.connect(
                     self._on_document_changed)
@@ -47,7 +47,7 @@ class SymbolBrowserPanel(Panel):
             self.editor.cursorPositionChanged.disconnect(
                 self._on_cursor_pos_changed)
             try:
-                api.get_mode(
+                frontend.get_mode(
                     self.editor,
                     'DocumentAnalyserMode').documentChanged.disconnect(
                     self._on_document_changed)
@@ -57,7 +57,7 @@ class SymbolBrowserPanel(Panel):
 
     def _on_document_changed(self):
         try:
-            mode = api.get_mode(self.editor, 'DocumentAnalyserMode')
+            mode = frontend.get_mode(self.editor, 'DocumentAnalyserMode')
         except KeyError:
             definitions = []
         else:
@@ -76,7 +76,7 @@ class SymbolBrowserPanel(Panel):
                 # of a string.
                 pass
         self._definitions = definitions
-        self._sync_combo_box(api.cursor_line_nbr(self.editor))
+        self._sync_combo_box(frontend.cursor_line_nbr(self.editor))
 
     @QtCore.pyqtSlot(int)
     def _on_definition_activated(self, index):
@@ -94,7 +94,7 @@ class SymbolBrowserPanel(Panel):
             self.combo_box.setCurrentIndex(index)
 
     def _on_cursor_pos_changed(self):
-        line = api.cursor_line_nbr(self.editor)
+        line = frontend.cursor_line_nbr(self.editor)
         if self._prevLine != line:
             self._sync_combo_box(line)
         self._prevLine = line

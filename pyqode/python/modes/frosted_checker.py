@@ -2,7 +2,7 @@
 """
 This module contains the pyFlakes checker mode
 """
-from pyqode.core.modes import CheckerMode
+from pyqode.core.frontend.modes import CheckerMode
 from pyqode.python.workers import run_frosted
 
 

@@ -4,9 +4,9 @@ Contains the quick documentation panel
 """
 from docutils.core import publish_parts
 from PyQt4 import QtGui
-from pyqode.core import api
-from pyqode.core.api import Panel
-from pyqode.core.utils import drift_color
+from pyqode.core import frontend
+from pyqode.core.frontend import Panel
+from pyqode.core.frontend.utils import drift_color
 from pyqode.python.workers import quick_doc
 
 
@@ -110,7 +110,7 @@ class QuickDocPanel(Panel):
             self._reset_stylesheet()
 
     def _on_action_quick_doc_triggered(self):
-        tc = api.word_under_cursor(self.editor, select_whole_word=True)
+        tc = frontend.word_under_cursor(self.editor, select_whole_word=True)
         request_data = {
             'code': self.editor.toPlainText(),
             'line': tc.blockNumber() + 1,
@@ -118,7 +118,7 @@ class QuickDocPanel(Panel):
             'path': self.editor.file_path,
             'encoding': self.editor.file_encoding
         }
-        api.request_work(self.editor,
+        frontend.request_work(self.editor,
                          quick_doc, request_data,
                          on_receive=self._on_results_available)
 

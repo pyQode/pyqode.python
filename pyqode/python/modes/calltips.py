@@ -5,13 +5,13 @@ Contains the JediCompletionProvider class implementation.
 import os
 from pyqode.core import logger
 from pyqode.core import settings
-from pyqode.core import api
-from pyqode.core.utils import DelayJobRunner
+from pyqode.core import frontend
+from pyqode.core.frontend.utils import DelayJobRunner
 from pyqode.python import workers
 from PyQt4 import QtCore, QtGui
 
 
-class CalltipsMode(api.Mode, QtCore.QObject):
+class CalltipsMode(frontend.Mode, QtCore.QObject):
     """
     This mode shows function/method call tips in a QToolTip using
     :meth:`jedi.Script.call_signatures`.
@@ -20,7 +20,7 @@ class CalltipsMode(api.Mode, QtCore.QObject):
     tooltipHideRequested = QtCore.pyqtSignal()
 
     def __init__(self):
-        api.Mode.__init__(self)
+        frontend.Mode.__init__(self)
         QtCore.QObject.__init__(self)
         self.__jobRunner = DelayJobRunner(self, nb_threads_max=1, delay=700)
         self.tooltipDisplayRequested.connect(self._display_tooltip)
@@ -54,7 +54,7 @@ class CalltipsMode(api.Mode, QtCore.QObject):
         if self.__requestCnt == 0:
             self.__requestCnt += 1
             logger.debug("Calltip requested")
-            api.request_work(
+            frontend.request_work(
                 self.editor,
                 workers.calltips,
                 {'code': source, 'line': line, 'column': col, 'path': None,
@@ -74,7 +74,7 @@ class CalltipsMode(api.Mode, QtCore.QObject):
 
     def _is_last_chard_end_of_word(self):
         try:
-            tc = api.word_under_cursor(self.editor)
+            tc = frontend.word_under_cursor(self.editor)
             tc.setPosition(tc.position())
             tc.movePosition(tc.StartOfLine, tc.KeepAnchor)
             l = tc.selectedText()

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-from pyqode.core import api
+from pyqode.core import frontend
 from PyQt4 import QtGui, QtCore
 
 
-class CommentsMode(api.Mode):
+class CommentsMode(frontend.Mode):
     """
     Mode that allow to comment/uncomment a set of lines using Ctrl+/.
     """

@@ -19,7 +19,7 @@ Syntax highlighter options
 .. autodata:: py_docstringTag
 
 """
-from pyqode.core.utils import TextStyle
+from pyqode.core.frontend.utils import TextStyle
 
 # ----------------
 # PySyntaxHighlighter

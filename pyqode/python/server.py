@@ -19,14 +19,13 @@ package but you have to write a new server to do that.
 
 """
 import sys
-from pyqode.core import server
-from pyqode.core import workers
+from pyqode.core import backend
 from pyqode.python.workers import JediCompletionProvider
 
 
 if __name__ == '__main__':
     # setup argument parser and parse command line args
-    parser = server.default_parser()
+    parser = backend.default_parser()
     parser.add_argument('-s', '--syspath', nargs='*')
     args = parser.parse_args()
 
@@ -36,8 +35,9 @@ if __name__ == '__main__':
             sys.path.insert(0, path)
 
     # setup completion providers
-    workers.CodeCompletion.providers.append(JediCompletionProvider())
-    workers.CodeCompletion.providers.append(workers.DocumentWordsProvider())
+    backend.CodeCompletionWorker.providers.append(JediCompletionProvider())
+    backend.CodeCompletionWorker.providers.append(
+        backend.DocumentWordsProvider())
 
     # starts the server
-    server.run(args)
+    backend.serve_forever(args)

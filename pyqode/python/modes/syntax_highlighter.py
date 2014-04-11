@@ -7,11 +7,11 @@ from PyQt4 import QtGui, QtCore
 from pyqode.core import style as core_style
 from pyqode.python import style
 
-from pyqode.core.syntax_highlighter import SyntaxHighlighter
-from pyqode.core.syntax_highlighter import IndentBasedFoldDetector
-from pyqode.core.utils import TextStyle
-from pyqode.core.utils import memoized
-from pyqode.core.api import Mode
+from pyqode.core.frontend.syntax_highlighter import SyntaxHighlighter
+from pyqode.core.frontend.syntax_highlighter import IndentBasedFoldDetector
+from pyqode.core.frontend.utils import TextStyle
+from pyqode.core.frontend.utils import memoized
+from pyqode.core.frontend import Mode
 
 
 #: Default (white) color scheme for :class:`pyqode.python.PyHighlighterMode`
