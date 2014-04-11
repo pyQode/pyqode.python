@@ -80,9 +80,9 @@ class QPythonCodeEdit(QCodeEdit):
         frontend.install_panel(self, panels.LineNumberPanel())
         frontend.install_panel(self, panels.MarkerPanel())
         frontend.install_panel(self, panels.SearchAndReplacePanel(),
-                          panels.SearchAndReplacePanel.Position.BOTTOM)
+                               panels.SearchAndReplacePanel.Position.BOTTOM)
         frontend.install_panel(self, SymbolBrowserPanel(),
-                          SymbolBrowserPanel.Position.TOP)
+                               SymbolBrowserPanel.Position.TOP)
 
         # modes
         # generic
@@ -102,7 +102,8 @@ class QPythonCodeEdit(QCodeEdit):
         frontend.install_mode(self, CalltipsMode())
         frontend.install_mode(self, PyIndenterMode())
         frontend.install_mode(self, GoToAssignmentsMode())
-        frontend.install_panel(self, QuickDocPanel(), frontend.Panel.Position.BOTTOM)
+        frontend.install_panel(self, QuickDocPanel(),
+                               frontend.Panel.Position.BOTTOM)
         frontend.install_mode(self, CommentsMode())
 
     @QtCore.pyqtSlot()

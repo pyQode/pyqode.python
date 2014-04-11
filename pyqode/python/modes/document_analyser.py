@@ -50,7 +50,7 @@ class DocumentAnalyserMode(Mode, QtCore.QObject):
             }
             try:
                 frontend.request_work(self.editor, defined_names, request_data,
-                                 on_receive=self._on_results_available)
+                                      on_receive=self._on_results_available)
             except frontend.NotConnectedError:
                 QtCore.QTimer.singleShot(100, self._run_analysis)
         else:

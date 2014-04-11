@@ -8,10 +8,9 @@ It runs a QApplication and shows a QPythonCodeEdit for 500ms.
 """
 import sys
 from PyQt4 import QtCore, QtGui
-from pyqode.core import api
+from pyqode.core import frontend
 from pyqode.python import server
 from pyqode.python.editor import QPythonCodeEdit
-
 import logging
 logging.basicConfig(level=True)
 
@@ -25,10 +24,10 @@ def test_editor():
     app = QtGui.QApplication(sys.argv)
     editor = QPythonCodeEdit()
     editor.show()
-    api.start_server(editor, server.__file__)
+    frontend.start_server(editor, server.__file__)
     editor.open_file(__file__)
-    QtCore.QTimer.singleShot(500, leave)
+    QtCore.QTimer.singleShot(2000, leave)
     app.exec_()
-    api.stop_server(editor)
+    frontend.stop_server(editor)
     del editor
     del app

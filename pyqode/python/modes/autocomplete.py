@@ -74,11 +74,11 @@ class PyAutoCompleteMode(AutoCompleteMode):
         usd = self.editor.textCursor().block().userData()
         for start, end in usd.cc_disabled_zones:
             if (start <= column < end - 1 and
-                    not frontend.current_line_text(self.editor).lstrip().startswith(
-                    '"""')):
+                    not frontend.current_line_text(
+                        self.editor).lstrip().startswith('"""')):
                 return
-        prev_line = frontend.line_text(self.editor,
-                                  frontend.cursor_line_nbr(self.editor) - 1)
+        prev_line = frontend.line_text(
+            self.editor, frontend.cursor_line_nbr(self.editor) - 1)
         is_below_fct_or_class = "def" in prev_line or "class" in prev_line
         if (e.text() == '"' and
                 '""' == frontend.current_line_text(self.editor).strip() and

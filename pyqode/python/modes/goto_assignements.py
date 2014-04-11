@@ -72,8 +72,9 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
             self.sep = self.editor.add_separator()
             self.editor.add_action(self.action_goto)
         else:
-            frontend.get_mode(self.editor, WordClickMode).word_clicked.disconnect(
-                self.request_goto)
+            frontend.get_mode(
+                self.editor, WordClickMode).word_clicked.disconnect(
+                    self.request_goto)
             self.editor.remove_action(self.action_goto)
             self.editor.remove_action(self.sep)
 
@@ -97,9 +98,9 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
                 'encoding': self.editor.file_encoding
             }
             frontend.request_work(self.editor,
-                             workers.goto_assignments,
-                             request_data,
-                             on_receive=self._on_results_available)
+                                  workers.goto_assignments,
+                                  request_data,
+                                  on_receive=self._on_results_available)
             self._pending = True
         self.editor.set_cursor(QtCore.Qt.WaitCursor)
 

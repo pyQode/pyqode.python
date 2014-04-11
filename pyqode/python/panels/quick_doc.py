@@ -119,8 +119,8 @@ class QuickDocPanel(Panel):
             'encoding': self.editor.file_encoding
         }
         frontend.request_work(self.editor,
-                         quick_doc, request_data,
-                         on_receive=self._on_results_available)
+                              quick_doc, request_data,
+                              on_receive=self._on_results_available)
 
     def _on_results_available(self, status, results):
         if status:

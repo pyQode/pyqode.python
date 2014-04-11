@@ -136,8 +136,8 @@ class PyAutoIndentMode(AutoIndentMode):
         if pos:
             tc2 = QTextCursor(tc)
             tc2.setPosition(pos)
-            ol, oc = frontend.get_mode(self.editor, SymbolMatcherMode).symbol_pos(
-                tc2, '(', 0)
+            ol, oc = frontend.get_mode(
+                self.editor, SymbolMatcherMode).symbol_pos(tc2, '(', 0)
             line = frontend.line_text(self.editor, ol)
             return len(line) - len(line.lstrip())
         return None
