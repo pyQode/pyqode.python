@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'python_editor.ui'
 #
-# Created: Sun Mar 16 19:02:49 2014
-#      by: PyQt4 UI code generator 4.10.3
+# Created: Mon Apr 14 21:15:15 2014
+#      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -55,16 +55,14 @@ class Ui_MainWindow(object):
         self.toolBar.setObjectName(_fromUtf8("toolBar"))
         MainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
         self.actionOpen = QtGui.QAction(MainWindow)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/example_icons/rc/folder.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon = QtGui.QIcon.fromTheme(_fromUtf8("document-open"))
         self.actionOpen.setIcon(icon)
         self.actionOpen.setIconVisibleInMenu(True)
         self.actionOpen.setObjectName(_fromUtf8("actionOpen"))
         self.actionSave = QtGui.QAction(MainWindow)
         self.actionSave.setEnabled(False)
-        icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap(_fromUtf8(":/example_icons/rc/document-save.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionSave.setIcon(icon1)
+        icon = QtGui.QIcon.fromTheme(_fromUtf8("document-save"))
+        self.actionSave.setIcon(icon)
         self.actionSave.setIconVisibleInMenu(True)
         self.actionSave.setObjectName(_fromUtf8("actionSave"))
         self.actionPanel = QtGui.QAction(MainWindow)
@@ -93,7 +91,6 @@ class Ui_MainWindow(object):
         self.toolBar.addAction(self.actionSave)
 
         self.retranslateUi(MainWindow)
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(_translate("MainWindow", "pyQode - Python Editor", None))
@@ -114,3 +111,4 @@ class Ui_MainWindow(object):
         self.actionDark.setText(_translate("MainWindow", "Dark", None))
 
 from pyqode.python.editor import QPythonCodeEdit
+from . import editor_rc

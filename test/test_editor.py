@@ -25,7 +25,7 @@ def test_editor():
     editor = QPythonCodeEdit()
     editor.show()
     frontend.start_server(editor, server.__file__)
-    editor.open_file(__file__)
+    frontend.open_file(editor, __file__)
     QtCore.QTimer.singleShot(2000, leave)
     app.exec_()
     frontend.stop_server(editor)

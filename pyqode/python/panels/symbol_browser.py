@@ -2,10 +2,14 @@
 """
 SymbolBrowserPanel
 """
-from pyqode.core import logger
+import logging
 from pyqode.core.frontend import Panel
 from pyqode.core import frontend
 from PyQt4 import QtGui, QtCore
+
+
+def _logger():
+    return logging.getLogger(__name__)
 
 
 class SymbolBrowserPanel(Panel):
@@ -41,8 +45,8 @@ class SymbolBrowserPanel(Panel):
                     'DocumentAnalyserMode').documentChanged.connect(
                     self._on_document_changed)
             except KeyError:
-                logger.warning("No DocumentAnalyserMode found, install it "
-                               "before SymbolBrowserPanel!")
+                _logger().warning("No DocumentAnalyserMode found, install it "
+                                  "before SymbolBrowserPanel!")
         else:
             self.editor.cursorPositionChanged.disconnect(
                 self._on_cursor_pos_changed)
@@ -52,8 +56,8 @@ class SymbolBrowserPanel(Panel):
                     'DocumentAnalyserMode').documentChanged.disconnect(
                     self._on_document_changed)
             except KeyError:
-                logger.warning("No DocumentAnalyserMode found, install it "
-                               "before SymbolBrowserPanel!")
+                _logger().warning("No DocumentAnalyserMode found, install it "
+                                  "before SymbolBrowserPanel!")
 
     def _on_document_changed(self):
         try:
@@ -76,7 +80,7 @@ class SymbolBrowserPanel(Panel):
                 # of a string.
                 pass
         self._definitions = definitions
-        self._sync_combo_box(frontend.cursor_line_nbr(self.editor))
+        self._sync_combo_box(frontend.current_line_nbr(self.editor))
 
     @QtCore.pyqtSlot(int)
     def _on_definition_activated(self, index):
@@ -94,7 +98,7 @@ class SymbolBrowserPanel(Panel):
             self.combo_box.setCurrentIndex(index)
 
     def _on_cursor_pos_changed(self):
-        line = frontend.cursor_line_nbr(self.editor)
+        line = frontend.current_line_nbr(self.editor)
         if self._prevLine != line:
             self._sync_combo_box(line)
         self._prevLine = line

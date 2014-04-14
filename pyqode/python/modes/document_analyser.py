@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
-from pyqode.core import logger
+import logging
 from pyqode.core import frontend
 from pyqode.core.frontend import Mode
 from pyqode.core.frontend.utils import DelayJobRunner
 from pyqode.python.workers import Definition, defined_names
 from PyQt4 import QtCore
+
+
+def _logger():
+    return logging.getLogger(__name__)
 
 
 class DocumentAnalyserMode(Mode, QtCore.QObject):
@@ -62,7 +66,7 @@ class DocumentAnalyserMode(Mode, QtCore.QObject):
             if results is not None:
                 results = [Definition().from_dict(ddict) for ddict in results]
                 self.results = results
-                logger.debug("Document structure changed")
+                _logger().debug("Document structure changed")
             else:
                 self.results = []
             self.documentChanged.emit()

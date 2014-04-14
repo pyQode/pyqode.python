@@ -3,9 +3,13 @@
 """
 Contains the worker classes/functions executed on the server side.
 """
+import logging
 import os
-from pyqode.core import logger
 from pyqode.python.pep8utils import CustomChecker
+
+
+def _logger():
+    return logging.getLogger(__name__)
 
 
 def calltips(request_data):
@@ -30,8 +34,8 @@ def calltips(request_data):
     try:
         import jedi
     except ImportError:
-        logger.error("Failed to import jedi. Check your jedi "
-                     "installation")
+        _logger().error("Failed to import jedi. Check your jedi "
+                        "installation")
     else:
         code = request_data['code']
         line = request_data['line']
@@ -55,8 +59,8 @@ def goto_assignments(request_data):
     try:
         import jedi
     except ImportError:
-        logger.error("Failed to import jedi. Check your jedi "
-                     "installation")
+        _logger().error("Failed to import jedi. Check your jedi "
+                        "installation")
     else:
         code = request_data['code']
         line = request_data['line']
@@ -169,8 +173,8 @@ def defined_names(request_data):
     try:
         import jedi
     except ImportError:
-        logger.error("Failed to import jedi. Check your jedi "
-                     "installation")
+        _logger().error("Failed to import jedi. Check your jedi "
+                        "installation")
     else:
         code = request_data['code']
         path = request_data['path']
@@ -203,10 +207,10 @@ def defined_names(request_data):
         if ret_val:
             if not _compare_definitions(ret_val, old_definitions):
                 ret_val = None
-                logger.debug("No changes detected")
+                _logger().debug("No changes detected")
             else:
                 _old_definitions["%s_definitions" % path] = ret_val
-                logger.debug("Document structure changed")
+                _logger().debug("Document structure changed")
                 status = True
                 ret_val = [d.to_dict() for d in ret_val]
         return status, ret_val
@@ -223,8 +227,8 @@ def quick_doc(request_data):
     try:
         import jedi
     except ImportError:
-        logger.error("Failed to import jedi. Check your jedi "
-                     "installation")
+        _logger().error("Failed to import jedi. Check your jedi "
+                        "installation")
     else:
         script = jedi.Script(code, line, column, path, encoding)
         try:
@@ -287,7 +291,7 @@ def run_frosted(request_data):
             # Avoid using msg, since for the only known case, it
             # contains a bogus message that claims the encoding the
             # file declared was unknown.s
-            logger.warning("%s: problem decoding source" % path)
+            _logger().warning("%s: problem decoding source" % path)
         else:
             ret_val.append((msg, ERROR, lineno))
     else:
@@ -344,8 +348,7 @@ def icon_from_typename(name, type):
     if type in ICONS:
         ret_val = ICONS[type]
     elif type:
-        logger.warning("Unimplemented completion type: %s" %
-                       type)
+        _logger().warning("Unimplemented completion type: %s" % type)
     return ret_val
 
 
@@ -367,8 +370,8 @@ class JediCompletionProvider:
             import jedi
             from jedi.evaluate.imports import ModuleNotFound
         except ImportError:
-            logger.error("Failed to import jedi. Check your jedi "
-                         "installation")
+            _logger().error("Failed to import jedi. Check your jedi "
+                            "installation")
         else:
             try:
                 script = jedi.Script(code, line, column, path,

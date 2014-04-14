@@ -93,9 +93,9 @@
    <addaction name="actionOpen"/>
    <addaction name="actionSave"/>
   </widget>
-  <action name="actionOpen">
+    <action name="actionOpen">
    <property name="icon">
-    <iconset resource="editor.qrc">
+    <iconset theme="document-open" resource="simple_editor.qrc">
      <normaloff>:/example_icons/rc/folder.png</normaloff>:/example_icons/rc/folder.png</iconset>
    </property>
    <property name="text">
@@ -113,7 +113,7 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset resource="editor.qrc">
+    <iconset theme="document-save" resource="simple_editor.qrc">
      <normaloff>:/example_icons/rc/document-save.png</normaloff>:/example_icons/rc/document-save.png</iconset>
    </property>
    <property name="text">
@@ -173,38 +173,4 @@
  <resources>
   <include location="editor.qrc"/>
  </resources>
- <connections>
-  <connection>
-   <sender>editor</sender>
-   <signal>dirtyChanged(bool)</signal>
-   <receiver>actionSave</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>538</x>
-     <y>447</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionSave</sender>
-   <signal>triggered()</signal>
-   <receiver>editor</receiver>
-   <slot>saveToFile()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>538</x>
-     <y>447</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
 </ui>

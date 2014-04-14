@@ -21,7 +21,7 @@ class PyAutoCompleteMode(AutoCompleteMode):
 
     def _format_func_params(self, indent):
         parameters = ""
-        l = frontend.cursor_line_nbr(self.editor) - 1
+        l = frontend.current_line_nbr(self.editor) - 1
         c = indent + len("def ") + 1
         script = jedi.Script(self.editor.toPlainText(), l, c,
                              self.editor.file_path,
@@ -35,7 +35,7 @@ class PyAutoCompleteMode(AutoCompleteMode):
         return to_insert
 
     def _insert_docstring(self, prev_line, below_fct):
-        indent = self.editor.line_indent()
+        indent = frontend.line_indent(self.editor)
         if "class" in prev_line or not below_fct:
             to_insert = '"\n{0}\n{0}"""'.format(indent * " ")
         else:
@@ -48,8 +48,8 @@ class PyAutoCompleteMode(AutoCompleteMode):
         self.editor.setTextCursor(tc)
 
     def _in_method_call(self):
-        l = frontend.cursor_line_nbr(self.editor) - 1
-        expected_indent = self.editor.line_indent() - 4
+        l = frontend.current_line_nbr(self.editor) - 1
+        expected_indent = frontend.line_indent(self.editor) - 4
         while l >= 0:
             text = frontend.line_text(self.editor, l)
             indent = len(text) - len(text.lstrip())
@@ -70,7 +70,7 @@ class PyAutoCompleteMode(AutoCompleteMode):
 
     def _on_post_key_pressed(self, e):
         # if we are in disabled cc, use the parent implementation
-        column = frontend.cursor_column_nbr(self.editor)
+        column = frontend.current_column_nbr(self.editor)
         usd = self.editor.textCursor().block().userData()
         for start, end in usd.cc_disabled_zones:
             if (start <= column < end - 1 and
@@ -78,7 +78,7 @@ class PyAutoCompleteMode(AutoCompleteMode):
                         self.editor).lstrip().startswith('"""')):
                 return
         prev_line = frontend.line_text(
-            self.editor, frontend.cursor_line_nbr(self.editor) - 1)
+            self.editor, frontend.current_line_nbr(self.editor) - 1)
         is_below_fct_or_class = "def" in prev_line or "class" in prev_line
         if (e.text() == '"' and
                 '""' == frontend.current_line_text(self.editor).strip() and

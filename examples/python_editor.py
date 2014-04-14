@@ -4,14 +4,15 @@
 Integrates the generic editor using the pyQode qt designer plugin.
 """
 import logging
-from pyqode.python import server
-logging.basicConfig(level=logging.INFO)
 import os
 import sys
+
 from PyQt4 import QtCore, QtGui
-from ui.python_editor_ui import Ui_MainWindow
 
 from pyqode.core import frontend
+from pyqode.python import server
+
+from ui.python_editor_ui import Ui_MainWindow
 
 
 class PythonEditorWindow(QtGui.QMainWindow, Ui_MainWindow):
@@ -19,16 +20,11 @@ class PythonEditorWindow(QtGui.QMainWindow, Ui_MainWindow):
         QtGui.QMainWindow.__init__(self)
         Ui_MainWindow.__init__(self)
         self.setupUi(self)
-        # start the pyqode.python server and pass it additional paths to insert
-        # into sys.path
-        frontend.start_server(self.editor, server.__file__,
-                              args=['-s', os.getcwd()])
-        self.actionOpen.setIcon(
-            QtGui.QIcon.fromTheme(
-                "document-open", QtGui.QIcon(":/example_icons/rc/folder.png")))
-        self.actionSave.setIcon(
-            QtGui.QIcon.fromTheme("document-save", QtGui.QIcon(
-                ":/example_icons/rc/document-save.png")))
+
+        # starts pyqode server
+        frontend.start_server(self.editor, server.__file__)
+
+        # Setup menus
         mnu = QtGui.QMenu("Edit", self.menubar)
         mnu.addActions(self.editor.actions())
         self.menubar.addMenu(mnu)
@@ -37,19 +33,18 @@ class PythonEditorWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.setupPanelsMenu()
         self.setupPanelsMenu()
 
-        # handle assignement that are out of the current document
+        # connect to editor signals
+        self.editor.dirty_changed.connect(self.actionSave.setEnabled)
+        self.actionSave.triggered.connect(self.save)
+        self.actionOpen.triggered.connect(self.on_actionOpen_triggered)
+
+        # handle assignment that are out of the current document
         frontend.get_mode(
             self.editor, 'GoToAssignmentsMode').outOfDocument.connect(
             self.onOutOfDocument)
 
         # open ourself
-        self.editor.open_file(__file__)
-
-    def onOutOfDocument(self, definition):
-        QtGui.QMessageBox.warning(self, "Out of document",
-                                  "%s is defined out of the current document. "
-                                  "An IDE will typically open a new tab." %
-                                  definition.full_name)
+        frontend.open_file(self.editor, __file__)
 
     def setupStylesMenu(self):
         group = QtGui.QActionGroup(self)
@@ -82,6 +77,14 @@ class PythonEditorWindow(QtGui.QMainWindow, Ui_MainWindow):
                 a.panel = v
                 self.menuPanels.addAction(a)
 
+    @QtCore.pyqtSlot(object)
+    def onOutOfDocument(self, definition):
+        QtGui.QMessageBox.warning(self, "Out of document",
+                                  "%s is defined out of the current document. "
+                                  "An IDE will typically open a new tab." %
+                                  definition.full_name)
+
+    @QtCore.pyqtSlot()
     def changeStyle(self, action):
         if action == self.actionLight:
             self.editor.use_white_style()
@@ -93,18 +96,25 @@ class PythonEditorWindow(QtGui.QMainWindow, Ui_MainWindow):
         filePath = QtGui.QFileDialog.getOpenFileName(
             self, "Choose a file", os.path.expanduser("~"))
         if filePath:
-            self.editor.open_file(filePath)
+            frontend.open_file(self.editor, filePath)
 
+    @QtCore.pyqtSlot()
     def onPanelCheckStateChanged(self):
         action = self.sender()
         action.panel.enabled = action.isChecked()
 
+    @QtCore.pyqtSlot()
     def onModeCheckStateChanged(self):
         action = self.sender()
         action.get_mode.enabled = action.isChecked()
 
+    @QtCore.pyqtSlot()
+    def save(self):
+        frontend.save_to_file(self.editor)
+
 
 def main():
+    logging.basicConfig(level=logging.INFO)
     app = QtGui.QApplication(sys.argv)
     win = PythonEditorWindow()
     win.show()

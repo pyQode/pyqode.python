@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-This scripts compile the ui and qrc files using pyside dev tools then modify
-them to use PyQt4 instead of PySide. It also adapts the rc imports so that
+This scripts compile the ui and qrc files using pyqt4 dev tools then modify
+them to use PyQt4 instead of pyqt4. It also adapts the rc imports so that
 they works with python3
 """
 import glob
@@ -16,8 +16,6 @@ def fix_script(script):
     for l in lines:
         if l.startswith("import "):
             l = "from . " + l
-        if "from PySide import" in l:
-            l = l.replace("from PySide import", "from PyQt4 import")
         new_lines.append(l)
     with open(script, 'w') as f_script:
         f_script.write("\n".join(new_lines))
@@ -44,3 +42,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

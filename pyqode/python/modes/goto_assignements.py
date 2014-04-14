@@ -2,13 +2,17 @@
 """
 Contains the go to assignments mode.
 """
+import logging
 import os
 from PyQt4 import QtCore, QtGui
-from pyqode.core import logger
 from pyqode.core import frontend
 from pyqode.core.frontend import Mode
 from pyqode.core.frontend.modes import WordClickMode
 from pyqode.python import workers
+
+
+def _logger():
+    return logging.getLogger(__name__)
 
 
 class Assignment(object):
@@ -102,17 +106,17 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
                                   request_data,
                                   on_receive=self._on_results_available)
             self._pending = True
-        self.editor.set_cursor(QtCore.Qt.WaitCursor)
+        self.editor.set_mouse_cursor(QtCore.Qt.WaitCursor)
 
     def _goto(self, definition):
         fp = os.path.normpath(self.editor.file_path.replace(".pyc", ".py"))
         if definition.module_path == fp:
             line = definition.line
             col = definition.column
-            logger.debug("Go to %s" % definition)
+            _logger().debug("Go to %s" % definition)
             frontend.goto_line(self.editor, line, move=True, column=col)
         else:
-            logger.debug("Out of doc: %s" % definition)
+            _logger().debug("Out of doc: %s" % definition)
             self.outOfDocument.emit(definition)
 
     def _unique(self, seq):
@@ -133,18 +137,18 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
 
     def _on_results_available(self, status, definitions):
         if status:
-            self.editor.set_cursor(QtCore.Qt.IBeamCursor)
+            self.editor.set_mouse_cursor(QtCore.Qt.IBeamCursor)
             self._pending = False
             definitions = [Assignment(path, line, col, full_name)
                            for path, line, col, full_name in definitions]
             definitions = self._unique(definitions)
-            logger.debug("Got %r" % definitions)
+            _logger().debug("Got %r" % definitions)
             if len(definitions) == 1:
                 definition = definitions[0]
                 if definition:
                     self._goto(definition)
             elif len(definitions) > 1:
-                logger.debug(
+                _logger().debug(
                     "More than 1 assignments in different modules, user "
                     "need to make a choice: %s" % definitions)
                 def_str, result = QtGui.QInputDialog.getItem(
@@ -157,5 +161,5 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
                             self._goto(definition)
                             return
             else:
-                logger.info("GoToAssignments: No results found")
+                _logger().info("GoToAssignments: No results found")
                 self.noResultsFound.emit()

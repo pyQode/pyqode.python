@@ -2,13 +2,17 @@
 """
 Contains the JediCompletionProvider class implementation.
 """
+import logging
 import os
-from pyqode.core import logger
 from pyqode.core import settings
 from pyqode.core import frontend
 from pyqode.core.frontend.utils import DelayJobRunner
 from pyqode.python import workers
 from PyQt4 import QtCore, QtGui
+
+
+def _logger():
+    return logging.getLogger(__name__)
 
 
 class CalltipsMode(frontend.Mode, QtCore.QObject):
@@ -53,7 +57,7 @@ class CalltipsMode(frontend.Mode, QtCore.QObject):
     def _request_calltip(self, source, line, col, fn, encoding):
         if self.__requestCnt == 0:
             self.__requestCnt += 1
-            logger.debug("Calltip requested")
+            _logger().debug("Calltip requested")
             frontend.request_work(
                 self.editor,
                 workers.calltips,
@@ -62,7 +66,7 @@ class CalltipsMode(frontend.Mode, QtCore.QObject):
 
     def _on_results_available(self, status, results):
         if status:
-            logger.debug("Calltip request finished")
+            _logger().debug("Calltip request finished")
             self.__requestCnt -= 1
             if results:
                 call = {"call.module.name": results[0],
