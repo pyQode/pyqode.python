@@ -1,20 +1,20 @@
 Add python support to pyQode
-========================================
+============================
 
-.. image:: https://travis-ci.org/pyQode/pyqode.python.png?branch=master
+.. image:: https://travis-ci.org/pyQode/pyqode.python.svg?branch=master
     :target: https://travis-ci.org/pyQode/pyqode.python
     :alt: Travis-CI build status
 
-.. image:: https://pypip.in/d/pyqode.python/badge.png
-    :target: https://crate.io/packages/pyqode.python/
+.. image:: http://img.shields.io/pypi/dm/pyqode.python.svg
+    :target: https://pypi.python.org/pypi/pyqode.python/
     :alt: Number of PyPI downloads
 
-.. image:: https://pypip.in/v/pyqode.python/badge.png
-    :target: https://crate.io/packages/pyqode.python/
+.. image:: http://img.shields.io/pypi/v/pyqode.python.svg
+    :target: https://pypi.python.org/pypi/pyqode.python/
     :alt: Latest PyPI version
 
 What is pyqode.python?
------------------------
+----------------------
 
 *pyqode.python* is an `official pyqode extension package`_ that adds **python** support to `pyQode`_.
 
