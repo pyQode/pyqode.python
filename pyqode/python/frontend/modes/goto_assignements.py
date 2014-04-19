@@ -8,7 +8,7 @@ from PyQt4 import QtCore, QtGui
 from pyqode.core import frontend
 from pyqode.core.frontend import Mode
 from pyqode.core.frontend.modes import WordClickMode
-from pyqode.python import workers
+from pyqode.python.backend import workers
 
 
 def _logger():

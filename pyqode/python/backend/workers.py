@@ -5,7 +5,7 @@ Contains the worker classes/functions executed on the server side.
 """
 import logging
 import os
-from pyqode.python.pep8utils import CustomChecker
+from pyqode.python.backend.pep8utils import CustomChecker
 
 
 def _logger():
@@ -72,7 +72,7 @@ def goto_assignments(request_data):
         try:
             definitions = script.goto_assignments()
         except jedi.NotFoundError:
-            return []
+            pass
         else:
             ret_val = [(d.module_path, d.line, d.column, d.full_name)
                        for d in definitions]

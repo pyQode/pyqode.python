@@ -7,7 +7,7 @@ from PyQt4 import QtGui
 from pyqode.core import frontend
 from pyqode.core.frontend import Panel
 from pyqode.core.frontend.utils import drift_color
-from pyqode.python.workers import quick_doc
+from pyqode.python.backend.workers import quick_doc
 
 
 class QuickDocPanel(Panel):

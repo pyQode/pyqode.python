@@ -9,9 +9,9 @@ run designer.pyw (Qt Designer must be installed on your system and must be
 in your path on Windows)
 """
 # This only works with PyQt, PySide does not support the QtDesigner module
-from pyqode.python.editor import QPythonCodeEdit
+from pyqode.python.frontend.code_edit import PyCodeEdit
 
-PLUGINS_TYPES = {'QPythonCodeEdit': QPythonCodeEdit}
+PLUGINS_TYPES = {'QPythonCodeEdit': PyCodeEdit}
 
 try:
     from pyqode.core.plugins.pyqode_core_plugin import QCodeEditPlugin
@@ -21,9 +21,9 @@ try:
         _class = 'QPythonCodeEdit'    # name of the widget class
         _name = "QPythonCodeEdit"
         _icon = None
-        _type = QPythonCodeEdit
+        _type = PyCodeEdit
 
         def createWidget(self, parent):
-            return QPythonCodeEdit(parent)
+            return PyCodeEdit(parent)
 except ImportError:
     print("Cannot use pyQode plugins without PyQt4")

@@ -10,7 +10,7 @@ import sys
 from PyQt4 import QtCore, QtGui
 
 from pyqode.core import frontend
-from pyqode.python import server
+from pyqode.python.backend import server
 
 from ui.python_editor_ui import Ui_MainWindow
 

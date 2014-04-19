@@ -7,8 +7,7 @@ from PyQt4 import QtGui, QtCore
 from pyqode.core import style as core_style
 from pyqode.python import style
 
-from pyqode.core.frontend.syntax_highlighter import SyntaxHighlighter
-from pyqode.core.frontend.syntax_highlighter import IndentBasedFoldDetector
+from pyqode.core.frontend import SyntaxHighlighter
 from pyqode.core.frontend.utils import TextStyle
 from pyqode.core.frontend.utils import memoized
 from pyqode.core.frontend import Mode
@@ -152,8 +151,7 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
     punctuations = ["\:", "\,", "\."]
 
     def __init__(self, document=None):
-        SyntaxHighlighter.__init__(self, document,
-                                   fold_detector=IndentBasedFoldDetector())
+        SyntaxHighlighter.__init__(self, document)
         self.__doc = document
         Mode.__init__(self)
         self.tri_single = (QtCore.QRegExp("'''"), 1, 'docstring')

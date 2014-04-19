@@ -7,7 +7,7 @@ import os
 from pyqode.core import settings
 from pyqode.core import frontend
 from pyqode.core.frontend.utils import DelayJobRunner
-from pyqode.python import workers
+from pyqode.python.backend import workers
 from PyQt4 import QtCore, QtGui
 
 

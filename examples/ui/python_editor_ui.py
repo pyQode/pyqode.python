@@ -33,7 +33,7 @@ class Ui_MainWindow(object):
         self.gridLayout.setSpacing(1)
         self.gridLayout.setMargin(1)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
-        self.editor = QPythonCodeEdit(self.centralwidget)
+        self.editor = PyCodeEdit(self.centralwidget)
         self.editor.setObjectName(_fromUtf8("editor"))
         self.gridLayout.addWidget(self.editor, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
@@ -110,5 +110,4 @@ class Ui_MainWindow(object):
         self.actionLight.setText(_translate("MainWindow", "Light", None))
         self.actionDark.setText(_translate("MainWindow", "Dark", None))
 
-from pyqode.python.editor import QPythonCodeEdit
-from . import editor_rc
+from pyqode.python.frontend.code_edit import PyCodeEdit

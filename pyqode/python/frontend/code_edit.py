@@ -4,35 +4,21 @@ This package contains python specific modes, panels and editor.
 """
 import re
 import sys
-import weakref
+
 from PyQt4 import QtCore, QtGui
 
-from pyqode.core.frontend import QCodeEdit
+from pyqode.core.frontend import CodeEdit
 from pyqode.core import frontend
 from pyqode.core.frontend import modes
 from pyqode.core.frontend import panels
 from pyqode.core import style as core_style
-
 from pyqode.python import style
-from pyqode.python.modes import PyAutoCompleteMode
-from pyqode.python.modes import CalltipsMode
-from pyqode.python.modes import CommentsMode
-from pyqode.python.modes import PEP8CheckerMode
-from pyqode.python.modes import PyAutoIndentMode
-from pyqode.python.modes import FrostedCheckerMode
-from pyqode.python.modes import PyHighlighterMode
-from pyqode.python.modes import PyIndenterMode
-from pyqode.python.modes import DEFAULT_DARK_STYLES
-from pyqode.python.modes import DEFAULT_LIGHT_STYLES
-from pyqode.python.modes import GoToAssignmentsMode
-from pyqode.python.modes import DocumentAnalyserMode
-from pyqode.python.panels import SymbolBrowserPanel
-from pyqode.python.panels import QuickDocPanel
-
-import pyqode.python.ui.pyqode_python_icons_rc
+from pyqode.python.frontend import modes as pymodes
+from pyqode.python.frontend import panels as pypanels
+from pyqode.python.frontend.ui import pyqode_python_icons_rc
 
 
-class QPythonCodeEdit(QCodeEdit):
+class PyCodeEdit(CodeEdit):
     """
     Extends QCodeEdit with a hardcoded set of modes and panels specifics to
     a python code editor widget.
@@ -69,20 +55,20 @@ class QPythonCodeEdit(QCodeEdit):
     LIGHT_STYLE = 1
 
     def __init__(self, parent=None):
-        super(QPythonCodeEdit, self).__init__(parent)
+        super(PyCodeEdit, self).__init__(parent)
         self.setLineWrapMode(self.NoWrap)
         self.setWindowTitle("pyQode - Python Editor")
 
         # install those modes first as they are required by other modes/panels
-        frontend.install_mode(self, DocumentAnalyserMode())
+        frontend.install_mode(self, pymodes.DocumentAnalyserMode())
 
         # panels
         frontend.install_panel(self, panels.LineNumberPanel())
         frontend.install_panel(self, panels.MarkerPanel())
         frontend.install_panel(self, panels.SearchAndReplacePanel(),
                                panels.SearchAndReplacePanel.Position.BOTTOM)
-        frontend.install_panel(self, SymbolBrowserPanel(),
-                               SymbolBrowserPanel.Position.TOP)
+        frontend.install_panel(self, pypanels.SymbolBrowserPanel(),
+                               pypanels.SymbolBrowserPanel.Position.TOP)
 
         # modes
         # generic
@@ -94,17 +80,17 @@ class QPythonCodeEdit(QCodeEdit):
         frontend.install_mode(self, modes.WordClickMode())
         frontend.install_mode(self, modes.CodeCompletionMode())
         # python specifics
-        frontend.install_mode(self, PyHighlighterMode(self.document()))
-        frontend.install_mode(self, PyAutoCompleteMode())
-        frontend.install_mode(self, PyAutoIndentMode())
-        frontend.install_mode(self, FrostedCheckerMode())
-        frontend.install_mode(self, PEP8CheckerMode())
-        frontend.install_mode(self, CalltipsMode())
-        frontend.install_mode(self, PyIndenterMode())
-        frontend.install_mode(self, GoToAssignmentsMode())
-        frontend.install_panel(self, QuickDocPanel(),
+        frontend.install_mode(self, pymodes.PyHighlighterMode(self.document()))
+        frontend.install_mode(self, pymodes.PyAutoCompleteMode())
+        frontend.install_mode(self, pymodes.PyAutoIndentMode())
+        frontend.install_mode(self, pymodes.FrostedCheckerMode())
+        frontend.install_mode(self, pymodes.PEP8CheckerMode())
+        frontend.install_mode(self, pymodes.CalltipsMode())
+        frontend.install_mode(self, pymodes.PyIndenterMode())
+        frontend.install_mode(self, pymodes.GoToAssignmentsMode())
+        frontend.install_panel(self, pypanels.QuickDocPanel(),
                                frontend.Panel.Position.BOTTOM)
-        frontend.install_mode(self, CommentsMode())
+        frontend.install_mode(self, pymodes.CommentsMode())
 
     @QtCore.pyqtSlot()
     def use_dark_style(self, use=True):

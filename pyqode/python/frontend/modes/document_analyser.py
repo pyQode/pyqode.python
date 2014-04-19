@@ -3,7 +3,7 @@ import logging
 from pyqode.core import frontend
 from pyqode.core.frontend import Mode
 from pyqode.core.frontend.utils import DelayJobRunner
-from pyqode.python.workers import Definition, defined_names
+from pyqode.python.backend.workers import Definition, defined_names
 from PyQt4 import QtCore
 
 

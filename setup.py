@@ -19,7 +19,7 @@ def readme():
 
 
 # get requirements
-requirements = ['pyqode.core>=1.3.1', 'jedi>=0.7', 'pep8', 'pyflakes',
+requirements = ['pyqode.core>=1.3.1', 'jedi>=0.7', 'pep8', 'frosted',
                 'docutils']
 
 
@@ -40,7 +40,7 @@ setup(
     install_requires=requirements,
     entry_points={'pyqode_plugins':
                   ['pyqode_python = '
-                   'pyqode.python.plugins.pyqode_python_plugin']},
+                   'pyqode.python.designer_plugin']},
     zip_safe=False,
     classifiers=[
         'Development Status :: 5 - Production/Stable',

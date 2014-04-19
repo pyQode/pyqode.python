@@ -86,7 +86,8 @@ class SymbolBrowserPanel(Panel):
     def _on_definition_activated(self, index):
         definition = self.combo_box.itemData(index)
         if definition:
-            self.editor.goto_line(definition.line, column=definition.column)
+            frontend.goto_line(self.editor, definition.line,
+                               column=definition.column)
 
     def _sync_combo_box(self, line):
         i = -1

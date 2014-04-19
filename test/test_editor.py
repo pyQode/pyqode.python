@@ -7,11 +7,14 @@ version (3.2, 3.3, 3.4).
 It runs a QApplication and shows a QPythonCodeEdit for 500ms.
 """
 import sys
-from PyQt4 import QtCore, QtGui
-from pyqode.core import frontend
-from pyqode.python import server
-from pyqode.python.editor import QPythonCodeEdit
 import logging
+
+from PyQt4 import QtCore, QtGui
+
+from pyqode.core import frontend
+from pyqode.python.backend import server
+from pyqode.python.frontend.code_edit import PyCodeEdit
+
 logging.basicConfig(level=True)
 
 
@@ -22,7 +25,7 @@ def leave():
 
 def test_editor():
     app = QtGui.QApplication(sys.argv)
-    editor = QPythonCodeEdit()
+    editor = PyCodeEdit()
     editor.show()
     frontend.start_server(editor, server.__file__)
     frontend.open_file(editor, __file__)

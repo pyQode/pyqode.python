@@ -20,7 +20,7 @@ package but you have to write a new server to do that.
 """
 import sys
 from pyqode.core import backend
-from pyqode.python.workers import JediCompletionProvider
+from pyqode.python.backend.workers import JediCompletionProvider
 
 
 if __name__ == '__main__':

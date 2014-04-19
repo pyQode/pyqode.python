@@ -3,7 +3,7 @@
 This module contains the pyFlakes checker mode
 """
 from pyqode.core.frontend.modes import CheckerMode
-from pyqode.python.workers import run_pep8
+from pyqode.python.backend.workers import run_pep8
 
 
 class PEP8CheckerMode(CheckerMode):
