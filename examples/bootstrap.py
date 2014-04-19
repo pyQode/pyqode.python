@@ -45,7 +45,7 @@ def main():
     bootstrapper.preLoadFinished.connect(splash.close)
 
     # bootstrap and show splash
-    bootstrapper.bootstrap()
+    bootstrapper.bootstrap(port=5566)
     splash.show()
     app.processEvents()
 
