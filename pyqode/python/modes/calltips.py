@@ -58,10 +58,11 @@ class CalltipsWorker(Worker):
                 call_name = c.call_name
             except AttributeError:
                 call_name = c.name
-            try:
-                params = [str(p.get_name()) for p in c.params]
-            except AttributeError:
-                params = [str(p.name) for p in c.params]
+            # try:
+            #     params = [str(p.get_name()) for p in c.params]
+            # except AttributeError:
+            #     params = [str(p.name) for p in c.params]
+            params = [p.description for p in c.params]
 
             results = [str(module_name), str(call_name),
                        params, c.index,
@@ -163,6 +164,7 @@ class CalltipsMode(Mode, QtCore.QObject):
         for i, param in enumerate(call['call.params']):
             if i != 0:
                 calltip += ", "
+            # display current param in bold
             if i == call['call.index']:
                 calltip += "<b>"
             calltip += param
