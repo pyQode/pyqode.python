@@ -20,28 +20,29 @@ from pyqode.python.frontend.ui import pyqode_python_icons_rc
 
 class PyCodeEdit(CodeEdit):
     """
-    Extends QCodeEdit with a hardcoded set of modes and panels specifics to
+    Extends CodeEdit with a hardcoded set of modes and panels specifics to
     a python code editor widget.
 
     **Panels:**
-        * :class:`pyqode.core.FoldingPanel`
-        * :class:`pyqode.core.LineNumberPanel`
-        * :class:`pyqode.core.MarkerPanel`
-        * :class:`pyqode.core.SearchAndReplacePanel`
+        * :class:`pyqode.core.frontend.panels.LineNumberPanel`
+        * :class:`pyqode.core.frontend.panels.MarkerPanel`
+        * :class:`pyqode.core.frontend.panels.SearchAndReplacePanel`
+        * :class:`pyqode.python.frontend.panels.QuickDocPanel`
+        * :class:`pyqode.python.frontend.panels.SymbolBrowserPanel`
 
     **Modes:**
-        * :class:`pyqode.core.CaretLineHighlighterMode`
-        * :class:`pyqode.core.RightMarginMode`
-        * :class:`pyqode.core.CodeCompletionMode`
-        * :class:`pyqode.core.ZoomMode`
-        * :class:`pyqode.core.SymbolMatcherMode`
-        * :class:`pyqode.python.PyAutoCompleteMode`
-        * :class:`pyqode.python.PyHighlighterMode`
-        * :class:`pyqode.python.PyAutoIndentMode`
-        * :class:`pyqode.python.PyFlakesCheckerMode`
-        * :class:`pyqode.python.PEP8CheckerMode`
-        * :class:`pyqode.python.CalltipsMode`
-        * :class:`pyqode.python.PyIndenterMode`
+        * :class:`pyqode.core.frontend.modes.CaretLineHighlighterMode`
+        * :class:`pyqode.core.frontend.modes.RightMarginMode`
+        * :class:`pyqode.core.frontend.modes.CodeCompletionMode`
+        * :class:`pyqode.core.frontend.modes.ZoomMode`
+        * :class:`pyqode.core.frontend.modes.SymbolMatcherMode`
+        * :class:`pyqode.python.frontend.modes.PyAutoCompleteMode`
+        * :class:`pyqode.python.frontend.modes.PyHighlighterMode`
+        * :class:`pyqode.python.frontend.modes.PyAutoIndentMode`
+        * :class:`pyqode.python.frontend.modes.PyFlakesCheckerMode`
+        * :class:`pyqode.python.frontend.modes.PEP8CheckerMode`
+        * :class:`pyqode.python.frontend.modes.CalltipsMode`
+        * :class:`pyqode.python.frontend.modes.PyIndenterMode`
 
     It also implements utility methods to switch from a white style to a dark
     style and inversely.

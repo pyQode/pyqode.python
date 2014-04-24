@@ -14,9 +14,9 @@ from pyqode.python.frontend.code_edit import PyCodeEdit
 PLUGINS_TYPES = {'QPythonCodeEdit': PyCodeEdit}
 
 try:
-    from pyqode.core.plugins.pyqode_core_plugin import QCodeEditPlugin
+    from pyqode.core.plugins.pyqode_core_plugin import CodeEditPlugin
 
-    class QPythonCodeEditPlugin(QCodeEditPlugin):
+    class QPythonCodeEditPlugin(CodeEditPlugin):
         _module = 'pyqode.python'        # path to the widget's module
         _class = 'QPythonCodeEdit'    # name of the widget class
         _name = "QPythonCodeEdit"

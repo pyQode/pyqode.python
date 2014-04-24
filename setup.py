@@ -28,7 +28,7 @@ setup(
     namespace_packages=['pyqode'],
     version=read_version(),
     packages=find_packages(),
-    keywords=["QCodeEditor PySide PyQt code editor widget python"],
+    keywords=["CodeEdit PySide PyQt code editor widget python"],
     # package_data={'pyqode.python.ui': ['*.ui', 'rc/*']},
     package_dir={'pyqode': 'pyqode'},
     url='https://github.com/pyQode/pyqode.python',

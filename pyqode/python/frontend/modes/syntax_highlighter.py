@@ -13,9 +13,8 @@ from pyqode.core.frontend.utils import memoized
 from pyqode.core.frontend import Mode
 
 
-#: Default (white) color scheme for :class:`pyqode.python.PyHighlighterMode`
-#: Those values are added to :attr:`pyqode.core.QCodeEdit.style` properties in
-#: the *Python* section
+#: Default (white) color scheme for
+#: :class:`pyqode.python.frontend.modes.PyHighlighterMode`
 DEFAULT_LIGHT_STYLES = {
     'keyword': TextStyle('#808000 nbold nitalic nunderlined'),
     'builtins': TextStyle('#808000 nbold nitalic nunderlined'),
@@ -34,9 +33,8 @@ DEFAULT_LIGHT_STYLES = {
     'docstringTag': TextStyle('#0000FF nbold nitalic underlined'),
 }
 
-#: Alternative dark color scheme for :class:`pyqode.python.PyHighlighterMode`
-#: Those values are added to :attr:`pyqode.core.QCodeEdit.style` properties in
-#: the *Python* section
+#: Alternative dark color scheme for
+#: :class:`pyqode.python.frontend.modes.PyHighlighterMode`
 DEFAULT_DARK_STYLES = {
     'keyword': TextStyle('#CC7832 bold nitalic nunderlined'),
     'builtins': TextStyle('#CC7832 nbold nitalic nunderlined'),
