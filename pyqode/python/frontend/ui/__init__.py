@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 This packages contains the qt ui and resource files used in
 pyqode.python.

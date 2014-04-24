@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 The frontend packages contains classes and functions related to
 tge gui side application. This is where you will find the python
