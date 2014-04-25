@@ -137,8 +137,21 @@ class QuickDocPanel(Panel):
                     string = string.replace(
                         '</tr>\n<tr class="field"><td>&nbsp;</td>', '')
                     if string:
-                        self.text_edit.setText(string)
-
+                        skip_error_msg = False
+                        print(string)
+                        lines = []
+                        for l in string.splitlines():
+                            if (l.startswith('<div class="system-message"') or
+                                    l.startswith(
+                                        '<div class="last system-message"')):
+                                skip_error_msg = True
+                                continue
+                            if skip_error_msg:
+                                if l.endswith('</div>'):
+                                    skip_error_msg = False
+                            else:
+                                lines.append(l)
+                        self.text_edit.setText('\n'.join(lines))
                 else:
                     self.text_edit.setText("Documentation not found")
             else:
