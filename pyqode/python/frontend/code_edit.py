@@ -14,6 +14,9 @@ from pyqode.core.frontend import panels
 from pyqode.core import style as core_style
 from pyqode.python import style
 from pyqode.python.frontend import modes as pymodes
+from pyqode.python.frontend.modes.syntax_highlighter import DEFAULT_DARK_STYLES
+from pyqode.python.frontend.modes.syntax_highlighter import \
+    DEFAULT_LIGHT_STYLES
 from pyqode.python.frontend import panels as pypanels
 from pyqode.python.frontend.ui import pyqode_python_icons_rc
 
