@@ -9,9 +9,8 @@ from pyqode.core.frontend.modes.matcher import SymbolMatcherMode
 
 class PyAutoIndentMode(AutoIndentMode):
     """
-    Customised :class:`pyqode.core.AutoIndentMode` for python, the indentation
-    level is based on the previous line indent but is automatically incremented
-    after a *:* and decremented after *pass* or *return*
+    Customised :class:`pyqode.core.frontend.modes.AutoIndentMode` for python
+    that tries its best to follow the pep8 indentation guidelines.
     """
     def __init__(self):
         super(PyAutoIndentMode, self).__init__()

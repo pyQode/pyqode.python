@@ -130,7 +130,7 @@ class PyCodeEdit(CodeEdit):
 
 def set_dark_color_scheme(code_edit):
     """
-    Set a dark scheme on a :class:`pyqode.core.QCodeEdit`.
+    Set a dark scheme on a :class:`pyqode.core.frontend.CodeEdit`.
 
     The color scheme is similar to pycharm's darcula color scheme.
 
@@ -138,8 +138,8 @@ def set_dark_color_scheme(code_edit):
         :class:`pyqode.python.PyHighlighterMode` has been installed on the
         QCodeEdit instance
 
-    :param code_edit: QCodeEdit instance
-    :type code_edit: pyqode.core.QCodeEdit
+    :param code_edit: CodeEdit instance
+    :type code_edit: pyqode.core.frontend.QCodeEdit
     """
     for k, v in DEFAULT_DARK_STYLES.items():
         style.__dict__['py_' + k] = v

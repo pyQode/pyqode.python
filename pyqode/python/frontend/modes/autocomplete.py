@@ -8,8 +8,8 @@ from pyqode.core.frontend.modes import AutoCompleteMode
 
 class PyAutoCompleteMode(AutoCompleteMode):
     """
-    Extends :class:`pyqode.core.AutoCompleteMode` to add support for function
-    docstring and method/function call.
+    Extends :class:`pyqode.core.frontend.modes.AutoCompleteMode` to add
+    support for function docstring and method/function call.
 
     Docstring completion adds a `:param` sphinx tag foreach parameter in the
     above function.

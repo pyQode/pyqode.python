@@ -33,7 +33,7 @@ class CommentsMode(frontend.Mode):
         cursor = self.editor.textCursor()
         # make comment/uncomment a single operation for the undo stack
         cursor.beginEditBlock()
-        # did the user do a reversed selection (from bottom to top)?
+        # did the user do a reversed selection (from _bottom to _top)?
         sel_start = cursor.selectionStart()
         sel_end = cursor.selectionEnd()
         reversed_selection = cursor.position() == sel_start
