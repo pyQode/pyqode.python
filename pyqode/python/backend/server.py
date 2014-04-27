@@ -18,21 +18,28 @@ append to sys path, that way you don't clutter the use1r env with IDE specific
 package but you have to write a new server to do that.
 
 """
+import argparse
 import sys
-from pyqode.core import backend
-from pyqode.python.backend.workers import JediCompletionProvider
 
 
 if __name__ == '__main__':
     # setup argument parser and parse command line args
-    parser = backend.default_parser()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("port", help="the local tcp port to use to run "
+                        "the server")
     parser.add_argument('-s', '--syspath', nargs='*')
     args = parser.parse_args()
+
+    sys.stderr.write('%r\n' % args)
 
     # add user paths to sys.path
     if args.syspath:
         for path in args.syspath:
+            sys.stderr.write('insert path %s\n' % path)
             sys.path.insert(0, path)
+
+    from pyqode.core import backend
+    from pyqode.python.backend.workers import JediCompletionProvider
 
     # setup completion providers
     backend.CodeCompletionWorker.providers.append(JediCompletionProvider())
