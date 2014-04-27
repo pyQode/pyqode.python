@@ -272,14 +272,13 @@ def run_frosted(request_data):
     import _ast
     WARNING = 1
     ERROR = 2
-
     ret_val = []
     code = request_data['code']
     path = request_data['path']
     encoding = request_data['encoding']
+    if not code or not encoding or not path:
+        return False, ret_val
     # First, compile into an AST and handle syntax errors.
-    if not code or not encoding:
-        return
     try:
         tree = compile(code.encode(encoding), path, "exec",
                        _ast.PyCF_ONLY_AST)
