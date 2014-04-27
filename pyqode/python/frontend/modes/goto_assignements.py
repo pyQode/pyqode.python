@@ -53,10 +53,10 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
     """
     #: Signal emitted when the definition cannot be reached in the current
     #: document
-    outOfDocument = QtCore.pyqtSignal(Assignment)
+    out_of_doc = QtCore.pyqtSignal(Assignment)
 
     #: Signal emitted when no results could be found.
-    noResultsFound = QtCore.pyqtSignal()
+    no_results_found = QtCore.pyqtSignal()
 
     def __init__(self):
         Mode.__init__(self)
@@ -117,7 +117,7 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
             frontend.goto_line(self.editor, line, move=True, column=col)
         else:
             _logger().debug("Out of doc: %s" % definition)
-            self.outOfDocument.emit(definition)
+            self.out_of_doc.emit(definition)
 
     def _unique(self, seq):
         """
@@ -162,4 +162,4 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
                             return
             else:
                 _logger().info("GoToAssignments: No results found")
-                self.noResultsFound.emit()
+                self.no_results_found.emit()
