@@ -9,12 +9,12 @@ This package contains the code of the notepad application:
     - server.py: This is the server script for the pyqode backend.
 """
 import sys
-from PyQt4.QtGui import QApplication, QInputDialog
+from PyQt4.QtGui import QApplication
 from .main_window import MainWindow
-from . import utils
 from .settings import Settings
-__version__ = '0.0.1'
 
+
+__version__ = '0.0.1'
 
 
 def main():
