@@ -10,11 +10,11 @@ def get_interpreters():
                        for exe in ['python2', 'python3']
                        if os.path.exists(os.path.join('/usr/bin/', exe))]
     else:
-        executables = []
+        executables = set()
         paths = os.environ['PATH'].split(';')
         for path in paths:
             if 'python' in path.lower():
                 if 'scripts' in path.lower():
                      path = os.path.abspath(os.path.join(path, os.pardir))
-                executables.append(os.path.join(path, 'python.exe'))
+                executables.add(os.path.join(path, 'python.exe'))
     return executables
