@@ -109,7 +109,10 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
         self.editor.set_mouse_cursor(QtCore.Qt.WaitCursor)
 
     def _goto(self, definition):
-        fp = os.path.normpath(self.editor.file_path.replace(".pyc", ".py"))
+        if not self.editor.file_path:
+            fp = ''
+        else:
+            fp = os.path.normpath(self.editor.file_path.replace(".pyc", ".py"))
         if definition.module_path == fp:
             line = definition.line
             col = definition.column
