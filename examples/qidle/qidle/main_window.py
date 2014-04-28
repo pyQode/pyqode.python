@@ -5,6 +5,7 @@ import os
 import platform
 from PyQt4 import QtCore
 from PyQt4 import QtGui
+import sys
 from pyqode.core import frontend
 from pyqode.core.frontend import widgets
 from pyqode.python.backend import server
@@ -88,9 +89,15 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             if platform.system().lower() == 'linux':
                 zip_path = '/usr/share/qidle/libraries.zip'
                 assert os.path.exists(zip_path)
-        frontend.start_server(editor, server.__file__,
-                              interpreter=Settings().interpreter,
-                              args=['-s', zip_path])
+        if hasattr(sys, "frozen"):
+            server_path = os.path.join(os.getcwd(), 'server.py')
+            frontend.start_server(editor, server_path,
+                                  interpreter=Settings().interpreter,
+                                  args=['-s', zip_path])
+        else:
+            frontend.start_server(editor, server.__file__,
+                                  interpreter=Settings().interpreter,
+                                  args=['-s', zip_path])
         m = frontend.get_mode(editor, modes.GoToAssignmentsMode)
         assert isinstance(m, modes.GoToAssignmentsMode)
         m.out_of_doc.connect(self.on_goto_out_of_doc)
