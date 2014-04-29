@@ -30,12 +30,10 @@ if __name__ == '__main__':
     parser.add_argument('-s', '--syspath', nargs='*')
     args = parser.parse_args()
 
-    sys.stderr.write('%r\n' % args)
-
     # add user paths to sys.path
     if args.syspath:
         for path in args.syspath:
-            sys.stderr.write('insert path %s\n' % path)
+            print('insert path %s\n' % path)
             sys.path.insert(0, path)
 
     from pyqode.core import backend

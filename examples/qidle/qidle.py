@@ -4,6 +4,7 @@ import sys
 from qidle import main
 import logging
 
+
 if __name__ == '__main__':
     filename = None
     if sys.platform == 'win32':
