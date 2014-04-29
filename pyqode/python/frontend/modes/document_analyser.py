@@ -14,16 +14,16 @@ def _logger():
 class DocumentAnalyserMode(Mode, QtCore.QObject):
     """
     This mode analyses the structure of a document (a tree of
-    :class:`pyqode.python.modes.document_analyser.Definition`.
+    :class:`pyqode.python.backend.workers.Definition`.
 
-    :attr:pyqode.python.DocumentAnalyserMode.documentChanged` is emitted
-    whenever the document structure changed.
+    :attr:`pyqode.python.frontend.modes.DocumentAnalyserMode.document_changed`
+    is emitted whenever the document structure changed.
 
     To keep good performances, the analysis task is run when the application is
     idle for more than 1 second (by default).
     """
     #: Signal emitted when the document structure changed.
-    documentChanged = QtCore.pyqtSignal()
+    document_changed = QtCore.pyqtSignal()
 
     def __init__(self, delay=1000):
         Mode.__init__(self)
@@ -59,7 +59,7 @@ class DocumentAnalyserMode(Mode, QtCore.QObject):
                 QtCore.QTimer.singleShot(100, self._run_analysis)
         else:
             self.results = []
-            self.documentChanged.emit()
+            self.document_changed.emit()
 
     def _on_results_available(self, status, results):
         if status:
@@ -69,7 +69,7 @@ class DocumentAnalyserMode(Mode, QtCore.QObject):
                 _logger().debug("Document structure changed")
             else:
                 self.results = []
-            self.documentChanged.emit()
+            self.document_changed.emit()
 
     @property
     def flattened_results(self):

@@ -63,8 +63,8 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
     this syntax highlighter highlights multi-line comments and docstrings
     properly.
 
-    Its color scheme is entirely configurable (the properties are available in
-    the Python section of :attr:`pyqode.core.frontend.CodeEdit.style`).
+    Its color scheme is entirely configurable through the properties exposed in
+    :mod:`pyqode.python.style`
 
     .. note:: To detect and remember multi-line strings/docstrings we use
               :attr:`QtGui.QTextBlock.userState` which is a bitmask combination

@@ -47,9 +47,11 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
     more than one assignments, an input dialog is used to ask the user to
     choose the desired assignment.
 
-    This mode will emit :attr:`pyqode.python.GoToAssignmentsMode.outOfDocument`
-    if the definition can not be reached in the current document. IDEs will
-    typically open a new editor tab and go to the definition.
+    This mode will emit
+    :attr:`pyqode.python.frontend.modes.GoToAssignmentsMode.out_of_doc` if the
+    definition can not be reached in the current document. IDE will typically
+    open a new editor tab and go to the definition.
+
     """
     #: Signal emitted when the definition cannot be reached in the current
     #: document

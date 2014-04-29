@@ -138,8 +138,8 @@ def set_dark_color_scheme(code_edit):
     The color scheme is similar to pycharm's darcula color scheme.
 
     .. note:: This function will work only if a
-        :class:`pyqode.python.PyHighlighterMode` has been installed on the
-        CodeEdit instance
+        :class:`pyqode.python.frontend.modes.PyHighlighterMode` has been
+        installed on the CodeEdit instance
 
     :param code_edit: CodeEdit instance
     :type code_edit: pyqode.core.frontend.CodeEdit
@@ -157,13 +157,13 @@ def set_dark_color_scheme(code_edit):
 
 def set_white_color_scheme(code_edit):
     """
-    Set a light scheme on a :class:`pyqode.core.CodeEdit`.
+    Set a light scheme on a :class:`pyqode.core.frontend.CodeEdit`.
 
     The color scheme is similar to the qt creator's default color scheme.
 
     .. note:: This function will work only if a
-        :class:`pyqode.python.PyHighlighterMode` has been installed on the
-        codeEdit instance
+        :class:`pyqode.python.frontend.modes.PyHighlighterMode` has been
+        installed on the ```code_edit``` instance.
 
     :param code_edit: CodeEdit instance
     :type code_edit: pyqode.core.frontend.CodeEdit
