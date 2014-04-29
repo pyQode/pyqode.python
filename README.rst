@@ -62,6 +62,17 @@ Resources
 -  `Wiki`_
 -  `Documentation`_
 
+
+Snapshots
+---------
+
+Here are a few snapshots of the Qidle example application (snapshots
+taken on a Gnome 3 desktop):
+
+.. image:: doc/source/_static/qidle.png
+    :alt: Preview of Qidle, the pyqode clone of idle (example app)
+
+
 .. _Downloads: https://github.com/pyQode/pyqode.python/releases
 .. _Source repository: https://github.com/pyQode/pyqode.python/
 .. _Wiki: https://github.com/pyQode/pyqode.core/wiki
@@ -71,3 +82,4 @@ Resources
 .. _pyQode: https://github.com/pyQode
 .. _Jedi: https://github.com/davidhalter/jedi
 .. _`Documentation`: http://pyqodepython.readthedocs.org/en/latest/
+
