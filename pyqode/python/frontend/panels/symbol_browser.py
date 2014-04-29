@@ -42,7 +42,7 @@ class SymbolBrowserPanel(Panel):
             try:
                 frontend.get_mode(
                     self.editor,
-                    'DocumentAnalyserMode').documentChanged.connect(
+                    'DocumentAnalyserMode').document_changed.connect(
                     self._on_document_changed)
             except KeyError:
                 _logger().warning("No DocumentAnalyserMode found, install it "
@@ -53,7 +53,7 @@ class SymbolBrowserPanel(Panel):
             try:
                 frontend.get_mode(
                     self.editor,
-                    'DocumentAnalyserMode').documentChanged.disconnect(
+                    'DocumentAnalyserMode').document_changed.disconnect(
                     self._on_document_changed)
             except KeyError:
                 _logger().warning("No DocumentAnalyserMode found, install it "
