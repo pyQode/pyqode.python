@@ -116,20 +116,6 @@ class PyCodeEdit(CodeEdit):
             return
         set_white_color_scheme(self)
 
-    def detect_encoding(self, data):
-        """
-        Detects encoding based on PEP 0263
-        """
-        encoding = self.default_encoding()
-        if sys.version_info[0] == 3:
-            data = str(data.decode("utf-8"))
-        for l in data.splitlines():
-            regexp = re.compile(r"#.*coding[:=]\s*([-\w.]+)")
-            match = regexp.match(l)
-            if match:
-                encoding = match.groups()[0]
-        return encoding
-
 
 def set_dark_color_scheme(code_edit):
     """
