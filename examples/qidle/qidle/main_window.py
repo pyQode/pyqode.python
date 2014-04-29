@@ -9,7 +9,7 @@ import sys
 from pyqode.core import frontend
 from pyqode.core.frontend import widgets
 from pyqode.python.backend import server
-from pyqode.python.frontend import PyCodeEdit
+from pyqode.python.frontend import PyCodeEdit, open_file
 from pyqode.python.frontend import modes
 from .utils import get_interpreters
 from .settings import Settings
@@ -24,7 +24,18 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.dockWidget.hide()
         self.setup_recent_files_menu()
         self.setup_actions()
+        self.setup_status_bar_widgets()
         self.on_current_tab_changed()
+
+    def setup_status_bar_widgets(self):
+        self.lbl_interpreter = QtGui.QLabel()
+        self.lbl_filename = QtGui.QLabel()
+        self.lbl_encoding = QtGui.QLabel()
+        self.lbl_cursor_pos = QtGui.QLabel()
+        self.statusbar.addPermanentWidget(self.lbl_filename, 200)
+        self.statusbar.addPermanentWidget(self.lbl_interpreter, 100)
+        self.statusbar.addPermanentWidget(self.lbl_encoding, 20)
+        self.statusbar.addPermanentWidget(self.lbl_cursor_pos, 20)
 
     def setup_actions(self):
         """ Connects slots to signals """
@@ -84,6 +95,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         :param editor: editor to setup.
         """
+        editor.cursorPositionChanged.connect(self.on_cursor_pos_changed)
         zip_path = os.path.join(os.getcwd(), 'libraries.zip')
         if not os.path.exists(zip_path):
             if platform.system().lower() == 'linux':
@@ -118,7 +130,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             if index == -1:
                 editor = PyCodeEdit(self)
                 self.setup_editor(editor)
-                frontend.open_file(editor, path)
+                open_file(editor, path)
                 self.tabWidget.add_code_edit(editor)
                 self.recent_files_manager.open_file(path)
                 self.menu_recents.update_actions()
@@ -239,8 +251,16 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             self.setup_mnu_edit(editor)
             self.setup_mnu_modes(editor)
             self.setup_mnu_panels(editor)
+            self.lbl_cursor_pos.setText('%d:%d' % frontend.cursor_position(
+                editor))
+            self.lbl_encoding.setText(editor.file_encoding)
+            self.lbl_filename.setText(editor.file_path)
+            self.lbl_interpreter.setText(Settings().interpreter)
         else:
             self.actionSave.setDisabled(True)
+            self.lbl_encoding.clear()
+            self.lbl_filename.clear()
+            self.lbl_cursor_pos.clear()
 
     @QtCore.pyqtSlot(QtGui.QAction)
     def on_interpreter_changed(self, action):
@@ -257,10 +277,11 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             editor = self.tabWidget.widget(i)
             frontend.stop_server(editor)
             self.setup_editor(editor)
+            self.lbl_interpreter.setText(interpreter)
             m = frontend.get_mode(editor, modes.PEP8CheckerMode)
-            m.request_check()
+            m.request_analysis()
             m = frontend.get_mode(editor, modes.FrostedCheckerMode)
-            m.request_check()
+            m.request_analysis()
 
     def on_panel_state_changed(self):
         """
@@ -322,3 +343,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         if status:
             args = text.split(' ')
             Settings().set_run_config_for_file(path, args)
+
+    @QtCore.pyqtSlot()
+    def on_cursor_pos_changed(self):
+        if self.tabWidget.currentWidget():
+            self.lbl_cursor_pos.setText('%d:%d' % frontend.cursor_position(
+                self.tabWidget.currentWidget()))
