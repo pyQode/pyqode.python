@@ -24,10 +24,9 @@ def open_file(editor, path, replace_tabs_by_spaces=True):
         """
         For the implementation of encoding definitions in Python, look at:
         - http://www.python.org/dev/peps/pep-0263/
-        - http://docs.python.org/2/reference/lexical_analysis.html#encoding-declarations
 
         .. note:: code taken and adapted from
-        ```jedi.common.source_to_unicode.detect_encoding```
+            ```jedi.common.source_to_unicode.detect_encoding```
         """
         import ast
 
