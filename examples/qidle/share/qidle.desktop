@@ -2,7 +2,7 @@
 Encoding=UTF-8
 Name=Qidle
 Comment=Qidle, idle made with pyQode
-Exec=notepad
+Exec=qidle
 Terminal=false
 Type=Application
 Icon=/usr/share/pixmaps/qidle.png
