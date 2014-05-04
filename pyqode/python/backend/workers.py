@@ -25,12 +25,6 @@ def calltips(request_data):
 
     :returns tuple(module_name, call_name, params)
     """
-    def param_name(p):
-        try:
-            return p.get_name()
-        except AttributeError:
-            return p.name
-
     try:
         import jedi
     except ImportError:
@@ -325,6 +319,7 @@ def icon_from_typename(name, type):
              'MODULE': ':/pyqode_python_icons/rc/namespace.png',
              'KEYWORD': ':/pyqode_python_icons/rc/keyword.png',
              'PARAM': ':/pyqode_python_icons/rc/var.png',
+             'INSTANCE': ':/pyqode_python_icons/rc/var.png',
              'PARAM-PRIV': ':/pyqode_python_icons/rc/var.png',
              'PARAM-PROT': ':/pyqode_python_icons/rc/var.png',
              'FUNCTION': ':/pyqode_python_icons/rc/func.png',
@@ -367,36 +362,20 @@ class JediCompletionProvider:
         ret_val = []
         try:
             import jedi
-            from jedi.evaluate.imports import ModuleNotFound
         except ImportError:
             _logger().error("Failed to import jedi. Check your jedi "
                             "installation")
         else:
             try:
-                script = jedi.Script(code, line, column, path,
-                                     encoding)
-
+                script = jedi.Script(code, line, column, path, encoding)
                 completions = script.completions()
+                print('completions: %r' % completions)
             except jedi.NotFoundError:
                 completions = []
-            prefix = prefix.strip()
-            follow_definitions = prefix != 'from' and prefix != 'import'
             for completion in completions:
-                name = completion.name
-                # desc = completion.description
-                # deduce type from description
-                type = completion.type
-                if "getset_descriptor" in completion.description:
-                    type = 'STATEMENT'
-                if type.lower() == 'import' and follow_definitions:
-                    try:
-                        definition = completion.follow_definition()[0]
-                        type = definition.type
-                    except (IndexError, ModuleNotFound):
-                        # no definition
-                        # AttributeError is raised for GlobalNamespace
-                        pass
-                desc = completion.full_name
-                icon = icon_from_typename(name, type)
-                ret_val.append({'name': name, 'icon': icon, 'tooltip': desc})
+                ret_val.append({
+                    'name': completion.name,
+                    'icon': icon_from_typename(
+                        completion.name, completion.type),
+                    'tooltip': completion.full_name})
         return ret_val
