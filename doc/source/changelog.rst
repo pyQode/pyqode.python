@@ -5,6 +5,17 @@ Change Log
 
     These lists are not exhaustive.
 
+1.3.2
+-----
+
+New features:
+    - add support for jedi 0.8 final which bring several minor enhancements
+
+Fixed bugs:
+    - fix a bug with boostrap.py
+
+
+
 1.3.1
 -----
 

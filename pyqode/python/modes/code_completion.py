@@ -210,19 +210,7 @@ class JediCompletionProvider(CompletionProvider):
                 completions = []
             for completion in completions:
                 name = completion.name
-                # desc = completion.description
-                # deduce type from description
                 type = completion.type
-                if "getset_descriptor" in completion.description:
-                    type = 'STATEMENT'
-                if type.lower() == 'import':
-                    try:
-                        definition = completion.follow_definition()[0]
-                        type = definition.type
-                    except (IndexError, AttributeError):
-                        # no definition
-                        # AttributeError is raised for GlobalNamespace
-                        pass
                 desc = completion.full_name
                 icon = iconFromType(name, type)
                 retVal.append(Completion(name, icon=icon, tooltip=desc))

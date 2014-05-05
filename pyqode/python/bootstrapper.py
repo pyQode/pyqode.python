@@ -87,7 +87,7 @@ class Bootstrapper(QtCore.QObject):
             l.close()
 
         if not already_running:
-            start_server(slots=self._slots)
+            start_server(port=port, slots=self._slots)
             server = get_server()
             if not server:
                 logger.warning("Failed to start completion server")
