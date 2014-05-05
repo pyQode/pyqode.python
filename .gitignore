@@ -31,3 +31,6 @@ nosetests.xml
 .pydevproject
 /.idea/
 __pycache__
+.cache
+.tox
+*.log

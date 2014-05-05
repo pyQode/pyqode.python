@@ -1,28 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-#The MIT License (MIT)
-#
-#Copyright (c) <2013-2014> <Colin Duquesnoy and others, see AUTHORS.txt>
-#
-#Permission is hereby granted, free of charge, to any person obtaining a copy
-#of this software and associated documentation files (the "Software"), to deal
-#in the Software without restriction, including without limitation the rights
-#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-#copies of the Software, and to permit persons to whom the Software is
-#furnished to do so, subject to the following conditions:
-#
-#The above copyright notice and this permission notice shall be included in
-#all copies or substantial portions of the Software.
-#
-#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-#FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-#AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-#LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-#OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-#THE SOFTWARE.
-#
 """
 This setup script packages pyqode.python
 """
@@ -42,8 +19,8 @@ def readme():
 
 
 # get requirements
-requirements = ['pyqode.core>=1.3.2', 'jedi>=0.8', 'pep8', 'pyflakes',
-                'docutils']
+requirements = ['pyqode.core>=2.0.0-alpha1', 'jedi>=0.7',
+                'pep8', 'frosted', 'docutils']
 
 
 setup(
@@ -51,8 +28,7 @@ setup(
     namespace_packages=['pyqode'],
     version=read_version(),
     packages=find_packages(),
-    keywords=["QCodeEditor PySide PyQt code editor widget python"],
-    # package_data={'pyqode.python.ui': ['*.ui', 'rc/*']},
+    keywords=["CodeEdit PySide PyQt code editor widget python"],
     package_dir={'pyqode': 'pyqode'},
     url='https://github.com/pyQode/pyqode.python',
     license='MIT',
@@ -62,20 +38,22 @@ setup(
     long_description=readme(),
     install_requires=requirements,
     entry_points={'pyqode_plugins':
-                 ['pyqode_python = pyqode.python.plugins.pyqode_python_plugin']},
+                  ['pyqode_python = '
+                   'pyqode.python.designer_plugin']},
     zip_safe=False,
     classifiers=[
-          'Development Status :: 5 - Production/Stable',
-          'Environment :: X11 Applications :: Qt',
-          'Environment :: Win32 (MS Windows)',
-          'Intended Audience :: Developers',
-          'License :: OSI Approved :: MIT License',
-          'Operating System :: Microsoft :: Windows',
-          'Operating System :: POSIX :: Linux',
-          'Programming Language :: Python :: 2.7',
-          'Programming Language :: Python :: 3.2',
-          'Programming Language :: Python :: 3.3',
-          'Topic :: Software Development :: Libraries :: Application Frameworks',
-          'Topic :: Software Development :: Widget Sets',
-          'Topic :: Text Editors :: Integrated Development Environments (IDE)']
+        'Development Status :: 5 - Production/Stable',
+        'Environment :: X11 Applications :: Qt',
+        'Environment :: Win32 (MS Windows)',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: MIT License',
+        'Operating System :: Microsoft :: Windows',
+        'Operating System :: POSIX :: Linux',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.2',
+        'Programming Language :: Python :: 3.3',
+        'Topic :: Software Development :: Libraries :: Application Frameworks',
+        'Topic :: Software Development :: Widget Sets',
+        'Topic :: Text Editors :: Integrated Development Environments (IDE)'
+    ]
 )
