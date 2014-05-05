@@ -58,16 +58,10 @@ class CalltipsWorker(Worker):
                 call_name = c.call_name
             except AttributeError:
                 call_name = c.name
-            # try:
-            #     params = [str(p.get_name()) for p in c.params]
-            # except AttributeError:
-            #     params = [str(p.name) for p in c.params]
             params = [p.description for p in c.params]
-
             results = [str(module_name), str(call_name),
                        params, c.index,
                        c.bracket_start, self.col]
-            # seems like len of signatures is always 1 when getting calltips
             return results
         return []
 
