@@ -42,7 +42,7 @@ def readme():
 
 
 # get requirements
-requirements = ['pyqode.core>=1.3.1', 'jedi>=0.7', 'pep8', 'pyflakes',
+requirements = ['pyqode.core>=1.3.1', 'jedi>=0.8', 'pep8', 'pyflakes',
                 'docutils']
 
 
