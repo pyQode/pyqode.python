@@ -28,7 +28,7 @@ class DocumentAnalyserMode(Mode, QtCore.QObject):
     def __init__(self, delay=1000):
         Mode.__init__(self)
         QtCore.QObject.__init__(self)
-        self._jobRunner = DelayJobRunner(self, nb_threads_max=1, delay=delay)
+        self._jobRunner = DelayJobRunner(delay=delay)
         #: The list of results (elements might have children; this is actually
         #: a tree).
         self.results = []
@@ -43,7 +43,7 @@ class DocumentAnalyserMode(Mode, QtCore.QObject):
             self.editor.new_text_set.disconnect(self._run_analysis)
 
     def _on_line_count_changed(self, e):
-        self._jobRunner.request_job(self._run_analysis, False)
+        self._jobRunner.request_job(self._run_analysis)
 
     def _run_analysis(self):
         if self.editor.toPlainText():

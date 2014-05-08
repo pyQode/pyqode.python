@@ -26,7 +26,6 @@ class CalltipsMode(frontend.Mode, QtCore.QObject):
     def __init__(self):
         frontend.Mode.__init__(self)
         QtCore.QObject.__init__(self)
-        self.__jobRunner = DelayJobRunner(self, nb_threads_max=1, delay=700)
         self.tooltipDisplayRequested.connect(self._display_tooltip)
         self.tooltipHideRequested.connect(QtGui.QToolTip.hideText)
         self.__requestCnt = 0
