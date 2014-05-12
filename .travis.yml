@@ -16,7 +16,7 @@ before_install:
  - "sh -e /etc/init.d/xvfb start"
 install:
  - sudo apt-get install -qq python3-pyqt4 --fix-missing
- - pip install https://github.com/pyQode/pyqode.core/archive/develop.zip
+ - pip install git+https://github.com/pyQode/pyqode.core.git@develop
 script:
   - pip install .
   - if [ $ENV == "pytest" ]; then
