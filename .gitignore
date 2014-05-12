@@ -34,3 +34,4 @@ __pycache__
 .cache
 .tox
 *.log
+htmlcov

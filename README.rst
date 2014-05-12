@@ -1,20 +1,46 @@
 Add python support to pyQode
 ============================
 
+Status
+------
+
+Package:
+++++++++
+
+
+.. image:: http://img.shields.io/pypi/v/pyqode.python.png
+    :target: https://pypi.python.org/pypi/pyqode.python/
+    :alt: Latest PyPI version
+
+.. image:: http://img.shields.io/pypi/dm/pyqode.python.png
+    :target: https://pypi.python.org/pypi/pyqode.python/
+    :alt: Number of PyPI downloads
+
+
+Stable (`master`_):
++++++++++++++++++++
+
 .. image:: https://travis-ci.org/pyQode/pyqode.python.svg?branch=master
     :target: https://travis-ci.org/pyQode/pyqode.python
     :alt: Travis-CI build status
 
-.. image:: http://img.shields.io/pypi/dm/pyqode.python.svg
-    :target: https://pypi.python.org/pypi/pyqode.python/
-    :alt: Number of PyPI downloads
+.. image:: https://coveralls.io/repos/pyQode/pyqode.python/badge.png?branch=master
+    :target: https://coveralls.io/r/pyQode/pyqode.python?branch=master
+    :alt: Coverage Status
 
-.. image:: http://img.shields.io/pypi/v/pyqode.python.svg
-    :target: https://pypi.python.org/pypi/pyqode.python/
-    :alt: Latest PyPI version
+Unstable (`develop`_):
+++++++++++++++++++++++
 
-What is pyqode.python?
-----------------------
+.. image:: https://travis-ci.org/pyQode/pyqode.python.svg?branch=develop
+    :target: https://travis-ci.org/pyQode/pyqode.python
+    :alt: Travis-CI build status
+
+.. image:: https://coveralls.io/repos/pyQode/pyqode.python/badge.png?branch=develop
+    :target: https://coveralls.io/r/pyQode/pyqode.python?branch=develop
+    :alt: Coverage Status
+
+About pyqode.python
+-------------------
 
 *pyqode.python* is an `official pyqode extension package`_ that adds **python**
 support to `pyQode`_.
