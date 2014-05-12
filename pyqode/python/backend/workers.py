@@ -3,8 +3,12 @@
 """
 Contains the worker classes/functions executed on the server side.
 """
+import _ast
 import logging
 import os
+import pep8
+import jedi
+from frosted import checker
 from pyqode.python.backend.pep8utils import CustomChecker
 
 
@@ -25,53 +29,41 @@ def calltips(request_data):
 
     :returns tuple(module_name, call_name, params)
     """
-    try:
-        import jedi
-    except ImportError:
-        _logger().error("Failed to import jedi. Check your jedi "
-                        "installation")
-    else:
-        code = request_data['code']
-        line = request_data['line']
-        column = request_data['column']
-        path = request_data['path']
-        # encoding = request_data['encoding']
-        encoding = 'utf-8'
-        # use jedi to get call signatures
-        script = jedi.Script(code, line, column, path, encoding)
-        signatures = script.call_signatures()
-        for c in signatures:
-            results = (str(c.module_name), str(c.call_name),
-                       [p.description for p in c.params], c.index,
-                       c.bracket_start, column)
-            # todo: add support for multiple signatures
-            return True, results
-        return False, []
+    code = request_data['code']
+    line = request_data['line']
+    column = request_data['column']
+    path = request_data['path']
+    # encoding = request_data['encoding']
+    encoding = 'utf-8'
+    # use jedi to get call signatures
+    script = jedi.Script(code, line, column, path, encoding)
+    signatures = script.call_signatures()
+    for c in signatures:
+        results = (str(c.module_name), str(c.call_name),
+                   [p.description for p in c.params], c.index,
+                   c.bracket_start, column)
+        # todo: add support for multiple signatures
+        return True, results
+    return False, []
 
 
 def goto_assignments(request_data):
+    code = request_data['code']
+    line = request_data['line']
+    column = request_data['column']
+    path = request_data['path']
+    # encoding = request_data['encoding']
+    encoding = 'utf-8'
+    script = jedi.Script(code, line, column, path, encoding)
     try:
-        import jedi
-    except ImportError:
-        _logger().error("Failed to import jedi. Check your jedi "
-                        "installation")
+        definitions = script.goto_assignments()
+    except jedi.NotFoundError:
+        pass
     else:
-        code = request_data['code']
-        line = request_data['line']
-        column = request_data['column']
-        path = request_data['path']
-        # encoding = request_data['encoding']
-        encoding = 'utf-8'
-        script = jedi.Script(code, line, column, path, encoding)
-        try:
-            definitions = script.goto_assignments()
-        except jedi.NotFoundError:
-            pass
-        else:
-            ret_val = [(d.module_path, d.line, d.column, d.full_name)
-                       for d in definitions]
-            return True, ret_val
-    return False, None
+        ret_val = [(d.module_path, d.line, d.column, d.full_name)
+                   for d in definitions]
+        return True, ret_val
+
 
 _old_definitions = {}
 
@@ -164,51 +156,44 @@ def defined_names(request_data):
             return False
 
     global _old_definitions
+    code = request_data['code']
+    path = request_data['path']
+    # encoding = request_data['encoding']
+    encoding = 'utf-8'
+    ret_val = []
+    toplvl_definitions = jedi.defined_names(code, path, encoding)
+    for d in toplvl_definitions:
+        d_line, d_column = d.start_pos
+        # use full name for import type
+        definition = Definition(d.name, icon_from_typename(d.name, d.type),
+                                d_line, d_column, d.full_name)
+        # check for methods in class
+        if d.type == "class":
+            sub_definitions = d.defined_names()
+            for sub_d in sub_definitions:
+                icon = icon_from_typename(sub_d.name, sub_d.type)
+                line, column = sub_d.start_pos
+                if sub_d.full_name == "":
+                    sub_d.full_name = sub_d.name
+                sub_definition = Definition(sub_d.name, icon, line, column,
+                                            sub_d.full_name)
+                definition.add_child(sub_definition)
+        ret_val.append(definition)
     try:
-        import jedi
-    except ImportError:
-        _logger().error("Failed to import jedi. Check your jedi "
-                        "installation")
-    else:
-        code = request_data['code']
-        path = request_data['path']
-        # encoding = request_data['encoding']
-        encoding = 'utf-8'
-        ret_val = []
-        toplvl_definitions = jedi.defined_names(code, path, encoding)
-        for d in toplvl_definitions:
-            d_line, d_column = d.start_pos
-            # use full name for import type
-            definition = Definition(d.name, icon_from_typename(d.name, d.type),
-                                    d_line, d_column, d.full_name)
-            # check for methods in class
-            if d.type == "class":
-                sub_definitions = d.defined_names()
-                for sub_d in sub_definitions:
-                    icon = icon_from_typename(sub_d.name, sub_d.type)
-                    line, column = sub_d.start_pos
-                    if sub_d.full_name == "":
-                        sub_d.full_name = sub_d.name
-                    sub_definition = Definition(sub_d.name, icon, line, column,
-                                                sub_d.full_name)
-                    definition.add_child(sub_definition)
-            ret_val.append(definition)
-        try:
-            old_definitions = _old_definitions["%s_definitions" % path]
-        except KeyError:
-            old_definitions = []
-        status = False
-        if ret_val:
-            if not _compare_definitions(ret_val, old_definitions):
-                ret_val = None
-                _logger().debug("No changes detected")
-            else:
-                _old_definitions["%s_definitions" % path] = ret_val
-                _logger().debug("Document structure changed")
-                status = True
-                ret_val = [d.to_dict() for d in ret_val]
-        return status, ret_val
-    return False, None
+        old_definitions = _old_definitions["%s_definitions" % path]
+    except KeyError:
+        old_definitions = []
+    status = False
+    if ret_val:
+        if not _compare_definitions(ret_val, old_definitions):
+            ret_val = None
+            _logger().debug("No changes detected")
+        else:
+            _old_definitions["%s_definitions" % path] = ret_val
+            _logger().debug("Document structure changed")
+            status = True
+            ret_val = [d.to_dict() for d in ret_val]
+    return status, ret_val
 
 
 def quick_doc(request_data):
@@ -242,9 +227,6 @@ def run_pep8(request_data):
     :returns a list of tuples (msg, msg_type, line_number)
     """
     WARNING = 1
-
-    import pep8
-
     code = request_data['code']
     path = request_data['path']
     # setup our custom style guide with our custom checker which returns a list
@@ -263,7 +245,6 @@ def run_frosted(request_data):
     Worker that run a frosted (the fork of pyflakes) code analysis on the
     current editor text.
     """
-    import _ast
     WARNING = 1
     ERROR = 2
     ret_val = []
@@ -289,7 +270,6 @@ def run_frosted(request_data):
             ret_val.append((msg, ERROR, lineno))
     else:
         # Okay, it's syntactically valid.  Now check it.
-        from frosted import checker
         w = checker.Checker(tree, os.path.split(path)[1])
         w.messages.sort(key=lambda m: m.lineno)
         for warning in w.messages:
@@ -361,21 +341,15 @@ class JediCompletionProvider:
         """
         ret_val = []
         try:
-            import jedi
-        except ImportError:
-            _logger().error("Failed to import jedi. Check your jedi "
-                            "installation")
-        else:
-            try:
-                script = jedi.Script(code, line, column, path, encoding)
-                completions = script.completions()
-                print('completions: %r' % completions)
-            except jedi.NotFoundError:
-                completions = []
-            for completion in completions:
-                ret_val.append({
-                    'name': completion.name,
-                    'icon': icon_from_typename(
-                        completion.name, completion.type),
-                    'tooltip': completion.full_name})
+            script = jedi.Script(code, line, column, path, encoding)
+            completions = script.completions()
+            print('completions: %r' % completions)
+        except jedi.NotFoundError:
+            completions = []
+        for completion in completions:
+            ret_val.append({
+                'name': completion.name,
+                'icon': icon_from_typename(
+                    completion.name, completion.type),
+                'tooltip': completion.full_name})
         return ret_val

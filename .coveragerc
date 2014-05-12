@@ -34,6 +34,7 @@ exclude_lines =
     except AttributeError:
     except RuntimeError:
     except ImportError
+    except jedi.NotFoundError:
     pass
 
     # unknown errors
