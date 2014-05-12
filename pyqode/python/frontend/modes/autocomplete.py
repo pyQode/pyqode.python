@@ -68,7 +68,7 @@ class PyAutoCompleteMode(AutoCompleteMode):
         tc.movePosition(tc.Left, tc.MoveAnchor, 2)
         self.editor.setTextCursor(tc)
 
-    def _on_post_key_pressed(self, e):
+    def _on_post_key_pressed(self, event):
         # if we are in disabled cc, use the parent implementation
         column = frontend.current_column_nbr(self.editor)
         usd = self.editor.textCursor().block().userData()
@@ -80,13 +80,13 @@ class PyAutoCompleteMode(AutoCompleteMode):
         prev_line = frontend.line_text(
             self.editor, frontend.current_line_nbr(self.editor) - 1)
         is_below_fct_or_class = "def" in prev_line or "class" in prev_line
-        if (e.text() == '"' and
+        if (event.text() == '"' and
                 '""' == frontend.current_line_text(self.editor).strip() and
                 (is_below_fct_or_class or column == 2)):
             self._insert_docstring(prev_line, is_below_fct_or_class)
-        elif (e.text() == "(" and
+        elif (event.text() == "(" and
                 frontend.current_line_text(self.editor).lstrip().startswith(
                     "def ")):
             self._handle_fct_def()
         else:
-            super(PyAutoCompleteMode, self)._on_post_key_pressed(e)
+            super(PyAutoCompleteMode, self)._on_post_key_pressed(event)

@@ -257,33 +257,33 @@ class PyAutoIndentMode(AutoIndentMode):
         column = tc.columnNumber()
         return column >= len(fullline.rstrip()) - 1
 
-    def _get_indent(self, tc):
-        pos = tc.position()
+    def _get_indent(self, cursor):
+        pos = cursor.position()
         ln, column = frontend.cursor_position(self.editor)
-        fullline = self.get_full_line(tc)
+        fullline = self.get_full_line(cursor)
         line = fullline[:column]
         # no indent
         if pos == 0 or column == 0:
             return "", ""
-        pre, post = AutoIndentMode._get_indent(self, tc)
-        if self.at_block_start(tc, line):
+        pre, post = AutoIndentMode._get_indent(self, cursor)
+        if self.at_block_start(cursor, line):
             return pre, post
         # return pressed in comments
-        if self.is_in_comment(column, tc, fullline):
+        if self.is_in_comment(column, cursor, fullline):
             if line.strip().startswith("#") and column != len(fullline):
                 post = post + '#'
             return pre, post
-        elif self.between_paren(tc, column):
+        elif self.between_paren(cursor, column):
             pre, post = self.handle_indent_after_paren(column, line, fullline,
-                                                       tc)
+                                                       cursor)
         else:
-            lastword = self.get_last_word(tc)
+            lastword = self.get_last_word(cursor)
             inStringDef, char = self.is_in_string_def(fullline, column)
             if inStringDef:
                 # the string might be between paren if multiline
                 # check if there a at least a non closed paren on the previous
                 # lines
-                if self.has_unclosed_paren(tc):
+                if self.has_unclosed_paren(cursor):
                     pre = char
                 else:
                     pre = '" \\'
@@ -293,16 +293,16 @@ class PyAutoIndentMode(AutoIndentMode):
                 post += char
             elif fullline.rstrip().endswith(":") and \
                     lastword.rstrip().endswith(':') and self.at_block_end(
-                    tc, fullline):
+                    cursor, fullline):
                 try:
-                    indent = self.get_indent_of_opening_paren(tc, column) + 4
+                    indent = self.get_indent_of_opening_paren(cursor, column) + 4
                     if indent:
                         post = indent * " "
                 except TypeError:
                     kw = ["if", "class", "def", "while", "for", "else", "elif",
                           "except", "finally", "try"]
                     l = fullline
-                    ln = tc.blockNumber()
+                    ln = cursor.blockNumber()
 
                     def check_kw_in_line(kwds, lparam):
                         for kwd in kwds:
@@ -322,12 +322,12 @@ class PyAutoIndentMode(AutoIndentMode):
             elif fullline.endswith(")") and lastword.endswith(')'):
                 # find line where the open braces can be found and align with
                 # that line
-                indent = self.get_indent_of_opening_paren(tc, column)
+                indent = self.get_indent_of_opening_paren(cursor, column)
                 if indent:
                     post = indent * " "
             elif ("\\" not in fullline and "#" not in fullline and
                     fullline.strip() and not fullline.endswith(')') and
-                    not self.at_block_end(tc, fullline)):
+                    not self.at_block_end(cursor, fullline)):
                 if lastword and lastword[-1] != " ":
                     pre += " \\"
                 else:
@@ -336,7 +336,7 @@ class PyAutoIndentMode(AutoIndentMode):
                 if fullline.endswith(':'):
                     post += 4 * " "
             elif (lastword == "return" or lastword == "pass" or
-                    self.has_two_empty_line_before(tc)):
+                    self.has_two_empty_line_before(cursor)):
                 post = post[:-4]
 
         return pre, post

@@ -2,15 +2,36 @@ language: python
 python:
   - "3.2"
 env:
- - TOXENV=py32
+  - ENV=pytest
+  - ENV=pep8
+  - ENV=cov
+matrix:
+    allow_failures:
+        - env: ENV=cov
+        - env: ENV=pep8
 virtualenv:
   system_site_packages: true
 before_install:
  - "export DISPLAY=:99.0"
  - "sh -e /etc/init.d/xvfb start"
 install:
- # install deps
  - sudo apt-get install -qq python3-pyqt4 --fix-missing
- - pip install tox
+ - pip install https://github.com/pyQode/pyqode.core/archive/develop.zip
 script:
- - tox
+  - pip install .
+  - if [ $ENV == "pytest" ]; then
+    python3 runtests.py;
+    fi
+  - if [ $ENV == "pep8" ]; then
+    pip install pytest-pep8;
+    python3 runtests.py --pep8;
+    fi
+  - if [ $ENV == "cov" ]; then
+    pip install pytest-cov;
+    python3 runtests.py --cov pyqode;
+    fi
+after_script:
+  - if [ $ENV == "cov" ]; then
+    sudo pip install --quiet coveralls;
+    coveralls;
+    fi
