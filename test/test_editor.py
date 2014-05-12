@@ -13,6 +13,7 @@ from PyQt4 import QtCore, QtGui
 
 from pyqode.core import frontend
 from pyqode.python.backend import server
+from pyqode.python.frontend import open_file
 from pyqode.python.frontend.code_edit import PyCodeEdit
 
 logging.basicConfig(level=True)
@@ -28,7 +29,7 @@ def test_editor():
     editor = PyCodeEdit()
     editor.show()
     frontend.start_server(editor, server.__file__)
-    frontend.open_file(editor, __file__)
+    open_file(editor, __file__)
     QtCore.QTimer.singleShot(2000, leave)
     app.exec_()
     frontend.stop_server(editor)
