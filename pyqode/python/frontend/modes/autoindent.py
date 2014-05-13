@@ -146,7 +146,7 @@ class PyAutoIndentMode(AutoIndentMode):
         char = None
         ln = tc.blockNumber() + 1
         tc_trav = QTextCursor(tc)
-        while ln > 1:
+        while ln >= 1:
             tc_trav.movePosition(tc_trav.StartOfLine, tc_trav.MoveAnchor)
             data = tc_trav.block().userData()
             lists = [data.parentheses, data.braces, data.square_brackets]
@@ -271,7 +271,7 @@ class PyAutoIndentMode(AutoIndentMode):
         # return pressed in comments
         if self.is_in_comment(column, cursor, fullline):
             if line.strip().startswith("#") and column != len(fullline):
-                post = post + '#'
+                post = post + '# '
             return pre, post
         elif self.between_paren(cursor, column):
             pre, post = self.handle_indent_after_paren(column, line, fullline,
