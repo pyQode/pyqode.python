@@ -32,12 +32,15 @@ def pytest_runtest_setup(item):
         travis_platform = True if 'TRAVIS' in os.environ else False
         if travis_platform and item.get_marker('skip_on_travis'):
             pytest.skip("test skipped when ran on Travis-CI: %r" % item)
+        else:
+            logging.info("------------------- %s -------------------",
+                         item.name)
 
 
 # -------------------
 # Setup logging
 # -------------------
-logging.basicConfig(level=logging.INFO,
+logging.basicConfig(level=logging.DEBUG,
                     filename='pytest.log',
                     filemode='w')
 
@@ -65,7 +68,7 @@ def editor(request):
     from pyqode.python.frontend import PyCodeEdit
     from pyqode.python.backend import server
 
-    logging.info('setup session editor')
+    logging.info('################ setup session editor ################')
 
     settings.file_watcher_auto_reload = True
     settings.save_on_focus_out = False
@@ -78,7 +81,8 @@ def editor(request):
 
     def fin():
         global _widget
-        logging.info('teardown session editor')
+        logging.info('################ teardown session editor ###############'
+                     '#')
         frontend.stop_server(_widget)
         QTest.qWait(1000)
         del _widget

@@ -61,8 +61,6 @@ def editor_open(path):
     def decorator(func):
         @functools.wraps(func)
         def wrapper(editor, *args, **kwds):
-            import logging
-            logging.critical('---------------- %s ----------------' % func.__name__)
             open_file(editor, path)
             return func(editor, *args, **kwds)
         return wrapper
