@@ -19,10 +19,10 @@ class PyAutoCompleteMode(AutoCompleteMode):
     Method completion adds "self):" to method definition.
     """
 
-    def _format_func_params(self, indent):
+    def _format_func_params(self, prev_line, indent):
         parameters = ""
         l = frontend.current_line_nbr(self.editor) - 1
-        c = indent + len("def ") + 1
+        c = len(prev_line) - len(prev_line.strip()) + len("def ") + 1
         script = jedi.Script(self.editor.toPlainText(), l, c,
                              self.editor.file_path,
                              self.editor.file_encoding)
@@ -39,7 +39,7 @@ class PyAutoCompleteMode(AutoCompleteMode):
         if "class" in prev_line or not below_fct:
             to_insert = '"\n{0}\n{0}"""'.format(indent * " ")
         else:
-            to_insert = self._format_func_params(indent)
+            to_insert = self._format_func_params(prev_line, indent)
         tc = self.editor.textCursor()
         p = tc.position()
         tc.insertText(to_insert)
