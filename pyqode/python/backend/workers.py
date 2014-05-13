@@ -203,21 +203,14 @@ def quick_doc(request_data):
     path = request_data['path']
     # encoding = 'utf-8'
     encoding = 'utf-8'
+    script = jedi.Script(code, line, column, path, encoding)
     try:
-        import jedi
-    except ImportError:
-        _logger().error("Failed to import jedi. Check your jedi "
-                        "installation")
+        definitions = script.goto_definitions()
+    except jedi.NotFoundError:
+        return []
     else:
-        script = jedi.Script(code, line, column, path, encoding)
-        try:
-            definitions = script.goto_definitions()
-        except jedi.NotFoundError:
-            return []
-        else:
-            ret_val = [d.doc for d in definitions]
-            return True, ret_val
-    return False, []
+        ret_val = [d.doc for d in definitions]
+        return True, ret_val
 
 
 def run_pep8(request_data):
