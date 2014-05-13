@@ -16,8 +16,9 @@ def test_py_code_edit(editor):
     assert isinstance(editor, PyCodeEdit)
     QTest.qWait(1000)
     editor.use_dark_style()
-    QTest.qWait(100)
+    QTest.qWait(1000)
     editor.use_white_style()
+    QTest.qWait(1000)
 
     # for coverage
     editor.use_dark_style(use=False)

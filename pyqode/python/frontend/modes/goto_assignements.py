@@ -78,9 +78,12 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
             self.sep = self.editor.add_separator()
             self.editor.add_action(self.action_goto)
         else:
-            frontend.get_mode(
-                self.editor, WordClickMode).word_clicked.disconnect(
-                    self.request_goto)
+            try:
+                frontend.get_mode(
+                    self.editor, WordClickMode).word_clicked.disconnect(
+                        self.request_goto)
+            except KeyError:
+                pass  # not installed or already removed
             self.editor.remove_action(self.action_goto)
             self.editor.remove_action(self.sep)
 

@@ -189,28 +189,38 @@ def server_path():
 
 
 def setup_editor(code_edit):
-        # add panels
-    p = panels.LineNumberPanel()
-    frontend.install_panel(code_edit, p)
-    p.show()
-    p = panels.MarkerPanel()
-    frontend.install_panel(code_edit, p)
-    p.show()
-    p = panels.SearchAndReplacePanel()
-    frontend.install_panel(code_edit, p, p.Position.BOTTOM)
-    p.show()
+    from pyqode.python.frontend import modes as pymodes
+    from pyqode.python.frontend import panels as pypanels
 
-    # add modes
-    frontend.install_mode(code_edit, modes.AutoCompleteMode())
-    frontend.install_mode(code_edit, modes.CaseConverterMode())
-    frontend.install_mode(code_edit, modes.FileWatcherMode())
+    # add panels
+    frontend.install_mode(code_edit, pymodes.DocumentAnalyserMode())
+
+    # panels
+    frontend.install_panel(code_edit, panels.LineNumberPanel())
+    frontend.install_panel(code_edit, panels.MarkerPanel())
+    frontend.install_panel(code_edit, panels.SearchAndReplacePanel(),
+                           panels.SearchAndReplacePanel.Position.BOTTOM)
+    frontend.install_panel(code_edit, pypanels.SymbolBrowserPanel(),
+                           pypanels.SymbolBrowserPanel.Position.TOP)
+
+    # modes
+    # generic
     frontend.install_mode(code_edit, modes.CaretLineHighlighterMode())
+    frontend.install_mode(code_edit, modes.FileWatcherMode())
     frontend.install_mode(code_edit, modes.RightMarginMode())
-    frontend.install_mode(code_edit, modes.PygmentsSyntaxHighlighter(
-        code_edit.document()))
     frontend.install_mode(code_edit, modes.ZoomMode())
-    frontend.install_mode(code_edit, modes.CodeCompletionMode())
-    frontend.install_mode(code_edit, modes.AutoIndentMode())
-    frontend.install_mode(code_edit, modes.IndenterMode())
     frontend.install_mode(code_edit, modes.SymbolMatcherMode())
     frontend.install_mode(code_edit, modes.WordClickMode())
+    frontend.install_mode(code_edit, modes.CodeCompletionMode())
+    # python specifics
+    frontend.install_mode(code_edit, pymodes.PyHighlighterMode(code_edit.document()))
+    frontend.install_mode(code_edit, pymodes.PyAutoCompleteMode())
+    frontend.install_mode(code_edit, pymodes.PyAutoIndentMode())
+    frontend.install_mode(code_edit, pymodes.FrostedCheckerMode())
+    frontend.install_mode(code_edit, pymodes.PEP8CheckerMode())
+    frontend.install_mode(code_edit, pymodes.CalltipsMode())
+    frontend.install_mode(code_edit, pymodes.PyIndenterMode())
+    frontend.install_mode(code_edit, pymodes.GoToAssignmentsMode())
+    frontend.install_panel(code_edit, pypanels.QuickDocPanel(),
+                           frontend.Panel.Position.BOTTOM)
+    frontend.install_mode(code_edit, pymodes.CommentsMode())

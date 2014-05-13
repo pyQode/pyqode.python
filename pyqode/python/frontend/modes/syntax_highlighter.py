@@ -144,7 +144,7 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
 
     #: List of special punctuation
     braces = [
-        '\{', '\}', '\(', '\)', '\[', '\]',
+        r'\{', r'\}', r'\(', r'\)', r'\[', r'\]',
     ]
 
     #: List of highlighted punctuations
@@ -203,9 +203,9 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
             'keyword': style.py_keyword,
             'builtins': style.py_builtins,
             'operator': style.py_operator,
-            'punctuation': style.py_punctuation,
+            # 'punctuation': style.py_punctuation,
             'decorator': style.py_decorator,
-            'brace': style.py_brace,
+            # 'brace': style.py_brace,
             'class': style.py_class,
             'function': style.py_function,
             'string': style.py_string,
@@ -261,16 +261,6 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
         else:
             self.setDocument(None)
 
-    def _on_style_changed(self, section, key):
-        if not key:
-            self._cache_version = self.editor.style.value("background").name()
-            self.rehighlight()
-        if key == "whiteSpaceForeground":
-            self.rehighlight()
-        elif key == "background":
-            self._cache_version = self.editor.style.value("background").name()
-            self.rehighlight()
-
     def rehighlight(self, *args, **kwargs):
         self._purge_mem_cache()
         SyntaxHighlighter.rehighlight(self)
@@ -281,10 +271,10 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
             return "keyword"
         if word in self.builtins:
             return "builtins"
-        if word in self.braces:
-            return "braces"
-        if word in self.punctuations:
-            return "punctuation"
+        # if word in self.braces:
+        #     return "braces"
+        # if word in self.punctuations:
+        #     return "punctuation"
         if word == "self":
             return word
         return None
@@ -311,8 +301,6 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
         usd = self.currentBlock().userData()
         if hasattr(usd, "cc_disabled_zones"):
             usd.cc_disabled_zones[:] = []
-        else:
-            usd.cc_disabled_zones = []
         if self.match_multiline(text):
             self.highlight_spaces(text)
             self.highlight_sphinx_tags(text)
@@ -373,12 +361,7 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
 
         # single quoted
         if text.startswith("'''") or text.endswith("'''"):
-            if prev_state == 1:
-                # end of comment
-                multi = True
-                state = 0
-                docstring = was_docstring
-            elif prev_state == 0 or prev_state == -1:
+            if prev_state == 0 or prev_state == -1:
                 state = 1
                 # start of single quoted comment
                 if (text.startswith("'''") and text.endswith("'''") and
@@ -396,7 +379,7 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
                 multi = True
                 state = 0
                 docstring = was_docstring
-            elif prev_state == 0 or prev_state == -1:
+            else:
                 # start of comment
                 multi = True
                 state = 2
@@ -404,10 +387,6 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
                 if (text.startswith('"""') and text.endswith('"""') and
                         len(text) > 6):
                     state = 0
-            else:
-                multi = True
-                state = 1
-                docstring = was_docstring
         else:
             if prev_state > 0:
                 multi = True
@@ -432,8 +411,4 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
         return multi
 
     def _purge_mem_cache(self):
-        def next_int():
-            for i in range(sys.maxsize):
-                yield i
-
-        self._cache_version = next_int()
+        self._cache_version += 1

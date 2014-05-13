@@ -60,25 +60,15 @@ class SymbolBrowserPanel(Panel):
                                   "before SymbolBrowserPanel!")
 
     def _on_document_changed(self):
-        try:
-            mode = frontend.get_mode(self.editor, 'DocumentAnalyserMode')
-        except KeyError:
-            definitions = []
-        else:
-            definitions = mode.flattened_results
+        mode = frontend.get_mode(self.editor, 'DocumentAnalyserMode')
+        definitions = mode.flattened_results
         self.combo_box.clear()
         if definitions:
             self.combo_box.addItem(" < Select a symbol >")
         else:
             self.combo_box.addItem("No symbols")
         for d in definitions:
-            try:
-                self.combo_box.addItem(QtGui.QIcon(d.icon), d.name, d)
-            except TypeError:
-                # skip un-named elements, sometimes jedi fail to
-                # to get a variable name and return a list instead
-                # of a string.
-                pass
+            self.combo_box.addItem(QtGui.QIcon(d.icon), d.name, d)
         self._definitions = definitions
         self._sync_combo_box(frontend.current_line_nbr(self.editor))
 

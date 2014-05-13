@@ -104,10 +104,8 @@ class QuickDocPanel(Panel):
         else:
             self.editor.remove_action(self.action_quick_doc)
 
-    def _on_style_changed(self, section, key):
-        super(QuickDocPanel, self)._on_style_changed(section, key)
-        if key in self._KEYS or not key:
-            self._reset_stylesheet()
+    def refresh_style(self):
+        self._reset_stylesheet()
 
     def _on_action_quick_doc_triggered(self):
         tc = frontend.word_under_cursor(self.editor, select_whole_word=True)
@@ -152,7 +150,5 @@ class QuickDocPanel(Panel):
                             else:
                                 lines.append(l)
                         self.text_edit.setText('\n'.join(lines))
-                else:
-                    self.text_edit.setText("Documentation not found")
-            else:
-                self.text_edit.setText("Documentation not found")
+                        return
+            self.text_edit.setText("Documentation not found")
