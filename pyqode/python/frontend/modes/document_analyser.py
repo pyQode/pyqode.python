@@ -63,12 +63,9 @@ class DocumentAnalyserMode(Mode, QtCore.QObject):
 
     def _on_results_available(self, status, results):
         if status:
-            if results is not None:
-                results = [Definition().from_dict(ddict) for ddict in results]
-                self.results = results
-                _logger().debug("Document structure changed")
-            else:
-                self.results = []
+            results = [Definition().from_dict(ddict) for ddict in results]
+            self.results = results
+            _logger().debug("Document structure changed")
             self.document_changed.emit()
 
     @property

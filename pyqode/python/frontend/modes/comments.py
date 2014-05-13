@@ -25,15 +25,7 @@ class CommentsMode(frontend.Mode):
             self.editor.remove_action(self.separator)
             self.action.triggered.disconnect(self.comment)
 
-    def comment(self):
-        """
-        Comments/Uncomments the selected lines or the current lines if there
-        is no selection.
-        """
-        cursor = self.editor.textCursor()
-        # make comment/uncomment a single operation for the undo stack
-        cursor.beginEditBlock()
-        # did the user do a reversed selection (from _bottom to _top)?
+    def check_selection(self, cursor):
         sel_start = cursor.selectionStart()
         sel_end = cursor.selectionEnd()
         reversed_selection = cursor.position() == sel_start
@@ -43,13 +35,25 @@ class CommentsMode(frontend.Mode):
             cursor.select(QtGui.QTextCursor.LineUnderCursor)
             has_selection = False
 
+        return has_selection, reversed_selection, sel_end, sel_start
+
+    def comment(self):
+        """
+        Comments/Uncomments the selected lines or the current lines if there
+        is no selection.
+        """
+        cursor = self.editor.textCursor()
+        # make comment/uncomment a single operation for the undo stack
+        cursor.beginEditBlock()
+
+        # did the user do a reversed selection (from _bottom to _top)?
+        has_sel, reversed_sel, sel_end, sel_start = self.check_selection(
+            cursor)
         # get selected lines
         lines = cursor.selection().toPlainText().splitlines()
         nb_lines = len(lines)
-
         # move to first line
         cursor.setPosition(sel_start)
-
         # we uncomment if all lines were commented, otherwise we comment all
         # lines in selection
         comment = False
@@ -57,7 +61,7 @@ class CommentsMode(frontend.Mode):
             cursor.movePosition(QtGui.QTextCursor.StartOfLine)
             cursor.movePosition(QtGui.QTextCursor.EndOfLine, cursor.KeepAnchor)
             line = cursor.selectedText().lstrip()
-            if not line.strip():
+            if not len(line.strip()):
                 # skips empty lines
                 continue
             indent = len(cursor.selectedText()) - len(line)
@@ -81,9 +85,7 @@ class CommentsMode(frontend.Mode):
                     cursor.insertText("")
                     if i == 0:
                         sel_start -= 1
-                        sel_end -= 1
-                    else:
-                        sel_end -= 1
+                    sel_end -= 1
                 # comment
                 else:
                     cursor.movePosition(QtGui.QTextCursor.StartOfLine)
@@ -91,24 +93,16 @@ class CommentsMode(frontend.Mode):
                     cursor.insertText("# ")
                     if i == 0:
                         sel_start += 1
-                        sel_end += 1
-                    else:
-                        sel_end += 1
+                    sel_end += 1
             # next line
             cursor.movePosition(QtGui.QTextCursor.EndOfLine)
             cursor.setPosition(cursor.position() + 1)
         cursor.setPosition(sel_start + (1 if not comment else -1))
         cursor.setPosition(sel_start + (1 if not comment else -1))
         cursor.endEditBlock()
-        if has_selection:
-            pos = sel_end if not reversed_selection else sel_start
+        if has_sel:
+            pos = sel_end if not reversed_sel else sel_start
             cursor.setPosition(pos, QtGui.QTextCursor.MoveAnchor)
         else:
             cursor.movePosition(cursor.Down, cursor.MoveAnchor, 1)
         self.editor.setTextCursor(cursor)
-
-    def _on_key_pressed(self, event):
-        if(event.modifiers() & QtCore.Qt.ControlModifier and
-           event.key() == QtCore.Qt.Key_Slash):
-            event.accept()
-            self.comment()

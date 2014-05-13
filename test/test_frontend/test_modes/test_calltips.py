@@ -25,7 +25,7 @@ def test_calltips(editor):
     mode = get_mode(editor)
     assert frontend.connected_to_server(editor)
     assert mode is not None
-    editor.setPlainText("open(__file_", 'text/x-python', 'utf-8')
+    editor.setPlainText("open(__file_")
     frontend.goto_line(editor, 1, len('open(__file_'))
     QTest.keyPress(editor, ',')
     QTest.keyRelease(editor, ',')
@@ -37,7 +37,7 @@ def test_calltips_with_closing_paren(editor):
     mode = get_mode(editor)
     assert frontend.connected_to_server(editor)
     assert mode is not None
-    editor.setPlainText("open", 'text/x-python', 'utf-8')
+    editor.setPlainText("open")
     frontend.goto_line(editor, 1, len('open'))
     QTest.keyPress(editor, '(')
     QTest.keyRelease(editor, '(')

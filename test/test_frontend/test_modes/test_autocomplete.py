@@ -27,7 +27,7 @@ def test_basic(editor):
 
 def test_autocomple_func_parens(editor):
     editor.clear()
-    editor.setPlainText('def foo', 'text/x-python', 'utf-8')
+    editor.setPlainText('def foo')
     frontend.goto_line(editor, 1, len('def foo'))
     QTest.keyPress(editor, '(')
     assert editor.toPlainText() == 'def foo():'
@@ -35,7 +35,7 @@ def test_autocomple_func_parens(editor):
 
 def test_autocomple_method_parens(editor):
     editor.clear()
-    editor.setPlainText('class\n    def foo', 'text/x-python', 'utf-8')
+    editor.setPlainText('class\n    def foo')
     frontend.goto_line(editor, 2, len('    def foo'))
     QTest.keyPress(editor, '(')
     assert editor.toPlainText() == 'class\n    def foo(self):'
@@ -43,7 +43,7 @@ def test_autocomple_method_parens(editor):
 
 def test_class_docstrings(editor):
     editor.clear()
-    editor.setPlainText('class Foo:\n    ', 'text/x-python', 'utf-8')
+    editor.setPlainText('class Foo:\n    ')
     frontend.goto_line(editor, 2, len('    '))
     QTest.keyPress(editor, '"')
     QTest.keyPress(editor, '"')
@@ -52,9 +52,14 @@ def test_class_docstrings(editor):
 
 def test_fct_docstrings(editor):
     editor.clear()
-    editor.setPlainText('def foo(bar, spam, eggs):\n    ',
-                        'text/x-python', 'utf-8')
+    editor.setPlainText('def foo(bar, spam, eggs):\n    ')
     frontend.goto_line(editor, 2, len('    '))
     QTest.keyPress(editor, '"')
     QTest.keyPress(editor, '"')
-    assert editor.toPlainText() == 'def foo(bar, spam, eggs):\n    """\n    \n    :param bar:\n    :param spam:\n    :param eggs:\n    """'
+    assert editor.toPlainText() == ('def foo(bar, spam, eggs):'
+                                    '\n'
+                                    '    """\n'
+                                    '    \n'
+                                    '    :param bar:\n'
+                                    '    :param spam:\n'
+                                    '    :param eggs:\n    """')

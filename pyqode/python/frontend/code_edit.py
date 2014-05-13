@@ -116,6 +116,9 @@ class PyCodeEdit(CodeEdit):
             return
         set_white_color_scheme(self)
 
+    def setPlainText(self, txt, mimetype='text/x-python', encoding='utf-8'):
+        super().setPlainText(txt, mimetype, encoding)
+
 
 def set_dark_color_scheme(code_edit):
     """
