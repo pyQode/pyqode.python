@@ -40,7 +40,7 @@ def pytest_runtest_setup(item):
 # -------------------
 # Setup logging
 # -------------------
-logging.basicConfig(level=logging.DEBUG,
+logging.basicConfig(level=logging.INFO,
                     filename='pytest.log',
                     filemode='w')
 
@@ -78,13 +78,16 @@ def editor(request):
     _widget.resize(800, 600)
     _widget.show()
     _app.setActiveWindow(_widget)
+    while not frontend.connected_to_server(_widget):
+        QTest.qWait(100)
 
     def fin():
         global _widget
         logging.info('################ teardown session editor ###############'
                      '#')
         frontend.stop_server(_widget)
-        QTest.qWait(1000)
+        while frontend.connected_to_server(_widget):
+            QTest.qWait(100)
         del _widget
 
     request.addfinalizer(fin)

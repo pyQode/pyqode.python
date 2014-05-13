@@ -1,0 +1,4 @@
+print "a very |long string"
+->
+print "a very " \
+    "|long string"

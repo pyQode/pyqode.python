@@ -271,7 +271,7 @@ class PyAutoIndentMode(AutoIndentMode):
         # return pressed in comments
         if self.is_in_comment(column, cursor, fullline):
             if line.strip().startswith("#") and column != len(fullline):
-                post = post + '# '
+                post += '# '
             return pre, post
         elif self.between_paren(cursor, column):
             pre, post = self.handle_indent_after_paren(column, line, fullline,
