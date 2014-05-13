@@ -61,7 +61,6 @@ def app(request):
 @pytest.fixture(scope="session")
 def editor(request):
     global _app, _widget
-    from test import helpers
     from pyqode.core import frontend, settings
     from pyqode.python.frontend import PyCodeEdit
     from pyqode.python.backend import server

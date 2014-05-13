@@ -19,6 +19,7 @@ from pyqode.core import settings
 from pyqode.core import frontend
 from pyqode.core.frontend import modes
 from pyqode.core.frontend import panels
+from pyqode.python.frontend import open_file
 
 
 test_dir = dirname(abspath(__file__))
@@ -62,7 +63,7 @@ def editor_open(path):
         def wrapper(editor, *args, **kwds):
             import logging
             logging.critical('---------------- %s ----------------' % func.__name__)
-            frontend.open_file(editor, path)
+            open_file(editor, path)
             return func(editor, *args, **kwds)
         return wrapper
     return decorator
