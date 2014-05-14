@@ -15,10 +15,6 @@ class PyAutoIndentMode(AutoIndentMode):
     def __init__(self):
         super(PyAutoIndentMode, self).__init__()
 
-    def is_operator(self, word):
-        operators = ['.', ',', '+', '-', '/', '*', 'or', 'and', "=", "%", "=="]
-        return word in operators
-
     def has_two_empty_line_before(self, tc):
         ln = tc.blockNumber()
         limit = ln - 1
@@ -65,24 +61,37 @@ class PyAutoIndentMode(AutoIndentMode):
         full_line = tc2.selectedText()
         return full_line
 
-    def between_paren(self, tc, col):
-        data = tc.block().userData()
+    def parens_count_for_block(self, col, block):
+        data = block.userData()
         nb_open = 0
         nb_closed = 0
         lists = [data.parentheses, data.braces, data.square_brackets]
         for symbols in lists:
             for paren in symbols:
-                if paren.position >= col:
-                    break
                 if self.is_paren_open(paren):
                     nb_open += 1
-                if self.is_paren_closed(paren):
+                if paren.position >= col and self.is_paren_closed(paren):
                     nb_closed += 1
+        return nb_closed, nb_open
+
+    def between_paren(self, tc, col):
+        nb_closed, nb_open = self.parens_count_for_block(col, tc.block())
         block = tc.block().next()
+        while nb_open == nb_closed == 0 and block.isValid():
+            nb_closed, nb_open = self.parens_count_for_block(0, block)
+            block = block.next()
         # if not, is there an non closed paren on the next lines.
         parens = {'(': 0, '{': 0, '[': 0}
         matching = {')': '(', '}': '{', ']': '['}
-        if not nb_open > nb_closed:
+        rparens = {')': 0, '}': 0, ']': 0}
+        rmatching = {'(': ')', '{': '}', '[': ']'}
+        if nb_open != nb_closed:
+            # look down
+            if nb_open > nb_closed:
+                operation = self._next_block
+            else:
+                operation = self._prev_block
+            block = operation(tc.block())
             while block.isValid():
                 data = block.userData()
                 lists = [data.parentheses, data.braces, data.square_brackets]
@@ -90,14 +99,26 @@ class PyAutoIndentMode(AutoIndentMode):
                     for paren in symbols:
                         if self.is_paren_open(paren):
                             parens[paren.character] += 1
-                        if self.is_paren_closed(paren):
-                            parens[matching[paren.character]] -= 1
-                            if parens[matching[paren.character]] < 0:
+                            rparens[rmatching[paren.character]] -= 1
+                            if (operation == self._prev_block and
+                                rparens[rmatching[paren.character]] < 0):
                                 return True
-                block = block.next()
-            return False
-        else:
+                        if self.is_paren_closed(paren):
+                            rparens[paren.character] += 1
+                            parens[matching[paren.character]] -= 1
+                            if (operation == self._next_block and
+                                    parens[matching[paren.character]] < 0):
+                                return True
+                block = operation(block)
+        elif nb_open:
             return True
+        return False
+
+    def _next_block(self, b):
+        return b.next()
+
+    def _prev_block(self, b):
+        return b.previous()
 
     def is_in_comment(self, column, tc, full_line):
         use_parent_impl = False
@@ -210,6 +231,8 @@ class PyAutoIndentMode(AutoIndentMode):
         (oL, oC), (cL, cC) = self.get_parent_pos(tc, column)
         closingline = frontend.line_text(self.editor, cL)
         openingline = frontend.line_text(self.editor, oL)
+        openingline = re.sub(r'".*"', "", openingline)
+        openingline = re.sub(r"'.*'", "", openingline)
         openingindent = len(openingline) - len(openingline.lstrip())
         tokens = [t.strip() for t in re.split(', |and |or ',
                                               line[oC:column]) if t]
@@ -267,6 +290,8 @@ class PyAutoIndentMode(AutoIndentMode):
             return "", ""
         pre, post = AutoIndentMode._get_indent(self, cursor)
         if self.at_block_start(cursor, line):
+            if self.has_two_empty_line_before(cursor):
+                post = post[:-4]
             return pre, post
         # return pressed in comments
         if self.is_in_comment(column, cursor, fullline):
@@ -295,7 +320,8 @@ class PyAutoIndentMode(AutoIndentMode):
                     lastword.rstrip().endswith(':') and self.at_block_end(
                     cursor, fullline):
                 try:
-                    indent = self.get_indent_of_opening_paren(cursor, column) + 4
+                    indent = self.get_indent_of_opening_paren(cursor, column) \
+                             + 4
                     if indent:
                         post = indent * " "
                 except TypeError:
@@ -316,7 +342,7 @@ class PyAutoIndentMode(AutoIndentMode):
                     indent = (len(l) - len(l.lstrip())) * " "
                     indent += 4 * " "
                     post = indent
-            elif fullline.endswith("\\"):
+            elif line.endswith("\\"):
                 # increment indent
                 post += 4 * " "
             elif fullline.endswith(")") and lastword.endswith(')'):
@@ -335,8 +361,7 @@ class PyAutoIndentMode(AutoIndentMode):
                 post += 4 * " "
                 if fullline.endswith(':'):
                     post += 4 * " "
-            elif (lastword == "return" or lastword == "pass" or
-                    self.has_two_empty_line_before(cursor)):
+            elif (lastword == "return" or lastword == "pass"):
                 post = post[:-4]
 
         return pre, post

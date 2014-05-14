@@ -82,7 +82,7 @@ class Case:
         editor.setPlainText(self.context.input_code)
         frontend.goto_line(editor, self.context.input_line,
                            self.context.input_column)
-        wait = 500
+        wait = 1
         QTest.qWait(wait)
         QTest.keyPress(editor, QtCore.Qt.Key_Return)
         QTest.qWait(wait)

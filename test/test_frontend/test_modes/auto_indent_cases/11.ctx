@@ -1,4 +1,6 @@
-print(foo, (1, 2)|)
+if main == |'__name__':
+    pass
 ->
-print(foo, (1, 2)
-            |)
+if main ==  \
+        |'__name__':
+    pass

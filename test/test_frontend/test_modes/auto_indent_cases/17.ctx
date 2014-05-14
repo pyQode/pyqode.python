@@ -1,0 +1,6 @@
+print("Foo = %s %d %f" % (bar,
+                          15,| 16.2))
+->
+print("Foo = %s %d %f" % (bar,
+                          15,
+                          |16.2))

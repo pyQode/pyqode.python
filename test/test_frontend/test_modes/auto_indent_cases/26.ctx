@@ -1,0 +1,6 @@
+if True:
+    print(|4 + 5)
+->
+if True:
+    print(
+        |4 + 5)

@@ -1,0 +1,8 @@
+if True:
+    if (main == |'__name__'):
+        pass
+->
+if True:
+    if (main == 
+        |'__name__'):
+        pass

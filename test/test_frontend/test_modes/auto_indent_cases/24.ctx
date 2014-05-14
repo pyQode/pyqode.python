@@ -1,0 +1,8 @@
+elif(" a very very very very very long "
+        "yeah really long |string"):
+    pass
+->
+elif(" a very very very very very long "
+        "yeah really long "
+        "|string"):
+    pass
