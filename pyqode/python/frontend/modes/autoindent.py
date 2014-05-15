@@ -69,6 +69,8 @@ class PyAutoIndentMode(AutoIndentMode):
         for symbols in lists:
             for paren in symbols:
                 if self.is_paren_open(paren):
+                    if not col:
+                        return -1, -1
                     nb_open += 1
                 if paren.position >= col and self.is_paren_closed(paren):
                     nb_closed += 1
@@ -78,7 +80,7 @@ class PyAutoIndentMode(AutoIndentMode):
         nb_closed, nb_open = self.parens_count_for_block(col, tc.block())
         block = tc.block().next()
         while nb_open == nb_closed == 0 and block.isValid():
-            nb_closed, nb_open = self.parens_count_for_block(0, block)
+            nb_closed, nb_open = self.parens_count_for_block(nb_open, block)
             block = block.next()
         # if not, is there an non closed paren on the next lines.
         parens = {'(': 0, '{': 0, '[': 0}
@@ -110,7 +112,7 @@ class PyAutoIndentMode(AutoIndentMode):
                                     parens[matching[paren.character]] < 0):
                                 return True
                 block = operation(block)
-        elif nb_open:
+        elif nb_open > 0:
             return True
         return False
 
@@ -248,7 +250,7 @@ class PyAutoIndentMode(AutoIndentMode):
                 post = openingindent * " "
             else:
                 # align elems in list, tuple, dict
-                if re.match('.*=[\s][\W].*', openingline):
+                if re.match('.*=[\s][\W].*', openingline) and oL - cL == 1:
                     post = openingindent * " " + 4 * " "
                 # align elems in fct declaration (we align with first
                 # token)
@@ -299,8 +301,11 @@ class PyAutoIndentMode(AutoIndentMode):
                 post += '# '
             return pre, post
         elif self.between_paren(cursor, column):
-            pre, post = self.handle_indent_after_paren(column, line, fullline,
-                                                       cursor)
+            try:
+                pre, post = self.handle_indent_after_paren(column, line, fullline,
+                                                           cursor)
+            except TypeError:
+                return pre, post
         else:
             lastword = self.get_last_word(cursor)
             inStringDef, char = self.is_in_string_def(fullline, column)
