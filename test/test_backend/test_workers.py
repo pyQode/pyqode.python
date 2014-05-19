@@ -64,7 +64,7 @@ def test_defined_names():
         code = file.read()
     status, results = workers.defined_names({'code': code, 'path': filename})
     assert status is True
-    assert len(results) == 18
+    assert len(results) == 16
     definitions = []
     for i, definition in enumerate(results):
         d = workers.Definition()
@@ -85,7 +85,7 @@ def test_defined_names():
     code += "\ndef foo():\n    print('bar')"
     status, results = workers.defined_names({'code': code, 'path': filename})
     assert status is True
-    assert len(results) == 19
+    assert len(results) == 17
 
 
 def test_quick_doc():
