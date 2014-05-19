@@ -5,10 +5,13 @@
 
 include MANIFEST.in
 include setup.py
-include LICENSE.txt
-include AUTHORS.txt
-include README.rst
-include CONTRIBUTING.md
+include LICENSE
+include *.rst
+include runtests.py
+include pytest.ini
+include conftest.py
+include .coveragerc
+
 recursive-include doc *
 recursive-include pyqode/python/frontend/ui/ *
 recursive-include examples *
