@@ -287,7 +287,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
         Show about dialog
         """
-        QtGui.QMessageBox.about(
+        QtWidgets.QMessageBox.about(
             self, 'pyQode qidle',
             'This qidle application is an example of what you can do with '
             'pyqode.python.')
