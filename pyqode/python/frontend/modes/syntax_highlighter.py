@@ -54,7 +54,7 @@ DEFAULT_DARK_STYLES = {
 }
 
 
-class PyHighlighterMode(SyntaxHighlighter, Mode):
+class PyHighlighterMode(SyntaxHighlighter):
     """
     Syntax highlighter specifically crafted for the Python programming
     language.
@@ -151,9 +151,8 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
     punctuations = ["\:", "\,", "\."]
 
     def __init__(self, document=None):
-        SyntaxHighlighter.__init__(self, document)
+        super().__init__(document)
         self.__doc = document
-        Mode.__init__(self)
         self.tri_single = (QtCore.QRegExp("'''"), 1, 'docstring')
         self.tri_double = (QtCore.QRegExp('"""'), 2, 'docstring')
 
@@ -263,7 +262,7 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
 
     def rehighlight(self, *args, **kwargs):
         self._purge_mem_cache()
-        SyntaxHighlighter.rehighlight(self)
+        super().rehighlight()
 
     @memoized
     def format_from_word(self, word):
