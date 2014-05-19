@@ -5,7 +5,7 @@ This package contains python specific modes, panels and editor.
 import re
 import sys
 
-from PyQt4 import QtCore, QtGui
+from pyqode.qt import QtCore, QtGui
 
 from pyqode.core.frontend import CodeEdit
 from pyqode.core import frontend
@@ -96,7 +96,7 @@ class PyCodeEdit(CodeEdit):
                                frontend.Panel.Position.BOTTOM)
         frontend.install_mode(self, pymodes.CommentsMode())
 
-    @QtCore.pyqtSlot()
+    @QtCore.Slot()
     def use_dark_style(self, use=True):
         """
         Changes the editor style to a dark color scheme similar to pycharm's
@@ -106,7 +106,7 @@ class PyCodeEdit(CodeEdit):
             return
         set_dark_color_scheme(self)
 
-    @QtCore.pyqtSlot()
+    @QtCore.Slot()
     def use_white_style(self, use=True):
         """
         Changes the editor style to a dark color scheme similar to QtCreator's

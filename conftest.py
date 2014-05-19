@@ -10,9 +10,8 @@ This scripts configures the test suite. We do two things:
 import logging
 import os
 import sys
-from PyQt4.QtTest import QTest
 import pytest
-from PyQt4.QtGui import QApplication
+
 
 try:
     import faulthandler
@@ -48,6 +47,7 @@ logging.basicConfig(level=logging.INFO,
 # Setup QApplication
 # -------------------
 # 2. create qt application
+from pyqode.qt.QtWidgets import QApplication
 _app = QApplication(sys.argv)
 _widget = None
 
@@ -67,6 +67,7 @@ def editor(request):
     from pyqode.core import frontend, settings
     from pyqode.python.frontend import PyCodeEdit
     from pyqode.python.backend import server
+    from pyqode.qt.QtTest import QTest
 
     logging.info('################ setup session editor ################')
 

@@ -1,7 +1,7 @@
 """
 Test the autocomplete mode
 """
-from PyQt4.QtTest import QTest
+from pyqode.qt.QtTest import QTest
 from pyqode.core import frontend
 from pyqode.python.frontend import modes as pymodes
 from ...helpers import editor_open

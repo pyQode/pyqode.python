@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """ Contains the python autocomplete mode """
 import jedi
-from PyQt4 import QtGui
+from pyqode.qt import QtGui
 from pyqode.core import frontend
 from pyqode.core.frontend.modes import AutoCompleteMode
 

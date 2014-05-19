@@ -2,8 +2,8 @@
 Test the autocomplete mode
 """
 import logging
-from PyQt4 import QtCore, QtGui
-from PyQt4.QtTest import QTest
+from pyqode.qt import QtCore, QtWidgets
+from pyqode.qt.QtTest import QTest
 from pyqode.core import frontend
 from pyqode.python.frontend import modes as pymodes
 from ...helpers import editor_open
@@ -54,9 +54,9 @@ def test_goto_out_of_doc(editor):
 
 
 def accept_dlg():
-    widgets = QtGui.QApplication.instance().topLevelWidgets()
+    widgets = QtWidgets.QApplication.instance().topLevelWidgets()
     for w in widgets:
-        if isinstance(w, QtGui.QDialog):
+        if isinstance(w, QtWidgets.QDialog):
             QTest.keyPress(w, QtCore.Qt.Key_Tab)
             QTest.keyPress(w, QtCore.Qt.Key_Tab)
             QTest.keyPress(w, QtCore.Qt.Key_Return)

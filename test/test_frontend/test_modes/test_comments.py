@@ -2,8 +2,8 @@
 Test the autocomplete mode
 """
 import logging
-from PyQt4 import QtCore
-from PyQt4.QtTest import QTest
+from pyqode.qt import QtCore
+from pyqode.qt.QtTest import QTest
 from pyqode.core import frontend
 from pyqode.python.frontend import modes as pymodes
 from ...helpers import editor_open

@@ -3,7 +3,7 @@
 This module contains the python specific syntax highlighter
 """
 import sys
-from PyQt4 import QtGui, QtCore
+from pyqode.qt import QtGui, QtCore
 from pyqode.core import style as core_style
 from pyqode.python import style
 

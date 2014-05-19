@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """ Contains smart indent modes """
 import re
-from PyQt4.QtGui import QTextCursor
+from pyqode.qt.QtGui import QTextCursor
 from pyqode.core import frontend
 from pyqode.core.frontend.modes.autoindent import AutoIndentMode
 from pyqode.core.frontend.modes.matcher import SymbolMatcherMode
@@ -103,7 +103,7 @@ class PyAutoIndentMode(AutoIndentMode):
                             parens[paren.character] += 1
                             rparens[rmatching[paren.character]] -= 1
                             if (operation == self._prev_block and
-                                rparens[rmatching[paren.character]] < 0):
+                                    rparens[rmatching[paren.character]] < 0):
                                 return True
                         if self.is_paren_closed(paren):
                             rparens[paren.character] += 1
@@ -302,8 +302,8 @@ class PyAutoIndentMode(AutoIndentMode):
             return pre, post
         elif self.between_paren(cursor, column):
             try:
-                pre, post = self.handle_indent_after_paren(column, line, fullline,
-                                                           cursor)
+                pre, post = self.handle_indent_after_paren(
+                    column, line, fullline, cursor)
             except TypeError:
                 return pre, post
         else:
@@ -325,8 +325,8 @@ class PyAutoIndentMode(AutoIndentMode):
                     lastword.rstrip().endswith(':') and self.at_block_end(
                     cursor, fullline):
                 try:
-                    indent = self.get_indent_of_opening_paren(cursor, column) \
-                             + 4
+                    indent = (self.get_indent_of_opening_paren(cursor, column)
+                              + 4)
                     if indent:
                         post = indent * " "
                 except TypeError:

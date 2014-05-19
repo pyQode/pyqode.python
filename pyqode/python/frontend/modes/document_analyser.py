@@ -4,7 +4,7 @@ from pyqode.core import frontend
 from pyqode.core.frontend import Mode
 from pyqode.core.frontend.utils import DelayJobRunner
 from pyqode.python.backend.workers import Definition, defined_names
-from PyQt4 import QtCore
+from pyqode.qt import QtCore
 
 
 def _logger():
@@ -23,7 +23,7 @@ class DocumentAnalyserMode(Mode, QtCore.QObject):
     idle for more than 1 second (by default).
     """
     #: Signal emitted when the document structure changed.
-    document_changed = QtCore.pyqtSignal()
+    document_changed = QtCore.Signal()
 
     def __init__(self, delay=1000):
         Mode.__init__(self)
