@@ -19,7 +19,7 @@ def readme():
 
 
 # get requirements
-requirements = ['pyqode.core>=2.0.0-alpha1', 'jedi>=0.7',
+requirements = ['pyqode.core>=2.0.0-beta1', 'jedi>=0.8',
                 'pep8', 'frosted', 'docutils']
 
 
