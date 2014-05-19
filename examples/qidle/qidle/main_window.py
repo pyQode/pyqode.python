@@ -156,7 +156,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         accepted.
 
         """
-        filename = QtGui.QFileDialog.getOpenFileName(self, 'Open')
+        filename, filter = QtWidgets.QFileDialog.getOpenFileName(self, 'Open')
         if filename:
             self.open_file(filename)
         self.actionRun.setEnabled(True)
