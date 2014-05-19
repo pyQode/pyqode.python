@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """ Contains the python autocomplete mode """
 import jedi
-from pyqode.qt import QtGui
 from pyqode.core import frontend
 from pyqode.core.frontend.modes import AutoCompleteMode
 
@@ -18,12 +17,13 @@ class PyAutoCompleteMode(AutoCompleteMode):
 
     Method completion adds "self):" to method definition.
     """
+    # pylint: disable=no-init, missing-docstring
 
     def _format_func_params(self, prev_line, indent):
         parameters = ""
-        l = frontend.current_line_nbr(self.editor) - 1
-        c = len(prev_line) - len(prev_line.strip()) + len("def ") + 1
-        script = jedi.Script(self.editor.toPlainText(), l, c,
+        line_nbr = frontend.current_line_nbr(self.editor) - 1
+        col = len(prev_line) - len(prev_line.strip()) + len("def ") + 1
+        script = jedi.Script(self.editor.toPlainText(), line_nbr, col,
                              self.editor.file_path,
                              self.editor.file_encoding)
         definition = script.goto_definitions()[0]
@@ -40,22 +40,22 @@ class PyAutoCompleteMode(AutoCompleteMode):
             to_insert = '"\n{0}\n{0}"""'.format(indent * " ")
         else:
             to_insert = self._format_func_params(prev_line, indent)
-        tc = self.editor.textCursor()
-        p = tc.position()
-        tc.insertText(to_insert)
-        tc.setPosition(p)  # we are there ""|"
-        tc.movePosition(tc.Down)
-        self.editor.setTextCursor(tc)
+        cursor = self.editor.textCursor()
+        pos = cursor.position()
+        cursor.insertText(to_insert)
+        cursor.setPosition(pos)  # we are there ""|"
+        cursor.movePosition(cursor.Down)
+        self.editor.setTextCursor(cursor)
 
     def _in_method_call(self):
-        l = frontend.current_line_nbr(self.editor) - 1
+        line_nbr = frontend.current_line_nbr(self.editor) - 1
         expected_indent = frontend.line_indent(self.editor) - 4
-        while l >= 0:
-            text = frontend.line_text(self.editor, l)
+        while line_nbr >= 0:
+            text = frontend.line_text(self.editor, line_nbr)
             indent = len(text) - len(text.lstrip())
             if indent == expected_indent and 'class' in text:
                 return True
-            l -= 1
+            line_nbr -= 1
         return False
 
     def _handle_fct_def(self):
@@ -63,10 +63,10 @@ class PyAutoCompleteMode(AutoCompleteMode):
             txt = "self):"
         else:
             txt = "):"
-        tc = self.editor.textCursor()
-        tc.insertText(txt)
-        tc.movePosition(tc.Left, tc.MoveAnchor, 2)
-        self.editor.setTextCursor(tc)
+        cursor = self.editor.textCursor()
+        cursor.insertText(txt)
+        cursor.movePosition(cursor.Left, cursor.MoveAnchor, 2)
+        self.editor.setTextCursor(cursor)
 
     def _on_post_key_pressed(self, event):
         # if we are in disabled cc, use the parent implementation
@@ -84,9 +84,8 @@ class PyAutoCompleteMode(AutoCompleteMode):
                 '""' == frontend.current_line_text(self.editor).strip() and
                 (is_below_fct_or_class or column == 2)):
             self._insert_docstring(prev_line, is_below_fct_or_class)
-        elif (event.text() == "(" and
-                frontend.current_line_text(self.editor).lstrip().startswith(
-                    "def ")):
+        elif (event.text() == "(" and frontend.current_line_text(
+                self.editor).lstrip().startswith("def ")):
             self._handle_fct_def()
         else:
             super(PyAutoCompleteMode, self)._on_post_key_pressed(event)

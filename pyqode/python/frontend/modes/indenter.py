@@ -13,8 +13,12 @@ class PyIndenterMode(IndenterMode):
     indents/unindents the **whole** line. This replace the default IndenterMode
     which we found to be better suited for python code editing.
     """
+    # pylint: disable=no-init
 
     def indent(self):
+        """
+        Performs an indentation
+        """
         cursor = self.editor.textCursor()
         assert isinstance(cursor, QtGui.QTextCursor)
         if not cursor.hasSelection():
@@ -33,6 +37,9 @@ class PyIndenterMode(IndenterMode):
             self.editor.setTextCursor(cursor)
 
     def unindent(self):
+        """
+        Performs an un-indentation
+        """
         cursor = self.editor.textCursor()
         assert isinstance(cursor, QtGui.QTextCursor)
         if not cursor.hasSelection():

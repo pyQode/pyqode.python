@@ -22,7 +22,10 @@ import argparse
 import sys
 
 
-if __name__ == '__main__':
+def main():
+    """
+    Server process' entry point
+    """
     # setup argument parser and parse command line args
     parser = argparse.ArgumentParser()
     parser.add_argument("port", help="the local tcp port to use to run "
@@ -46,3 +49,6 @@ if __name__ == '__main__':
 
     # starts the server
     backend.serve_forever(args)
+
+if __name__ == '__main__':
+    main()

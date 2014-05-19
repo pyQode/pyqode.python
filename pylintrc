@@ -1,0 +1,25 @@
+[MASTER]
+ignore=.git, ui, doc, test, examples
+
+[FORMAT]
+# Maximum number of characters on a single line.
+max-line-length=79
+# Maximum number of lines in a module
+max-module-lines=2000
+
+[MESSAGES CONTROL]
+disable=no-name-in-module,import-error,no-member
+
+[REPORTS]
+disable-report=no-name-in-module,import-error,no-member
+
+[DESIGN]
+max-args=15
+max-locals=30
+max-returns=15
+max-branches=50
+max-statements=60
+max-parents=7
+max-attributes=20
+min-public-methods=0
+max-public-methods=20

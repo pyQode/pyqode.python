@@ -2,9 +2,6 @@
 """
 This package contains python specific modes, panels and editor.
 """
-import re
-import sys
-
 from pyqode.qt import QtCore, QtGui
 
 from pyqode.core.frontend import CodeEdit
@@ -18,6 +15,7 @@ from pyqode.python.frontend.modes.syntax_highlighter import DEFAULT_DARK_STYLES
 from pyqode.python.frontend.modes.syntax_highlighter import \
     DEFAULT_LIGHT_STYLES
 from pyqode.python.frontend import panels as pypanels
+# pylint: disable=unused-import
 from pyqode.python.frontend.ui import pyqode_python_icons_rc
 
 
@@ -117,6 +115,11 @@ class PyCodeEdit(CodeEdit):
         set_white_color_scheme(self)
 
     def setPlainText(self, txt, mimetype='text/x-python', encoding='utf-8'):
+        """
+        Extends QCodeEdit.setPlainText to allow user to setPlainText without
+        mimetype (since the python syntax highlighter does not use it).
+        """
+        # pylint: disable=invalid-name, no-self-use
         super().setPlainText(txt, mimetype, encoding)
 
 
@@ -133,8 +136,8 @@ def set_dark_color_scheme(code_edit):
     :param code_edit: CodeEdit instance
     :type code_edit: pyqode.core.frontend.CodeEdit
     """
-    for k, v in DEFAULT_DARK_STYLES.items():
-        style.__dict__['py_' + k] = v
+    for key, val in DEFAULT_DARK_STYLES.items():
+        style.__dict__['py_' + key] = val
     core_style.background = QtGui.QColor("#252525")
     core_style.foreground = QtGui.QColor("#A9B7C6")
     core_style.caretLineBackground = QtGui.QColor("#2d2d2d")
@@ -157,8 +160,8 @@ def set_white_color_scheme(code_edit):
     :param code_edit: CodeEdit instance
     :type code_edit: pyqode.core.frontend.CodeEdit
     """
-    for k, v in DEFAULT_LIGHT_STYLES.items():
-        style.__dict__['py_' + k] = v
+    for key, value in DEFAULT_LIGHT_STYLES.items():
+        style.__dict__['py_' + key] = value
     core_style.background = QtGui.QColor("#FFFFFF")
     core_style.foreground = QtGui.QColor("#000000")
     core_style.caretLineBackground = QtGui.QColor("#E4EDF8")

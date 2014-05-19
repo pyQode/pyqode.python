@@ -128,10 +128,8 @@ class PyAutoIndentMode(AutoIndentMode):
         for start, end in usd.cc_disabled_zones:
             if start < column < end:
                 string = full_line[start:end]
-                if not ((string.startswith("'") or
-                        string.startswith('"')) and
-                        (string.endswith("'") or
-                         string.endswith('"'))):
+                if not ((string.startswith("'") or string.startswith('"')) and
+                        (string.endswith("'") or string.endswith('"'))):
                     use_parent_impl = True
                     break
         return use_parent_impl
@@ -322,8 +320,8 @@ class PyAutoIndentMode(AutoIndentMode):
                     post += 4 * " "
                 post += char
             elif fullline.rstrip().endswith(":") and \
-                    lastword.rstrip().endswith(':') and self.at_block_end(
-                    cursor, fullline):
+                    lastword.rstrip().endswith(':') and \
+                    self.at_block_end(cursor, fullline):
                 try:
                     indent = (self.get_indent_of_opening_paren(cursor, column)
                               + 4)
@@ -357,8 +355,8 @@ class PyAutoIndentMode(AutoIndentMode):
                 if indent:
                     post = indent * " "
             elif ("\\" not in fullline and "#" not in fullline and
-                    fullline.strip() and not fullline.endswith(')') and
-                    not self.at_block_end(cursor, fullline)):
+                  fullline.strip() and not fullline.endswith(')') and
+                  not self.at_block_end(cursor, fullline)):
                 if lastword and lastword[-1] != " ":
                     pre += " \\"
                 else:

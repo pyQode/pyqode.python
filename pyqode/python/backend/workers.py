@@ -10,9 +10,13 @@ import pep8
 import jedi
 from frosted import checker
 from pyqode.python.backend.pep8utils import CustomChecker
+# pylint: disable=C0103, global-variable-not-assigned
 
 
 def _logger():
+    """
+     Returns the module's logger
+    """
     return logging.getLogger(__name__)
 
 
@@ -38,16 +42,19 @@ def calltips(request_data):
     # use jedi to get call signatures
     script = jedi.Script(code, line, column, path, encoding)
     signatures = script.call_signatures()
-    for c in signatures:
-        results = (str(c.module_name), str(c.call_name),
-                   [p.description for p in c.params], c.index,
-                   c.bracket_start, column)
+    for sig in signatures:
+        results = (str(sig.module_name), str(sig.name),
+                   [p.description for p in sig.params], sig.index,
+                   sig.bracket_start, column)
         # todo: add support for multiple signatures
         return True, results
     return False, []
 
 
 def goto_assignments(request_data):
+    """
+    Go to assignements worker.
+    """
     code = request_data['code']
     line = request_data['line']
     column = request_data['column']
@@ -78,8 +85,6 @@ class Definition(object):
         #: Icon resource name associated with the definition, can be None
         self.icon = icon
         #: Definition name (name of the class, method, variable)
-        if hasattr(name, "string"):
-            name = name.string
         self.name = name
         #: The line of the definition in the current editor text
         self.line = line
@@ -140,6 +145,9 @@ class Definition(object):
 
 
 def defined_names(request_data):
+    """
+    Returns the list of defined names for the document.
+    """
     def _compare_definitions(a, b):
         """
         Compare two definition lists.
@@ -197,6 +205,9 @@ def defined_names(request_data):
 
 
 def quick_doc(request_data):
+    """
+    Worker that returns the documentation of the symbol under cursor.
+    """
     code = request_data['code']
     line = request_data['line']
     column = request_data['column']
@@ -228,6 +239,7 @@ def run_pep8(request_data):
                                 checker_class=CustomChecker)
     results = pep8style.input_file(path, lines=code.splitlines(True))
     messages = []
+    # pylint: disable=unused-variable
     for line_number, offset, code, text, doc in results:
         messages.append((text, WARNING, line_number))
     return True, messages
@@ -252,17 +264,19 @@ def run_frosted(request_data):
                        _ast.PyCF_ONLY_AST)
     except SyntaxError as value:
         msg = value.args[0]
+        # pylint: disable=unused-variable
         (lineno, offset, text) = value.lineno, value.offset, value.text
         # If there's an encoding problem with the file, the text is None
         if text is None:
             # Avoid using msg, since for the only known case, it
             # contains a bogus message that claims the encoding the
             # file declared was unknown.s
-            _logger().warning("%s: problem decoding source" % path)
+            _logger().warning("%s: problem decoding source", path)
         else:
             ret_val.append((msg, ERROR, lineno))
     else:
         # Okay, it's syntactically valid.  Now check it.
+        # pylint: disable=no-value-for-parameter
         w = checker.Checker(tree, os.path.split(path)[1])
         w.messages.sort(key=lambda m: m.lineno)
         for warning in w.messages:
@@ -274,7 +288,7 @@ def run_frosted(request_data):
     return True, ret_val
 
 
-def icon_from_typename(name, type):
+def icon_from_typename(name, icon_type):
     """
     Returns the icon resource filename that corresponds to the given typename.
 
@@ -300,22 +314,22 @@ def icon_from_typename(name, type):
              'FUNCTION-PRIV': ':/pyqode_python_icons/rc/func_priv.png',
              'FUNCTION-PROT': ':/pyqode_python_icons/rc/func_prot.png'}
     ret_val = None
-    type = type.upper()
+    icon_type = icon_type.upper()
     # jedi 0.8 introduced NamedPart class, which have a string instead of being
     # one
     if hasattr(name, "string"):
         name = name.string
-    if type == "FORFLOW" or type == "STATEMENT":
-        type = "PARAM"
-    if type == "PARAM" or type == "FUNCTION":
+    if icon_type == "FORFLOW" or icon_type == "STATEMENT":
+        icon_type = "PARAM"
+    if icon_type == "PARAM" or icon_type == "FUNCTION":
         if name.startswith("__"):
-            type += "-PRIV"
+            icon_type += "-PRIV"
         elif name.startswith("_"):
-            type += "-PROT"
-    if type in ICONS:
-        ret_val = ICONS[type]
-    elif type:
-        _logger().warning("Unimplemented completion type: %s" % type)
+            icon_type += "-PROT"
+    if icon_type in ICONS:
+        ret_val = ICONS[icon_type]
+    elif icon_type:
+        _logger().warning("Unimplemented completion icon_type: %s", icon_type)
     return ret_val
 
 
@@ -325,8 +339,10 @@ class JediCompletionProvider:
 
     .. _`jedi`: https://github.com/davidhalter/jedi
     """
+    # pylint: disable=no-init, unused-argument
 
-    def complete(self, code, line, column, path, encoding, prefix):
+    @staticmethod
+    def complete(code, line, column, path, encoding, prefix):
         """
         Completes python code using `jedi`_.
 

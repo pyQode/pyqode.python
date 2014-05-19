@@ -30,8 +30,8 @@ def open_file(editor, path, replace_tabs_by_spaces=True):
         """
         import ast
 
-        with open(path, 'rb') as f:
-            source = f.read()
+        with open(path, 'rb') as file:
+            source = file.read()
             # take care of line encodings (not in jedi)
             source = source.replace(b'\r', b'')
             source_str = str(source).replace('\\n', '\n')

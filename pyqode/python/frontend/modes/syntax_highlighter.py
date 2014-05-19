@@ -200,21 +200,21 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
 
     def _init_style(self):
         self.styles = {
-            'keyword': style.py_keyword,
-            'builtins': style.py_builtins,
-            'operator': style.py_operator,
-            # 'punctuation': style.py_punctuation,
-            'decorator': style.py_decorator,
-            # 'brace': style.py_brace,
-            'class': style.py_class,
-            'function': style.py_function,
-            'string': style.py_string,
-            'docstring': style.py_docstring,
-            'comment': style.py_comment,
-            'self': style.py_self,
-            'numbers': style.py_numbers,
-            'predefined': style.py_predefined,
-            'docstringTag': style.py_docstring_tag,
+            'keyword': style.keyword,
+            'builtins': style.builtins,
+            'operator': style.operator,
+            # 'punctuation': style.punctuation,
+            'decorator': style.decorator,
+            # 'brace': style.brace,
+            'class': style.klass,
+            'function': style.function,
+            'string': style.string,
+            'docstring': style.docstring,
+            'comment': style.comment,
+            'self': style.self,
+            'numbers': style.numbers,
+            'predefined': style.predefined,
+            'docstringTag': style.docstring_tag,
         }
 
     def refresh_style(self):
