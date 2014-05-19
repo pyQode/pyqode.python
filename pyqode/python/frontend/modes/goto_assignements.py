@@ -143,9 +143,9 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
         return checked
 
     def _on_results_available(self, status, definitions):
+        self._pending = False
         if status:
             self.editor.set_mouse_cursor(QtCore.Qt.IBeamCursor)
-            self._pending = False
             definitions = [Assignment(path, line, col, full_name)
                            for path, line, col, full_name in definitions]
             definitions = self._unique(definitions)
@@ -158,7 +158,7 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
                 _logger().debug(
                     "More than 1 assignments in different modules, user "
                     "need to make a choice: %s" % definitions)
-                def_str, result = QtGui.QInputDialog.getItem(
+                def_str, result = QtWidgets.QInputDialog.getItem(
                     self.editor, "Choose a definition",
                     "Choose the definition you want to go to:",
                     [str(d) for d in definitions])
