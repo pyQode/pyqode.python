@@ -49,7 +49,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.actionClose_all_tabs.triggered.connect(self.tabWidget.close_all)
         self.actionQuit.triggered.connect(
             QtWidgets.QApplication.instance().quit)
-        self.tabWidget.dirty_changed.connect(self.on_dirty_changed)
         self.tabWidget.currentChanged.connect(self.on_current_tab_changed)
         self.actionAbout.triggered.connect(self.on_about)
         self.actionRun.triggered.connect(self.on_run)
@@ -129,11 +128,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             index = self.tabWidget.index_from_filename(path)
             if index == -1:
                 editor = PyCodeEdit(self)
+                editor.file_path = path
                 self.setup_editor(editor)
-                open_file(editor, path)
                 self.tabWidget.add_code_edit(editor)
                 self.recent_files_manager.open_file(path)
                 self.menu_recents.update_actions()
+                open_file(editor, path)
             else:
                 self.tabWidget.setCurrentIndex(index)
         return editor
@@ -177,21 +177,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.menu_recents.update_actions()
             self.actionRun.setEnabled(True)
             self.actionConfigure_run.setEnabled(True)
-
-    @QtCore.Slot(bool)
-    def on_dirty_changed(self, dirty):
-        """
-        Enable/Disable save action depending on the dirty flag of the
-        current editor tab.
-
-        :param dirty: Dirty flag
-        """
-        try:
-            path = self.tabWidget.currentWidget().file_path
-        except (AttributeError, TypeError):
-            self.actionSave.setDisabled(True)
-        else:
-            self.actionSave.setEnabled(dirty and path is not None)
 
     def setup_mnu_edit(self, editor):
         """
@@ -241,6 +226,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.menuEdit.setEnabled(editor is not None)
         self.menuModes.setEnabled(editor is not None)
         self.menuPanels.setEnabled(editor is not None)
+        self.actionSave.setEnabled(editor is not None)
         self.actionSave_as.setEnabled(editor is not None)
         self.actionClose_tab.setEnabled(editor is not None)
         self.actionClose_all_tabs.setEnabled(editor is not None)
@@ -258,7 +244,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.lbl_filename.setText(editor.file_path)
             self.lbl_interpreter.setText(Settings().interpreter)
         else:
-            self.actionSave.setDisabled(True)
             self.lbl_encoding.clear()
             self.lbl_filename.clear()
             self.lbl_cursor_pos.clear()
@@ -338,9 +323,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def on_configure_run(self):
         path = self.tabWidget.currentWidget().file_path
         args = Settings().get_run_config_for_file(path)
-        text, status = QtGui.QInputDialog.getText(
+        text, status = QtWidgets.QInputDialog.getText(
             self, 'Run configuration', 'Script arguments:',
-            QtGui.QLineEdit.Normal, ' '.join(args))
+            QtWidgets.QLineEdit.Normal, ' '.join(args))
         if status:
             args = text.split(' ')
             Settings().set_run_config_for_file(path, args)
