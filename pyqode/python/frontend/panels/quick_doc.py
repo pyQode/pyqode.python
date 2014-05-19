@@ -3,7 +3,7 @@
 Contains the quick documentation panel
 """
 from docutils.core import publish_parts
-from PyQt4 import QtGui
+from pyqode.qt import QtGui, QtWidgets
 from pyqode.core import frontend
 from pyqode.core.frontend import Panel
 from pyqode.core.frontend.utils import drift_color
@@ -56,19 +56,19 @@ class QuickDocPanel(Panel):
     def __init__(self):
         super(QuickDocPanel, self).__init__()
         # layouts
-        layout = QtGui.QHBoxLayout()
+        layout = QtWidgets.QHBoxLayout()
         self.setLayout(layout)
-        child_layout = QtGui.QVBoxLayout()
+        child_layout = QtWidgets.QVBoxLayout()
 
         # A QTextEdit to show the doc
-        self.text_edit = QtGui.QTextEdit()
+        self.text_edit = QtWidgets.QTextEdit()
         self.text_edit.setReadOnly(True)
         self.text_edit.setAcceptRichText(True)
         layout.addWidget(self.text_edit)
 
         # A QPushButton (inside a child layout for a better alignment)
         # to close the panel
-        self.bt_close = QtGui.QPushButton()
+        self.bt_close = QtWidgets.QPushButton()
         self.bt_close.setIcon(QtGui.QIcon.fromTheme(
             "application-exit", QtGui.QIcon(":/pyqode-icons/rc/close.png")))
         self.bt_close.clicked.connect(self.hide)
@@ -77,7 +77,7 @@ class QuickDocPanel(Panel):
         layout.addLayout(child_layout)
 
         # Action
-        self.action_quick_doc = QtGui.QAction("Show documentation", self)
+        self.action_quick_doc = QtWidgets.QAction("Show documentation", self)
         self.action_quick_doc.setShortcut("Alt+Q")
 
         self.action_quick_doc.triggered.connect(

@@ -2,7 +2,7 @@
 """
 Contains the python indenter.
 """
-from PyQt4 import QtGui
+from pyqode.qt import QtGui
 from pyqode.core.frontend.modes import IndenterMode
 from pyqode.core import settings
 

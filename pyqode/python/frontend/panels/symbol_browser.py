@@ -5,7 +5,7 @@ SymbolBrowserPanel
 import logging
 from pyqode.core.frontend import Panel
 from pyqode.core import frontend
-from PyQt4 import QtGui, QtCore
+from pyqode.qt import QtGui, QtCore, QtWidgets
 
 
 def _logger():
@@ -24,9 +24,9 @@ class SymbolBrowserPanel(Panel):
         super(SymbolBrowserPanel, self).__init__()
         self._prevLine = -1
         self._definitions = []
-        layout = QtGui.QHBoxLayout()
+        layout = QtWidgets.QHBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
-        self.combo_box = QtGui.QComboBox()
+        self.combo_box = QtWidgets.QComboBox()
         self.combo_box.setSizeAdjustPolicy(
             self.combo_box.AdjustToMinimumContentsLength)
         self.combo_box.activated.connect(self._on_definition_activated)
@@ -72,7 +72,7 @@ class SymbolBrowserPanel(Panel):
         self._definitions = definitions
         self._sync_combo_box(frontend.current_line_nbr(self.editor))
 
-    @QtCore.pyqtSlot(int)
+    @QtCore.Slot(int)
     def _on_definition_activated(self, index):
         definition = self.combo_box.itemData(index)
         if definition:

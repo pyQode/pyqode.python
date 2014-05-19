@@ -3,8 +3,8 @@ This module contains the main window implementation.
 """
 import os
 import platform
-from PyQt4 import QtCore
-from PyQt4 import QtGui
+from pyqode.qt import QtCore
+from pyqode.qt import QtWidgets
 import sys
 from pyqode.core import frontend
 from pyqode.core.frontend import widgets
@@ -16,7 +16,7 @@ from .settings import Settings
 from .ui.main_window_ui import Ui_MainWindow
 
 
-class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
+class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self):
         super().__init__()
         # Load our UI (made in Qt Designer)
@@ -28,10 +28,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.on_current_tab_changed()
 
     def setup_status_bar_widgets(self):
-        self.lbl_interpreter = QtGui.QLabel()
-        self.lbl_filename = QtGui.QLabel()
-        self.lbl_encoding = QtGui.QLabel()
-        self.lbl_cursor_pos = QtGui.QLabel()
+        self.lbl_interpreter = QtWidgets.QLabel()
+        self.lbl_filename = QtWidgets.QLabel()
+        self.lbl_encoding = QtWidgets.QLabel()
+        self.lbl_cursor_pos = QtWidgets.QLabel()
         self.statusbar.addPermanentWidget(self.lbl_filename, 200)
         self.statusbar.addPermanentWidget(self.lbl_interpreter, 100)
         self.statusbar.addPermanentWidget(self.lbl_encoding, 20)
@@ -47,7 +47,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.actionClose_other_tabs.triggered.connect(
             self.tabWidget.close_others)
         self.actionClose_all_tabs.triggered.connect(self.tabWidget.close_all)
-        self.actionQuit.triggered.connect(QtGui.QApplication.instance().quit)
+        self.actionQuit.triggered.connect(
+            QtWidgets.QApplication.instance().quit)
         self.tabWidget.dirty_changed.connect(self.on_dirty_changed)
         self.tabWidget.currentChanged.connect(self.on_current_tab_changed)
         self.actionAbout.triggered.connect(self.on_about)
@@ -68,11 +69,11 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.menuFile.insertSeparator(self.actionSave)
 
     def setup_menu_interpreters(self):
-        mnu = QtGui.QMenu('Select Python interpreter', self.menuEdit)
-        group = QtGui.QActionGroup(self)
+        mnu = QtWidgets.QMenu('Select Python interpreter', self.menuEdit)
+        group = QtWidgets.QActionGroup(self)
         group.triggered.connect(self.on_interpreter_changed)
         for interpreter in get_interpreters():
-            a = QtGui.QAction(mnu)
+            a = QtWidgets.QAction(mnu)
             a.setText(interpreter)
             a.setCheckable(True)
             if interpreter == Settings().interpreter:
@@ -113,7 +114,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         assert isinstance(m, modes.GoToAssignmentsMode)
         m.out_of_doc.connect(self.on_goto_out_of_doc)
 
-    @QtCore.pyqtSlot(str)
+    @QtCore.Slot(str)
     def open_file(self, path):
         """
         Creates a new GenericCodeEdit, opens the requested file and adds it
@@ -137,7 +138,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 self.tabWidget.setCurrentIndex(index)
         return editor
 
-    @QtCore.pyqtSlot()
+    @QtCore.Slot()
     def on_new(self):
         """
         Add a new empty code editor to the tab widget
@@ -148,7 +149,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.actionRun.setDisabled(True)
         self.actionConfigure_run.setDisabled(True)
 
-    @QtCore.pyqtSlot()
+    @QtCore.Slot()
     def on_open(self):
         """
         Shows an open file dialog and open the file if the dialog was
@@ -161,14 +162,15 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.actionRun.setEnabled(True)
         self.actionConfigure_run.setEnabled(True)
 
-    @QtCore.pyqtSlot()
+    @QtCore.Slot()
     def on_save_as(self):
         """
         Save the current editor document as.
         """
         path = self.tabWidget.currentWidget().file_path
         path = os.path.dirname(path) if path else ''
-        filename = QtGui.QFileDialog.getSaveFileName(self, 'Save', path)
+        filename, filter = QtWidgets.QFileDialog.getSaveFileName(self,
+                                                                 'Save', path)
         if filename:
             self.tabWidget.save_current(filename)
             self.recent_files_manager.open_file(filename)
@@ -176,7 +178,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             self.actionRun.setEnabled(True)
             self.actionConfigure_run.setEnabled(True)
 
-    @QtCore.pyqtSlot(bool)
+    @QtCore.Slot(bool)
     def on_dirty_changed(self, dirty):
         """
         Enable/Disable save action depending on the dirty flag of the
@@ -204,7 +206,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
     def setup_mnu_modes(self, editor):
         for k, v in sorted(frontend.get_modes(editor).items()):
-            a = QtGui.QAction(self.menuModes)
+            a = QtWidgets.QAction(self.menuModes)
             a.setText(k)
             a.setCheckable(True)
             a.setChecked(v.enabled)
@@ -219,7 +221,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         """
         for zones, dic in sorted(frontend.get_panels(editor).items()):
             for k, v in dic.items():
-                a = QtGui.QAction(self.menuModes)
+                a = QtWidgets.QAction(self.menuModes)
                 a.setText(k)
                 a.setCheckable(True)
                 a.setChecked(v.enabled)
@@ -227,7 +229,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 a.panel = v
                 self.menuPanels.addAction(a)
 
-    @QtCore.pyqtSlot()
+    @QtCore.Slot()
     def on_current_tab_changed(self):
         """
         Update action states when the current tab changed.
@@ -261,7 +263,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             self.lbl_filename.clear()
             self.lbl_cursor_pos.clear()
 
-    @QtCore.pyqtSlot(QtGui.QAction)
+    @QtCore.Slot(QtWidgets.QAction)
     def on_interpreter_changed(self, action):
         """
         Change the selected interpreter and restart server of opened editor to
@@ -343,7 +345,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             args = text.split(' ')
             Settings().set_run_config_for_file(path, args)
 
-    @QtCore.pyqtSlot()
+    @QtCore.Slot()
     def on_cursor_pos_changed(self):
         if self.tabWidget.currentWidget():
             self.lbl_cursor_pos.setText('%d:%d' % frontend.cursor_position(

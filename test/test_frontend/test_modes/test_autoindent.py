@@ -21,9 +21,9 @@ E.g.::
 import glob
 import logging
 import os
-from PyQt4 import QtCore
-from PyQt4.QtTest import QTest
-from PyQt4 import QtGui
+from pyqode.qt import QtCore, QtWidgets
+from pyqode.qt.QtTest import QTest
+from pyqode.qt import QtGui
 import pytest
 from test.helpers import cwd_at
 from pyqode.core import frontend
@@ -101,7 +101,7 @@ def collect_cases():
 
 @pytest.mark.parametrize('test_case', collect_cases())
 def test_auto_indent(editor, test_case):
-    QtGui.QApplication.setActiveWindow(editor)
+    QtWidgets.QApplication.setActiveWindow(editor)
     editor.setFocus(True)
     test_case.run(editor)
 

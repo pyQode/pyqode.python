@@ -4,7 +4,7 @@ Contains the go to assignments mode.
 """
 import logging
 import os
-from PyQt4 import QtCore, QtGui
+from pyqode.qt import QtCore, QtGui, QtWidgets
 from pyqode.core import frontend
 from pyqode.core.frontend import Mode
 from pyqode.core.frontend.modes import WordClickMode
@@ -55,16 +55,16 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
     """
     #: Signal emitted when the definition cannot be reached in the current
     #: document
-    out_of_doc = QtCore.pyqtSignal(Assignment)
+    out_of_doc = QtCore.Signal(Assignment)
 
     #: Signal emitted when no results could be found.
-    no_results_found = QtCore.pyqtSignal()
+    no_results_found = QtCore.Signal()
 
     def __init__(self):
         Mode.__init__(self)
         QtCore.QObject.__init__(self)
         self._pending = False
-        self.action_goto = QtGui.QAction("Go to assignments", self)
+        self.action_goto = QtWidgets.QAction("Go to assignments", self)
         self.action_goto.setShortcut("F2")
         self.action_goto.triggered.connect(self.request_goto)
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """ Contains smart indent modes """
 import re
-from PyQt4.QtGui import QTextCursor
+from pyqode.qt.QtGui import QTextCursor
 from pyqode.core import frontend
 from pyqode.core.frontend.modes.autoindent import AutoIndentMode
 from pyqode.core.frontend.modes.matcher import SymbolMatcherMode

@@ -8,7 +8,7 @@ from pyqode.core import settings
 from pyqode.core import frontend
 from pyqode.core.frontend.utils import DelayJobRunner
 from pyqode.python.backend import workers
-from PyQt4 import QtCore, QtGui
+from pyqode.qt import QtCore, QtWidgets
 
 
 def _logger():
@@ -20,14 +20,14 @@ class CalltipsMode(frontend.Mode, QtCore.QObject):
     This mode shows function/method call tips in a QToolTip using
     :meth:`jedi.Script.call_signatures`.
     """
-    tooltipDisplayRequested = QtCore.pyqtSignal(object, int)
-    tooltipHideRequested = QtCore.pyqtSignal()
+    tooltipDisplayRequested = QtCore.Signal(object, int)
+    tooltipHideRequested = QtCore.Signal()
 
     def __init__(self):
         frontend.Mode.__init__(self)
         QtCore.QObject.__init__(self)
         self.tooltipDisplayRequested.connect(self._display_tooltip)
-        self.tooltipHideRequested.connect(QtGui.QToolTip.hideText)
+        self.tooltipHideRequested.connect(QtWidgets.QToolTip.hideText)
         self.__requestCnt = 0
 
     def _on_state_changed(self, state):
@@ -111,4 +111,4 @@ class CalltipsMode(frontend.Mode, QtCore.QObject):
             self.editor.cursorRect().y() + 35)
         position = self.editor.mapToGlobal(position)
         # show tooltip
-        QtGui.QToolTip.showText(position, calltip, self.editor)
+        QtWidgets.QToolTip.showText(position, calltip, self.editor)
