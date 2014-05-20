@@ -172,17 +172,21 @@ def defined_names(request_data):
         definition = Definition(d.name, icon_from_typename(d.name, d.type),
                                 d_line, d_column, d.full_name)
         # check for methods in class
-        if d.type == "class":
-            sub_definitions = d.defined_names()
-            for sub_d in sub_definitions:
-                icon = icon_from_typename(sub_d.name, sub_d.type)
-                line, column = sub_d.start_pos
-                if sub_d.full_name == "":
-                    sub_d.full_name = sub_d.name
-                sub_definition = Definition(sub_d.name, icon, line, column,
-                                            sub_d.full_name)
-                definition.add_child(sub_definition)
-        ret_val.append(definition)
+        if d.type == "class" or d.type == 'function':
+            try:
+                sub_definitions = d.defined_names()
+                for sub_d in sub_definitions:
+                    icon = icon_from_typename(sub_d.name, sub_d.type)
+                    line, column = sub_d.start_pos
+                    if sub_d.full_name == "":
+                        sub_d.full_name = sub_d.name
+                    sub_definition = Definition(sub_d.name, icon, line, column,
+                                                sub_d.full_name)
+                    definition.add_child(sub_definition)
+            except AttributeError:
+                pass
+        if d.type != 'import':
+            ret_val.append(definition)
     try:
         old_definitions = _old_definitions["%s_definitions" % path]
     except KeyError:
