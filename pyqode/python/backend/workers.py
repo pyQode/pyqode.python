@@ -3,13 +3,9 @@
 """
 Contains the worker classes/functions executed on the server side.
 """
-import _ast
 import logging
 import os
-import pep8
 import jedi
-from frosted import checker
-from pyqode.python.backend.pep8utils import CustomChecker
 # pylint: disable=C0103, global-variable-not-assigned
 
 
@@ -230,6 +226,8 @@ def run_pep8(request_data):
 
     :returns a list of tuples (msg, msg_type, line_number)
     """
+    import pep8
+    from pyqode.python.backend.pep8utils import CustomChecker
     WARNING = 1
     code = request_data['code']
     path = request_data['path']
@@ -250,6 +248,8 @@ def run_frosted(request_data):
     Worker that run a frosted (the fork of pyflakes) code analysis on the
     current editor text.
     """
+    from frosted import checker
+    import _ast
     WARNING = 1
     ERROR = 2
     ret_val = []
