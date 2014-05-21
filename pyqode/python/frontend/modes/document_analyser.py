@@ -62,10 +62,12 @@ class DocumentAnalyserMode(Mode, QtCore.QObject):
             self.document_changed.emit()
 
     def _on_results_available(self, status, results):
-        results = [Definition().from_dict(ddict) for ddict in results]
+        if results:
+            results = [Definition().from_dict(ddict) for ddict in results]
         self.results = results
-        _logger().debug("Document structure changed")
-        self.document_changed.emit()
+        if self.results is not None:
+            _logger().debug("Document structure changed")
+            self.document_changed.emit()
 
     @property
     def flattened_results(self):
