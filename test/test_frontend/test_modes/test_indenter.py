@@ -1,5 +1,4 @@
 from pyqode.core import frontend
-from pyqode.core import frontends
 from pyqode.python.frontend import modes
 
 
