@@ -8,12 +8,7 @@ from pyqode.core.frontend import CodeEdit
 from pyqode.core import frontend
 from pyqode.core.frontend import modes
 from pyqode.core.frontend import panels
-from pyqode.core import style as core_style
-from pyqode.python import style
 from pyqode.python.frontend import modes as pymodes
-from pyqode.python.frontend.modes.syntax_highlighter import DEFAULT_DARK_STYLES
-from pyqode.python.frontend.modes.syntax_highlighter import \
-    DEFAULT_LIGHT_STYLES
 from pyqode.python.frontend import panels as pypanels
 # pylint: disable=unused-import
 from pyqode.python.frontend.ui import pyqode_python_icons_rc
@@ -136,15 +131,18 @@ def set_dark_color_scheme(code_edit):
     :param code_edit: CodeEdit instance
     :type code_edit: pyqode.core.frontend.CodeEdit
     """
-    for key, val in DEFAULT_DARK_STYLES.items():
-        style.__dict__[key] = val
-    core_style.background = QtGui.QColor("#252525")
-    core_style.foreground = QtGui.QColor("#A9B7C6")
-    core_style.caretLineBackground = QtGui.QColor("#2d2d2d")
-    core_style.whiteSpaceForeground = QtGui.QColor('#404040')
-    core_style.matchedBraceBackground = None
-    core_style.matchedBraceForeground = QtGui.QColor("#FF8647")
-    code_edit.refresh_style()
+    highlighter = frontend.get_mode(code_edit, pymodes.PyHighlighterMode)
+    highlighter.styles = highlighter.DEFAULT_DARK_STYLES
+    code_edit.background = QtGui.QColor("#252525")
+    code_edit.foreground = QtGui.QColor("#A9B7C6")
+    code_edit.whitespaces_foreground = QtGui.QColor('#404040')
+    line_highlighter = frontend.get_mode(code_edit,
+                                         modes.CaretLineHighlighterMode)
+    line_highlighter.refresh()
+    symbol_matcher = frontend.get_mode(code_edit, modes.SymbolMatcherMode)
+    assert isinstance(symbol_matcher, modes.SymbolMatcherMode)
+    symbol_matcher.match_background = QtGui.QColor("transparent")
+    symbol_matcher.match_foreground = QtGui.QColor("#FF8647")
 
 
 def set_white_color_scheme(code_edit):
@@ -160,12 +158,15 @@ def set_white_color_scheme(code_edit):
     :param code_edit: CodeEdit instance
     :type code_edit: pyqode.core.frontend.CodeEdit
     """
-    for key, value in DEFAULT_LIGHT_STYLES.items():
-        style.__dict__[key] = value
-    core_style.background = QtGui.QColor("#FFFFFF")
-    core_style.foreground = QtGui.QColor("#000000")
-    core_style.caretLineBackground = QtGui.QColor("#E4EDF8")
-    core_style.whiteSpaceForeground = QtGui.QColor("#dddddd")
-    core_style.matchedBraceBackground = QtGui.QColor("#B4EEB4")
-    core_style.matchedBraceForeground = QtGui.QColor("#FF0000")
-    code_edit.refresh_style()
+    highlighter = frontend.get_mode(code_edit, pymodes.PyHighlighterMode)
+    highlighter.styles = highlighter.DEFAULT_LIGHT_STYLES
+    code_edit.background = QtGui.QColor("#252525")
+    code_edit.foreground = QtGui.QColor("#A9B7C6")
+    code_edit.whitespaces_foreground = QtGui.QColor('#404040')
+    line_highlighter = frontend.get_mode(code_edit,
+                                         modes.CaretLineHighlighterMode)
+    line_highlighter.refresh()
+    symbol_matcher = frontend.get_mode(code_edit, modes.SymbolMatcherMode)
+    assert isinstance(symbol_matcher, modes.SymbolMatcherMode)
+    symbol_matcher.match_background = QtGui.QBrush(QtGui.QColor('#B4EEB4'))
+    symbol_matcher.match_foreground = QtGui.QColor('red')

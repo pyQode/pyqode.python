@@ -64,15 +64,13 @@ def app(request):
 @pytest.fixture(scope="session")
 def editor(request):
     global _app, _widget
-    from pyqode.core import frontend, settings
+    from pyqode.core import frontend
+    from pyqode.core.frontend import modes
     from pyqode.python.frontend import PyCodeEdit
     from pyqode.python.backend import server
     from pyqode.qt.QtTest import QTest
 
     logging.info('################ setup session editor ################')
-
-    settings.file_watcher_auto_reload = True
-    settings.save_on_focus_out = False
 
     _widget = PyCodeEdit()
     frontend.start_server(_widget, server.__file__)
@@ -81,6 +79,10 @@ def editor(request):
     _app.setActiveWindow(_widget)
     while not frontend.connected_to_server(_widget):
         QTest.qWait(100)
+
+    frontend.get_mode(_widget,
+                      modes.FileWatcherMode).file_watcher_auto_reload = True
+    _widget.save_on_focus_out = False
 
     def fin():
         global _widget

@@ -2,56 +2,11 @@
 """
 This module contains the python specific syntax highlighter
 """
-import sys
 from pyqode.qt import QtGui, QtCore
-from pyqode.core import style as core_style
-from pyqode.python import style
-
 from pyqode.core.frontend import SyntaxHighlighter
 from pyqode.core.frontend.utils import TextStyle
 from pyqode.core.frontend.utils import memoized
 from pyqode.core.frontend import Mode
-
-
-#: Default (white) color scheme for
-#: :class:`pyqode.python.frontend.modes.PyHighlighterMode`
-DEFAULT_LIGHT_STYLES = {
-    'keyword': TextStyle('#808000 nbold nitalic nunderlined'),
-    'builtins': TextStyle('#808000 nbold nitalic nunderlined'),
-    'operator': TextStyle('darkGray nbold nitalic nunderlined'),
-    'punctuation': TextStyle('darkGray nbold nitalic nunderlined'),
-    'decorator': TextStyle('#808000 nbold nitalic nunderlined'),
-    'brace': TextStyle('#404040 nbold nitalic nunderlined'),
-    'class': TextStyle('#800080 nbold nitalic nunderlined'),
-    'function': TextStyle('#800080 nbold nitalic nunderlined'),
-    'string': TextStyle('#008000 nbold nitalic nunderlined'),
-    'docstring': TextStyle('#0000AA nbold nitalic nunderlined'),
-    'comment': TextStyle('#008000 nbold italic nunderlined'),
-    'self': TextStyle('#8F2828 nbold italic nunderlined'),
-    'numbers': TextStyle('#000080 nbold nitalic nunderlined'),
-    'predefined': TextStyle('#B200B2 nbold nitalic nunderlined'),
-    'docstringTag': TextStyle('#0000FF nbold nitalic underlined'),
-}
-
-#: Alternative dark color scheme for
-#: :class:`pyqode.python.frontend.modes.PyHighlighterMode`
-DEFAULT_DARK_STYLES = {
-    'keyword': TextStyle('#CC7832 bold nitalic nunderlined'),
-    'builtins': TextStyle('#CC7832 nbold nitalic nunderlined'),
-    'operator': TextStyle('#A9B7C6 nbold nitalic nunderlined'),
-    'punctuation': TextStyle('#A9B7C6 nbold nitalic nunderlined'),
-    'decorator': TextStyle('#BBB529 nbold nitalic nunderlined'),
-    'brace': TextStyle('#AAAAAA nbold nitalic nunderlined'),
-    'class': TextStyle('#A9B7C6 bold nitalic nunderlined'),
-    'function': TextStyle('#A9B7C6 bold nitalic nunderlined'),
-    'string': TextStyle('#A5C261 nbold nitalic nunderlined'),
-    'docstring': TextStyle('#629755 nbold nitalic nunderlined'),
-    'comment': TextStyle('#808080 nbold italic nunderlined'),
-    'self': TextStyle('#94558D nbold italic nunderlined'),
-    'numbers': TextStyle('#6897B3 nbold nitalic nunderlined'),
-    'predefined': TextStyle('#B200B2 nbold nitalic nunderlined'),
-    'docstringTag': TextStyle('#427735 bold nitalic underlined')
-}
 
 
 class PyHighlighterMode(SyntaxHighlighter):
@@ -82,6 +37,46 @@ class PyHighlighterMode(SyntaxHighlighter):
                     different color.
     """
     _DESCRIPTION = "Custom QtGui.QSyntaxHighlighter to highlight python syntax"
+
+    #: Default (white) color scheme for
+    #: :class:`pyqode.python.frontend.modes.PyHighlighterMode`
+    DEFAULT_LIGHT_STYLES = {
+        'keyword': TextStyle('#808000 nbold nitalic nunderlined'),
+        'builtins': TextStyle('#808000 nbold nitalic nunderlined'),
+        'operator': TextStyle('darkGray nbold nitalic nunderlined'),
+        'punctuation': TextStyle('darkGray nbold nitalic nunderlined'),
+        'decorator': TextStyle('#808000 nbold nitalic nunderlined'),
+        'brace': TextStyle('#404040 nbold nitalic nunderlined'),
+        'class': TextStyle('#800080 nbold nitalic nunderlined'),
+        'function': TextStyle('#800080 nbold nitalic nunderlined'),
+        'string': TextStyle('#008000 nbold nitalic nunderlined'),
+        'docstring': TextStyle('#0000AA nbold nitalic nunderlined'),
+        'comment': TextStyle('#008000 nbold italic nunderlined'),
+        'self': TextStyle('#8F2828 nbold italic nunderlined'),
+        'numbers': TextStyle('#000080 nbold nitalic nunderlined'),
+        'predefined': TextStyle('#B200B2 nbold nitalic nunderlined'),
+        'docstringTag': TextStyle('#0000FF nbold nitalic underlined'),
+    }
+
+    #: Alternative dark color scheme for
+    #: :class:`pyqode.python.frontend.modes.PyHighlighterMode`
+    DEFAULT_DARK_STYLES = {
+        'keyword': TextStyle('#CC7832 bold nitalic nunderlined'),
+        'builtins': TextStyle('#CC7832 nbold nitalic nunderlined'),
+        'operator': TextStyle('#A9B7C6 nbold nitalic nunderlined'),
+        'punctuation': TextStyle('#A9B7C6 nbold nitalic nunderlined'),
+        'decorator': TextStyle('#BBB529 nbold nitalic nunderlined'),
+        'brace': TextStyle('#AAAAAA nbold nitalic nunderlined'),
+        'class': TextStyle('#A9B7C6 bold nitalic nunderlined'),
+        'function': TextStyle('#A9B7C6 bold nitalic nunderlined'),
+        'string': TextStyle('#A5C261 nbold nitalic nunderlined'),
+        'docstring': TextStyle('#629755 nbold nitalic nunderlined'),
+        'comment': TextStyle('#808080 nbold italic nunderlined'),
+        'self': TextStyle('#94558D nbold italic nunderlined'),
+        'numbers': TextStyle('#6897B3 nbold nitalic nunderlined'),
+        'predefined': TextStyle('#B200B2 nbold nitalic nunderlined'),
+        'docstringTag': TextStyle('#427735 bold nitalic underlined')
+    }
 
     #: List of python keywords
     keywords = [
@@ -198,23 +193,7 @@ class PyHighlighterMode(SyntaxHighlighter):
         self._init_style()
 
     def _init_style(self):
-        self.styles = {
-            'keyword': style.keyword,
-            'builtins': style.builtins,
-            'operator': style.operator,
-            # 'punctuation': style.punctuation,
-            'decorator': style.decorator,
-            # 'brace': style.brace,
-            'class': style.klass,
-            'function': style.function,
-            'string': style.string,
-            'docstring': style.docstring,
-            'comment': style.comment,
-            'self': style.self,
-            'numbers': style.numbers,
-            'predefined': style.predefined,
-            'docstringTag': style.docstring_tag,
-        }
+        self.styles = self.DEFAULT_LIGHT_STYLES
 
     def refresh_style(self):
         self.styles.clear()
@@ -285,7 +264,7 @@ class PyHighlighterMode(SyntaxHighlighter):
             index = expression.pos(0)
             length = len(expression.cap(0))
             self.setFormat(index, length, self.format(
-                core_style.whitespaces_foreground, self._cache_version))
+                self.editor.whitespaces_foreground, self._cache_version))
             index = expression.indexIn(text, index + length)
 
     def highlight_sphinx_tags(self, text):

@@ -6,16 +6,11 @@ the jedi helper module for their testing package
 import os
 import functools
 import platform
-import sys
 from os.path import abspath
 from os.path import dirname
 
 from pyqode.qt.QtTest import QTest
-
-from pyqode.core import actions
 from pyqode.core import frontend
-from pyqode.core import style
-from pyqode.core import settings
 from pyqode.core import frontend
 from pyqode.core.frontend import modes
 from pyqode.core.frontend import panels
@@ -65,60 +60,6 @@ def editor_open(path):
             return func(editor, *args, **kwds)
         return wrapper
     return decorator
-
-
-def preserve_settings(func):
-    @functools.wraps(func)
-    def wrapper(editor, *args, **kwds):
-        dic = dict(settings.__dict__)
-        try:
-            ret = func(editor, *args, **kwds)
-        finally:
-            for k, v in dic.items():
-                if k.startswith('_'):
-                    continue
-                setattr(settings, k, v)
-            editor.refresh_settings()
-        return ret
-    return wrapper
-
-
-def preserve_style(func):
-    @functools.wraps(func)
-    def wrapper(editor, *args, **kwds):
-        dic = dict(style.__dict__)
-        ret = None
-        try:
-            ret = func(editor, *args, **kwds)
-        finally:
-            print('Restoring default style')
-            for k, v in dic.items():
-                if k.startswith('_'):
-                    continue
-                print('STYLE', k, v)
-                setattr(style, k, v)
-                print('STYLE VAL:', k, getattr(style, k))
-            editor.refresh_style()
-            QTest.qWait(100)
-        return ret
-    return wrapper
-
-
-def preserve_actions(func):
-    @functools.wraps(func)
-    def wrapper(editor, *args, **kwds):
-        dic = dict(actions.__dict__)
-        ret = None
-        try:
-            ret = func(editor, *args, **kwds)
-        finally:
-            for k, v in dic.items():
-                if k.startswith('_'):
-                    continue
-                setattr(actions, k, v)
-            editor.refresh_actions()
-        return ret
-    return wrapper
 
 
 def preserve_editor_config(func):

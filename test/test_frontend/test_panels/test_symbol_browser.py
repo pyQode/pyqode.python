@@ -1,6 +1,5 @@
-from pyqode.qt import QtCore
 from pyqode.qt.QtTest import QTest
-from pyqode.core import frontend, settings
+from pyqode.core import frontend
 from pyqode.python.frontend import panels
 
 from ...helpers import editor_open

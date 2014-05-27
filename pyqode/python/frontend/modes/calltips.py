@@ -4,9 +4,7 @@ Contains the JediCompletionProvider class implementation.
 """
 import logging
 import os
-from pyqode.core import settings
 from pyqode.core import frontend
-from pyqode.core.frontend.utils import DelayJobRunner
 from pyqode.python.backend import workers
 from pyqode.qt import QtCore, QtWidgets
 
@@ -82,7 +80,7 @@ class CalltipsMode(frontend.Mode, QtCore.QObject):
             tc.movePosition(tc.StartOfLine, tc.KeepAnchor)
             l = tc.selectedText()
             last_char = l[len(l) - 1]
-            seps = settings.word_separators
+            seps = self.editor.word_separators
             symbols = [",", " ", "("]
             return last_char in seps and last_char not in symbols
         except IndexError:

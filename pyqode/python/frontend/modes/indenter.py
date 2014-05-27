@@ -4,7 +4,6 @@ Contains the python indenter.
 """
 from pyqode.qt import QtGui
 from pyqode.core.frontend.modes import IndenterMode
-from pyqode.core import settings
 
 
 class PyIndenterMode(IndenterMode):
@@ -27,9 +26,9 @@ class PyIndenterMode(IndenterMode):
             self.indent_selection(cursor)
         else:
             # simply insert indentation at the cursor position
-            tab_len = settings.tab_length
+            tab_len = self.editor.tab_length
             cursor.beginEditBlock()
-            if settings.use_spaces_instead_of_tabs:
+            if self.editor.use_spaces_instead_of_tabs:
                 cursor.insertText(tab_len * " ")
             else:
                 cursor.insertText('\t')

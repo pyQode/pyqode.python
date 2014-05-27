@@ -1,4 +1,4 @@
-from pyqode.core import frontend, settings
+from pyqode.core import frontend
 from pyqode.python.frontend import modes
 from pyqode.python.frontend.modes import syntax_highlighter
 from ...helpers import editor_open

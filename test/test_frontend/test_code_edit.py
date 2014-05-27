@@ -20,6 +20,6 @@ def test_py_code_edit(editor):
     editor.use_white_style()
     QTest.qWait(1000)
 
-    # for coverage
-    editor.use_dark_style(use=False)
+    # # for coverage
     editor.use_white_style(use=False)
+    editor.use_dark_style(use=False)

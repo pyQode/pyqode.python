@@ -1,4 +1,5 @@
-from pyqode.core import frontend, settings
+from pyqode.core import frontend
+from pyqode.core import frontends
 from pyqode.python.frontend import modes
 
 
@@ -16,11 +17,11 @@ def test_indent(editor):
     editor.setPlainText('print("foo")')
     mode.indent()
     assert editor.toPlainText() == '    print("foo")'
-    settings.use_spaces_instead_of_tabs = False
+    editor.use_spaces_instead_of_tabs = False
     editor.clear()
     mode.indent()
     assert editor.toPlainText() == '\t'
-    settings.use_spaces_instead_of_tabs = True
+    editor.use_spaces_instead_of_tabs = True
 
 
 def test_unindent(editor):
