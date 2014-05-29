@@ -160,8 +160,8 @@ def set_white_color_scheme(code_edit):
     """
     highlighter = frontend.get_mode(code_edit, pymodes.PyHighlighterMode)
     highlighter.styles = highlighter.DEFAULT_LIGHT_STYLES
-    code_edit.background = QtGui.QColor("#252525")
-    code_edit.foreground = QtGui.QColor("#A9B7C6")
+    code_edit.background = QtGui.QColor("#FFFFFF")
+    code_edit.foreground = QtGui.QColor("#000000")
     code_edit.whitespaces_foreground = QtGui.QColor('#404040')
     line_highlighter = frontend.get_mode(code_edit,
                                          modes.CaretLineHighlighterMode)
