@@ -46,7 +46,7 @@ class DocumentAnalyserMode(Mode, QtCore.QObject):
         self._jobRunner.request_job(self._run_analysis)
 
     def _run_analysis(self):
-        if self.editor.toPlainText():
+        if self.editor and self.editor.toPlainText():
             request_data = {
                 'code': self.editor.toPlainText(),
                 'path': self.editor.file_path,

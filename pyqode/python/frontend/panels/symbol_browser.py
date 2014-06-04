@@ -60,6 +60,8 @@ class SymbolBrowserPanel(Panel):
                                   "before SymbolBrowserPanel!")
 
     def _on_document_changed(self):
+        if not self or not self.editor:
+            return
         mode = frontend.get_mode(self.editor, 'DocumentAnalyserMode')
         definitions = mode.flattened_results
         self.combo_box.clear()
