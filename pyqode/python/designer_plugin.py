@@ -10,7 +10,7 @@ in your path on Windows)
 """
 # pylint: skip-file
 # This only works with PyQt, PySide does not support the QtDesigner module
-from pyqode.python.frontend import PyCodeEdit
+from pyqode.python.code_edit import PyCodeEdit
 from pyqode.core.designer_plugins import WidgetPlugin
 
 

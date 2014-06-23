@@ -8,7 +8,6 @@ they works with python3
 import glob
 import os
 
-
 def fix_script(script):
     with open(script, 'r') as f_script:
         lines = f_script.read().splitlines()
