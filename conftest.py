@@ -47,7 +47,7 @@ logging.basicConfig(level=logging.INFO,
 # Setup QApplication
 # -------------------
 # 2. create qt application
-from pyqode.qt.QtWidgets import QApplication
+from pyqode.core.qt.QtWidgets import QApplication
 _app = QApplication(sys.argv)
 _widget = None
 
@@ -64,32 +64,30 @@ def app(request):
 @pytest.fixture(scope="session")
 def editor(request):
     global _app, _widget
-    from pyqode.core import frontend
-    from pyqode.core.frontend import modes
-    from pyqode.python.frontend import PyCodeEdit
+    from pyqode.core import modes
+    from pyqode.python.code_edit import PyCodeEdit
     from pyqode.python.backend import server
-    from pyqode.qt.QtTest import QTest
+    from pyqode.core.qt.QtTest import QTest
 
     logging.info('################ setup session editor ################')
 
     _widget = PyCodeEdit()
-    frontend.start_server(_widget, server.__file__)
+    _widget.backend.start(server.__file__)
     _widget.resize(800, 600)
     _widget.show()
     _app.setActiveWindow(_widget)
-    while not frontend.connected_to_server(_widget):
+    while not _widget.backend.connected:
         QTest.qWait(100)
 
-    frontend.get_mode(_widget,
-                      modes.FileWatcherMode).file_watcher_auto_reload = True
+    _widget.modes.get(modes.FileWatcherMode).file_watcher_auto_reload = True
     _widget.save_on_focus_out = False
 
     def fin():
         global _widget
         logging.info('################ teardown session editor ###############'
                      '#')
-        frontend.stop_server(_widget)
-        while frontend.connected_to_server(_widget):
+        _widget.backend.stop()
+        while _widget.backend.connected:
             QTest.qWait(100)
         del _widget
 

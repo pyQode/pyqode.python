@@ -2,7 +2,7 @@
 Test all workers in pyqode.python.backend.workers.
 """
 import sys
-from pyqode.python import frontend as pyfrontend
+from pyqode.python import code_edit
 from pyqode.python.backend import workers
 
 
@@ -57,7 +57,6 @@ def test_goto_assignments():
 
 
 def test_defined_names():
-    from pyqode.python.frontend import code_edit
     code = ""
     filename = code_edit.__file__
     with open(filename, 'r') as file:

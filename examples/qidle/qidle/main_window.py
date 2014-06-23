@@ -3,14 +3,14 @@ This module contains the main window implementation.
 """
 import os
 import platform
-from pyqode.qt import QtCore
-from pyqode.qt import QtWidgets
 import sys
-from pyqode.core import frontend
-from pyqode.core.frontend import widgets
+from pyqode.core.api import TextHelper
+from pyqode.core.qt import QtCore
+from pyqode.core.qt import QtWidgets
+from pyqode.core import widgets
 from pyqode.python.backend import server
-from pyqode.python.frontend import PyCodeEdit, open_file
-from pyqode.python.frontend import modes
+from pyqode.python.code_edit import PyCodeEdit
+from pyqode.python import modes
 from .utils import get_interpreters
 from .settings import Settings
 from .ui.main_window_ui import Ui_MainWindow
@@ -102,14 +102,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 zip_path = '/usr/share/qidle/libraries.zip'
         if hasattr(sys, "frozen"):
             server_path = os.path.join(os.getcwd(), 'server.py')
-            frontend.start_server(editor, server_path,
-                                  interpreter=Settings().interpreter,
-                                  args=['-s', zip_path])
+            editor.backend.start(server_path,
+                                 interpreter=Settings().interpreter,
+                                 args=['-s', zip_path])
         else:
-            frontend.start_server(editor, server.__file__,
-                                  interpreter=Settings().interpreter,
-                                  args=['-s', zip_path])
-        m = frontend.get_mode(editor, modes.GoToAssignmentsMode)
+            editor.backend.start(server.__file__,
+                                 interpreter=Settings().interpreter,
+                                 args=['-s', zip_path])
+        m = editor.modes.get(modes.GoToAssignmentsMode)
         assert isinstance(m, modes.GoToAssignmentsMode)
         m.out_of_doc.connect(self.on_goto_out_of_doc)
 
@@ -128,12 +128,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             index = self.tabWidget.index_from_filename(path)
             if index == -1:
                 editor = PyCodeEdit(self)
-                editor.file_path = path
                 self.setup_editor(editor)
+                editor.file.open(path)
                 self.tabWidget.add_code_edit(editor)
                 self.recent_files_manager.open_file(path)
                 self.menu_recents.update_actions()
-                open_file(editor, path)
             else:
                 self.tabWidget.setCurrentIndex(index)
         return editor
@@ -167,7 +166,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
         Save the current editor document as.
         """
-        path = self.tabWidget.currentWidget().file_path
+        path = self.tabWidget.currentWidget().file.path
         path = os.path.dirname(path) if path else ''
         filename, filter = QtWidgets.QFileDialog.getSaveFileName(self,
                                                                  'Save', path)
@@ -190,13 +189,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.setup_menu_interpreters()
 
     def setup_mnu_modes(self, editor):
-        for k, v in sorted(frontend.get_modes(editor).items()):
+        for mode in editor.modes:
             a = QtWidgets.QAction(self.menuModes)
-            a.setText(k)
+            a.setText(mode.name)
             a.setCheckable(True)
-            a.setChecked(v.enabled)
+            a.setChecked(mode.enabled)
             a.changed.connect(self.on_mode_state_changed)
-            a.mode = v
+            a.mode = mode
             self.menuModes.addAction(a)
 
     def setup_mnu_panels(self, editor):
@@ -204,15 +203,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Setup the panels menu for the current editor.
         :param editor:
         """
-        for zones, dic in sorted(frontend.get_panels(editor).items()):
-            for k, v in dic.items():
-                a = QtWidgets.QAction(self.menuModes)
-                a.setText(k)
-                a.setCheckable(True)
-                a.setChecked(v.enabled)
-                a.changed.connect(self.on_panel_state_changed)
-                a.panel = v
-                self.menuPanels.addAction(a)
+        for panel in editor.panels:
+            a = QtWidgets.QAction(self.menuModes)
+            a.setText(panel.name)
+            a.setCheckable(True)
+            a.setChecked(panel.enabled)
+            a.changed.connect(self.on_panel_state_changed)
+            a.panel = panel
+            self.menuPanels.addAction(a)
 
     @QtCore.Slot()
     def on_current_tab_changed(self):
@@ -238,10 +236,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.setup_mnu_edit(editor)
             self.setup_mnu_modes(editor)
             self.setup_mnu_panels(editor)
-            self.lbl_cursor_pos.setText('%d:%d' % frontend.cursor_position(
-                editor))
-            self.lbl_encoding.setText(editor.file_encoding)
-            self.lbl_filename.setText(editor.file_path)
+            self.lbl_cursor_pos.setText(
+                '%d:%d' % TextHelper(editor).cursor_position())
+            self.lbl_encoding.setText(editor.file.encoding)
+            self.lbl_filename.setText(editor.file.path)
             self.lbl_interpreter.setText(Settings().interpreter)
         else:
             self.lbl_encoding.clear()
@@ -261,12 +259,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # restart server with the new interpreter
         for i in range(self.tabWidget.count()):
             editor = self.tabWidget.widget(i)
-            frontend.stop_server(editor)
+            editor.backend.stop()
             self.setup_editor(editor)
             self.lbl_interpreter.setText(interpreter)
-            m = frontend.get_mode(editor, modes.PEP8CheckerMode)
+            m = editor.modes.get(modes.PEP8CheckerMode)
             m.request_analysis()
-            m = frontend.get_mode(editor, modes.FrostedCheckerMode)
+            m = editor.modes.get(modes.FrostedCheckerMode)
             m.request_analysis()
 
     def on_panel_state_changed(self):
@@ -296,7 +294,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
         Run the current current script
         """
-        filename = self.tabWidget.currentWidget().file_path
+        filename = self.tabWidget.currentWidget().file.path
         wd = os.path.dirname(filename)
         args = Settings().get_run_config_for_file(filename)
         self.interactiveConsole.start_process(
@@ -313,15 +311,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
         editor = self.open_file(assignment.module_path)
         if editor:
-            frontend.goto_line(editor, assignment.line,
-                               column=assignment.column)
+            TextHelper(editor).goto_line(assignment.line, assignment.column)
 
     def on_process_finished(self):
         self.actionRun.setEnabled(True)
         self.actionConfigure_run.setEnabled(True)
 
     def on_configure_run(self):
-        path = self.tabWidget.currentWidget().file_path
+        path = self.tabWidget.currentWidget().file.path
         args = Settings().get_run_config_for_file(path)
         text, status = QtWidgets.QInputDialog.getText(
             self, 'Run configuration', 'Script arguments:',
@@ -332,6 +329,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     @QtCore.Slot()
     def on_cursor_pos_changed(self):
-        if self.tabWidget.currentWidget():
-            self.lbl_cursor_pos.setText('%d:%d' % frontend.cursor_position(
-                self.tabWidget.currentWidget()))
+        editor = self.tabWidget.currentWidget()
+        if editor:
+            self.lbl_cursor_pos.setText(
+                '%d:%d' % TextHelper(editor).cursor_position())

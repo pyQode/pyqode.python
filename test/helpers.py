@@ -8,13 +8,11 @@ import functools
 import platform
 from os.path import abspath
 from os.path import dirname
+from pyqode.core import api
 
-from pyqode.qt.QtTest import QTest
-from pyqode.core import frontend
-from pyqode.core import frontend
-from pyqode.core.frontend import modes
-from pyqode.core.frontend import panels
-from pyqode.python.frontend import open_file
+from pyqode.core.qt.QtTest import QTest
+from pyqode.core import modes
+from pyqode.core import panels
 
 
 test_dir = dirname(abspath(__file__))
@@ -56,7 +54,7 @@ def editor_open(path):
     def decorator(func):
         @functools.wraps(func)
         def wrapper(editor, *args, **kwds):
-            open_file(editor, path)
+            editor.file.open(path)
             return func(editor, *args, **kwds)
         return wrapper
     return decorator
@@ -69,10 +67,11 @@ def preserve_editor_config(func):
         try:
             ret = func(editor, *args, **kwds)
         finally:
-            frontend.uninstall_all(editor)
+            editor.modes.clear()
+            editor.panels.clear()
             setup_editor(editor)
-            if not frontend.connected_to_server(editor):
-                frontend.start_server(editor, server_path())
+            if not editor.backend.connected:
+                editor.backend.start(server_path())
                 wait_for_connected(editor)
         return ret
     return wrapper
@@ -105,12 +104,11 @@ def log_test_name(func):
     return wrapper
 
 
-
 # -------------------
 # Helper functions
 # -------------------
 def wait_for_connected(editor):
-    while not frontend.connected_to_server(editor):
+    while not editor.backend.connected:
         QTest.qWait(100)
 
 
@@ -130,38 +128,36 @@ def server_path():
 
 
 def setup_editor(code_edit):
-    from pyqode.python.frontend import modes as pymodes
-    from pyqode.python.frontend import panels as pypanels
+    from pyqode.python import modes as pymodes
+    from pyqode.python import panels as pypanels
 
-    # add panels
-    frontend.install_mode(code_edit, pymodes.DocumentAnalyserMode())
+    code_edit.modes.append(pymodes.DocumentAnalyserMode())
 
     # panels
-    frontend.install_panel(code_edit, panels.LineNumberPanel())
-    frontend.install_panel(code_edit, panels.MarkerPanel())
-    frontend.install_panel(code_edit, panels.SearchAndReplacePanel(),
+    code_edit.panels.append(panels.LineNumberPanel())
+    code_edit.panels.append(panels.MarkerPanel())
+    code_edit.panels.append(panels.SearchAndReplacePanel(),
                            panels.SearchAndReplacePanel.Position.BOTTOM)
-    frontend.install_panel(code_edit, pypanels.SymbolBrowserPanel(),
+    code_edit.panels.append(pypanels.SymbolBrowserPanel(),
                            pypanels.SymbolBrowserPanel.Position.TOP)
 
     # modes
     # generic
-    frontend.install_mode(code_edit, modes.CaretLineHighlighterMode())
-    frontend.install_mode(code_edit, modes.FileWatcherMode())
-    frontend.install_mode(code_edit, modes.RightMarginMode())
-    frontend.install_mode(code_edit, modes.ZoomMode())
-    frontend.install_mode(code_edit, modes.SymbolMatcherMode())
-    frontend.install_mode(code_edit, modes.WordClickMode())
-    frontend.install_mode(code_edit, modes.CodeCompletionMode())
+    code_edit.modes.append(modes.CaretLineHighlighterMode())
+    code_edit.modes.append(modes.FileWatcherMode())
+    code_edit.modes.append(modes.RightMarginMode())
+    code_edit.modes.append(modes.ZoomMode())
+    code_edit.modes.append(modes.SymbolMatcherMode())
+    code_edit.modes.append(modes.WordClickMode())
+    code_edit.modes.append(modes.CodeCompletionMode())
     # python specifics
-    frontend.install_mode(code_edit, pymodes.PyHighlighterMode(code_edit.document()))
-    frontend.install_mode(code_edit, pymodes.PyAutoCompleteMode())
-    frontend.install_mode(code_edit, pymodes.PyAutoIndentMode())
-    frontend.install_mode(code_edit, pymodes.FrostedCheckerMode())
-    frontend.install_mode(code_edit, pymodes.PEP8CheckerMode())
-    frontend.install_mode(code_edit, pymodes.CalltipsMode())
-    frontend.install_mode(code_edit, pymodes.PyIndenterMode())
-    frontend.install_mode(code_edit, pymodes.GoToAssignmentsMode())
-    frontend.install_panel(code_edit, pypanels.QuickDocPanel(),
-                           frontend.Panel.Position.BOTTOM)
-    frontend.install_mode(code_edit, pymodes.CommentsMode())
+    code_edit.modes.append(pymodes.PyHighlighterMode(code_edit.document()))
+    code_edit.modes.append(pymodes.PyAutoCompleteMode())
+    code_edit.modes.append(pymodes.PyAutoIndentMode())
+    code_edit.modes.append(pymodes.FrostedCheckerMode())
+    code_edit.modes.append(pymodes.PEP8CheckerMode())
+    code_edit.modes.append(pymodes.CalltipsMode())
+    code_edit.modes.append(pymodes.PyIndenterMode())
+    code_edit.modes.append(pymodes.GoToAssignmentsMode())
+    code_edit.panels.append(pypanels.QuickDocPanel(), api.Panel.Position.BOTTOM)
+    code_edit.modes.append(pymodes.CommentsMode())

@@ -7,8 +7,7 @@ omit =
     *designer_plugin.py
     # at the moment, we do not test misc ui elements such as
     # widgets and dialogs (how could this be possible to test?)
-    *pyqode/python/frontend/dialogs.py
-    *pyqode/python/frontend/ui/*
+    *pyqode/python/ui/*
 
 [report]
 # Regexes for lines to exclude from consideration

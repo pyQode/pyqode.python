@@ -13,6 +13,6 @@ include conftest.py
 include .coveragerc
 
 recursive-include doc *
-recursive-include pyqode/python/frontend/ui/ *
+recursive-include pyqode/python/ui/ *
 recursive-include examples *
 recursive-include test *
