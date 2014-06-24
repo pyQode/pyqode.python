@@ -6,7 +6,13 @@ modes and panels dedicated to python source code editing.
 
 This documentation is a simple API reference for the new modes and panels. You
 should have read the `pyqode.core documentation`_  that covers the core concepts
-of pyqode.
+of pyQode.
+
+.. image:: _static/qidle.png
+    :alt: Screenshot of QIdle example
+    :width: 400
+    :height: 300
+    :align: center
 
 
 .. _`pyqode.core documentation`: http://pyqodecore.readthedocs.org/en/latest/
@@ -14,7 +20,7 @@ of pyqode.
 
 
 Parts of the documentation:
-============================
+===========================
 
 .. toctree::
     :maxdepth: 1
@@ -22,8 +28,8 @@ Parts of the documentation:
 
     whats_new
     download
+    api/index
     changelog
-    api
     bugs
     contribute
     license
@@ -45,12 +51,12 @@ Parts of the documentation:
 
    * .. glossary::
 
-      :doc:`api`
+      :doc:`api/index`
          The api reference documentation
 
 
 Meta information:
-============================
+=================
 
 .. hlist::
    :columns: 2
@@ -77,7 +83,7 @@ Meta information:
 
 
 Indices and tables:
-============================
+===================
 
 * :ref:`genindex`
 

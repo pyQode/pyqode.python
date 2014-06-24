@@ -1,5 +1,5 @@
 Contributing
-==================
+============
 
 pyqode.python is an open-source project, and it needs your help to go on growing
 and improving.
@@ -18,7 +18,7 @@ If you have any question, just open an issue on the issue tracker.
 .. _`here`: https://github.com/pyQode/pyqode.core/wiki/Projects
 
 Recommendation for submitting a post request:
--------------------------------------------------
+---------------------------------------------
 Pull Requests are great (on the dev branch)! Readme/Documentation changes are
 ok in the master branch.
 

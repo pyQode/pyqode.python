@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-This package contains python specific modes, panels and editor.
+This package contains the python code editor widget
 """
 from pyqode.core.qt import QtCore, QtGui
 from pyqode.core import api

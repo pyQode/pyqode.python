@@ -5,6 +5,12 @@ Change Log
 
     These lists are not exhaustive.
 
+2.0.0
+-----
+
+Too many things have change since 1.3.2 as the API has undergone some heavy
+refactoring.
+
 1.3.2
 -----
 
@@ -13,8 +19,6 @@ New features:
 
 Fixed bugs:
     - fix a bug with boostrap.py
-
-
 
 1.3.1
 -----

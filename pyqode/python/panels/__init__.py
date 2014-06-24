@@ -12,5 +12,5 @@ from pyqode.python.panels.quick_doc import QuickDocPanel
 
 __all__ = [
     'SymbolBrowserPanel',
-    'QuickDocPanel'
+    'QuickDocPanel',
 ]

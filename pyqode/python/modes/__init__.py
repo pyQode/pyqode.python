@@ -28,5 +28,5 @@ __all__ = [
     'GoToAssignmentsMode',
     'PyIndenterMode',
     'PEP8CheckerMode',
-    'PyHighlighterMode'
+    'PyHighlighterMode',
 ]
