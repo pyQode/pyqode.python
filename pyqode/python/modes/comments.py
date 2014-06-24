@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 from pyqode.core import api
 from pyqode.core.qt import QtGui, QtCore, QtWidgets
 
@@ -20,10 +21,21 @@ class CommentsMode(api.Mode):
             self.action.triggered.connect(self.comment)
             self.separator = self.editor.add_separator()
             self.editor.add_action(self.action)
+            if 'pyqt5' in os.environ['QT_API'].lower():
+                self.editor.key_pressed.connect(self.on_key_pressed)
         else:
             self.editor.remove_action(self.action)
             self.editor.remove_action(self.separator)
             self.action.triggered.disconnect(self.comment)
+            if 'pyqt5' in os.environ['QT_API'].lower():
+                self.editor.key_pressed.disconnect(self.on_key_pressed)
+
+    def on_key_pressed(self, key_event):
+        ctrl = (key_event.modifiers() & QtCore.Qt.ControlModifier ==
+                QtCore.Qt.ControlModifier)
+        if key_event.key() == QtCore.Qt.Key_Slash and ctrl:
+            self.comment()
+            key_event.accept()
 
     def check_selection(self, cursor):
         sel_start = cursor.selectionStart()
