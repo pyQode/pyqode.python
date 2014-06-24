@@ -95,14 +95,22 @@ class PyAutoIndentMode(AutoIndentMode):
             # look down
             if nb_open > nb_closed:
                 operation = self._next_block
+                down = True
             else:
                 operation = self._prev_block
-            block = operation(tc.block())
+                down = False
+            block = tc.block()
+            # block = operation(tc.block())
+            offset = col
             while block.isValid():
                 data = block.userData()
                 lists = [data.parentheses, data.braces, data.square_brackets]
                 for symbols in lists:
                     for paren in symbols:
+                        if paren.position < offset and down:
+                            continue
+                        if paren.position >= offset and not down:
+                            continue
                         if self.is_paren_open(paren):
                             parens[paren.character] += 1
                             rparens[rmatching[paren.character]] -= 1
@@ -116,6 +124,7 @@ class PyAutoIndentMode(AutoIndentMode):
                                     parens[matching[paren.character]] < 0):
                                 return True
                 block = operation(block)
+                offset = 0 if down else len(block.text())
         elif nb_open > 0:
             return True
         return False
