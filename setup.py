@@ -22,12 +22,11 @@ def readme():
 requirements = ['pyqode.core>=2.0.0-beta1', 'jedi>=0.8',
                 'pep8', 'frosted', 'docutils']
 
-
 setup(
     name='pyqode.python',
     namespace_packages=['pyqode'],
     version=read_version(),
-    packages=find_packages(),
+    packages=[p for p in find_packages() if not 'test' in p],
     keywords=["CodeEdit PySide PyQt code editor widget python"],
     package_dir={'pyqode': 'pyqode'},
     url='https://github.com/pyQode/pyqode.python',
