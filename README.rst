@@ -79,7 +79,7 @@ taken on a Gnome 3 desktop):
 .. _Source repository: https://github.com/pyQode/pyqode.python/
 .. _Wiki: https://github.com/pyQode/pyqode.core/wiki
 .. _official pyqode extension package: https://github.com/pyQode/pyqode.core/wiki/Extensions#official-packages
-.. _pyqode.core:: https://github.com/pyQode/pyqode.core
+.. _pyqode.core: https://github.com/pyQode/pyqode.core
 .. _Jedi: https://github.com/davidhalter/jedi
 .. _`Documentation`: http://pyqodepython.readthedocs.org/en/latest/
 .. _master: https://github.com/pyQode/pyqode.python/tree/master
