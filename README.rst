@@ -68,11 +68,11 @@ Resources
 Snapshots
 ---------
 
-Here are a few snapshots of the Qidle example application (snapshots
+Here is a snapshot of the QIdle example application (snapshots
 taken on a Gnome 3 desktop):
 
 .. image:: doc/source/_static/qidle.png
-    :alt: Preview of Qidle, the pyqode clone of idle (example app)
+    :alt: Preview of QIdle, the pyQode clone of idle (example app)
 
 
 .. _Downloads: https://github.com/pyQode/pyqode.python/releases

@@ -1,3 +1,6 @@
+.. image:: _static/pyqode-banner.png
+    :alt: pyQode
+
 Welcome to pyqode.python documentation!
 =======================================
 
@@ -8,15 +11,8 @@ This documentation is a simple API reference for the new modes and panels. You
 should have read the `pyqode.core documentation`_  that covers the core concepts
 of pyQode.
 
-.. image:: _static/qidle.png
-    :alt: Screenshot of QIdle example
-    :width: 400
-    :height: 300
-    :align: center
-
 
 .. _`pyqode.core documentation`: http://pyqodecore.readthedocs.org/en/latest/
-
 
 
 Parts of the documentation:
