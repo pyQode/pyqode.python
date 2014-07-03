@@ -1,148 +1,153 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-#The MIT License (MIT)
-#
-#Copyright (c) <2013-2014> <Colin Duquesnoy and others, see AUTHORS.txt>
-#
-#Permission is hereby granted, free of charge, to any person obtaining a copy
-#of this software and associated documentation files (the "Software"), to deal
-#in the Software without restriction, including without limitation the rights
-#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-#copies of the Software, and to permit persons to whom the Software is
-#furnished to do so, subject to the following conditions:
-#
-#The above copyright notice and this permission notice shall be included in
-#all copies or substantial portions of the Software.
-#
-#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-#FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-#AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-#LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-#OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-#THE SOFTWARE.
-#
 """ Contains smart indent modes """
 import re
-from pyqode.qt.QtGui import QTextCursor
+from pyqode.core.api import TextHelper
+from pyqode.core.qt.QtGui import QTextCursor
 from pyqode.core.modes.autoindent import AutoIndentMode
+from pyqode.core.modes.matcher import SymbolMatcherMode
 
 
 class PyAutoIndentMode(AutoIndentMode):
     """
-    Customised :class:`pyqode.core.AutoIndentMode` for python, the indentation
-    level is based on the previous line indent but is automatically incremented
-    after a *:* and decremented after *pass* or *return*
+    Customised :class:`pyqode.core.modes.AutoIndentMode` for python
+    that tries its best to follow the pep8 indentation guidelines.
     """
-    #: Mode identifier
-    IDENTIFIER = "pyAutoIndentMode"
-    #: Mode description
-    _DESCRIPTION = """ This mode provides python specific auto indentation. """
-
     def __init__(self):
         super(PyAutoIndentMode, self).__init__()
 
-    def isOperator(self, word):
-        operators = ['.', ',', '+', '-', '/', '*', 'or', 'and', "=", "%", "=="]
-        return word in operators
+    def on_install(self, editor):
+        super().on_install(editor)
+        self._helper = TextHelper(editor)
 
-    def twoPrevEmptyLine(self, tc):
+    def has_two_empty_line_before(self, tc):
         ln = tc.blockNumber()
         limit = ln - 1
         while ln > limit:
-            if self.editor.lineText(ln).strip() != "":
+            if self._helper.line_text(ln).strip() != "":
                 return False
             ln -= 1
         return True
 
-    def isStringBetweenParams(self, tc):
+    def has_unclosed_paren(self, tc):
         ln = tc.blockNumber()
         while ln >= 0:
-            line = self.editor.lineText(ln)
+            line = self._helper.line_text(ln)
             if line.count("(") > line.count(")"):
                 return True
             ln -= 1
         return False
 
-    def inStringDef(self, fullLine, column):
+    def is_in_string_def(self, full_line, column):
         count = 0
         char = "'"
-        for i in range(len(fullLine)):
-            if fullLine[i] == "'" or fullLine[i] == '"':
+        for i in range(len(full_line)):
+            if full_line[i] == "'" or full_line[i] == '"':
                 count += 1
-            if fullLine[i] == '"' and i < column:
+            if full_line[i] == '"' and i < column:
                 char = '"'
         count_after_col = 0
-        for i in range(column, len(fullLine)):
-            if fullLine[i] == "'" or fullLine[i] == '"':
+        for i in range(column, len(full_line)):
+            if full_line[i] == "'" or full_line[i] == '"':
                 count_after_col += 1
         return count % 2 == 0 and count_after_col % 2 == 1, char
 
-    def isOpenParen(self, paren):
+    def is_paren_open(self, paren):
         return (paren.character == "(" or paren.character == "["
                 or paren.character == '{')
 
-    def isClosedParen(self, paren):
+    def is_paren_closed(self, paren):
         return (paren.character == ")" or paren.character == "]"
                 or paren.character == '}')
 
-    def getfullLine(self, tc):
+    def get_full_line(self, tc):
         tc2 = QTextCursor(tc)
         tc2.select(QTextCursor.LineUnderCursor)
         full_line = tc2.selectedText()
         return full_line
 
-    def betweenParen(self, tc, col):
-        data = tc.block().userData()
+    def parens_count_for_block(self, col, block):
+        data = block.userData()
         nb_open = 0
         nb_closed = 0
-        lists = [data.parentheses, data.braces, data.squareBrackets]
-        # does it have an opened paren on the same line?
+        lists = [data.parentheses, data.braces, data.square_brackets]
         for symbols in lists:
             for paren in symbols:
-                if paren.position >= col:
-                    break
-                if self.isOpenParen(paren):
+                if self.is_paren_open(paren):
+                    if not col:
+                        return -1, -1
                     nb_open += 1
-                if self.isClosedParen(paren):
+                if paren.position >= col and self.is_paren_closed(paren):
                     nb_closed += 1
+        return nb_closed, nb_open
+
+    def between_paren(self, tc, col):
+        nb_closed, nb_open = self.parens_count_for_block(col, tc.block())
         block = tc.block().next()
+        while nb_open == nb_closed == 0 and block.isValid():
+            nb_closed, nb_open = self.parens_count_for_block(nb_open, block)
+            block = block.next()
         # if not, is there an non closed paren on the next lines.
         parens = {'(': 0, '{': 0, '[': 0}
         matching = {')': '(', '}': '{', ']': '['}
-        if not nb_open > nb_closed:
+        rparens = {')': 0, '}': 0, ']': 0}
+        rmatching = {'(': ')', '{': '}', '[': ']'}
+        if nb_open != nb_closed:
+            # look down
+            if nb_open > nb_closed:
+                operation = self._next_block
+                down = True
+            else:
+                operation = self._prev_block
+                down = False
+            block = tc.block()
+            # block = operation(tc.block())
+            offset = col
             while block.isValid():
                 data = block.userData()
-                lists = [data.parentheses, data.braces, data.squareBrackets]
+                lists = [data.parentheses, data.braces, data.square_brackets]
                 for symbols in lists:
                     for paren in symbols:
-                        if self.isOpenParen(paren):
+                        if paren.position < offset and down:
+                            continue
+                        if paren.position >= offset and not down:
+                            continue
+                        if self.is_paren_open(paren):
                             parens[paren.character] += 1
-                        if self.isClosedParen(paren):
-                            parens[matching[paren.character]] -= 1
-                            if parens[matching[paren.character]] < 0:
+                            rparens[rmatching[paren.character]] -= 1
+                            if (operation == self._prev_block and
+                                    rparens[rmatching[paren.character]] < 0):
                                 return True
-                block = block.next()
-            return False
-        else:
+                        if self.is_paren_closed(paren):
+                            rparens[paren.character] += 1
+                            parens[matching[paren.character]] -= 1
+                            if (operation == self._next_block and
+                                    parens[matching[paren.character]] < 0):
+                                return True
+                block = operation(block)
+                offset = 0 if down else len(block.text())
+        elif nb_open > 0:
             return True
+        return False
 
-    def inComment(self, column, tc, fullLine):
-        useParentImpl = False
+    def _next_block(self, b):
+        return b.next()
+
+    def _prev_block(self, b):
+        return b.previous()
+
+    def is_in_comment(self, column, tc, full_line):
+        use_parent_impl = False
         usd = tc.block().userData()
         for start, end in usd.cc_disabled_zones:
             if start < column < end:
-                string = fullLine[start:end]
-                if not ((string.startswith("'") or
-                        string.startswith('"')) and
-                        (string.endswith("'") or
-                         string.endswith('"'))):
-                    useParentImpl = True
+                string = full_line[start:end]
+                if not ((string.startswith("'") or string.startswith('"')) and
+                        (string.endswith("'") or string.endswith('"'))):
+                    use_parent_impl = True
                     break
-        return useParentImpl
+        return use_parent_impl
 
-    def getLastWord(self, tc):
+    def get_last_word(self, tc):
         tc2 = QTextCursor(tc)
         tc2.movePosition(QTextCursor.Left, 1)
         tc2.movePosition(QTextCursor.WordLeft, tc.KeepAnchor)
@@ -150,7 +155,7 @@ class PyAutoIndentMode(AutoIndentMode):
         #                  self.editor.cursorPosition[1])
         return tc2.selectedText().strip()
 
-    def getIndentOfOpeningParen(self, tc, column):
+    def get_indent_of_opening_paren(self, tc, column):
         # find last closed paren
         pos = None
         data = tc.block().userData()
@@ -164,109 +169,114 @@ class PyAutoIndentMode(AutoIndentMode):
         if pos:
             tc2 = QTextCursor(tc)
             tc2.setPosition(pos)
-            oL, oC = self.editor.symbolMatcherMode.getSymbolPos(
+            ol, oc = self.editor.modes.get(SymbolMatcherMode).symbol_pos(
                 tc2, '(', 0)
-            line = self.editor.lineText(oL)
+            line = self._helper.line_text(ol)
             return len(line) - len(line.lstrip())
         return None
 
-    def getLastOpenParenPos(self, tc, column):
+    def get_last_open_paren_pos(self, tc, column):
         pos = None
         char = None
         ln = tc.blockNumber() + 1
         tc_trav = QTextCursor(tc)
-        while ln > 1:
+        while ln >= 1:
             tc_trav.movePosition(tc_trav.StartOfLine, tc_trav.MoveAnchor)
             data = tc_trav.block().userData()
-            lists = [data.parentheses, data.braces, data.squareBrackets]
+            lists = [data.parentheses, data.braces, data.square_brackets]
             for symbols in lists:
                 for paren in reversed(symbols):
                     if paren.position < column:
-                        if self.isOpenParen(paren):
+                        if self.is_paren_open(paren):
                             if paren.position > column:
                                 continue
                             else:
                                 pos = tc_trav.position() + paren.position
                                 char = paren.character
-                                # ensure it does not have a closing paren on the
-                                # same line
+                                # ensure it does not have a closing paren on
+                                # the same line
                                 tc3 = QTextCursor(tc)
                                 tc3.setPosition(pos)
-                                l, c = self.editor.symbolMatcherMode.getSymbolPos(
-                                    tc3, ')')
+                                l, c = self.editor.modes.get(
+                                    SymbolMatcherMode).symbol_pos(tc3, ')')
                                 if l == ln and c < column:
                                     continue
                                 return pos, char
             # check previous line
             tc_trav.movePosition(tc_trav.Up, tc_trav.MoveAnchor)
             ln = tc_trav.blockNumber() + 1
-            column = len(self.editor.lineText(ln))
+            column = len(self._helper.line_text(ln))
         return pos, char
 
-    def getParenPos(self, tc, column):
-        pos, char = self.getLastOpenParenPos(tc, column)
+    def get_parent_pos(self, tc, column):
+        pos, char = self.get_last_open_paren_pos(tc, column)
         if char == '(':
-            pType = 0
-            closingChar = ')'
+            ptype = 0
+            closingchar = ')'
         elif char == '[':
-            pType = 1
-            closingChar = ']'
+            ptype = 1
+            closingchar = ']'
         elif char == '{':
-            pType = 2
-            closingChar = '}'
+            ptype = 2
+            closingchar = '}'
         tc2 = QTextCursor(tc)
         tc2.setPosition(pos)
-        oL, oC = self.editor.symbolMatcherMode.getSymbolPos(
-            tc2, char, pType)
-        cL, cC = self.editor.symbolMatcherMode.getSymbolPos(
-            tc2, closingChar, pType)
-        return (oL, oC), (cL, cC)
+        ol, oc = self.editor.modes.get(SymbolMatcherMode).symbol_pos(
+            tc2, char, ptype)
+        cl, cc = self.editor.modes.get(SymbolMatcherMode).symbol_pos(
+            tc2, closingchar, ptype)
+        return (ol, oc), (cl, cc)
 
-    def getNextChar(self, tc):
+    def get_next_char(self, tc):
         tc2 = QTextCursor(tc)
         tc2.movePosition(QTextCursor.NextCharacter, QTextCursor.KeepAnchor)
         char = tc2.selectedText()
         return char
 
-    def handleIndentAfterParen(self, column, line, fullLine, tc):
+    def handle_indent_after_paren(self, column, line, fullline, tc):
+        """
+        Handle indent between symbols such as parenthesis, braces,...
+        """
         # elements might be separated by ',' 'or' 'and'
-        nextChar = self.getNextChar(tc)
-        nextCharIsClosingSymbol = nextChar in [']', ')', '}']
-        (oL, oC), (cL, cC) = self.getParenPos(tc, column)
-        closingLine = self.editor.lineText(cL)
-        openingLine = self.editor.lineText(oL)
-        openingIndent = len(openingLine) - len(openingLine.lstrip())
+        next_char = self.get_next_char(tc)
+        nextcharisclosingsymbol = next_char in [']', ')', '}']
+        (oL, oC), (cL, cC) = self.get_parent_pos(tc, column)
+        closingline = self._helper.line_text(cL)
+        openingline = self._helper.line_text(oL)
+        openingline = re.sub(r'".*"', "", openingline)
+        openingline = re.sub(r"'.*'", "", openingline)
+        openingindent = len(openingline) - len(openingline.lstrip())
         tokens = [t.strip() for t in re.split(', |and |or ',
                                               line[oC:column]) if t]
 
         # align with first token pos
-        if len(closingLine) > cC and closingLine[cC] == ":":
-            post = openingIndent * " " + 8 * " "
+        if len(closingline) > cC and closingline[cC] == ":":
+            post = openingindent * " " + 8 * " "
         else:
             # press enter before a '}', ']', ')'
             # which close an affectation (tuple, list , dict)
-            if nextCharIsClosingSymbol and re.match('.*=[\s][\W].*',
-                                                    openingLine):
-                post = openingIndent * " "
+            if nextcharisclosingsymbol and re.match('.*=[\s][\W].*',
+                                                    openingline):
+                post = openingindent * " "
             else:
                 # align elems in list, tuple, dict
-                if re.match('.*=[\s][\W].*', openingLine):
-                    post = openingIndent * " " + 4 * " "
+                if re.match('.*=[\s][\W].*', openingline) and oL - cL == 1:
+                    post = openingindent * " " + 4 * " "
                 # align elems in fct declaration (we align with first
                 # token)
                 else:
                     if len(tokens):
                         post = oC * " "
                     else:
-                        post = openingIndent * " " + 4 * " "
+                        post = openingindent * " " + 4 * " "
         pre = ""
-        inStringDef, char = self.inStringDef(fullLine, column)
-        if inStringDef:
+        in_string_def, char = self.is_in_string_def(fullline, column)
+        if in_string_def:
             pre = char
             post += char
         return pre, post
 
-    def atBlockStart(self, tc, line):
+    def at_block_start(self, tc, line):
         """
         Improve QTextCursor.atBlockStart to ignore spaces
         """
@@ -276,88 +286,97 @@ class PyAutoIndentMode(AutoIndentMode):
         indentation = len(line) - len(line.lstrip())
         return column <= indentation
 
-    def atBlockEnd(self, tc, fullLine):
+    def at_block_end(self, tc, fullline):
         if tc.atBlockEnd():
             return True
         column = tc.columnNumber()
-        return column >= len(fullLine.rstrip()) - 1
+        return column >= len(fullline.rstrip()) - 1
 
-    def _getIndent(self, tc):
-        pos = tc.position()
-        ln, column = self.editor.cursorPosition
-        fullLine = self.getfullLine(tc)
-        line = fullLine[:column]
+    def _get_indent(self, cursor):
+        pos = cursor.position()
+        ln, column = self._helper.cursor_position()
+        fullline = self.get_full_line(cursor)
+        line = fullline[:column]
         # no indent
         if pos == 0 or column == 0:
             return "", ""
-        pre, post = AutoIndentMode._getIndent(self, tc)
-        if self.atBlockStart(tc, line):
+        pre, post = AutoIndentMode._get_indent(self, cursor)
+        if self.at_block_start(cursor, line):
+            if self.has_two_empty_line_before(cursor):
+                post = post[:-4]
             return pre, post
         # return pressed in comments
-        if self.inComment(column, tc, fullLine):
-            if line.strip().startswith("#") and column != len(fullLine):
-                post = post + '#'
+        if self.is_in_comment(column, cursor, fullline):
+            if line.strip().startswith("#") and column != len(fullline):
+                post += '# '
             return pre, post
-        elif self.betweenParen(tc, column):
-            pre, post = self.handleIndentAfterParen(column, line, fullLine, tc)
+        elif self.between_paren(cursor, column):
+            try:
+                pre, post = self.handle_indent_after_paren(
+                    column, line, fullline, cursor)
+            except TypeError:
+                return pre, post
         else:
-            lastWord = self.getLastWord(tc)
-            inStringDef, char = self.inStringDef(fullLine, column)
+            lastword = self.get_last_word(cursor)
+            inStringDef, char = self.is_in_string_def(fullline, column)
             if inStringDef:
                 # the string might be between paren if multiline
                 # check if there a at least a non closed paren on the previous
                 # lines
-                if self.isStringBetweenParams(tc):
-                    pre =  char
+                if self.has_unclosed_paren(cursor):
+                    pre = char
                 else:
                     pre = '" \\'
                     post += 4 * ' '
-                if fullLine.endswith(':'):
+                if fullline.endswith(':'):
                     post += 4 * " "
                 post += char
-            elif fullLine.rstrip().endswith(":") and \
-                    lastWord.rstrip().endswith(':') and self.atBlockEnd(
-                    tc, fullLine):
+            elif fullline.rstrip().endswith(":") and \
+                    lastword.rstrip().endswith(':') and \
+                    self.at_block_end(cursor, fullline):
                 try:
-                    indent = self.getIndentOfOpeningParen(tc, column) + 4
+                    indent = (self.get_indent_of_opening_paren(cursor, column)
+                              + 4)
                     if indent:
                         post = indent * " "
                 except TypeError:
-                    kw = ["if", "class", "def", "while", "for", "else", "elif", "except", "finally", "try"]
-                    l = fullLine
-                    ln = tc.blockNumber()
-                    def check_kw_in_line(kws, l):
-                        for kw in kws:
-                            if kw in l:
+                    kw = ["if", "class", "def", "while", "for", "else", "elif",
+                          "except", "finally", "try"]
+                    l = fullline
+                    ln = cursor.blockNumber()
+
+                    def check_kw_in_line(kwds, lparam):
+                        for kwd in kwds:
+                            if kwd in lparam:
                                 return True
                         return False
+
                     while not check_kw_in_line(kw, l) and ln:
                         ln -= 1
-                        l = self.editor.lineText(ln)
+                        l = self._helper.line_text(ln)
                     indent = (len(l) - len(l.lstrip())) * " "
                     indent += 4 * " "
                     post = indent
-            elif fullLine.endswith("\\"):
+            elif line.endswith("\\"):
                 # increment indent
-                post = post + 4 * " "
-            elif fullLine.endswith(")") and lastWord.endswith(')'):
+                post += 4 * " "
+            elif fullline.endswith(")") and lastword.endswith(')'):
                 # find line where the open braces can be found and align with
                 # that line
-                indent = self.getIndentOfOpeningParen(tc, column)
+                indent = self.get_indent_of_opening_paren(cursor, column)
                 if indent:
                     post = indent * " "
-            elif (not "\\" in fullLine and not "#" in fullLine and
-                      fullLine.strip() and not fullLine.endswith(')') and
-                      not self.atBlockEnd(tc, fullLine)):
-                if lastWord and lastWord[-1] != " ":
+            elif ("\\" not in fullline and "#" not in fullline and
+                  fullline.strip() and not fullline.endswith(')') and
+                  not self.at_block_end(cursor, fullline)):
+                if lastword and lastword[-1] != " ":
                     pre += " \\"
                 else:
                     pre += '\\'
                 post += 4 * " "
-                if fullLine.endswith(':'):
+                if fullline.endswith(':'):
                     post += 4 * " "
-            elif (lastWord == "return" or lastWord == "pass" or
-                    self.twoPrevEmptyLine(tc)):
+            elif (lastword == "return" or lastword == "pass"):
                 post = post[:-4]
 
         return pre, post

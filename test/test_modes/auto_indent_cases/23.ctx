@@ -1,0 +1,6 @@
+print(" a very very"
+      "very very very long |string")
+->
+print(" a very very"
+      "very very very long "
+      "|string")

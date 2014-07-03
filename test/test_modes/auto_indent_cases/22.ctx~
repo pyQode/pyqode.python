@@ -1,0 +1,16 @@
+if True:
+    print 'Ok'
+    
+    |
+if False:
+    pass
+
+->
+if True:
+    print 'Ok'
+    
+    
+|
+if False:
+    pass
+

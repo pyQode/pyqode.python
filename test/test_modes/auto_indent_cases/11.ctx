@@ -1,0 +1,6 @@
+if main == |'__name__':
+    pass
+->
+if main ==  \
+        |'__name__':
+    pass

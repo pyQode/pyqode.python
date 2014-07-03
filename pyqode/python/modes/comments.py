@@ -1,65 +1,43 @@
 # -*- coding: utf-8 -*-
-#
-#The MIT License (MIT)
-#
-#Copyright (c) <2013-2014> <Colin Duquesnoy and others, see AUTHORS.txt>
-#
-#Permission is hereby granted, free of charge, to any person obtaining a copy
-#of this software and associated documentation files (the "Software"), to deal
-#in the Software without restriction, including without limitation the rights
-#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-#copies of the Software, and to permit persons to whom the Software is
-#furnished to do so, subject to the following conditions:
-#
-#The above copyright notice and this permission notice shall be included in
-#all copies or substantial portions of the Software.
-#
-#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-#FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-#AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-#LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-#OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-#THE SOFTWARE.
-#
-from pyqode.core import Mode
-from pyqode.qt import QtGui, QtCore
+import os
+from pyqode.core import api
+from pyqode.core.qt import QtGui, QtCore, QtWidgets
 
 
-class CommentsMode(Mode):
+class CommentsMode(api.Mode):
     """
     Mode that allow to comment/uncomment a set of lines using Ctrl+/.
     """
-    IDENTIFIER = "commentsMode"
-    DESCRIPTION = "Comments/uncomments a set of lines (Ctrl+/)"
-
     def __init__(self):
         super(CommentsMode, self).__init__()
-        self.action = QtGui.QAction("Comment/Uncomment", self.editor)
+        self.action = QtWidgets.QAction("Comment/Uncomment", self.editor)
         self.action.setShortcut("Ctrl+/")
 
-    def _onStateChanged(self, state):
+    def on_state_changed(self, state):
         """
         Called when the mode is activated/deactivated
         """
         if state:
             self.action.triggered.connect(self.comment)
-            self.separator = self.editor.addSeparator()
-            self.editor.addAction(self.action)
+            self.separator = self.editor.add_separator()
+            self.editor.add_action(self.action)
+            if 'pyqt5' in os.environ['QT_API'].lower():
+                self.editor.key_pressed.connect(self.on_key_pressed)
         else:
-            self.editor.removeAction(self.action)
-            self.editor.removeAction(self.separator)
+            self.editor.remove_action(self.action)
+            self.editor.remove_action(self.separator)
             self.action.triggered.disconnect(self.comment)
+            if 'pyqt5' in os.environ['QT_API'].lower():
+                self.editor.key_pressed.disconnect(self.on_key_pressed)
 
-    def comment(self):
-        """
-        Comments/Uncomments the selected lines or the current lines if there
-        is no selection.
-        """
-        cursor = self.editor.textCursor()
-        # make comment/uncomment a single operation for the undo stack
-        cursor.beginEditBlock()
-        # did the user do a reversed selection (from bottom to top)?
+    def on_key_pressed(self, key_event):
+        ctrl = (key_event.modifiers() & QtCore.Qt.ControlModifier ==
+                QtCore.Qt.ControlModifier)
+        if key_event.key() == QtCore.Qt.Key_Slash and ctrl:
+            self.comment()
+            key_event.accept()
+
+    def check_selection(self, cursor):
         sel_start = cursor.selectionStart()
         sel_end = cursor.selectionEnd()
         reversed_selection = cursor.position() == sel_start
@@ -69,13 +47,25 @@ class CommentsMode(Mode):
             cursor.select(QtGui.QTextCursor.LineUnderCursor)
             has_selection = False
 
+        return has_selection, reversed_selection, sel_end, sel_start
+
+    def comment(self):
+        """
+        Comments/Uncomments the selected lines or the current lines if there
+        is no selection.
+        """
+        cursor = self.editor.textCursor()
+        # make comment/uncomment a single operation for the undo stack
+        cursor.beginEditBlock()
+
+        # did the user do a reversed selection (from _bottom to _top)?
+        has_sel, reversed_sel, sel_end, sel_start = self.check_selection(
+            cursor)
         # get selected lines
         lines = cursor.selection().toPlainText().splitlines()
         nb_lines = len(lines)
-
         # move to first line
         cursor.setPosition(sel_start)
-
         # we uncomment if all lines were commented, otherwise we comment all
         # lines in selection
         comment = False
@@ -83,7 +73,7 @@ class CommentsMode(Mode):
             cursor.movePosition(QtGui.QTextCursor.StartOfLine)
             cursor.movePosition(QtGui.QTextCursor.EndOfLine, cursor.KeepAnchor)
             line = cursor.selectedText().lstrip()
-            if not line.strip():
+            if not len(line.strip()):
                 # skips empty lines
                 continue
             indent = len(cursor.selectedText()) - len(line)
@@ -107,9 +97,7 @@ class CommentsMode(Mode):
                     cursor.insertText("")
                     if i == 0:
                         sel_start -= 1
-                        sel_end -= 1
-                    else:
-                        sel_end -= 1
+                    sel_end -= 1
                 # comment
                 else:
                     cursor.movePosition(QtGui.QTextCursor.StartOfLine)
@@ -117,24 +105,16 @@ class CommentsMode(Mode):
                     cursor.insertText("# ")
                     if i == 0:
                         sel_start += 1
-                        sel_end += 1
-                    else:
-                        sel_end += 1
+                    sel_end += 1
             # next line
             cursor.movePosition(QtGui.QTextCursor.EndOfLine)
             cursor.setPosition(cursor.position() + 1)
         cursor.setPosition(sel_start + (1 if not comment else -1))
         cursor.setPosition(sel_start + (1 if not comment else -1))
         cursor.endEditBlock()
-        if has_selection:
-            pos = sel_end if not reversed_selection else sel_start
+        if has_sel:
+            pos = sel_end if not reversed_sel else sel_start
             cursor.setPosition(pos, QtGui.QTextCursor.MoveAnchor)
         else:
             cursor.movePosition(cursor.Down, cursor.MoveAnchor, 1)
         self.editor.setTextCursor(cursor)
-
-    def __on_keyPressed(self, event):
-        if(event.modifiers() & QtCore.Qt.ControlModifier and
-           event.key() == QtCore.Qt.Key_Slash):
-            event.accept()
-            self.comment()

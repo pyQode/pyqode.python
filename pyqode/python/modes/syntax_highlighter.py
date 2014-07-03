@@ -1,105 +1,82 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-#The MIT License (MIT)
-#
-#Copyright (c) <2013-2014> <Colin Duquesnoy and others, see AUTHORS.txt>
-#
-#Permission is hereby granted, free of charge, to any person obtaining a copy
-#of this software and associated documentation files (the "Software"), to deal
-#in the Software without restriction, including without limitation the rights
-#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-#copies of the Software, and to permit persons to whom the Software is
-#furnished to do so, subject to the following conditions:
-#
-#The above copyright notice and this permission notice shall be included in
-#all copies or substantial portions of the Software.
-#
-#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-#FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-#AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-#LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-#OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-#THE SOFTWARE.
-#th pyQode. If not, see http://www.gnu.org/licenses/.
-#
-""" This module contains the python specific syntax highlighter
 """
-import sys
-from pyqode.core import TextStyle, SyntaxHighlighter
-from pyqode.core.system import memoized
-from pyqode.qt import QtGui, QtCore
-from pyqode.core import Mode, IndentBasedFoldDetector
+This module contains the python specific syntax highlighter
+"""
+from pyqode.core.qt import QtGui, QtCore
+from pyqode.core.api import SyntaxHighlighter
+from pyqode.core.api import Mode
+from pyqode.core.api.utils import TextStyle
+from pyqode.core.api.utils import memoized
 
 
-#: Default (white) color scheme for :class:`pyqode.python.PyHighlighterMode`
-#: Those values are added to :attr:`pyqode.core.QCodeEdit.style` properties in
-#: the *Python* section
-DEFAULT_LIGHT_STYLES = {
-    'keyword': TextStyle('#808000 nbold nitalic nunderlined'),
-    'builtins': TextStyle('#808000 nbold nitalic nunderlined'),
-    'operator': TextStyle('darkGray nbold nitalic nunderlined'),
-    'punctuation': TextStyle('darkGray nbold nitalic nunderlined'),
-    'decorator': TextStyle('#808000 nbold nitalic nunderlined'),
-    'brace': TextStyle('#404040 nbold nitalic nunderlined'),
-    'class': TextStyle('#800080 nbold nitalic nunderlined'),
-    'function': TextStyle('#800080 nbold nitalic nunderlined'),
-    'string': TextStyle('#008000 nbold nitalic nunderlined'),
-    'docstring': TextStyle('#0000AA nbold nitalic nunderlined'),
-    'comment': TextStyle('#008000 nbold italic nunderlined'),
-    'self': TextStyle('#8F2828 nbold italic nunderlined'),
-    'numbers': TextStyle('#000080 nbold nitalic nunderlined'),
-    'predefined': TextStyle('#B200B2 nbold nitalic nunderlined'),
-    'docstringTag': TextStyle('#0000FF nbold nitalic underlined'),
-}
-
-#: Alternative dark color scheme for :class:`pyqode.python.PyHighlighterMode`
-#: Those values are added to :attr:`pyqode.core.QCodeEdit.style` properties in
-#: the *Python* section
-DEFAULT_DARK_STYLES = {
-    'keyword': TextStyle('#CC7832 bold nitalic nunderlined'),
-    'builtins': TextStyle('#CC7832 nbold nitalic nunderlined'),
-    'operator': TextStyle('#A9B7C6 nbold nitalic nunderlined'),
-    'punctuation': TextStyle('#A9B7C6 nbold nitalic nunderlined'),
-    'decorator': TextStyle('#BBB529 nbold nitalic nunderlined'),
-    'brace': TextStyle('#AAAAAA nbold nitalic nunderlined'),
-    'class': TextStyle('#A9B7C6 bold nitalic nunderlined'),
-    'function': TextStyle('#A9B7C6 bold nitalic nunderlined'),
-    'string': TextStyle('#A5C261 nbold nitalic nunderlined'),
-    'docstring': TextStyle('#629755 nbold nitalic nunderlined'),
-    'comment': TextStyle('#808080 nbold italic nunderlined'),
-    'self': TextStyle('#94558D nbold italic nunderlined'),
-    'numbers': TextStyle('#6897B3 nbold nitalic nunderlined'),
-    'predefined': TextStyle('#B200B2 nbold nitalic nunderlined'),
-    'docstringTag': TextStyle('#427735 bold nitalic underlined')
-}
-
-
-class PyHighlighterMode(SyntaxHighlighter, Mode):
+class PyHighlighterMode(SyntaxHighlighter):
     """
-    Syntax highlighter specifically crafted for the Python programming language.
+    Syntax highlighter specifically crafted for the Python programming
+    language.
 
-    Contrarily to :class:`pyqode.core.PygmentsSyntaxHighlighter` this syntax
-    highlighter highlights multi-line comments and docstrings properly.
-    Its color scheme is entirely configurable (the properties are available in
-    the Python section of :attr:`pyqode.core.QCodeEdit.style`).
+    Contrarily to :class:`pyqode.core.modes.PygmentsSyntaxHighlighter`
+    this syntax highlighter highlights multi-line comments and docstrings
+    properly.
+
+    Its color scheme is entirely configurable through the properties exposed in
+    :mod:`pyqode.python.style`
 
     .. note:: To detect and remember multi-line strings/docstrings we use
               :attr:`QtGui.QTextBlock.userState` which is a bitmask combination
               that store two information:
 
-                  * the 7 first **bits** are used to store the following states:
+                  * the 7 first **bits** are used to store the following
+                    states:
 
                       - 0: not a multi-line string/docstring
                       - 1: start of multi-line string/docstring
                       - 2: multi-line string/docstring
 
                   * the 8th **bit** is used to make the difference between a
-                    docstring and a string which are highlighted with a different
-                    color.
+                    docstring and a string which are highlighted with a
+                    different color.
     """
     _DESCRIPTION = "Custom QtGui.QSyntaxHighlighter to highlight python syntax"
+
+    #: Default (white) color scheme for
+    #: :class:`pyqode.python.modes.PyHighlighterMode`
+    DEFAULT_LIGHT_STYLES = {
+        'keyword': TextStyle('#808000 nbold nitalic nunderlined'),
+        'builtins': TextStyle('#808000 nbold nitalic nunderlined'),
+        'operator': TextStyle('darkGray nbold nitalic nunderlined'),
+        'punctuation': TextStyle('darkGray nbold nitalic nunderlined'),
+        'decorator': TextStyle('#808000 nbold nitalic nunderlined'),
+        'brace': TextStyle('#404040 nbold nitalic nunderlined'),
+        'class': TextStyle('#800080 nbold nitalic nunderlined'),
+        'function': TextStyle('#800080 nbold nitalic nunderlined'),
+        'string': TextStyle('#008000 nbold nitalic nunderlined'),
+        'docstring': TextStyle('#0000AA nbold nitalic nunderlined'),
+        'comment': TextStyle('#008000 nbold italic nunderlined'),
+        'self': TextStyle('#8F2828 nbold italic nunderlined'),
+        'numbers': TextStyle('#000080 nbold nitalic nunderlined'),
+        'predefined': TextStyle('#B200B2 nbold nitalic nunderlined'),
+        'docstringTag': TextStyle('#0000FF nbold nitalic underlined'),
+    }
+
+    #: Alternative dark color scheme for
+    #: :class:`pyqode.python.modes.PyHighlighterMode`
+    DEFAULT_DARK_STYLES = {
+        'keyword': TextStyle('#CC7832 bold nitalic nunderlined'),
+        'builtins': TextStyle('#CC7832 nbold nitalic nunderlined'),
+        'operator': TextStyle('#A9B7C6 nbold nitalic nunderlined'),
+        'punctuation': TextStyle('#A9B7C6 nbold nitalic nunderlined'),
+        'decorator': TextStyle('#BBB529 nbold nitalic nunderlined'),
+        'brace': TextStyle('#AAAAAA nbold nitalic nunderlined'),
+        'class': TextStyle('#A9B7C6 bold nitalic nunderlined'),
+        'function': TextStyle('#A9B7C6 bold nitalic nunderlined'),
+        'string': TextStyle('#A5C261 nbold nitalic nunderlined'),
+        'docstring': TextStyle('#629755 nbold nitalic nunderlined'),
+        'comment': TextStyle('#808080 nbold italic nunderlined'),
+        'self': TextStyle('#94558D nbold italic nunderlined'),
+        'numbers': TextStyle('#6897B3 nbold nitalic nunderlined'),
+        'predefined': TextStyle('#B200B2 nbold nitalic nunderlined'),
+        'docstringTag': TextStyle('#427735 bold nitalic underlined')
+    }
 
     #: List of python keywords
     keywords = [
@@ -162,27 +139,25 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
 
     #: List of special punctuation
     braces = [
-        '\{', '\}', '\(', '\)', '\[', '\]',
+        r'\{', r'\}', r'\(', r'\)', r'\[', r'\]',
     ]
 
     #: List of highlighted punctuations
     punctuations = ["\:", "\,", "\."]
 
     def __init__(self, document=None):
-        SyntaxHighlighter.__init__(self, document,
-                                   foldDetector=IndentBasedFoldDetector())
+        super().__init__(document)
         self.__doc = document
-        Mode.__init__(self)
         self.tri_single = (QtCore.QRegExp("'''"), 1, 'docstring')
         self.tri_double = (QtCore.QRegExp('"""'), 2, 'docstring')
 
-        self.cnt = 0
+        self._cache_version = -1
 
         rules = []
 
-        self.spacesPattern = QtCore.QRegExp(r'\s+')
-        self.wordsPattern = QtCore.QRegExp(r'\s+')
-        self.docstringPattern = QtCore.QRegExp(r"(:|@)\w+")
+        self.space_ptrn = QtCore.QRegExp(r'\s+')
+        self.words_ptrn = QtCore.QRegExp(r'\s+')
+        self.docstring_ptrn = QtCore.QRegExp(r"(:|@)\w+")
 
         # All other rules
         rules += [
@@ -215,12 +190,30 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
         # Build a QtCore.QRegExp for each pattern
         self.rules = [(QtCore.QRegExp(pat), fmt) for (pat, fmt) in rules]
 
+        self._init_style()
+
+    def _init_style(self):
+        self.styles = self.DEFAULT_LIGHT_STYLES
+
+    def refresh_style(self):
+        self.styles.clear()
+        del self.styles
+        self._init_style()
+        self._purge_mem_cache()
+        if self.editor:
+            self.rehighlight()
+
     @memoized
-    def format(self, style_key, current_style_bck):
+    def format(self, style_key, cache_version):
+        """
+        Returns a QTextCharFormat from a style key.
+
+        :param style_key: QColor or style key name.
+        """
         if isinstance(style_key, QtGui.QColor):
             value = style_key
         else:
-            value = self.editor.style.value(style_key, "Python")
+            value = self.styles[style_key]
         if isinstance(value, QtGui.QColor):
             _color = value
             _format = QtGui.QTextCharFormat()
@@ -237,98 +230,78 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
                 _format.setFontUnderline(True)
         return _format
 
-    def _onInstall(self, editor):
-        Mode._onInstall(self, editor)
-        for k, v in DEFAULT_LIGHT_STYLES.items():
-            self.editor.style.addProperty(k, v, "Python")
-        self.__foreground = self.editor.style.value(
-            "whiteSpaceForeground")
-        self.__bck = self.editor.style.value("background").name()
+    def on_install(self, editor):
+        Mode.on_install(self, editor)
 
-    def _onStateChanged(self, state):
+    def on_state_changed(self, state):
         if state:
             self.setDocument(self.editor.document())
         else:
             self.setDocument(None)
 
-    def _onStyleChanged(self, section, key):
-        if not key:
-            self.__foreground = self.editor.style.value(
-                "whiteSpaceForeground")
-            self.__bck = self.editor.style.value("background").name()
-            self.rehighlight()
-        if key == "whiteSpaceForeground":
-            self.__foreground = self.editor.style.value(
-                "whiteSpaceForeground")
-            self.rehighlight()
-        elif key == "background":
-            self.__bck = self.editor.style.value("background").name()
-            self.rehighlight()
-
     def rehighlight(self, *args, **kwargs):
-        self.__cancelMemoizeCache()
-        SyntaxHighlighter.rehighlight(self)
+        self._purge_mem_cache()
+        super().rehighlight()
 
     @memoized
-    def formatFromWord(self, word):
+    def format_from_word(self, word):
         if word in self.keywords:
             return "keyword"
         if word in self.builtins:
             return "builtins"
-        if word in self.braces:
-            return "braces"
-        if word in self.punctuations:
-            return "punctuation"
+        # if word in self.braces:
+        #     return "braces"
+        # if word in self.punctuations:
+        #     return "punctuation"
         if word == "self":
             return word
         return None
 
-    def highlightSpaces(self, text):
-        expression = self.spacesPattern
+    def highlight_spaces(self, text):
+        expression = self.space_ptrn
         index = expression.indexIn(text, 0)
         while index >= 0:
             index = expression.pos(0)
             length = len(expression.cap(0))
-            self.setFormat(index, length, self.format(self.__foreground,
-                                                      self.__bck))
+            self.setFormat(index, length, self.format(
+                self.editor.whitespaces_foreground, self._cache_version))
             index = expression.indexIn(text, index + length)
 
-    def highlightDocstringTags(self, text):
-        index = self.docstringPattern.indexIn(text, 0)
+    def highlight_sphinx_tags(self, text):
+        index = self.docstring_ptrn.indexIn(text, 0)
         while index >= 0:
-            length = self.docstringPattern.matchedLength()
+            length = self.docstring_ptrn.matchedLength()
             self.setFormat(index, length, self.format("docstringTag",
-                                                      self.__bck))
-            index = self.docstringPattern.indexIn(text, index + length)
+                                                      self._cache_version))
+            index = self.docstring_ptrn.indexIn(text, index + length)
 
-    def doHighlightBlock(self, text):
+    def highlight_block(self, text):
         usd = self.currentBlock().userData()
         if hasattr(usd, "cc_disabled_zones"):
             usd.cc_disabled_zones[:] = []
-        else:
-            usd.cc_disabled_zones = []
         if self.match_multiline(text):
-            self.highlightSpaces(text)
-            self.highlightDocstringTags(text)
+            self.highlight_spaces(text)
+            self.highlight_sphinx_tags(text)
             return
         for expression, fmt in self.rules:
             index = expression.indexIn(text)
             # used = False
-            toApply = fmt
+            to_apply = fmt
             while index >= 0:
                 l = expression.matchedLength()
                 if fmt == "word":
                     word = text[index:index + l]
-                    toApply = self.formatFromWord(word)
-                if toApply:
-                    self.setFormat(index, l, self.format(toApply, self.__bck))
+                    to_apply = self.format_from_word(word)
+                if to_apply:
+                    self.setFormat(index, l, self.format(to_apply,
+                                                         self._cache_version))
                 if fmt == "string":
                     usd.cc_disabled_zones.append((index, index + l))
                 elif fmt == "comment":
                     usd.cc_disabled_zones.append((index, pow(2, 32)))
                 index = expression.indexIn(text, index + l)
-        #Spaces
-        self.highlightSpaces(text)
+        # spaces
+        self.highlight_spaces(text)
 
     def match_multiline(self, text):
         #
@@ -349,67 +322,60 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
         # 0: not a multi-line comment or the last line
         # 1: start of multi-line comment
         # 2: multi-line comment (not start nor end)
-        prevState = self.previousBlockState() & 0x2
+        prev_state = self.previousBlockState() & 0x2
         # docstring or string is stored in bit 8
         # 0: string
         # 1: docstring
-        wasDocstring = self.previousBlockState() & 0x80
+        was_docstring = self.previousBlockState() & 0x80
         if self.previousBlockState() == -1:
-            prevState = 0
-            wasDocstring = 0
+            prev_state = 0
+            was_docstring = 0
 
         # check for mutli-line string that is not a docstring (a var)
         docstring = 0x80
-        if prevState == 0 and "=" in text:
+        if prev_state == 0 and "=" in text:
             text = text.split("=")[1].strip()
             docstring = 0
 
         # single quoted
         if text.startswith("'''") or text.endswith("'''"):
-            if prevState == 1:
-                # end of comment
-                multi = True
-                state = 0
-                docstring = wasDocstring
-            elif prevState == 0 or prevState == -1:
+            if prev_state == 0 or prev_state == -1:
                 state = 1
                 # start of single quoted comment
-                if text.startswith("'''") and text.endswith("'''") and len(text) > 6:
+                if (text.startswith("'''") and text.endswith("'''") and
+                        len(text) > 6):
                     state = 0
                 multi = True
             else:
                 # in single quoted docstring/string
                 multi = True
                 state = 2
-                docstring = wasDocstring
+                docstring = was_docstring
         elif text.startswith('"""') or text.endswith('"""'):
-            if prevState == 2:
+            if prev_state == 2:
                 # end of comment
                 multi = True
                 state = 0
-                docstring = wasDocstring
-            elif prevState == 0 or prevState == -1:
+                docstring = was_docstring
+            else:
                 # start of comment
                 multi = True
                 state = 2
                 # start of single quoted string/docstring
-                if text.startswith('"""') and text.endswith('"""') and len(text) > 6:
+                if (text.startswith('"""') and text.endswith('"""') and
+                        len(text) > 6):
                     state = 0
-            else:
-                multi = True
-                state = 1
-                docstring = wasDocstring
         else:
-            if prevState > 0:
+            if prev_state > 0:
                 multi = True
-                state = prevState
-                docstring = wasDocstring
+                state = prev_state
+                docstring = was_docstring
         if multi:
             fmt = "docstring"
             if not docstring:
                 fmt = "string"
             self.setFormat(len(original_text) - len(text),
-                           len(text), self.format(fmt, self.__bck))
+                           len(text), self.format(fmt, self._cache_version))
             usd = self.currentBlock().userData()
             end = pow(2, 32)
             if not state:
@@ -422,9 +388,5 @@ class PyHighlighterMode(SyntaxHighlighter, Mode):
         # print("State:", state)
         return multi
 
-    def __cancelMemoizeCache(self):
-        def nextInt():
-            for i in range(sys.maxsize):
-                yield i
-
-        self.__bck = nextInt()
+    def _purge_mem_cache(self):
+        self._cache_version += 1

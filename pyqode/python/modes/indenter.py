@@ -1,33 +1,9 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-#The MIT License (MIT)
-#
-#Copyright (c) <2013-2014> <Colin Duquesnoy and others, see AUTHORS.txt>
-#
-#Permission is hereby granted, free of charge, to any person obtaining a copy
-#of this software and associated documentation files (the "Software"), to deal
-#in the Software without restriction, including without limitation the rights
-#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-#copies of the Software, and to permit persons to whom the Software is
-#furnished to do so, subject to the following conditions:
-#
-#The above copyright notice and this permission notice shall be included in
-#all copies or substantial portions of the Software.
-#
-#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-#FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-#AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-#LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-#OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-#THE SOFTWARE.
-#
 """
 Contains the python indenter.
 """
-from pyqode.core import IndenterMode
-from pyqode.qt import QtGui
+from pyqode.core.qt import QtGui
+from pyqode.core.modes import IndenterMode
 
 
 class PyIndenterMode(IndenterMode):
@@ -36,17 +12,35 @@ class PyIndenterMode(IndenterMode):
     indents/unindents the **whole** line. This replace the default IndenterMode
     which we found to be better suited for python code editing.
     """
+    # pylint: disable=no-init
 
     def indent(self):
+        """
+        Performs an indentation
+        """
         cursor = self.editor.textCursor()
         assert isinstance(cursor, QtGui.QTextCursor)
         if not cursor.hasSelection():
             cursor.select(cursor.LineUnderCursor)
-        self.indentSelection(cursor)
+        if cursor.hasSelection():
+            self.indent_selection(cursor)
+        else:
+            # simply insert indentation at the cursor position
+            tab_len = self.editor.tab_length
+            cursor.beginEditBlock()
+            if self.editor.use_spaces_instead_of_tabs:
+                cursor.insertText(tab_len * " ")
+            else:
+                cursor.insertText('\t')
+            cursor.endEditBlock()
+            self.editor.setTextCursor(cursor)
 
-    def unIndent(self):
+    def unindent(self):
+        """
+        Performs an un-indentation
+        """
         cursor = self.editor.textCursor()
         assert isinstance(cursor, QtGui.QTextCursor)
         if not cursor.hasSelection():
             cursor.select(cursor.LineUnderCursor)
-        self.unIndentSelection(cursor)
+        self.unindent_selection(cursor)

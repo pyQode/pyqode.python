@@ -1,38 +1,14 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-#The MIT License (MIT)
-#
-#Copyright (c) <2013-2014> <Colin Duquesnoy and others, see AUTHORS.txt>
-#
-#Permission is hereby granted, free of charge, to any person obtaining a copy
-#of this software and associated documentation files (the "Software"), to deal
-#in the Software without restriction, including without limitation the rights
-#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-#copies of the Software, and to permit persons to whom the Software is
-#furnished to do so, subject to the following conditions:
-#
-#The above copyright notice and this permission notice shall be included in
-#all copies or substantial portions of the Software.
-#
-#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-#FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-#AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-#LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-#OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-#THE SOFTWARE.
-#
 """ Contains the python autocomplete mode """
 import jedi
-from pyqode.qt import QtGui
-from pyqode.core import AutoCompleteMode
+from pyqode.core.api import TextHelper
+from pyqode.core.modes import AutoCompleteMode
 
 
 class PyAutoCompleteMode(AutoCompleteMode):
     """
-    Extends :class:`pyqode.core.AutoCompleteMode` to add support for function docstring and
-    method/function call.
+    Extends :class:`pyqode.core.modes.AutoCompleteMode` to add
+    support for function docstring and method/function call.
 
     Docstring completion adds a `:param` sphinx tag foreach parameter in the
     above function.
@@ -41,72 +17,77 @@ class PyAutoCompleteMode(AutoCompleteMode):
 
     Method completion adds "self):" to method definition.
     """
+    # pylint: disable=no-init, missing-docstring
 
-    def _formatFuncParams(self, indent):
+    def _format_func_params(self, prev_line, indent):
         parameters = ""
-        l = self.editor.cursorPosition[0] - 1
-        c = indent + len("def ") + 1
-        script = jedi.Script(self.editor.toPlainText(), l, c,
-                             self.editor.filePath,
-                             self.editor.fileEncoding)
+        line_nbr = TextHelper(self.editor).current_line_nbr() - 1
+        col = len(prev_line) - len(prev_line.strip()) + len("def ") + 1
+        script = jedi.Script(self.editor.toPlainText(), line_nbr, col,
+                             self.editor.file.path,
+                             self.editor.file.encoding)
         definition = script.goto_definitions()[0]
         for defined_name in definition.defined_names():
             if defined_name.name != "self" and defined_name.type == 'param':
                 parameters += "\n{1}:param {0}:".format(
                     defined_name.name, indent * " ")
-        toInsert = '"\n{0}{1}\n{0}"""'.format(indent * " ", parameters)
-        return toInsert
+        to_insert = '"\n{0}{1}\n{0}"""'.format(indent * " ", parameters)
+        return to_insert
 
-    def _insertDocstring(self, prevLine, belowFct):
-        indent = self.editor.getLineIndent()
-        if "class" in prevLine or not belowFct:
-            toInsert = '"\n{0}\n{0}"""'.format(indent * " ")
+    def _insert_docstring(self, prev_line, below_fct):
+        indent = TextHelper(self.editor).line_indent()
+        if "class" in prev_line or not below_fct:
+            to_insert = '"\n{0}\n{0}"""'.format(indent * " ")
         else:
-            toInsert = self._formatFuncParams(indent)
-        tc = self.editor.textCursor()
-        p = tc.position()
-        tc.insertText(toInsert)
-        tc.setPosition(p)  # we are there ""|"
-        tc.movePosition(tc.Down)
-        self.editor.setTextCursor(tc)
+            to_insert = self._format_func_params(prev_line, indent)
+        cursor = self.editor.textCursor()
+        pos = cursor.position()
+        cursor.insertText(to_insert)
+        cursor.setPosition(pos)  # we are there ""|"
+        cursor.movePosition(cursor.Down)
+        self.editor.setTextCursor(cursor)
 
-    def _inMethodCall(self):
-        l = self.editor.cursorPosition[0] - 1
-        expected_indent = self.editor.getLineIndent() - 4
-        while l >= 0:
-            text = self.editor.lineText(l)
+    def _in_method_call(self):
+        helper = TextHelper(self.editor)
+        line_nbr = helper.current_line_nbr() - 1
+        expected_indent = helper.line_indent() - 4
+        while line_nbr >= 0:
+            text = helper.line_text(line_nbr)
             indent = len(text) - len(text.lstrip())
             if indent == expected_indent and 'class' in text:
                 return True
-            l -= 1
+            line_nbr -= 1
         return False
 
-    def _handleFctDef(self):
-        if self._inMethodCall():
+    def _handle_fct_def(self):
+        if self._in_method_call():
             txt = "self):"
         else:
             txt = "):"
-        tc = self.editor.textCursor()
-        tc.insertText(txt)
-        tc.movePosition(tc.Left, tc.MoveAnchor, 2)
-        self.editor.setTextCursor(tc)
+        cursor = self.editor.textCursor()
+        cursor.insertText(txt)
+        cursor.movePosition(cursor.Left, cursor.MoveAnchor, 2)
+        self.editor.setTextCursor(cursor)
 
-    def _onPostKeyPressed(self, e):
+    def _on_post_key_pressed(self, event):
         # if we are in disabled cc, use the parent implementation
-        column = self.editor.cursorPosition[1]
+        helper = TextHelper(self.editor)
+        column = helper.current_column_nbr()
         usd = self.editor.textCursor().block().userData()
-        for start, end in usd.cc_disabled_zones:
-            if (start <= column < end-1 and
-                    not self.editor.currentLineText.lstrip().startswith(
-                            '"""')):
-                return
-        prevLine = self.editor.lineText(self.editor.cursorPosition[0] - 1)
-        isBelowFuncOrClassDef = "def" in prevLine or "class" in prevLine
-        if (e.text() == '"' and '""' == self.editor.currentLineText.strip()
-                and (isBelowFuncOrClassDef or column == 2)):
-            self._insertDocstring(prevLine, isBelowFuncOrClassDef)
-        elif (e.text() == "(" and
-                  self.editor.currentLineText.lstrip().startswith("def ")):
-            self._handleFctDef()
-        else:
-            super(PyAutoCompleteMode, self)._onPostKeyPressed(e)
+        if usd:
+            for start, end in usd.cc_disabled_zones:
+                if (start <= column < end - 1 and
+                        not helper.current_line_text(
+                            ).lstrip().startswith('"""')):
+                    return
+            prev_line = helper.line_text(helper.current_line_nbr() - 1)
+            is_below_fct_or_class = "def" in prev_line or "class" in prev_line
+            if (event.text() == '"' and
+                    '""' == helper.current_line_text().strip() and
+                    (is_below_fct_or_class or column == 2)):
+                self._insert_docstring(prev_line, is_below_fct_or_class)
+            elif (event.text() == "(" and
+                    helper.current_line_text().lstrip().startswith("def ")):
+                self._handle_fct_def()
+            else:
+                super(PyAutoCompleteMode, self)._on_post_key_pressed(event)
