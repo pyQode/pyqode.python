@@ -19,8 +19,9 @@ def readme():
 
 
 # get requirements
-requirements = ['pyqode.core>=2.0.0-beta1', 'jedi>=0.8',
-                'pep8', 'frosted', 'docutils']
+requirements = [
+    'pyqode.core>=2.0.0', 'jedi>=0.8', 'pep8', 'frosted', 'docutils'
+]
 
 setup(
     name='pyqode.python',

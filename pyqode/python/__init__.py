@@ -6,4 +6,4 @@ of additional modes and panels for the frontend and by supplying
 dedicated workers for the backend.
 
 """
-__version__ = "2.0.0-rc1"
+__version__ = "2.0.0"
