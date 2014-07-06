@@ -32,7 +32,7 @@ class PyAutoCompleteMode(AutoCompleteMode):
             if defined_name.name != "self" and defined_name.type == 'param':
                 parameters += "\n{1}:param {0}:".format(
                     defined_name.name, indent * " ")
-        to_insert = '{0}{1}\n{0}"""'.format(indent * " ", parameters)
+        to_insert = '{1}\n{0}"""'.format(indent * " ", parameters)
         return to_insert
 
     def _insert_docstring(self, def_line, below_fct):
