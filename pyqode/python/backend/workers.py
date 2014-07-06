@@ -239,15 +239,19 @@ def run_pep8(request_data):
     # of strings instread of spitting the results at stdout
     pep8style = pep8.StyleGuide(parse_argv=False, config_file=True,
                                 checker_class=CustomChecker)
-    results = pep8style.input_file(path, lines=code.splitlines(True))
-    messages = []
-    # pylint: disable=unused-variable
-    for line_number, offset, code, text, doc in results:
-        messages.append(('[PEP8] %s' % text, WARNING, line_number))
-    return True, messages
+    try:
+        results = pep8style.input_file(path, lines=code.splitlines(True))
+    except Exception:
+        _logger().exception('Failed to run PEP8 analysis with data=%r'
+                            % request_data)
+        return False, []
+    else:
+        messages = []
+        # pylint: disable=unused-variable
+        for line_number, offset, code, text, doc in results:
+            messages.append(('[PEP8] %s' % text, WARNING, line_number))
+        return True, messages
 
-
-prev_results = []
 
 def run_frosted(request_data):
     """
