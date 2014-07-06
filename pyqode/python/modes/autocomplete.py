@@ -3,6 +3,7 @@
 import jedi
 from pyqode.core.api import TextHelper
 from pyqode.core.modes import AutoCompleteMode
+from pyqode.core.qt import QtCore
 
 
 class PyAutoCompleteMode(AutoCompleteMode):
@@ -21,7 +22,7 @@ class PyAutoCompleteMode(AutoCompleteMode):
 
     def _format_func_params(self, prev_line, indent):
         parameters = ""
-        line_nbr = TextHelper(self.editor).current_line_nbr() - 1
+        line_nbr = TextHelper(self.editor).current_line_nbr() - 2
         col = len(prev_line) - len(prev_line.strip()) + len("def ") + 1
         script = jedi.Script(self.editor.toPlainText(), line_nbr, col,
                              self.editor.file.path,
@@ -31,20 +32,21 @@ class PyAutoCompleteMode(AutoCompleteMode):
             if defined_name.name != "self" and defined_name.type == 'param':
                 parameters += "\n{1}:param {0}:".format(
                     defined_name.name, indent * " ")
-        to_insert = '"\n{0}{1}\n{0}"""'.format(indent * " ", parameters)
+        to_insert = '{0}{1}\n{0}"""'.format(indent * " ", parameters)
         return to_insert
 
-    def _insert_docstring(self, prev_line, below_fct):
+    def _insert_docstring(self, def_line, below_fct):
         indent = TextHelper(self.editor).line_indent()
-        if "class" in prev_line or not below_fct:
-            to_insert = '"\n{0}\n{0}"""'.format(indent * " ")
+        if "class" in def_line or not below_fct:
+            to_insert = '\n{0}"""'.format(indent * " ")
         else:
-            to_insert = self._format_func_params(prev_line, indent)
+            to_insert = self._format_func_params(def_line, indent)
         cursor = self.editor.textCursor()
         pos = cursor.position()
+        cursor.beginEditBlock()
         cursor.insertText(to_insert)
-        cursor.setPosition(pos)  # we are there ""|"
-        cursor.movePosition(cursor.Down)
+        cursor.setPosition(pos)
+        cursor.endEditBlock()
         self.editor.setTextCursor(cursor)
 
     def _in_method_call(self):
@@ -76,18 +78,20 @@ class PyAutoCompleteMode(AutoCompleteMode):
         usd = helper.block_user_data(self.editor.textCursor().block())
         if usd:
             for start, end in usd.cc_disabled_zones:
-                if (start <= column < end - 1 and
-                        not helper.current_line_text(
-                            ).lstrip().startswith('"""')):
+                cl = helper.current_line_text().lstrip()
+                if (start <= column < end - 1 and not cl.startswith('"""')):
                     return
-            prev_line = helper.line_text(helper.current_line_nbr() - 1)
-            is_below_fct_or_class = "def" in prev_line or "class" in prev_line
-            if (event.text() == '"' and
-                    '""' == helper.current_line_text().strip() and
-                    (is_below_fct_or_class or column == 2)):
-                self._insert_docstring(prev_line, is_below_fct_or_class)
+            def_line = helper.line_text(helper.current_line_nbr() - 2)
+            prev_line = helper.previous_line_text()
+            is_below_fct_or_class = "def" in def_line or "class" in def_line
+            if (event.key() == QtCore.Qt.Key_Return and
+                    '"""' == prev_line.strip() and
+                    (is_below_fct_or_class or column == 3)):
+                self._insert_docstring(def_line, is_below_fct_or_class)
             elif (event.text() == "(" and
                     helper.current_line_text().lstrip().startswith("def ")):
                 self._handle_fct_def()
             else:
-                super(PyAutoCompleteMode, self)._on_post_key_pressed(event)
+                line = TextHelper(self.editor).current_line_text().strip()
+                if line != '"""':
+                    super(PyAutoCompleteMode, self)._on_post_key_pressed(event)
