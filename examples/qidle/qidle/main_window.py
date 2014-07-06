@@ -100,7 +100,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if not os.path.exists(zip_path):
             if platform.system().lower() == 'linux':
                 zip_path = '/usr/share/qidle/libraries.zip'
-        if hasattr(sys, "frozen"):
+        if hasattr(sys, "frozen") or not '3' in Settings().interpreter:
             server_path = os.path.join(os.getcwd(), 'server.py')
             editor.backend.start(server_path,
                                  interpreter=Settings().interpreter,
@@ -108,7 +108,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         else:
             editor.backend.start(server.__file__,
                                  interpreter=Settings().interpreter,
-                                 args=['-s', zip_path])
+                                 args=['-s', ''])
         m = editor.modes.get(modes.GoToAssignmentsMode)
         assert isinstance(m, modes.GoToAssignmentsMode)
         m.out_of_doc.connect(self.on_goto_out_of_doc)
