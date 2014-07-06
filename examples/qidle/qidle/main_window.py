@@ -42,6 +42,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.actionOpen.triggered.connect(self.on_open)
         self.actionNew.triggered.connect(self.on_new)
         self.actionSave.triggered.connect(self.tabWidget.save_current)
+        self.actionSave.triggered.connect(self._enable_run)
         self.actionSave_as.triggered.connect(self.on_save_as)
         self.actionClose_tab.triggered.connect(self.tabWidget.close)
         self.actionClose_other_tabs.triggered.connect(
@@ -55,6 +56,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.interactiveConsole.process_finished.connect(
             self.on_process_finished)
         self.actionConfigure_run.triggered.connect(self.on_configure_run)
+
+    def _enable_run(self):
+        self.actionRun.setEnabled(self.tabWidget.currentWidget().file.path != '')
+        self.actionConfigure_run.setEnabled(self.tabWidget.currentWidget().file.path != '')
 
     def setup_recent_files_menu(self):
         """ Setup the recent files menu and manager """
