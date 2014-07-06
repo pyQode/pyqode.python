@@ -40,7 +40,7 @@ class PyCodeEdit(api.CodeEdit):
 
         # panels
         self.panels.append(panels.LineNumberPanel())
-        self.panels.append(panels.MarkerPanel())
+        self.panels.append(panels.CheckerPanel())
         self.panels.append(panels.SearchAndReplacePanel(),
                            panels.SearchAndReplacePanel.Position.BOTTOM)
         self.panels.append(pypanels.SymbolBrowserPanel(),

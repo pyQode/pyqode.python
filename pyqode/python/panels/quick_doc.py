@@ -134,7 +134,6 @@ class QuickDocPanel(Panel):
                         '</tr>\n<tr class="field"><td>&nbsp;</td>', '')
                     if string:
                         skip_error_msg = False
-                        print(string)
                         lines = []
                         for l in string.splitlines():
                             if (l.startswith('<div class="system-message"') or
