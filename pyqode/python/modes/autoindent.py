@@ -67,24 +67,24 @@ class PyAutoIndentMode(AutoIndentMode):
 
     def parens_count_for_block(self, col, block):
         data = TextHelper(self.editor).block_user_data(block)
-        nb_open = 0
-        nb_closed = 0
+        open_p = []
+        closed_p = []
         lists = [data.parentheses, data.braces, data.square_brackets]
         for symbols in lists:
             for paren in symbols:
                 if self.is_paren_open(paren):
                     if not col:
-                        return -1, -1
-                    nb_open += 1
-                if paren.position >= col and self.is_paren_closed(paren):
-                    nb_closed += 1
-        return nb_closed, nb_open
+                        return -1, -1, [], []
+                    open_p.append(paren)
+                if self.is_paren_closed(paren):
+                    closed_p.append(paren)
+        return len(open_p), len(closed_p), open_p, closed_p
 
     def between_paren(self, tc, col):
-        nb_closed, nb_open = self.parens_count_for_block(col, tc.block())
+        nb_closed, nb_open, open_p, closed_p = self.parens_count_for_block(col, tc.block())
         block = tc.block().next()
         while nb_open == nb_closed == 0 and block.isValid():
-            nb_closed, nb_open = self.parens_count_for_block(nb_open, block)
+            nb_closed, nb_open, open_p, closed_p = self.parens_count_for_block(nb_open, block)
             block = block.next()
         # if not, is there an non closed paren on the next lines.
         parens = {'(': 0, '{': 0, '[': 0}
@@ -126,7 +126,9 @@ class PyAutoIndentMode(AutoIndentMode):
                 block = operation(block)
                 offset = 0 if down else len(block.text())
         elif nb_open > 0:
-            return True
+            for closed_paren in reversed(closed_p):
+                if col < closed_paren.position:
+                    return True
         return False
 
     def _next_block(self, b):
