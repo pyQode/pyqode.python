@@ -151,7 +151,7 @@ def setup_editor(code_edit):
     code_edit.modes.append(modes.WordClickMode())
     code_edit.modes.append(modes.CodeCompletionMode())
     # python specifics
-    code_edit.modes.append(modes.PythonSH(code_edit.document()))
+    code_edit.modes.append(pymodes.PythonSH(code_edit.document()))
     code_edit.modes.append(pymodes.PyAutoCompleteMode())
     code_edit.modes.append(pymodes.PyAutoIndentMode())
     code_edit.modes.append(pymodes.FrostedCheckerMode())

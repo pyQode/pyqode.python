@@ -57,7 +57,7 @@ class PyCodeEdit(api.CodeEdit):
         self.modes.append(modes.WordClickMode())
         self.modes.append(modes.CodeCompletionMode())
         # python specifics
-        self.modes.append(modes.PythonSH(self.document()))
+        self.modes.append(pymodes.PythonSH(self.document()))
         self.modes.append(pymodes.PyAutoCompleteMode())
         self.modes.append(pymodes.PyAutoIndentMode())
         self.modes.append(pymodes.FrostedCheckerMode())
