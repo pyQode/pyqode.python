@@ -66,7 +66,7 @@ class PyAutoIndentMode(AutoIndentMode):
         return full_line
 
     def parens_count_for_block(self, col, block):
-        data = block.userData()
+        data = TextHelper(self.editor).block_user_data(block)
         nb_open = 0
         nb_closed = 0
         lists = [data.parentheses, data.braces, data.square_brackets]
@@ -103,7 +103,7 @@ class PyAutoIndentMode(AutoIndentMode):
             # block = operation(tc.block())
             offset = col
             while block.isValid():
-                data = block.userData()
+                data = TextHelper(self.editor).block_user_data(block)
                 lists = [data.parentheses, data.braces, data.square_brackets]
                 for symbols in lists:
                     for paren in symbols:
@@ -137,7 +137,7 @@ class PyAutoIndentMode(AutoIndentMode):
 
     def is_in_comment(self, column, tc, full_line):
         use_parent_impl = False
-        usd = tc.block().userData()
+        usd = TextHelper(self.editor).block_user_data(tc.block())
         for start, end in usd.cc_disabled_zones:
             if start < column < end:
                 string = full_line[start:end]
@@ -158,7 +158,7 @@ class PyAutoIndentMode(AutoIndentMode):
     def get_indent_of_opening_paren(self, tc, column):
         # find last closed paren
         pos = None
-        data = tc.block().userData()
+        data = TextHelper(self.editor).block_user_data(tc.block())
         tc2 = QTextCursor(tc)
         tc2.movePosition(tc2.StartOfLine, tc2.MoveAnchor)
         for paren in reversed(data.parentheses):
@@ -182,7 +182,7 @@ class PyAutoIndentMode(AutoIndentMode):
         tc_trav = QTextCursor(tc)
         while ln >= 1:
             tc_trav.movePosition(tc_trav.StartOfLine, tc_trav.MoveAnchor)
-            data = tc_trav.block().userData()
+            data = TextHelper(self.editor).block_user_data(tc_trav.block())
             lists = [data.parentheses, data.braces, data.square_brackets]
             for symbols in lists:
                 for paren in reversed(symbols):

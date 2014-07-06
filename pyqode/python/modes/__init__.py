@@ -14,7 +14,6 @@ from .goto_assignements import Assignment
 from .goto_assignements import GoToAssignmentsMode
 from .indenter import PyIndenterMode
 from .pep8_checker import PEP8CheckerMode
-from .syntax_highlighter import PyHighlighterMode
 
 
 __all__ = [
@@ -28,5 +27,4 @@ __all__ = [
     'GoToAssignmentsMode',
     'PyIndenterMode',
     'PEP8CheckerMode',
-    'PyHighlighterMode',
 ]

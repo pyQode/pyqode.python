@@ -73,7 +73,7 @@ class PyAutoCompleteMode(AutoCompleteMode):
         # if we are in disabled cc, use the parent implementation
         helper = TextHelper(self.editor)
         column = helper.current_column_nbr()
-        usd = self.editor.textCursor().block().userData()
+        usd = helper.block_user_data(self.editor.textCursor().block())
         if usd:
             for start, end in usd.cc_disabled_zones:
                 if (start <= column < end - 1 and

@@ -243,7 +243,7 @@ def run_pep8(request_data):
     messages = []
     # pylint: disable=unused-variable
     for line_number, offset, code, text, doc in results:
-        messages.append((text, WARNING, line_number))
+        messages.append(('[PEP8] %s' % text, WARNING, line_number))
     return True, messages
 
 
@@ -275,7 +275,7 @@ def run_frosted(request_data):
             # Avoid using msg, since for the only known case, it
             # contains a bogus message that claims the encoding the
             # file declared was unknown.s
-            _logger().warning("%s: problem decoding source", path)
+            _logger().warning("[SyntaxError] %s: problem decoding source", path)
         else:
             ret_val.append((msg, ERROR, lineno))
     else:
@@ -284,7 +284,7 @@ def run_frosted(request_data):
         w = checker.Checker(tree, os.path.split(path)[1])
         w.messages.sort(key=lambda m: m.lineno)
         for warning in w.messages:
-            msg = "%s: %s" % (warning.type.error_code, warning.message)
+            msg = "[pyFlakes] %s: %s" % (warning.type.error_code, warning.message)
             line = warning.lineno
             status = (WARNING if warning.type.error_code.startswith('W') else
                       ERROR)

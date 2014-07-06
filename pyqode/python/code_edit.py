@@ -57,7 +57,7 @@ class PyCodeEdit(api.CodeEdit):
         self.modes.append(modes.WordClickMode())
         self.modes.append(modes.CodeCompletionMode())
         # python specifics
-        self.modes.append(pymodes.PyHighlighterMode(self.document()))
+        self.modes.append(modes.PythonSH(self.document()))
         self.modes.append(pymodes.PyAutoCompleteMode())
         self.modes.append(pymodes.PyAutoIndentMode())
         self.modes.append(pymodes.FrostedCheckerMode())
@@ -67,26 +67,6 @@ class PyCodeEdit(api.CodeEdit):
         self.modes.append(pymodes.GoToAssignmentsMode())
         self.modes.append(pymodes.CommentsMode())
 
-    @QtCore.Slot()
-    def use_dark_style(self, use=True):
-        """
-        Changes the editor style to a dark color scheme similar to pycharm's
-        darcula color scheme.
-        """
-        if not use:
-            return
-        set_dark_color_scheme(self)
-
-    @QtCore.Slot()
-    def use_white_style(self, use=True):
-        """
-        Changes the editor style to a dark color scheme similar to QtCreator's
-        default color scheme.
-        """
-        if not use:
-            return
-        set_white_color_scheme(self)
-
     def setPlainText(self, txt, mimetype='text/x-python', encoding='utf-8'):
         """
         Extends QCodeEdit.setPlainText to allow user to setPlainText without
@@ -94,55 +74,3 @@ class PyCodeEdit(api.CodeEdit):
         """
         # pylint: disable=invalid-name, no-self-use
         super().setPlainText(txt, mimetype, encoding)
-
-
-def set_dark_color_scheme(code_edit):
-    """
-    Set a dark scheme on a :class:`pyqode.core.api.CodeEdit`.
-
-    The color scheme is similar to pycharm's darcula color scheme.
-
-    .. note:: This function will work only if a
-        :class:`pyqode.python.modes.PyHighlighterMode` has been
-        installed on the CodeEdit instance
-
-    :param code_edit: CodeEdit instance
-    :type code_edit: pyqode.core.api.CodeEdit
-    """
-    highlighter = code_edit.modes.get(pymodes.PyHighlighterMode)
-    highlighter.styles = highlighter.DEFAULT_DARK_STYLES
-    code_edit.background = QtGui.QColor("#252525")
-    code_edit.foreground = QtGui.QColor("#A9B7C6")
-    code_edit.whitespaces_foreground = QtGui.QColor('#404040')
-    line_highlighter = code_edit.modes.get(modes.CaretLineHighlighterMode)
-    line_highlighter.refresh()
-    symbol_matcher = code_edit.modes.get(modes.SymbolMatcherMode)
-    assert isinstance(symbol_matcher, modes.SymbolMatcherMode)
-    symbol_matcher.match_background = QtGui.QColor("transparent")
-    symbol_matcher.match_foreground = QtGui.QColor("#FF8647")
-
-
-def set_white_color_scheme(code_edit):
-    """
-    Set a light scheme on a :class:`pyqode.core.api.CodeEdit`.
-
-    The color scheme is similar to the qt creator's default color scheme.
-
-    .. note:: This function will work only if a
-        :class:`pyqode.python.modes.PyHighlighterMode` has been
-        installed on the ```code_edit``` instance.
-
-    :param code_edit: CodeEdit instance
-    :type code_edit: pyqode.core.api.CodeEdit
-    """
-    highlighter = code_edit.modes.get(pymodes.PyHighlighterMode)
-    highlighter.styles = highlighter.DEFAULT_LIGHT_STYLES
-    code_edit.background = QtGui.QColor("#FFFFFF")
-    code_edit.foreground = QtGui.QColor("#000000")
-    code_edit.whitespaces_foreground = QtGui.QColor('#404040')
-    line_highlighter = code_edit.modes.get(modes.CaretLineHighlighterMode)
-    line_highlighter.refresh()
-    symbol_matcher = code_edit.modes.get(modes.SymbolMatcherMode)
-    assert isinstance(symbol_matcher, modes.SymbolMatcherMode)
-    symbol_matcher.match_background = QtGui.QBrush(QtGui.QColor('#B4EEB4'))
-    symbol_matcher.match_foreground = QtGui.QColor('red')

@@ -2,9 +2,10 @@
 """
 Tests for PyCodeEdit
 """
+from pyqode.core.modes import PythonSH
 from pyqode.core.qt import QtWidgets
 from pyqode.core.qt.QtTest import QTest
-from pyqode.core.api import CodeEdit
+from pyqode.core.api import CodeEdit, ColorScheme
 from pyqode.python.code_edit import PyCodeEdit
 from .helpers import editor_open
 
@@ -15,11 +16,7 @@ def test_py_code_edit(editor):
     assert isinstance(editor, CodeEdit)
     assert isinstance(editor, PyCodeEdit)
     QTest.qWait(1000)
-    editor.use_dark_style()
+    editor.modes.get(PythonSH).color_scheme = ColorScheme('darcula')
     QTest.qWait(1000)
-    editor.use_white_style()
+    editor.modes.get(PythonSH).color_scheme = ColorScheme('qt')
     QTest.qWait(1000)
-
-    # # for coverage
-    editor.use_white_style(use=False)
-    editor.use_dark_style(use=False)
