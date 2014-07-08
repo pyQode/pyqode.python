@@ -81,10 +81,10 @@ class PyAutoIndentMode(AutoIndentMode):
         return len(open_p), len(closed_p), open_p, closed_p
 
     def between_paren(self, tc, col):
-        nb_closed, nb_open, open_p, closed_p = self.parens_count_for_block(col, tc.block())
+        nb_open, nb_closed, open_p, closed_p = self.parens_count_for_block(col, tc.block())
         block = tc.block().next()
         while nb_open == nb_closed == 0 and block.isValid():
-            nb_closed, nb_open, open_p, closed_p = self.parens_count_for_block(nb_open, block)
+            nb_open, nb_closed, open_p, closed_p = self.parens_count_for_block(nb_open, block)
             block = block.next()
         # if not, is there an non closed paren on the next lines.
         parens = {'(': 0, '{': 0, '[': 0}
@@ -210,7 +210,7 @@ class PyAutoIndentMode(AutoIndentMode):
             column = len(self._helper.line_text(ln))
         return pos, char
 
-    def get_parent_pos(self, tc, column):
+    def get_paren_pos(self, tc, column):
         pos, char = self.get_last_open_paren_pos(tc, column)
         if char == '(':
             ptype = 0
@@ -242,7 +242,7 @@ class PyAutoIndentMode(AutoIndentMode):
         # elements might be separated by ',' 'or' 'and'
         next_char = self.get_next_char(tc)
         nextcharisclosingsymbol = next_char in [']', ')', '}']
-        (oL, oC), (cL, cC) = self.get_parent_pos(tc, column)
+        (oL, oC), (cL, cC) = self.get_paren_pos(tc, column)
         closingline = self._helper.line_text(cL)
         openingline = self._helper.line_text(oL)
         openingline = re.sub(r'".*"', "", openingline)
@@ -268,9 +268,16 @@ class PyAutoIndentMode(AutoIndentMode):
                 # token)
                 else:
                     if len(tokens):
-                        post = oC * " "
+                        otext = TextHelper(self.editor).line_text(oL)
+                        if oL == TextHelper(self.editor).current_line_nbr() or otext[-1] != '(':
+                            # align with last opened paren
+                            post = oC * " "
+                        else:
+                            # align with first open paren
+                            indent = TextHelper(self.editor).line_indent()
+                            post = indent * ' '
                     else:
-                        post = openingindent * " " + 4 * " "
+                        post = openingindent * " " + self.editor.tab_length * " "
         pre = ""
         in_string_def, char = self.is_in_string_def(fullline, column)
         if in_string_def:
