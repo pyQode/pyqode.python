@@ -64,12 +64,14 @@ def preserve_editor_config(func):
     @functools.wraps(func)
     def wrapper(editor, *args, **kwds):
         ret = None
+        editor.setReadOnly(False)
         try:
             ret = func(editor, *args, **kwds)
         finally:
             editor.modes.clear()
             editor.panels.clear()
             setup_editor(editor)
+            editor.setReadOnly(False)
             if not editor.backend.connected:
                 editor.backend.start(server_path())
                 wait_for_connected(editor)
