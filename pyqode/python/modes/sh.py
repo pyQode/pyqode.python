@@ -167,6 +167,7 @@ class PythonSH(BaseSH):
                     else:
                         if '"""' in value:
                             self.setFormat(start, end-start, self.formats["docstring"])
+                            user_data.cc_disabled_zones.append((start, end))
                         elif key == 'decorator':
                             self.setFormat(start, end-start, self.formats["decorator"])
                         elif value == 'self':
