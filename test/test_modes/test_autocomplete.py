@@ -69,3 +69,16 @@ def test_fct_docstrings(editor):
                                     '    :param bar:\n'
                                     '    :param spam:\n'
                                     '    :param eggs:\n    """')
+
+
+def test_fct_docstrings_multiline(editor):
+    editor.clear()
+    editor.setPlainText('def foo(bar, spam,\n        eggs):\n    """')
+    TextHelper(editor).goto_line(3, len('    """'))
+    QTest.keyPress(editor, QtCore.Qt.Key_Return)
+    assert editor.toPlainText() == ('def foo(bar, spam,\n        eggs):\n'
+                                    '    """\n'
+                                    '    \n'
+                                    '    :param bar:\n'
+                                    '    :param spam:\n'
+                                    '    :param eggs:\n    """')

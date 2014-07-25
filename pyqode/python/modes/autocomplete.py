@@ -20,27 +20,41 @@ class PyAutoCompleteMode(AutoCompleteMode):
     """
     # pylint: disable=no-init, missing-docstring
 
-    def _format_func_params(self, prev_line, indent):
-        parameters = ""
-        line_nbr = TextHelper(self.editor).current_line_nbr() - 2
-        col = len(prev_line) - len(prev_line.strip()) + len("def ") + 1
-        script = jedi.Script(self.editor.toPlainText(), line_nbr, col,
-                             self.editor.file.path,
-                             self.editor.file.encoding)
-        definition = script.goto_definitions()[0]
-        for defined_name in definition.defined_names():
-            if defined_name.name != "self" and defined_name.type == 'param':
-                parameters += "\n{1}:param {0}:".format(
-                    defined_name.name, indent * " ")
-        to_insert = '{1}\n{0}"""'.format(indent * " ", parameters)
-        return to_insert
+    def _format_func_params(self, indent):
+        parameters = []
+        th = TextHelper(self.editor)
+        current_line_nbr = th.current_line_nbr()
+        line_nbr = current_line_nbr - 2
+        def_line_nbr = None
+        l = line_nbr
+        while def_line_nbr is None:
+            if 'def ' in th.line_text(l):
+                def_line_nbr = l
+                break
+            l -= 1
+        for i in range(def_line_nbr, line_nbr + 1):
+            txt = th.line_text(i)
+            if i == def_line_nbr:
+                # remove `def fct_name(`
+                txt = txt[txt.find('(') + 1:]
+            if i == line_nbr:
+                # remove `):`
+                txt = txt[:txt.rfind('):')]
+            params = txt.strip().split(',')
+            parameters += params
+        param_str = ""
+        for param in parameters:
+            if param and param != '"""':
+                param_str += "\n{1}:param {0}:".format(param.strip(),
+                                                       indent * " ")
+        return '{1}\n{0}"""'.format(indent * " ", param_str)
 
     def _insert_docstring(self, def_line, below_fct):
         indent = TextHelper(self.editor).line_indent()
         if "class" in def_line or not below_fct:
             to_insert = '\n{0}"""'.format(indent * " ")
         else:
-            to_insert = self._format_func_params(def_line, indent)
+            to_insert = self._format_func_params(indent)
         cursor = self.editor.textCursor()
         pos = cursor.position()
         cursor.beginEditBlock()
@@ -82,9 +96,23 @@ class PyAutoCompleteMode(AutoCompleteMode):
                 cl = helper.current_line_text().lstrip()
                 if start <= column <= end:
                     in_docstring = True
-            def_line = helper.line_text(helper.current_line_nbr() - 2)
+            def_line_nbr = None
+            l = helper.current_line_nbr() - 2
+            while def_line_nbr is None and l > 0:
+                ltext = TextHelper(self.editor).line_text(l)
+                if 'def ' in ltext:
+                    def_line_nbr = l
+                    break
+                l -= 1
             prev_line = helper.previous_line_text()
-            is_below_fct_or_class = "def" in def_line or "class" in def_line
+            def_line = ''
+            if def_line_nbr:
+                # function
+                is_below_fct_or_class = True
+            else:
+                # class
+                def_line = helper.line_text(helper.current_line_nbr() - 2)
+                is_below_fct_or_class = "class" in def_line
             if (event.key() == QtCore.Qt.Key_Return and in_docstring and
                     '"""' == prev_line.strip()):
                 self._insert_docstring(def_line, is_below_fct_or_class)
