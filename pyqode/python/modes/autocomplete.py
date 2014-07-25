@@ -77,16 +77,16 @@ class PyAutoCompleteMode(AutoCompleteMode):
         column = helper.current_column_nbr()
         usd = helper.block_user_data(self.editor.textCursor().block())
         if usd:
+            in_docstring = False
             for start, end in usd.cc_disabled_zones:
                 cl = helper.current_line_text().lstrip()
-                if (start <= column < end - 1 and not cl.startswith('"""')):
-                    return
+                if start <= column <= end:
+                    in_docstring = True
             def_line = helper.line_text(helper.current_line_nbr() - 2)
             prev_line = helper.previous_line_text()
             is_below_fct_or_class = "def" in def_line or "class" in def_line
-            if (event.key() == QtCore.Qt.Key_Return and
-                    '"""' == prev_line.strip() and
-                    (is_below_fct_or_class or column == 3)):
+            if (event.key() == QtCore.Qt.Key_Return and in_docstring and
+                    '"""' == prev_line.strip()):
                 self._insert_docstring(def_line, is_below_fct_or_class)
             elif (event.text() == "(" and
                     helper.current_line_text().lstrip().startswith("def ")):

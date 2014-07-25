@@ -42,6 +42,14 @@ def test_autocomple_method_parens(editor):
     assert editor.toPlainText() == 'class\n    def foo(self):'
 
 
+def test_module_docstrings(editor):
+    editor.clear()
+    editor.setPlainText('"""')
+    TextHelper(editor).goto_line(1, len('"""'))
+    QTest.keyPress(editor, QtCore.Qt.Key_Return)
+    assert editor.toPlainText() == '"""\n\n"""'
+
+
 def test_class_docstrings(editor):
     editor.clear()
     editor.setPlainText('class Foo:\n    """')
