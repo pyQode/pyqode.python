@@ -101,11 +101,3 @@ def test_auto_indent(editor, test_case):
     editor.setFocus(True)
     test_case.run(editor)
 
-
-
-
-
-# CASES = [
-#     (AutoIndentCase("print(foo, (1, 2))", 'print(\n    foo, (1, 2))', 1, len("print(")), ),
-#     (AutoIndentCase("print(foo, (1, 2))", 'print(foo,\n      (1, 2))', 1, len("print(foo,")), )
-# ]
