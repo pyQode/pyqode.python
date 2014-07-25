@@ -312,7 +312,6 @@ def icon_from_typename(name, icon_type):
 
     :returns: The associate icon resource filename or None.
     """
-    # todo clean the types list for jedi 0.8.0
     ICONS = {'CLASS': ':/pyqode_python_icons/rc/class.png',
              'IMPORT': ':/pyqode_python_icons/rc/namespace.png',
              'STATEMENT': ':/pyqode_python_icons/rc/var.png',
@@ -320,6 +319,7 @@ def icon_from_typename(name, icon_type):
              'MODULE': ':/pyqode_python_icons/rc/namespace.png',
              'KEYWORD': ':/pyqode_python_icons/rc/keyword.png',
              'PARAM': ':/pyqode_python_icons/rc/var.png',
+             'ARRAY': ':/pyqode_python_icons/rc/var.png',
              'INSTANCE': ':/pyqode_python_icons/rc/var.png',
              'PARAM-PRIV': ':/pyqode_python_icons/rc/var.png',
              'PARAM-PROT': ':/pyqode_python_icons/rc/var.png',
