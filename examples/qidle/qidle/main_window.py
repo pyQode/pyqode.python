@@ -105,7 +105,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if not os.path.exists(zip_path):
             if platform.system().lower() == 'linux':
                 zip_path = '/usr/share/qidle/libraries.zip'
-        if hasattr(sys, "frozen") or not '3' in Settings().interpreter:
+        if hasattr(sys, "frozen"):
             server_path = os.path.join(os.getcwd(), 'server.py')
             editor.backend.start(server_path,
                                  interpreter=Settings().interpreter,
