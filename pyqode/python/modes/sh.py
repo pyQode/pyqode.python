@@ -10,6 +10,7 @@ import builtins
 import re
 from pyqode.core.qt import QtGui
 from pyqode.core.api import SyntaxHighlighter as BaseSH
+from pyqode.core.api import TextBlockHelper
 
 
 def any(name, alternates):
@@ -113,9 +114,8 @@ class PythonSH(BaseSH):
         self.found_cell_separators = False
 
     def highlight_block(self, text, block):
-        user_data = block.user_data
-        user_data.cc_disabled_zones[:] = []
-        prev_state = self.previousBlockState()
+        prev_block = block.previous()
+        prev_state = TextBlockHelper.get_state(prev_block)
         if prev_state == self.INSIDE_DQ3STRING:
             offset = -4
             text = r'""" '+text
@@ -148,34 +148,27 @@ class PythonSH(BaseSH):
                         self.setFormat(start, end-start,
                                        self.formats["string"])
                         state = self.INSIDE_SQ3STRING
-                        user_data.cc_disabled_zones.append((start, end))
                     elif key == "uf_dq3string":
                         self.setFormat(start, end-start,
                                        self.formats["docstring"])
                         state = self.INSIDE_DQ3STRING
-                        user_data.cc_disabled_zones.append((start, end))
                     elif key == "uf_sqstring":
                         self.setFormat(start, end-start,
                                        self.formats["string"])
                         state = self.INSIDE_SQSTRING
-                        user_data.cc_disabled_zones.append((start, end))
                     elif key == "uf_dqstring":
                         self.setFormat(start, end-start,
                                        self.formats["string"])
                         state = self.INSIDE_DQSTRING
-                        user_data.cc_disabled_zones.append((start, end))
                     else:
                         if '"""' in value:
                             self.setFormat(start, end-start, self.formats["docstring"])
-                            user_data.cc_disabled_zones.append((start, end))
                         elif key == 'decorator':
                             self.setFormat(start, end-start, self.formats["decorator"])
                         elif value == 'self':
                             self.setFormat(start, end-start, self.formats["self"])
                         else:
                             self.setFormat(start, end-start, self.formats[key])
-                        if key == 'comment':
-                            user_data.cc_disabled_zones.append((start, end))
                         if key == "keyword":
                             if value in ("def", "class"):
                                 match1 = self.IDPROG.match(text, end)
@@ -212,7 +205,7 @@ class PythonSH(BaseSH):
 
             match = self.PROG.search(text, match.end())
 
-        self.setCurrentBlockState(state)
+        TextBlockHelper.set_state(block, state)
 
         if import_stmt is not None:
             block_nb = self.currentBlock().blockNumber()

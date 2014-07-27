@@ -88,38 +88,43 @@ class PyAutoCompleteMode(AutoCompleteMode):
     def _on_post_key_pressed(self, event):
         # if we are in disabled cc, use the parent implementation
         helper = TextHelper(self.editor)
-        column = helper.current_column_nbr()
-        usd = helper.block_user_data(self.editor.textCursor().block())
-        if usd:
-            in_docstring = False
-            for start, end in usd.cc_disabled_zones:
-                cl = helper.current_line_text().lstrip()
-                if start <= column <= end:
-                    in_docstring = True
-            def_line_nbr = None
-            l = helper.current_line_nbr() - 2
-            while def_line_nbr is None and l > 0:
-                ltext = TextHelper(self.editor).line_text(l)
-                if 'def ' in ltext:
-                    def_line_nbr = l
-                    break
-                l -= 1
-            prev_line = helper.previous_line_text()
-            def_line = ''
-            if def_line_nbr:
-                # function
-                is_below_fct_or_class = True
-            else:
-                # class
-                def_line = helper.line_text(helper.current_line_nbr() - 2)
-                is_below_fct_or_class = "class" in def_line
-            if (event.key() == QtCore.Qt.Key_Return and in_docstring and
-                    '"""' == prev_line.strip()):
-                self._insert_docstring(def_line, is_below_fct_or_class)
-            elif (event.text() == "(" and
-                    helper.current_line_text().lstrip().startswith("def ")):
-                self._handle_fct_def()
-            else:
-                line = TextHelper(self.editor).current_line_text().strip()
-                if line != '"""':
-                    super(PyAutoCompleteMode, self)._on_post_key_pressed(event)
+        cursor = self.editor.textCursor()
+        if event.key() == QtCore.Qt.Key_Return:
+            cursor = helper.select_lines(helper.current_line_nbr() - 1,
+                                         helper.current_line_nbr() - 1,
+                                         apply_selection=False)
+            cursor.movePosition(cursor.EndOfLine)
+            # add a fake space that will determine if we are in a docstring
+            cursor.insertText(' ')
+        in_docstring = helper.is_comment_or_string(cursor)
+        if event.key() == QtCore.Qt.Key_Return:
+            # remove fake space
+            cursor.movePosition(cursor.Left, cursor.KeepAnchor)
+            cursor.removeSelectedText()
+        l = helper.current_line_nbr() - 2
+        def_line_nbr = None
+        while def_line_nbr is None and l > 0:
+            ltext = TextHelper(self.editor).line_text(l)
+            if 'def ' in ltext:
+                def_line_nbr = l
+                break
+            l -= 1
+        prev_line = helper.previous_line_text()
+        def_line = ''
+        if def_line_nbr:
+            # function
+            is_below_fct_or_class = True
+        else:
+            # class
+            def_line = helper.line_text(helper.current_line_nbr() - 2)
+            is_below_fct_or_class = "class" in def_line
+        if (event.key() == QtCore.Qt.Key_Return and in_docstring and
+                '"""' == prev_line.strip()):
+            self._insert_docstring(def_line, is_below_fct_or_class)
+        elif (event.text() == "(" and
+                helper.current_line_text().lstrip().startswith("def ")):
+            self._handle_fct_def()
+        else:
+            line = TextHelper(self.editor).current_line_text().strip()
+            if line != '"""':
+                super(PyAutoCompleteMode, self)._on_post_key_pressed(event)

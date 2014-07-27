@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """ Contains smart indent modes """
 import re
-from pyqode.core.api import TextHelper
+from pyqode.core.api import TextHelper, get_block_symbol_data
 from pyqode.core.qt.QtGui import QTextCursor
 from pyqode.core.modes.autoindent import AutoIndentMode
 from pyqode.core.modes.matcher import SymbolMatcherMode
@@ -66,10 +66,9 @@ class PyAutoIndentMode(AutoIndentMode):
         return full_line
 
     def parens_count_for_block(self, col, block):
-        data = TextHelper(self.editor).block_user_data(block)
         open_p = []
         closed_p = []
-        lists = [data.parentheses, data.braces, data.square_brackets]
+        lists = get_block_symbol_data(block)
         for symbols in lists:
             for paren in symbols:
                 if self.is_paren_open(paren):
@@ -103,8 +102,7 @@ class PyAutoIndentMode(AutoIndentMode):
             # block = operation(tc.block())
             offset = col
             while block.isValid():
-                data = TextHelper(self.editor).block_user_data(block)
-                lists = [data.parentheses, data.braces, data.square_brackets]
+                lists = get_block_symbol_data(block)
                 for symbols in lists:
                     for paren in symbols:
                         if paren.position < offset and down:
@@ -137,18 +135,6 @@ class PyAutoIndentMode(AutoIndentMode):
     def _prev_block(self, b):
         return b.previous()
 
-    def is_in_comment(self, column, tc, full_line):
-        use_parent_impl = False
-        usd = TextHelper(self.editor).block_user_data(tc.block())
-        for start, end in usd.cc_disabled_zones:
-            if start < column < end:
-                string = full_line[start:end]
-                if not ((string.startswith("'") or string.startswith('"')) and
-                        (string.endswith("'") or string.endswith('"'))):
-                    use_parent_impl = True
-                    break
-        return use_parent_impl
-
     def get_last_word(self, tc):
         tc2 = QTextCursor(tc)
         tc2.movePosition(QTextCursor.Left, 1)
@@ -160,10 +146,10 @@ class PyAutoIndentMode(AutoIndentMode):
     def get_indent_of_opening_paren(self, tc, column):
         # find last closed paren
         pos = None
-        data = TextHelper(self.editor).block_user_data(tc.block())
+        data = get_block_symbol_data(tc.block())
         tc2 = QTextCursor(tc)
         tc2.movePosition(tc2.StartOfLine, tc2.MoveAnchor)
-        for paren in reversed(data.parentheses):
+        for paren in reversed(data[0]):
             if paren.character == ')':
                 column = paren.position
                 pos = tc2.position() + column + 1
@@ -184,8 +170,7 @@ class PyAutoIndentMode(AutoIndentMode):
         tc_trav = QTextCursor(tc)
         while ln >= 1:
             tc_trav.movePosition(tc_trav.StartOfLine, tc_trav.MoveAnchor)
-            data = TextHelper(self.editor).block_user_data(tc_trav.block())
-            lists = [data.parentheses, data.braces, data.square_brackets]
+            lists = get_block_symbol_data(tc_trav.block())
             for symbols in lists:
                 for paren in reversed(symbols):
                     if paren.position < column:
@@ -315,7 +300,9 @@ class PyAutoIndentMode(AutoIndentMode):
                 post = post[:-4]
             return pre, post
         # return pressed in comments
-        if self.is_in_comment(column, cursor, fullline):
+        if (self._helper.is_comment_or_string(
+                cursor, formats=['comment', 'docstring']) or
+                fullline.endswith('"""')):
             if line.strip().startswith("#") and column != len(fullline):
                 post += '# '
             return pre, post
