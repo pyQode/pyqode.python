@@ -9,7 +9,7 @@ It is approximately 3 time faster then :class:`pyqode.core.modes.PygmentsSH`.
 import builtins
 import re
 from pyqode.core.qt import QtGui
-from pyqode.core.api import SyntaxHighlighter as BaseSH
+from pyqode.core.api import SyntaxHighlighter as BaseSH, TextHelper
 from pyqode.core.api import TextBlockHelper
 
 
@@ -218,3 +218,20 @@ class PythonSH(BaseSH):
         self.import_statements = {}
         self.found_cell_separators = False
         super().rehighlight()
+
+    def detect_fold_level(self, prev_block, block):
+        if block.blockNumber() == 19:
+            pass
+        # first line is always at level 0
+        if prev_block is None:
+            return 0
+        elif prev_block.text().rstrip().endswith(':'):
+            return TextBlockHelper.get_fold_lvl(prev_block) + 1
+        else:
+            # check for deindentation
+            th = TextHelper(self.editor)
+            cindent = th.line_indent(block)
+            pindent = th.line_indent(prev_block)
+            if cindent < pindent:
+                return TextBlockHelper.get_fold_lvl(prev_block) - 1
+            return TextBlockHelper.get_fold_lvl(prev_block)
