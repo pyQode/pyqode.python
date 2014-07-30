@@ -111,9 +111,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                  interpreter=Settings().interpreter,
                                  args=['-s', zip_path])
         else:
-            editor.backend.start(server.__file__,
-                                 interpreter=Settings().interpreter,
-                                 args=['-s', ''])
+            editor.backend.start(
+                server.__file__, interpreter=Settings().interpreter,
+                args=['-s',
+                      zip_path if 'python2' in Settings().interpreter else ''])
         m = editor.modes.get(modes.GoToAssignmentsMode)
         assert isinstance(m, modes.GoToAssignmentsMode)
         m.out_of_doc.connect(self.on_goto_out_of_doc)
