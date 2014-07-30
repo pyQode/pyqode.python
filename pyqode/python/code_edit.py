@@ -39,6 +39,7 @@ class PyCodeEdit(api.CodeEdit):
         self.modes.append(pymodes.DocumentAnalyserMode())
 
         # panels
+        self.panels.append(panels.FoldingPanel())
         self.panels.append(panels.LineNumberPanel())
         self.panels.append(panels.CheckerPanel())
         self.panels.append(panels.SearchAndReplacePanel(),
@@ -46,6 +47,7 @@ class PyCodeEdit(api.CodeEdit):
         self.panels.append(pypanels.SymbolBrowserPanel(),
                            pypanels.SymbolBrowserPanel.Position.TOP)
         self.panels.append(pypanels.QuickDocPanel(), api.Panel.Position.BOTTOM)
+        self.panels.append(panels.EncodingPanel(), api.Panel.Position.TOP)
 
         # modes
         # generic
