@@ -111,6 +111,7 @@ class PythonSH(BaseSH):
     def __init__(self, parent, color_scheme=None):
         super().__init__(parent, color_scheme)
         self.import_statements = {}
+        self.global_import_statements = {}
         self.found_cell_separators = False
 
     def highlight_block(self, text, block):
@@ -200,38 +201,56 @@ class PythonSH(BaseSH):
                             self.setFormat(value.find(':') - 4, len(tag), self.formats["tag"])
                     for tag in ('.. note::', '.. warning::'):
                         if tag in value:
-                            self.setFormat(value.find('..') - 4, len(tag), self.formats["tag"])
+                            self.setFormat(value.find('..') - 4,
+                                           len(tag), self.formats["tag"])
 
 
             match = self.PROG.search(text, match.end())
 
         TextBlockHelper.set_state(block, state)
 
+        # update import zone
         if import_stmt is not None:
             block_nb = self.currentBlock().blockNumber()
             self.import_statements[block_nb] = import_stmt
+            txt = block.text()
+            if len(txt) - len(txt.strip()) == 0:
+                self.global_import_statements[block_nb] = import_stmt
+        # update import statements
+        if self.editor.file.opening and block == self.document().lastBlock() and len(self.global_import_statements):
+            start = list(self.global_import_statements.keys())[0]
+            end = list(self.global_import_statements.keys())[-1]
+            for line in range(start + 1, end + 1):
+                block = self.document().findBlockByNumber(line)
+                TextBlockHelper.set_fold_lvl(block, 1)
+                TextBlockHelper.set_fold_trigger(block, False)
+            if block.next().isValid():
+                TextBlockHelper.set_fold_lvl(block.next(), 0)
 
     def get_import_statements(self):
         return list(self.import_statements.values())
 
     def rehighlight(self):
         self.import_statements = {}
+        self.global_import_statements = {}
         self.found_cell_separators = False
         super().rehighlight()
 
     def detect_fold_level(self, prev_block, block):
-        if block.blockNumber() == 19:
-            pass
-        # first line is always at level 0
-        if prev_block is None:
-            return 0
-        elif prev_block.text().rstrip().endswith(':'):
-            return TextBlockHelper.get_fold_lvl(prev_block) + 1
-        else:
-            # check for deindentation
-            th = TextHelper(self.editor)
-            cindent = th.line_indent(block)
-            pindent = th.line_indent(prev_block)
-            if cindent < pindent:
-                return TextBlockHelper.get_fold_lvl(prev_block) - 1
-            return TextBlockHelper.get_fold_lvl(prev_block)
+        # Python is an indent based language so use indentation for folding
+        # makes sense. There is no need to get folding for every indentation
+        # (e.g. lines spanning over multiple lines) so we restrict to the first
+        # 3 level. Top level functions and
+        lvl = super().detect_fold_level(prev_block, block)
+        lvl = lvl if lvl < 3 else 2
+        n = block.blockNumber()
+        imports = list(self.global_import_statements.keys())
+        if len(imports) > 1:
+            imports = list(imports[1:])
+            if (n in list(range(imports[0], imports[-1] + 1)) or
+                    n == imports[0]):
+                return 1
+            # deindent line following last import
+            if n == list(self.global_import_statements.keys())[-1]:
+                return 0
+        return lvl
