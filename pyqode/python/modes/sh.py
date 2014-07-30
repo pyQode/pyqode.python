@@ -9,7 +9,7 @@ It is approximately 3 time faster then :class:`pyqode.core.modes.PygmentsSH`.
 import builtins
 import re
 from pyqode.core.qt import QtGui
-from pyqode.core.api import SyntaxHighlighter as BaseSH, TextHelper
+from pyqode.core.api import SyntaxHighlighter as BaseSH
 from pyqode.core.api import TextBlockHelper
 
 
@@ -238,11 +238,15 @@ class PythonSH(BaseSH):
 
     def detect_fold_level(self, prev_block, block):
         # Python is an indent based language so use indentation for folding
-        # makes sense. There is no need to get folding for every indentation
-        # (e.g. lines spanning over multiple lines) so we restrict to the first
-        # 3 level. Top level functions and
+        # makes sense but we restrict new regions to indentation after a ':',
+        # that way only the real logical blocks are displayed.
         lvl = super().detect_fold_level(prev_block, block)
-        lvl = lvl if lvl < 3 else 2
+        prev_lvl = TextBlockHelper.get_fold_lvl(prev_block)
+        # cancel false indentation, indentation can only happen if there is
+        # ':' on the previous line
+        if lvl > prev_lvl and not prev_block.text().strip().endswith(':'):
+            lvl = prev_lvl
+        # mark import statements as foldables
         n = block.blockNumber()
         imports = list(self.global_import_statements.keys())
         if len(imports) > 1:
