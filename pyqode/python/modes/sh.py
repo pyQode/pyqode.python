@@ -244,7 +244,7 @@ class PythonSH(BaseSH):
         prev_lvl = TextBlockHelper.get_fold_lvl(prev_block)
         # cancel false indentation, indentation can only happen if there is
         # ':' on the previous line
-        if lvl > prev_lvl and not prev_block.text().strip().endswith(':'):
+        if prev_block and lvl > prev_lvl and not prev_block.text().strip().endswith(':'):
             lvl = prev_lvl
         # mark import statements as foldables
         n = block.blockNumber()
