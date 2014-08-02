@@ -93,9 +93,12 @@ class PyAutoCompleteMode(AutoCompleteMode):
             cursor = helper.select_lines(helper.current_line_nbr() - 1,
                                          helper.current_line_nbr() - 1,
                                          apply_selection=False)
-            cursor.movePosition(cursor.EndOfLine)
-            # add a fake space that will determine if we are in a docstring
-            cursor.insertText(' ')
+            if cursor:
+                cursor.movePosition(cursor.EndOfLine)
+                # add a fake space that will determine if we are in a docstring
+                cursor.insertText(' ')
+            else:
+                return
         in_docstring = helper.is_comment_or_string(cursor)
         if event.key() == QtCore.Qt.Key_Return:
             # remove fake space
