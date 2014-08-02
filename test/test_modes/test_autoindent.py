@@ -78,7 +78,7 @@ class Case:
         editor.setPlainText(self.context.input_code)
         TextHelper(editor).goto_line(self.context.input_line,
                                      self.context.input_column)
-        wait = 1
+        wait = 500
         QTest.qWait(wait)
         QTest.keyPress(editor, QtCore.Qt.Key_Return)
         QTest.qWait(wait)

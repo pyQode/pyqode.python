@@ -254,7 +254,7 @@ class PyAutoIndentMode(AutoIndentMode):
                 else:
                     if len(tokens):
                         otext = TextHelper(self.editor).line_text(oL)
-                        if oL == TextHelper(self.editor).current_line_nbr() or otext[-1] != '(':
+                        if oL == TextHelper(self.editor).current_line_nbr() or otext[-1] not in ['(', '{', '[']:
                             # align with last opened paren
                             post = oC * " "
                         else:
