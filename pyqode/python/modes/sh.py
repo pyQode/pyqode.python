@@ -9,8 +9,9 @@ It is approximately 3 time faster then :class:`pyqode.core.modes.PygmentsSH`.
 import builtins
 import re
 from pyqode.core.qt import QtGui
-from pyqode.core.api import SyntaxHighlighter as BaseSH
+from pyqode.core.api import SyntaxHighlighter as BaseSH, TextHelper
 from pyqode.core.api import TextBlockHelper
+import sys
 
 
 def any(name, alternates):
@@ -83,7 +84,8 @@ def make_python_patterns(additional_keywords=[], additional_builtins=[]):
     ufstring2 = any("uf_dqstring", [uf_dqstring])
     ufstring3 = any("uf_sq3string", [uf_sq3string])
     ufstring4 = any("uf_dq3string", [uf_dq3string])
-    return "|".join([instance, decorator, kw, builtin, comment, ufstring1, ufstring2,
+    return "|".join([instance, decorator, kw, builtin, comment, ufstring1,
+                     ufstring2,
                      ufstring3, ufstring4, string, number,
                      any("SYNC", [r"\n"])])
 
@@ -110,8 +112,8 @@ class PythonSH(BaseSH):
 
     def __init__(self, parent, color_scheme=None):
         super().__init__(parent, color_scheme)
-        self.import_statements = {}
-        self.global_import_statements = {}
+        self.import_statements = []
+        self.global_import_statements = []
         self.found_cell_separators = False
 
     def highlight_block(self, text, block):
@@ -135,10 +137,13 @@ class PythonSH(BaseSH):
 
         import_stmt = None
 
+        block.docstring = False
+
         self.setFormat(0, len(text), self.formats["normal"])
 
         state = self.NORMAL
         match = self.PROG.search(text)
+        block.docstring_start = False
         while match:
             for key, value in list(match.groupdict().items()):
                 if value:
@@ -152,6 +157,7 @@ class PythonSH(BaseSH):
                     elif key == "uf_dq3string":
                         self.setFormat(start, end-start,
                                        self.formats["docstring"])
+                        block.docstring = True
                         state = self.INSIDE_DQ3STRING
                     elif key == "uf_sqstring":
                         self.setFormat(start, end-start,
@@ -163,11 +169,15 @@ class PythonSH(BaseSH):
                         state = self.INSIDE_DQSTRING
                     else:
                         if '"""' in value:
-                            self.setFormat(start, end-start, self.formats["docstring"])
+                            block.docstring = True
+                            self.setFormat(start, end-start,
+                                           self.formats["docstring"])
                         elif key == 'decorator':
-                            self.setFormat(start, end-start, self.formats["decorator"])
+                            self.setFormat(start, end-start,
+                                           self.formats["decorator"])
                         elif value == 'self':
-                            self.setFormat(start, end-start, self.formats["self"])
+                            self.setFormat(start, end-start,
+                                           self.formats["self"])
                         else:
                             self.setFormat(start, end-start, self.formats[key])
                         if key == "keyword":
@@ -196,14 +206,6 @@ class PythonSH(BaseSH):
                                     start, end = match1.span(1)
                                     self.setFormat(start, end-start,
                                                    self.formats["keyword"])
-                    for tag in (':param', ':return:', ':returns:', ':type', ':raises'):
-                        if tag in value:
-                            self.setFormat(value.find(':') - 4, len(tag), self.formats["tag"])
-                    for tag in ('.. note::', '.. warning::'):
-                        if tag in value:
-                            self.setFormat(value.find('..') - 4,
-                                           len(tag), self.formats["tag"])
-
 
             match = self.PROG.search(text, match.end())
 
@@ -211,15 +213,28 @@ class PythonSH(BaseSH):
 
         # update import zone
         if import_stmt is not None:
-            block_nb = self.currentBlock().blockNumber()
-            self.import_statements[block_nb] = import_stmt
-            txt = block.text()
-            if len(txt) - len(txt.strip()) == 0:
-                self.global_import_statements[block_nb] = import_stmt
+            if not block in self.import_statements:
+                block.import_stmt = import_stmt
+                self.import_statements.append(block)
+                txt = block.text()
+                if len(txt) - len(txt.strip()) == 0:
+                    self.global_import_statements.append(block)
+
         # update import statements
-        if self.editor.file.opening and block == self.document().lastBlock() and len(self.global_import_statements):
-            start = list(self.global_import_statements.keys())[0]
-            end = list(self.global_import_statements.keys())[-1]
+        if ((not self.editor.file.opening or
+                block == self.document().lastBlock()) and
+                len(self.global_import_statements) > 1):
+            end = 0
+            start = sys.maxsize
+            for block in self.global_import_statements:
+                n = block.blockNumber()
+                if n > end:
+                    end = n
+                if n < start:
+                    start = n
+            block = self.document().findBlockByNumber(start)
+            TextBlockHelper.set_fold_lvl(block, 1)
+            TextBlockHelper.set_fold_trigger(block, True)
             for line in range(start + 1, end + 1):
                 block = self.document().findBlockByNumber(line)
                 TextBlockHelper.set_fold_lvl(block, 1)
@@ -244,17 +259,20 @@ class PythonSH(BaseSH):
         prev_lvl = TextBlockHelper.get_fold_lvl(prev_block)
         # cancel false indentation, indentation can only happen if there is
         # ':' on the previous line
-        if prev_block and lvl > prev_lvl and not prev_block.text().strip().endswith(':'):
+        if(prev_block and
+                lvl > prev_lvl and
+                not prev_block.text().strip().endswith(':')):
             lvl = prev_lvl
-        # mark import statements as foldables
-        n = block.blockNumber()
-        imports = list(self.global_import_statements.keys())
-        if len(imports) > 1:
-            imports = list(imports[1:])
-            if (n in list(range(imports[0], imports[-1] + 1)) or
-                    n == imports[0]):
-                return 1
-            # deindent line following last import
-            if n == list(self.global_import_statements.keys())[-1]:
-                return 0
+        th = TextHelper(self.editor)
+        fmts = ['docstring']
+        wasdocstring = th.is_comment_or_string(prev_block, formats=fmts)
+        if block.docstring:
+            if wasdocstring:
+                # find block that starts the docstring
+                p = prev_block.previous()
+                wasdocstring = th.is_comment_or_string(p, formats=fmts)
+                while wasdocstring or p.text().strip() == '':
+                    p = p.previous()
+                    wasdocstring = th.is_comment_or_string(p, formats=fmts)
+                lvl = TextBlockHelper.get_fold_lvl(p.next()) + 1
         return lvl
