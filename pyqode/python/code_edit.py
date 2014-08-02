@@ -9,6 +9,7 @@ from pyqode.core import panels
 from pyqode.python import managers as pymanagers
 from pyqode.python import modes as pymodes
 from pyqode.python import panels as pypanels
+from pyqode.python.folding import PythonFoldDetector
 # pylint: disable=unused-import
 from pyqode.python.ui import pyqode_python_icons_rc
 
@@ -68,6 +69,8 @@ class PyCodeEdit(api.CodeEdit):
         self.modes.append(pymodes.PyIndenterMode())
         self.modes.append(pymodes.GoToAssignmentsMode())
         self.modes.append(pymodes.CommentsMode())
+
+        self.syntax_highlighter.fold_detector = PythonFoldDetector()
 
     def setPlainText(self, txt, mimetype='text/x-python', encoding='utf-8'):
         """
