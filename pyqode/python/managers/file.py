@@ -13,6 +13,7 @@ class PyFileManager(FileManager):
     encoding tag.
 
     """
+
     def detect_encoding(self, path):
         """
         For the implementation of encoding definitions in Python, look at:
