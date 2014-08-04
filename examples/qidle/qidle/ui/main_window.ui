@@ -30,7 +30,7 @@
      <x>0</x>
      <y>0</y>
      <width>847</width>
-     <height>27</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -111,7 +111,7 @@
    <widget class="QWidget" name="dockWidgetContents">
     <layout class="QGridLayout" name="gridLayout_2">
      <item row="0" column="0">
-      <widget class="InteractiveConsole" name="interactiveConsole"/>
+      <widget class="PyInteractiveConsole" name="interactiveConsole"/>
      </item>
     </layout>
    </widget>
@@ -260,9 +260,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>InteractiveConsole</class>
+   <class>PyInteractiveConsole</class>
    <extends>QTextEdit</extends>
-   <header>pyqode.core.widgets.interactive</header>
+   <header>pyqode.python.widgets</header>
   </customwidget>
   <customwidget>
    <class>TabWidget</class>

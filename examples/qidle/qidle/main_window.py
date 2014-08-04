@@ -9,7 +9,7 @@ from pyqode.core.qt import QtCore
 from pyqode.core.qt import QtWidgets
 from pyqode.core import widgets
 from pyqode.python.backend import server
-from pyqode.python.code_edit import PyCodeEdit
+from pyqode.python.widgets.code_edit import PyCodeEdit
 from pyqode.python import modes
 from .utils import get_interpreters
 from .settings import Settings

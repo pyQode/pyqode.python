@@ -2,8 +2,8 @@
 Test all workers in pyqode.python.backend.workers.
 """
 import sys
-from pyqode.python import code_edit
 from pyqode.python.backend import workers
+from pyqode.python.widgets import code_edit
 
 
 def test_calltips():

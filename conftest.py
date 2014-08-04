@@ -65,7 +65,7 @@ def app(request):
 def editor(request):
     global _app, _widget
     from pyqode.core import modes
-    from pyqode.python.code_edit import PyCodeEdit
+    from pyqode.python.widgets.code_edit import PyCodeEdit
     from pyqode.python.backend import server
     from pyqode.core.qt.QtTest import QTest
 

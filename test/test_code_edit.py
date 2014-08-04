@@ -5,7 +5,7 @@ Tests for PyCodeEdit
 from pyqode.core.qt import QtWidgets
 from pyqode.core.qt.QtTest import QTest
 from pyqode.core.api import CodeEdit, ColorScheme
-from pyqode.python.code_edit import PyCodeEdit
+from pyqode.python.widgets.code_edit import PyCodeEdit
 from pyqode.python.modes import PythonSH
 from .helpers import editor_open
 
