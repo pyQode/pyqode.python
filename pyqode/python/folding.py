@@ -11,13 +11,13 @@ class PythonFoldDetector(IndentFoldDetector):
         # that way only the real logical blocks are displayed.
         lvl = super().detect_fold_level(prev_block, block)
         prev_lvl = TextBlockHelper.get_fold_lvl(prev_block)
-        # cancel false indentation, indentation can only happen if there is
-        # ':' on the previous line
         # strip end of line comments
         txt = prev_block.text().strip() if prev_block else ''
         if txt.find('#') != -1:
             txt = txt[:txt.find('#')].strip()
-        if(prev_block and lvl > prev_lvl and not txt.endswith(':')):
+        # cancel false indentation, indentation can only happen if there is
+        # ':' on the previous line
+        if prev_block and lvl > prev_lvl and not (txt.endswith(':')):
             lvl = prev_lvl
         th = TextHelper(self.editor)
         fmts = ['docstring']
