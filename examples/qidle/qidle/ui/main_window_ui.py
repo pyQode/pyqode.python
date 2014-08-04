@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'main_window.ui'
 #
-# Created: Mon Jun 23 09:42:05 2014
-#      by: PyQt5 UI code generator 5.3
+# Created: Mon Aug  4 16:05:10 2014
+#      by: PyQt5 UI code generator 5.3.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -25,7 +25,7 @@ class Ui_MainWindow(object):
         self.gridLayout.addWidget(self.tabWidget, 1, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 847, 27))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 847, 20))
         self.menubar.setObjectName("menubar")
         self.menuFile = QtWidgets.QMenu(self.menubar)
         self.menuFile.setObjectName("menuFile")
@@ -50,7 +50,7 @@ class Ui_MainWindow(object):
         self.dockWidgetContents.setObjectName("dockWidgetContents")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.dockWidgetContents)
         self.gridLayout_2.setObjectName("gridLayout_2")
-        self.interactiveConsole = InteractiveConsole(self.dockWidgetContents)
+        self.interactiveConsole = PyInteractiveConsole(self.dockWidgetContents)
         self.interactiveConsole.setObjectName("interactiveConsole")
         self.gridLayout_2.addWidget(self.interactiveConsole, 0, 0, 1, 1)
         self.dockWidget.setWidget(self.dockWidgetContents)
@@ -174,5 +174,5 @@ class Ui_MainWindow(object):
         self.actionConfigure_run.setText(_translate("MainWindow", "Configure run"))
 
 from pyqode.core.widgets.tabs import TabWidget
-from pyqode.core.widgets.interactive import InteractiveConsole
+from pyqode.python.widgets import PyInteractiveConsole
 from . import resources_rc
