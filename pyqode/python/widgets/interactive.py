@@ -18,7 +18,7 @@ class PyInteractiveConsole(InteractiveConsole):
 
     PROG = QtCore.QRegExp(
         r'\s*File "[a-zA-Z\/_]*((.\.[a-z]*")|(")), line [0-9]*, in .*')
-    FILENAME_PROG = QtCore.QRegExp(r'"[a-zA-Z\/_]*((.\.[a-z]*)|("))')
+    FILENAME_PROG = QtCore.QRegExp(r'"[a-zA-Z\/_\.]*"')
     LINE_PROG = QtCore.QRegExp(r'line [0-9]*')
 
     class UserData(QtGui.QTextBlockUserData):
@@ -113,3 +113,15 @@ class PyInteractiveConsole(InteractiveConsole):
         super().leaveEvent(e)
         if QtWidgets.QApplication.overrideCursor() is not None:
             QtWidgets.QApplication.restoreOverrideCursor()
+
+
+if __name__ == '__main__':
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    c = PyInteractiveConsole()
+    c.start_process('python', ['/home/colin/test_transition.py'])
+    c._write(c,
+             'File "/home/colin/Development/Games/Multigame/multigame/games/masterdice.py", line 30, in __init__',
+             c.stderr_color)
+    c.show()
+    app.exec_()
