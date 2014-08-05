@@ -66,7 +66,7 @@ class PyInteractiveConsole(InteractiveConsole):
                     self.LINE_PROG.indexIn(line)
                     start = self.LINE_PROG.pos(0)
                     end = start + len(self.LINE_PROG.cap(0))
-                    l = line[start:end]
+                    l = int(line[start:end].replace('line ', ''))
 
                     self.FILENAME_PROG.indexIn(line)
                     start = self.FILENAME_PROG.pos(0)
