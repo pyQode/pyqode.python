@@ -1,0 +1,4 @@
+print(foo, [1,| 2])
+->
+print(foo, [1,
+            |2])
