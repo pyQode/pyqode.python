@@ -78,7 +78,7 @@ class Case:
         editor.setPlainText(self.context.input_code)
         TextHelper(editor).goto_line(self.context.input_line,
                                      self.context.input_column)
-        wait = 500
+        wait = 1
         QTest.qWait(wait)
         QTest.keyPress(editor, QtCore.Qt.Key_Return)
         QTest.qWait(wait)
@@ -91,6 +91,7 @@ class Case:
 def collect_cases():
     cases = []
     for file_path in sorted(glob.glob('auto_indent_cases/*.ctx')):
+        # if '44' in file_path:
         cases.append(Case(file_path))
     return cases
 
