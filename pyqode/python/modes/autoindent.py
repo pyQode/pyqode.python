@@ -44,6 +44,7 @@ class PyAutoIndentMode(AutoIndentMode):
                 return pre, post
         else:
             lastword = self._get_last_word(cursor)
+            lastwordu = self._get_last_word_unstripped(cursor)
             in_string_def, char = self._is_in_string_def(fullline, column)
             if in_string_def:
                 post, pre = self._handle_indent_inside_string(
@@ -61,24 +62,12 @@ class PyAutoIndentMode(AutoIndentMode):
                     lastword.endswith((')', '}', ']'))):
                 post = self._handle_indent_after_paren(cursor, post)
             elif ("\\" not in fullline and "#" not in fullline and
-                  fullline.strip() and not fullline.endswith(')') and
                   not self._at_block_end(cursor, fullline)):
-                # break in statement not enclose by parents
                 post, pre = self._handle_indent_in_statement(
-                    fullline, lastword, post, pre)
+                    fullline, lastwordu, post, pre)
             elif lastword == "return" or lastword == "pass":
                 post = post[:-self.editor.tab_length]
-
         return pre, post
-
-    def _has_unclosed_paren(self, tc):
-        ln = tc.blockNumber()
-        while ln >= 0:
-            line = self._helper.line_text(ln)
-            if line.count("(") > line.count(")"):
-                return True
-            ln -= 1
-        return False
 
     @staticmethod
     def _is_in_string_def(full_line, column):
@@ -146,6 +135,13 @@ class PyAutoIndentMode(AutoIndentMode):
         tc2.movePosition(QTextCursor.WordLeft, tc.KeepAnchor)
         return tc2.selectedText().strip()
 
+    @staticmethod
+    def _get_last_word_unstripped(tc):
+        tc2 = QTextCursor(tc)
+        tc2.movePosition(QTextCursor.Left, 1)
+        tc2.movePosition(QTextCursor.WordLeft, tc.KeepAnchor)
+        return tc2.selectedText()
+
     def _get_indent_of_opening_paren(self, tc):
         tc.movePosition(tc.Left, tc.KeepAnchor)
         char = tc.selectedText()
@@ -161,32 +157,41 @@ class PyAutoIndentMode(AutoIndentMode):
             line = self._helper.line_text(ol)
             return len(line) - len(line.lstrip())
 
-    def _get_last_open_paren_pos(self, tc, column):
+    def _get_first_open_paren(self, tc, column):
         pos = None
         char = None
         ln = tc.blockNumber() + 1
         tc_trav = QTextCursor(tc)
+        mapping = {'(': (')', 0), '[': (']', 1), '{': ('}', 2),}
         while ln >= 1:
             tc_trav.movePosition(tc_trav.StartOfLine, tc_trav.MoveAnchor)
             lists = get_block_symbol_data(tc_trav.block())
+            all_symbols = []
             for symbols in lists:
-                for paren in reversed(symbols):
-                    if paren.position < column:
-                        if self._is_paren_open(paren):
-                            if paren.position > column:
-                                continue
-                            else:
-                                pos = tc_trav.position() + paren.position
-                                char = paren.character
-                                # ensure it does not have a closing paren on
-                                # the same line
-                                tc3 = QTextCursor(tc)
-                                tc3.setPosition(pos)
+                all_symbols += [s for s in symbols]
+            symbols = sorted(all_symbols, key=lambda x: x.position)
+            for paren in reversed(symbols):
+                if paren.position < column:
+                    if self._is_paren_open(paren):
+                        if paren.position > column:
+                            continue
+                        else:
+                            pos = tc_trav.position() + paren.position
+                            char = paren.character
+                            # ensure it does not have a closing paren on
+                            # the same line
+                            tc3 = QTextCursor(tc)
+                            tc3.setPosition(pos)
+                            try:
+                                ch, ch_type = mapping[paren.character]
                                 l, c = self.editor.modes.get(
-                                    SymbolMatcherMode).symbol_pos(tc3, ')')
-                                if l == ln and c < column:
-                                    continue
-                                return pos, char
+                                    SymbolMatcherMode).symbol_pos(
+                                    tc3, ch, ch_type)
+                            except KeyError:
+                                continue
+                            if l == ln and c < column:
+                                continue
+                            return pos, char
             # check previous line
             tc_trav.movePosition(tc_trav.Up, tc_trav.MoveAnchor)
             ln = tc_trav.blockNumber() + 1
@@ -194,7 +199,7 @@ class PyAutoIndentMode(AutoIndentMode):
         return pos, char
 
     def _get_paren_pos(self, tc, column):
-        pos, char = self._get_last_open_paren_pos(tc, column)
+        pos, char = self._get_first_open_paren(tc, column)
         if char == '(':
             ptype = 0
             closingchar = ')'
@@ -236,7 +241,10 @@ class PyAutoIndentMode(AutoIndentMode):
                                               line[oc:column]) if t]
         # align with first token pos
         if len(closingline) > cc and closingline[cc] == ":":
-            post = openingindent * " " + 8 * " "
+            if ('def ' in openingline or 'class ' in openingline) and oc != tc.positionInBlock():
+                post = oc * ' '
+            else:
+                post = openingindent * " " + 8 * " "
         else:
             # press enter before a '}', ']', ')'
             # which close an affectation (tuple, list , dict)
@@ -290,15 +298,12 @@ class PyAutoIndentMode(AutoIndentMode):
         return column >= len(fullline.rstrip()) - 1
 
     def _handle_indent_inside_string(self, char, cursor, fullline, post):
-        # the string might be between paren if multiline
-        # check if there a at least a non closed paren on the previous
-        # lines
+        # break string with a '\' at the end of the original line, always
+        # breaking strings enclosed by parens is done in the
+        # _handle_between_paren method
         n = self.editor.tab_length
-        if self._has_unclosed_paren(cursor):
-            pre = char
-        else:
-            pre = '" \\'
-            post += n * ' '
+        pre = '" \\'
+        post += n * ' '
         if fullline.endswith(':'):
             post += n * " "
         post += char

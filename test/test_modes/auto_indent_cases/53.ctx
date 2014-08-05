@@ -1,0 +1,8 @@
+def my_function(param_a,
+                param_b,| param_c):
+    pass
+->
+def my_function(param_a,
+                param_b,
+                |param_c):
+    pass
