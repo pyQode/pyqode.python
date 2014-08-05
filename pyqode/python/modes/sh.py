@@ -233,7 +233,7 @@ class PythonSH(BaseSH):
                 if n < start:
                     start = n
             block = self.document().findBlockByNumber(start)
-            TextBlockHelper.set_fold_lvl(block, 1)
+            TextBlockHelper.set_fold_lvl(block, 0)
             TextBlockHelper.set_fold_trigger(block, True)
             for line in range(start + 1, end + 1):
                 block = self.document().findBlockByNumber(line)
