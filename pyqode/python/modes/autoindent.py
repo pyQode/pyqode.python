@@ -232,7 +232,10 @@ class PyAutoIndentMode(AutoIndentMode):
                                               line[oc:column]) if t]
         # align with first token pos
         if len(closingline) > cc and closingline[cc] == ":":
-            post = openingindent * " " + 8 * " "
+            if 'def ' in openingline:
+                post = oc * ' '
+            else:
+                post = openingindent * " " + 8 * " "
         else:
             # press enter before a '}', ']', ')'
             # which close an affectation (tuple, list , dict)
