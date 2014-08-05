@@ -249,10 +249,7 @@ def run_pep8(request_data):
         messages = []
         # pylint: disable=unused-variable
         for line_number, offset, code, text, doc in results:
-            if not 'blank line contains whitespace' in text:
-                # skip this warning because the editor will ensure not
-                # whitespace are left when saving the text
-                messages.append(('[PEP8] %s' % text, WARNING, line_number))
+            messages.append(('[PEP8] %s' % text, WARNING, line_number))
         return True, messages
 
 
