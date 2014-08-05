@@ -27,7 +27,7 @@ class PythonFoldDetector(IndentFoldDetector):
                 # find block that starts the docstring
                 p = prev_block.previous()
                 wasdocstring = th.is_comment_or_string(p, formats=fmts)
-                while wasdocstring or p.text().strip() == '':
+                while wasdocstring or p.text().strip() == '' and p.isValid():
                     p = p.previous()
                     wasdocstring = th.is_comment_or_string(p, formats=fmts)
                 lvl = TextBlockHelper.get_fold_lvl(p.next()) + 1
