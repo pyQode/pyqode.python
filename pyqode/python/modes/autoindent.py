@@ -252,8 +252,6 @@ class PyAutoIndentMode(AutoIndentMode):
             return "", ""
         pre, post = AutoIndentMode._get_indent(self, cursor)
         if self.at_block_start(cursor, line):
-            if self.has_two_empty_line_before(cursor):
-                post = post[:-4]
             return pre, post
         # return pressed in comments
         if (self._helper.is_comment_or_string(
