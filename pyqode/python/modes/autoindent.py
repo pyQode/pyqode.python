@@ -69,15 +69,6 @@ class PyAutoIndentMode(AutoIndentMode):
                 post = post[:-self.editor.tab_length]
         return pre, post
 
-    def _has_unclosed_paren(self, tc):
-        ln = tc.blockNumber()
-        while ln >= 0:
-            line = self._helper.line_text(ln)
-            if line.count("(") > line.count(")"):
-                return True
-            ln -= 1
-        return False
-
     @staticmethod
     def _is_in_string_def(full_line, column):
         count = 0
@@ -295,15 +286,12 @@ class PyAutoIndentMode(AutoIndentMode):
         return column >= len(fullline.rstrip()) - 1
 
     def _handle_indent_inside_string(self, char, cursor, fullline, post):
-        # the string might be between paren if multiline
-        # check if there a at least a non closed paren on the previous
-        # lines
+        # break string with a '\' at the end of the original line, always
+        # breaking strings enclosed by parens is done in the
+        # _handle_between_paren method
         n = self.editor.tab_length
-        if self._has_unclosed_paren(cursor):
-            pre = char
-        else:
-            pre = '" \\'
-            post += n * ' '
+        pre = '" \\'
+        post += n * ' '
         if fullline.endswith(':'):
             post += n * " "
         post += char
