@@ -99,11 +99,14 @@ class PyAutoIndentMode(AutoIndentMode):
                 operation = self._prev_block
                 down = False
             block = tc.block()
+            # if self.at_block_end(tc, block.text())=
             # block = operation(tc.block())
             offset = col
             while block.isValid():
                 lists = get_block_symbol_data(block)
                 for symbols in lists:
+                    if operation == self._prev_block:
+                        symbols = reversed(symbols)
                     for paren in symbols:
                         if paren.position < offset and down:
                             continue
