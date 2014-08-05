@@ -1,0 +1,6 @@
+    self.lbl_cursor_pos.setText(
+                '%d:%d' % TextHelper(|editor).cursor_position())
+->
+    self.lbl_cursor_pos.setText(
+                '%d:%d' % TextHelper(
+                    |editor).cursor_position())

@@ -11,6 +11,7 @@ class PyAutoIndentMode(AutoIndentMode):
     """
     Customised :class:`pyqode.core.modes.AutoIndentMode` for python
     that tries its best to follow the pep8 indentation guidelines.
+
     """
     def __init__(self):
         super(PyAutoIndentMode, self).__init__()
@@ -71,6 +72,8 @@ class PyAutoIndentMode(AutoIndentMode):
         lists = get_block_symbol_data(block)
         for symbols in lists:
             for paren in symbols:
+                if paren.position >= col:
+                    continue
                 if self.is_paren_open(paren):
                     if not col:
                         return -1, -1, [], []
@@ -80,63 +83,15 @@ class PyAutoIndentMode(AutoIndentMode):
         return len(open_p), len(closed_p), open_p, closed_p
 
     def between_paren(self, tc, col):
-        nb_open, nb_closed, open_p, closed_p = self.parens_count_for_block(col, tc.block())
-        block = tc.block().next()
-        while nb_open == nb_closed == 0 and block.isValid():
-            nb_open, nb_closed, open_p, closed_p = self.parens_count_for_block(nb_open, block)
-            block = block.next()
-        # if not, is there an non closed paren on the next lines.
-        parens = {'(': 0, '{': 0, '[': 0}
-        matching = {')': '(', '}': '{', ']': '['}
-        rparens = {')': 0, '}': 0, ']': 0}
-        rmatching = {'(': ')', '{': '}', '[': ']'}
-        if nb_open != nb_closed:
-            # look down
-            if nb_open > nb_closed:
-                operation = self._next_block
-                down = True
-            else:
-                operation = self._prev_block
-                down = False
-            block = tc.block()
-            # if self.at_block_end(tc, block.text())=
-            # block = operation(tc.block())
-            offset = col
-            while block.isValid():
-                lists = get_block_symbol_data(block)
-                for symbols in lists:
-                    if operation == self._prev_block:
-                        symbols = reversed(symbols)
-                    for paren in symbols:
-                        if paren.position < offset and down:
-                            continue
-                        if paren.position >= offset and not down:
-                            continue
-                        if self.is_paren_open(paren):
-                            parens[paren.character] += 1
-                            rparens[rmatching[paren.character]] -= 1
-                            if (operation == self._prev_block and
-                                    rparens[rmatching[paren.character]] < 0):
-                                return True
-                        if self.is_paren_closed(paren):
-                            rparens[paren.character] += 1
-                            parens[matching[paren.character]] -= 1
-                            if (operation == self._next_block and
-                                    parens[matching[paren.character]] < 0):
-                                return True
-                block = operation(block)
-                offset = 0 if down else len(block.text())
-        elif nb_open > 0:
-            for closed_paren in reversed(closed_p):
-                if col < closed_paren.position:
-                    return True
-        return False
-
-    def _next_block(self, b):
-        return b.next()
-
-    def _prev_block(self, b):
-        return b.previous()
+        block = tc.block()
+        nb_open = nb_closed = 0
+        while block.isValid():  # and nb_open >= nb_closed:
+            o, c, _, _ = self.parens_count_for_block(col, block)
+            nb_open += o
+            nb_closed += c
+            block = block.previous()
+            col = len(block.text())
+        return nb_open > nb_closed
 
     def get_last_word(self, tc):
         tc2 = QTextCursor(tc)
@@ -146,17 +101,18 @@ class PyAutoIndentMode(AutoIndentMode):
         #                  self.editor.cursorPosition[1])
         return tc2.selectedText().strip()
 
-    def get_indent_of_opening_paren(self, tc, column):
+    def get_indent_of_opening_paren(self, tc):
         tc.movePosition(tc.Left, tc.KeepAnchor)
         char = tc.selectedText()
         tc.movePosition(tc.Right, tc.MoveAnchor)
-        mapping = {')': '(', '}': '{', ']': '['}
+        mapping = {')': ('(', 0), '}': ('{', 1), ']': ('[', 2)}
         try:
-            ol, oc = self.editor.modes.get(SymbolMatcherMode).symbol_pos(
-                tc, mapping[char], 1)
+            character, char_type = mapping[char]
         except KeyError:
             return None
         else:
+            ol, oc = self.editor.modes.get(SymbolMatcherMode).symbol_pos(
+                tc, character, char_type)
             line = self._helper.line_text(ol)
             return len(line) - len(line.lstrip())
 
@@ -259,7 +215,10 @@ class PyAutoIndentMode(AutoIndentMode):
                             indent = TextHelper(self.editor).line_indent()
                             post = indent * ' '
                     else:
-                        post = openingindent * " " + self.editor.tab_length * " "
+                        # post = openingindent * " " + self.editor.tab_length * " "
+                        indent = len(openingindent * " " + self.editor.tab_length * " ") // self.editor.tab_length * self.editor.tab_length
+                        post = indent * ' '
+
         pre = ""
         in_string_def, char = self.is_in_string_def(fullline, column)
         if in_string_def:
@@ -328,7 +287,7 @@ class PyAutoIndentMode(AutoIndentMode):
                     lastword.rstrip().endswith(':') and \
                     self.at_block_end(cursor, fullline):
                 try:
-                    indent = (self.get_indent_of_opening_paren(cursor, column)
+                    indent = (self.get_indent_of_opening_paren(cursor)
                               + 4)
                     post = indent * " "
                 except TypeError:
@@ -357,7 +316,7 @@ class PyAutoIndentMode(AutoIndentMode):
                     lastword.endswith((')', '}', ']'))):
                 # find line where the open braces can be found and align with
                 # that line
-                indent = self.get_indent_of_opening_paren(cursor, column)
+                indent = self.get_indent_of_opening_paren(cursor)
                 if indent is not None:
                     post = indent * " "
             elif ("\\" not in fullline and "#" not in fullline and
