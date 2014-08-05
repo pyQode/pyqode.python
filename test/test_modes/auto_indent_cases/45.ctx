@@ -1,0 +1,10 @@
+        self.dist_dices = Dice3Panel(
+            "dist_dices", 1,
+            "ANIMS/MasterDice/GameDices.txa",
+            "ZONES/MasterDice/Dice3DistZone.zon", (1, 1))|
+->
+        self.dist_dices = Dice3Panel(
+            "dist_dices", 1,
+            "ANIMS/MasterDice/GameDices.txa",
+            "ZONES/MasterDice/Dice3DistZone.zon", (1, 1))
+        |
