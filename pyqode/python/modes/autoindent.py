@@ -144,24 +144,18 @@ class PyAutoIndentMode(AutoIndentMode):
         return tc2.selectedText().strip()
 
     def get_indent_of_opening_paren(self, tc, column):
-        # find last closed paren
-        pos = None
-        data = get_block_symbol_data(tc.block())
-        tc2 = QTextCursor(tc)
-        tc2.movePosition(tc2.StartOfLine, tc2.MoveAnchor)
-        for paren in reversed(data[0]):
-            if paren.character == ')':
-                column = paren.position
-                pos = tc2.position() + column + 1
-                break
-        if pos:
-            tc2 = QTextCursor(tc)
-            tc2.setPosition(pos)
+        tc.movePosition(tc.Left, tc.KeepAnchor)
+        char = tc.selectedText()
+        tc.movePosition(tc.Right, tc.MoveAnchor)
+        mapping = {')': '(', '}': '{', ']': '['}
+        try:
             ol, oc = self.editor.modes.get(SymbolMatcherMode).symbol_pos(
-                tc2, '(', 0)
+                tc, mapping[char], 1)
+        except KeyError:
+            return None
+        else:
             line = self._helper.line_text(ol)
             return len(line) - len(line.lstrip())
-        return None
 
     def get_last_open_paren_pos(self, tc, column):
         pos = None
@@ -333,9 +327,9 @@ class PyAutoIndentMode(AutoIndentMode):
                 try:
                     indent = (self.get_indent_of_opening_paren(cursor, column)
                               + 4)
-                    if indent:
-                        post = indent * " "
+                    post = indent * " "
                 except TypeError:
+                    # e.g indent is None (meaning the line does not ends with ):, ]: or }:
                     kw = ["if", "class", "def", "while", "for", "else", "elif",
                           "except", "finally", "try"]
                     l = fullline
@@ -356,11 +350,12 @@ class PyAutoIndentMode(AutoIndentMode):
             elif line.endswith("\\"):
                 # increment indent
                 post += 4 * " "
-            elif fullline.endswith(")") and lastword.endswith(')'):
+            elif (fullline.endswith((')', '}', ']')) and
+                    lastword.endswith((')', '}', ']'))):
                 # find line where the open braces can be found and align with
                 # that line
                 indent = self.get_indent_of_opening_paren(cursor, column)
-                if indent:
+                if indent is not None:
                     post = indent * " "
             elif ("\\" not in fullline and "#" not in fullline and
                   fullline.strip() and not fullline.endswith(')') and
