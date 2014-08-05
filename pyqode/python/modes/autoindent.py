@@ -44,6 +44,7 @@ class PyAutoIndentMode(AutoIndentMode):
                 return pre, post
         else:
             lastword = self._get_last_word(cursor)
+            lastwordu = self._get_last_word_unstripped(cursor)
             in_string_def, char = self._is_in_string_def(fullline, column)
             if in_string_def:
                 post, pre = self._handle_indent_inside_string(
@@ -61,14 +62,11 @@ class PyAutoIndentMode(AutoIndentMode):
                     lastword.endswith((')', '}', ']'))):
                 post = self._handle_indent_after_paren(cursor, post)
             elif ("\\" not in fullline and "#" not in fullline and
-                  fullline.strip() and not fullline.endswith(')') and
                   not self._at_block_end(cursor, fullline)):
-                # break in statement not enclose by parents
                 post, pre = self._handle_indent_in_statement(
-                    fullline, lastword, post, pre)
+                    fullline, lastwordu, post, pre)
             elif lastword == "return" or lastword == "pass":
                 post = post[:-self.editor.tab_length]
-
         return pre, post
 
     def _has_unclosed_paren(self, tc):
@@ -145,6 +143,13 @@ class PyAutoIndentMode(AutoIndentMode):
         tc2.movePosition(QTextCursor.Left, 1)
         tc2.movePosition(QTextCursor.WordLeft, tc.KeepAnchor)
         return tc2.selectedText().strip()
+
+    @staticmethod
+    def _get_last_word_unstripped(tc):
+        tc2 = QTextCursor(tc)
+        tc2.movePosition(QTextCursor.Left, 1)
+        tc2.movePosition(QTextCursor.WordLeft, tc.KeepAnchor)
+        return tc2.selectedText()
 
     def _get_indent_of_opening_paren(self, tc):
         tc.movePosition(tc.Left, tc.KeepAnchor)
