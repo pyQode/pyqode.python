@@ -1,0 +1,8 @@
+class Foo:
+    def bar(self, param):
+        param = bool(param)|
+->
+class Foo:
+    def bar(self, param):
+        param = bool(param)
+        |
