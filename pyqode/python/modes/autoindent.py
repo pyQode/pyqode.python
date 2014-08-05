@@ -232,7 +232,7 @@ class PyAutoIndentMode(AutoIndentMode):
                                               line[oc:column]) if t]
         # align with first token pos
         if len(closingline) > cc and closingline[cc] == ":":
-            if 'def ' in openingline:
+            if ('def ' in openingline or 'class ' in openingline) and oc != tc.positionInBlock():
                 post = oc * ' '
             else:
                 post = openingindent * " " + 8 * " "
