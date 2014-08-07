@@ -38,5 +38,9 @@ class PyFileManager(FileManager):
                                       first_two_lines)
         if possible_encoding:
             return possible_encoding.group(1)
-        else:
-            return super().detect_encoding(path)
+
+    def open(self, path, encoding=None, use_cached_encoding=True):
+        if encoding is None:
+            encoding = self.detect_encoding(path)
+        super().open(path, encoding=encoding,
+                     use_cached_encoding=use_cached_encoding)
