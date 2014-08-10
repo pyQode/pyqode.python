@@ -213,12 +213,11 @@ class PythonSH(BaseSH):
 
         # update import zone
         if import_stmt is not None:
-            if not block in self.import_statements:
-                block.import_stmt = import_stmt
-                self.import_statements.append(block)
-                txt = block.text()
-                if len(txt) - len(txt.strip()) == 0:
-                    self.global_import_statements.append(block)
+            block.import_stmt = import_stmt
+            self.import_statements.append(block)
+            txt = block.text()
+            if len(txt) - len(txt.strip()) == 0:
+                self.global_import_statements.append(block)
 
         # update import statements
         if ((not self.editor.file.opening or
@@ -242,11 +241,8 @@ class PythonSH(BaseSH):
             if block.next().isValid():
                 TextBlockHelper.set_fold_lvl(block.next(), 0)
 
-    def get_import_statements(self):
-        return list(self.import_statements.values())
-
     def rehighlight(self):
-        self.import_statements = {}
-        self.global_import_statements = {}
+        self.import_statements = []
+        self.global_import_statements = []
         self.found_cell_separators = False
         super().rehighlight()

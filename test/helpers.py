@@ -158,7 +158,7 @@ def setup_editor(code_edit):
     code_edit.modes.append(pymodes.DocumentAnalyserMode())
 
     # panels
-    code_edit.panels.append(panels.FoldingPanel(highlight_caret_scope=True))
+    code_edit.panels.append(panels.FoldingPanel())
     code_edit.panels.append(panels.LineNumberPanel())
     code_edit.panels.append(panels.MarkerPanel())
     code_edit.panels.append(panels.SearchAndReplacePanel(),
