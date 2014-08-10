@@ -8,7 +8,7 @@ It is approximately 3 time faster then :class:`pyqode.core.modes.PygmentsSH`.
 """
 import builtins
 import re
-from pyqode.core.qt import QtGui
+from pyqode.qt import QtGui
 from pyqode.core.api import SyntaxHighlighter as BaseSH, TextHelper
 from pyqode.core.api import TextBlockHelper
 import sys

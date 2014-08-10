@@ -3,7 +3,7 @@
 Contains the quick documentation panel
 """
 from docutils.core import publish_parts
-from pyqode.core.qt import QtCore, QtGui, QtWidgets
+from pyqode.qt import QtCore, QtGui, QtWidgets
 from pyqode.core.api import Panel, TextHelper
 from pyqode.core.api.utils import drift_color
 from pyqode.python.backend.workers import quick_doc

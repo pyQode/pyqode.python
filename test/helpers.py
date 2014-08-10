@@ -10,7 +10,7 @@ from os.path import abspath
 from os.path import dirname
 from pyqode.core import api
 
-from pyqode.core.qt.QtTest import QTest
+from pyqode.qt.QtTest import QTest
 from pyqode.core import modes
 from pyqode.core import panels
 from pyqode.python.folding import PythonFoldDetector

@@ -2,8 +2,8 @@
 """
 Tests for PyCodeEdit
 """
-from pyqode.core.qt import QtWidgets
-from pyqode.core.qt.QtTest import QTest
+from pyqode.qt import QtWidgets
+from pyqode.qt.QtTest import QTest
 from pyqode.core.api import CodeEdit, ColorScheme
 from pyqode.python.widgets.code_edit import PyCodeEdit
 from pyqode.python.modes import PythonSH

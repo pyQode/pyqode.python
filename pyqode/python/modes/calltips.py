@@ -6,7 +6,7 @@ import logging
 import os
 from pyqode.core.api import Mode, TextHelper
 from pyqode.python.backend import workers
-from pyqode.core.qt import QtCore, QtWidgets
+from pyqode.qt import QtCore, QtWidgets
 
 
 def _logger():

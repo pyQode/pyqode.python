@@ -2,7 +2,7 @@
 """ Contains smart indent modes """
 import re
 from pyqode.core.api import TextHelper, get_block_symbol_data
-from pyqode.core.qt.QtGui import QTextCursor
+from pyqode.qt.QtGui import QTextCursor
 from pyqode.core.modes.autoindent import AutoIndentMode
 from pyqode.core.modes.matcher import SymbolMatcherMode
 

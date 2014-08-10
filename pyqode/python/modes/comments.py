@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 from pyqode.core import api
-from pyqode.core.qt import QtGui, QtCore, QtWidgets
+from pyqode.qt import QtGui, QtCore, QtWidgets
 
 
 class CommentsMode(api.Mode):

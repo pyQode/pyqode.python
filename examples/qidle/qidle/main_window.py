@@ -5,8 +5,8 @@ import os
 import platform
 import sys
 from pyqode.core.api import TextHelper
-from pyqode.core.qt import QtCore
-from pyqode.core.qt import QtWidgets
+from pyqode.qt import QtCore
+from pyqode.qt import QtWidgets
 from pyqode.core import widgets
 from pyqode.python.backend import server
 from pyqode.python.widgets.code_edit import PyCodeEdit

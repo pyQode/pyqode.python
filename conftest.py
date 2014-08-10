@@ -47,7 +47,7 @@ logging.basicConfig(level=logging.INFO,
 # Setup QApplication
 # -------------------
 # 2. create qt application
-from pyqode.core.qt.QtWidgets import QApplication
+from pyqode.qt.QtWidgets import QApplication
 _app = QApplication(sys.argv)
 _widget = None
 
@@ -67,7 +67,7 @@ def editor(request):
     from pyqode.core import modes
     from pyqode.python.widgets.code_edit import PyCodeEdit
     from pyqode.python.backend import server
-    from pyqode.core.qt.QtTest import QTest
+    from pyqode.qt.QtTest import QTest
 
     logging.info('################ setup session editor ################')
 

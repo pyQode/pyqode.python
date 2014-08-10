@@ -5,7 +5,7 @@ from pyqode.core.api import Mode
 from pyqode.core.api import DelayJobRunner
 from pyqode.core.backend import NotConnected
 from pyqode.python.backend.workers import Definition, defined_names
-from pyqode.core.qt import QtCore
+from pyqode.qt import QtCore
 
 
 def _logger():

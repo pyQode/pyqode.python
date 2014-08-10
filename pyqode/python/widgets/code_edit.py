@@ -2,7 +2,7 @@
 """
 This package contains the python code editor widget
 """
-from pyqode.core.qt import QtCore, QtGui
+from pyqode.qt import QtCore, QtGui
 from pyqode.core import api
 from pyqode.core import modes
 from pyqode.core import panels

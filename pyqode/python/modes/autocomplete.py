@@ -3,7 +3,7 @@
 import jedi
 from pyqode.core.api import TextHelper
 from pyqode.core.modes import AutoCompleteMode
-from pyqode.core.qt import QtCore
+from pyqode.qt import QtCore
 
 
 class PyAutoCompleteMode(AutoCompleteMode):
