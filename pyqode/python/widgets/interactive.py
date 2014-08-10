@@ -1,5 +1,6 @@
 """
-This module contains the Interactive python console, for running python programs.
+This module contains the Interactive python console, for running python
+programs.
 """
 from pyqode.qt import QtCore, QtGui, QtWidgets
 from pyqode.core.widgets import InteractiveConsole
@@ -7,9 +8,9 @@ from pyqode.core.widgets import InteractiveConsole
 
 class PyInteractiveConsole(InteractiveConsole):
     """
-    Extends the InteractiveConcole to highlight python traceback. If the user press
-    on a filename in a traceback, the signal open_file_requested is emitted with the
-    file path to open and the line where the user want to go.
+    Extends the InteractiveConcole to highlight python traceback. If the user
+    press on a filename in a traceback, the signal open_file_requested is
+    emitted with the file path to open and the line where the user want to go.
 
     """
     #: Signal emitted when the user pressed on a traceback file location.
@@ -71,8 +72,9 @@ class PyInteractiveConsole(InteractiveConsole):
                     self.FILENAME_PROG.indexIn(line)
                     start = self.FILENAME_PROG.pos(0)
                     end = start + len(self.FILENAME_PROG.cap(0))
-                    write(self, line[:start+1], color)
-                    write_with_underline(self, line[start+1:end-1], QtGui.QColor('blue'), l,
+                    write(self, line[:start + 1], color)
+                    write_with_underline(self, line[start + 1:end - 1],
+                                         QtGui.QColor('blue'), l,
                                          start, end)
                     write(self, line[end-1:] + '\n', color)
                     continue
@@ -113,15 +115,3 @@ class PyInteractiveConsole(InteractiveConsole):
         super().leaveEvent(e)
         if QtWidgets.QApplication.overrideCursor() is not None:
             QtWidgets.QApplication.restoreOverrideCursor()
-
-
-if __name__ == '__main__':
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    c = PyInteractiveConsole()
-    c.start_process('python', ['/home/colin/test_transition.py'])
-    c._write(c,
-             'File "/home/colin/Development/Games/Multigame/multigame/games/masterdice.py", line 30, in __init__',
-             c.stderr_color)
-    c.show()
-    app.exec_()

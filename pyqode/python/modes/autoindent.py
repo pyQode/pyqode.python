@@ -162,7 +162,7 @@ class PyAutoIndentMode(AutoIndentMode):
         char = None
         ln = tc.blockNumber() + 1
         tc_trav = QTextCursor(tc)
-        mapping = {'(': (')', 0), '[': (']', 1), '{': ('}', 2),}
+        mapping = {'(': (')', 0), '[': (']', 1), '{': ('}', 2)}
         while ln >= 1:
             tc_trav.movePosition(tc_trav.StartOfLine, tc_trav.MoveAnchor)
             lists = get_block_symbol_data(tc_trav.block())
@@ -241,7 +241,8 @@ class PyAutoIndentMode(AutoIndentMode):
                                               line[oc:column]) if t]
         # align with first token pos
         if len(closingline) > cc and closingline[cc] == ":":
-            if ('def ' in openingline or 'class ' in openingline) and oc != tc.positionInBlock():
+            if ('def ' in openingline or
+                    'class ' in openingline) and oc != tc.positionInBlock():
                 post = oc * ' '
             else:
                 post = openingindent * " " + 8 * " "
@@ -260,7 +261,8 @@ class PyAutoIndentMode(AutoIndentMode):
                 else:
                     if len(tokens):
                         otext = TextHelper(self.editor).line_text(ol)
-                        if ol == TextHelper(self.editor).current_line_nbr() or otext[-1] not in ['(', '{', '[']:
+                        if (ol == TextHelper(self.editor).current_line_nbr() or
+                                otext[-1] not in ['(', '{', '[']):
                             # align with last opened paren
                             post = oc * " "
                         else:
@@ -270,7 +272,8 @@ class PyAutoIndentMode(AutoIndentMode):
                     else:
                         indent = (len(openingindent * " " +
                                       self.editor.tab_length * " ") //
-                                  self.editor.tab_length * self.editor.tab_length)
+                                  self.editor.tab_length *
+                                  self.editor.tab_length)
                         post = indent * ' '
         pre = ""
         in_string_def, char = self._is_in_string_def(fullline, column)
@@ -315,7 +318,8 @@ class PyAutoIndentMode(AutoIndentMode):
                       self.editor.tab_length)
             post = indent * " "
         except TypeError:
-            # e.g indent is None (meaning the line does not ends with ):, ]: or }:
+            # e.g indent is None (meaning the line does not ends with ):, ]:
+            # or }:
             kw = ["if", "class", "def", "while", "for", "else", "elif",
                   "except", "finally", "try"]
             l = fullline

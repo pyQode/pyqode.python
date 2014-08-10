@@ -58,9 +58,9 @@ kwlist = [
 
 def make_python_patterns(additional_keywords=[], additional_builtins=[]):
     """Strongly inspired from idlelib.ColorDelegator.make_pat"""
-    kw = r"\b" + any("keyword", kwlist+additional_keywords) + r"\b"
+    kw = r"\b" + any("keyword", kwlist + additional_keywords) + r"\b"
     builtinlist = [str(name) for name in dir(builtins)
-                   if not name.startswith('_')]+additional_builtins
+                   if not name.startswith('_')] + additional_builtins
     builtin = r"([^.'\"\\#]\b|^)" + any("builtin", builtinlist) + r"\b"
     comment = any("comment", [r"#[^\n]*"])
     instance = any("instance", [r"\bself\b"])
@@ -121,16 +121,16 @@ class PythonSH(BaseSH):
         prev_state = TextBlockHelper.get_state(prev_block)
         if prev_state == self.INSIDE_DQ3STRING:
             offset = -4
-            text = r'""" '+text
+            text = r'""" ' + text
         elif prev_state == self.INSIDE_SQ3STRING:
             offset = -4
-            text = r"''' "+text
+            text = r"''' " + text
         elif prev_state == self.INSIDE_DQSTRING:
             offset = -2
-            text = r'" '+text
+            text = r'" ' + text
         elif prev_state == self.INSIDE_SQSTRING:
             offset = -2
-            text = r"' "+text
+            text = r"' " + text
         else:
             offset = 0
             prev_state = self.NORMAL
@@ -148,38 +148,39 @@ class PythonSH(BaseSH):
             for key, value in list(match.groupdict().items()):
                 if value:
                     start, end = match.span(key)
-                    start = max([0, start+offset])
+                    start = max([0, start + offset])
                     end = max([0, end+offset])
                     if key == "uf_sq3string":
-                        self.setFormat(start, end-start,
+                        self.setFormat(start, end - start,
                                        self.formats["string"])
                         state = self.INSIDE_SQ3STRING
                     elif key == "uf_dq3string":
-                        self.setFormat(start, end-start,
+                        self.setFormat(start, end - start,
                                        self.formats["docstring"])
                         block.docstring = True
                         state = self.INSIDE_DQ3STRING
                     elif key == "uf_sqstring":
-                        self.setFormat(start, end-start,
+                        self.setFormat(start, end - start,
                                        self.formats["string"])
                         state = self.INSIDE_SQSTRING
                     elif key == "uf_dqstring":
-                        self.setFormat(start, end-start,
+                        self.setFormat(start, end - start,
                                        self.formats["string"])
                         state = self.INSIDE_DQSTRING
                     else:
                         if '"""' in value:
                             block.docstring = True
-                            self.setFormat(start, end-start,
+                            self.setFormat(start, end - start,
                                            self.formats["docstring"])
                         elif key == 'decorator':
-                            self.setFormat(start, end-start,
+                            self.setFormat(start, end - start,
                                            self.formats["decorator"])
                         elif value == 'self':
-                            self.setFormat(start, end-start,
+                            self.setFormat(start, end - start,
                                            self.formats["self"])
                         else:
-                            self.setFormat(start, end-start, self.formats[key])
+                            self.setFormat(start, end - start,
+                                           self.formats[key])
                         if key == "keyword":
                             if value in ("def", "class"):
                                 match1 = self.IDPROG.match(text, end)
@@ -188,7 +189,7 @@ class PythonSH(BaseSH):
                                     fmt = self.formats["definition"]
                                     if value == "class":
                                         fmt.setFontWeight(QtGui.QFont.Bold)
-                                    self.setFormat(start1, end1-start1, fmt)
+                                    self.setFormat(start1, end1 - start1, fmt)
                             elif value == "import":
                                 import_stmt = text.strip()
                                 # color all the "as" words on same line, except
@@ -204,7 +205,7 @@ class PythonSH(BaseSH):
                                     if not match1:
                                         break
                                     start, end = match1.span(1)
-                                    self.setFormat(start, end-start,
+                                    self.setFormat(start, end - start,
                                                    self.formats["keyword"])
 
             match = self.PROG.search(text, match.end())
