@@ -283,7 +283,8 @@ def run_frosted(request_data):
                 # Avoid using msg, since for the only known case, it
                 # contains a bogus message that claims the encoding the
                 # file declared was unknown.s
-                _logger().warning("[SyntaxError] %s: problem decoding source", path)
+                _logger().warning("[SyntaxError] %s: problem decoding source",
+                                  path)
             else:
                 ret_val.append((msg, ERROR, lineno))
         else:
@@ -292,10 +293,11 @@ def run_frosted(request_data):
             w = checker.Checker(tree, os.path.split(path)[1])
             w.messages.sort(key=lambda m: m.lineno)
             for warning in w.messages:
-                msg = "[pyFlakes] %s: %s" % (warning.type.error_code, warning.message.split(':')[-1])
+                msg = "[pyFlakes] %s: %s" % (
+                    warning.type.error_code, warning.message.split(':')[-1])
                 line = warning.lineno
-                status = (WARNING if warning.type.error_code.startswith('W') else
-                          ERROR)
+                status = (WARNING if warning.type.error_code.startswith('W')
+                          else ERROR)
                 ret_val.append((msg, status, line))
         status = True
     prev_results = ret_val

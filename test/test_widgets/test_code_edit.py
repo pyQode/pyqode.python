@@ -7,7 +7,7 @@ from pyqode.core.qt.QtTest import QTest
 from pyqode.core.api import CodeEdit, ColorScheme
 from pyqode.python.widgets.code_edit import PyCodeEdit
 from pyqode.python.modes import PythonSH
-from .helpers import editor_open
+from ..helpers import editor_open
 
 
 @editor_open(__file__)

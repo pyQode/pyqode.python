@@ -8,6 +8,9 @@ omit =
     # at the moment, we do not test misc ui elements such as
     # widgets and dialogs (how could this be possible to test?)
     *pyqode/python/ui/*
+    # widgets are not tested at the moment, this will likely change in the
+    # future but for now the focus is on the API.
+    *pyqode/python/widgets/*
 
 [report]
 # Regexes for lines to exclude from consideration

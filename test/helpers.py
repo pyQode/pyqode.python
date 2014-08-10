@@ -13,6 +13,7 @@ from pyqode.core import api
 from pyqode.core.qt.QtTest import QTest
 from pyqode.core import modes
 from pyqode.core import panels
+from pyqode.python.folding import PythonFoldDetector
 
 
 test_dir = dirname(abspath(__file__))
@@ -38,6 +39,27 @@ def cwd_at(path):
                 return func(*args, **kwds)
             finally:
                 os.chdir(oldcwd)
+        return wrapper
+    return decorator
+
+
+def delete_file_on_return(path):
+    """
+    Decorator to run function at `path`.
+
+    :type path: str
+    :arg path: relative path from repository root (e.g., 'pyqode' or 'test').
+    """
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwds):
+            try:
+                return func(*args, **kwds)
+            finally:
+                try:
+                    os.remove(path)
+                except (IOError, OSError):
+                    pass
         return wrapper
     return decorator
 
@@ -136,6 +158,7 @@ def setup_editor(code_edit):
     code_edit.modes.append(pymodes.DocumentAnalyserMode())
 
     # panels
+    code_edit.panels.append(panels.FoldingPanel())
     code_edit.panels.append(panels.LineNumberPanel())
     code_edit.panels.append(panels.MarkerPanel())
     code_edit.panels.append(panels.SearchAndReplacePanel(),
@@ -161,5 +184,8 @@ def setup_editor(code_edit):
     code_edit.modes.append(pymodes.CalltipsMode())
     code_edit.modes.append(pymodes.PyIndenterMode())
     code_edit.modes.append(pymodes.GoToAssignmentsMode())
-    code_edit.panels.append(pypanels.QuickDocPanel(), api.Panel.Position.BOTTOM)
+    code_edit.panels.append(pypanels.QuickDocPanel(),
+                            api.Panel.Position.BOTTOM)
     code_edit.modes.append(pymodes.CommentsMode())
+
+    code_edit.syntax_highlighter.fold_detector = PythonFoldDetector()

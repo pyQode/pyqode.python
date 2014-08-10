@@ -22,7 +22,7 @@ import argparse
 import sys
 
 
-def main():
+if __name__ == '__main__':
     """
     Server process' entry point
     """
@@ -49,6 +49,3 @@ def main():
 
     # starts the server
     backend.serve_forever(args)
-
-if __name__ == '__main__':
-    main()
