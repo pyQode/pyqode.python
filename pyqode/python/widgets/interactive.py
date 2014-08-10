@@ -76,7 +76,7 @@ class PyInteractiveConsole(InteractiveConsole):
                     write_with_underline(self, line[start + 1:end - 1],
                                          QtGui.QColor('blue'), l,
                                          start, end)
-                    write(self, line[end-1:] + '\n', color)
+                    write(self, line[end - 1:] + '\n', color)
                     continue
             write(text_edit, line + '\n', color)
 

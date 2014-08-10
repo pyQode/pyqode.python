@@ -149,7 +149,7 @@ class PythonSH(BaseSH):
                 if value:
                     start, end = match.span(key)
                     start = max([0, start + offset])
-                    end = max([0, end+offset])
+                    end = max([0, end + offset])
                     if key == "uf_sq3string":
                         self.setFormat(start, end - start,
                                        self.formats["string"])
