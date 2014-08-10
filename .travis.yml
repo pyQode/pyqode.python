@@ -10,7 +10,7 @@ matrix:
     allow_failures:
         - env: COV=1
         - env: PEP8=1
-        - env: QT_API=PyQt5
+        - env: QT_API=pyqt5
 virtualenv:
   system_site_packages: true
 before_install:
