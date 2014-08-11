@@ -11,7 +11,9 @@ from pyqode.python import modes as pymodes
 from pyqode.python import panels as pypanels
 from pyqode.python.folding import PythonFoldDetector
 # pylint: disable=unused-import
-from pyqode.python.ui import pyqode_python_icons_rc
+# load pyqode.python resources (code completion icons)
+# DO NOT REMOVE
+from pyqode.python.forms import pyqode_python_icons_rc
 
 
 class PyCodeEdit(api.CodeEdit):
