@@ -17,7 +17,6 @@ found in the bin folder::
 """
 import sys
 from cx_Freeze import setup, Executable
-
 from pyqode.core.modes import PYGMENTS_STYLES
 
 
@@ -37,12 +36,17 @@ if len(sys.argv) == 1:
     sys.argv.append("build")
 
 # Build options
-options = {"excludes": ["PyQt4.uic.port_v3", "PySide", "tcltk"],
-           "namespace_packages": ["pyqode.core", 'pyqode.python'],
+# get pygments styles (and remove our own styles since them have already
+# been packaged).
+pygments_styles = PYGMENTS_STYLES
+pygments_styles.remove('darcula')
+pygments_styles.remove('qt')
+options = {"namespace_packages": ["pyqode.core", 'pyqode.python'],
            "include_msvcr": True,
            "build_exe": "bin",
-           "includes": ["pkg_resources"] + ["pygments.styles.%s" % style
-                                            for style in PYGMENTS_STYLES]}
+           'include_files': ['libraries.zip'],
+           "includes": ["pkg_resources"] +
+                       ["pygments.styles.%s" % style for style in pygments_styles]}
 
 # Run the cxFreeze setup
 setup(name="Qidle",
