@@ -14,6 +14,9 @@ from .main_window import MainWindow
 from .settings import Settings
 
 
+__version__ = '1.1.0'
+
+
 def main():
     app = QApplication(sys.argv)
     if not Settings().interpreter:
