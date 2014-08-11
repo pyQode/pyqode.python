@@ -49,8 +49,9 @@ class PyCodeEdit(api.CodeEdit):
                            panels.SearchAndReplacePanel.Position.BOTTOM)
         self.panels.append(pypanels.SymbolBrowserPanel(),
                            pypanels.SymbolBrowserPanel.Position.TOP)
-        self.panels.append(pypanels.QuickDocPanel(), api.Panel.Position.BOTTOM)
         self.panels.append(panels.EncodingPanel(), api.Panel.Position.TOP)
+        self.add_separator()
+        self.panels.append(pypanels.QuickDocPanel(), api.Panel.Position.BOTTOM)
 
         # modes
         # generic
