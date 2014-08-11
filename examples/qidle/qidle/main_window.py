@@ -13,7 +13,7 @@ from pyqode.python.widgets.code_edit import PyCodeEdit
 from pyqode.python import modes
 from .utils import get_interpreters
 from .settings import Settings
-from .ui.main_window_ui import Ui_MainWindow
+from .forms.main_window_ui import Ui_MainWindow
 
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
@@ -279,6 +279,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
         action = self.sender()
         action.panel.enabled = action.isChecked()
+        action.panel.setVisible(action.isChecked())
 
     def on_mode_state_changed(self):
         """

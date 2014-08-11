@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading forms file 'main_window.forms'
+# Form implementation generated from reading ui file '/home/colin/Development/pyQode/python/examples/qidle/forms/main_window.ui'
 #
-# Created: Mon Aug  4 16:05:10 2014
+# Created: Mon Aug 11 13:13:55 2014
 #      by: PyQt5 UI code generator 5.3.1
 #
 # WARNING! All changes made in this file will be lost!
 
-from pyqode.qt import QtCore, QtGui, QtWidgets
+from pyqode.core.qt import QtCore, QtGui, QtWidgets
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -173,6 +173,6 @@ class Ui_MainWindow(object):
         self.actionRun.setToolTip(_translate("MainWindow", "Run current script"))
         self.actionConfigure_run.setText(_translate("MainWindow", "Configure run"))
 
-from pyqode.core.widgets.tabs import TabWidget
 from pyqode.python.widgets import PyInteractiveConsole
+from pyqode.core.widgets.tabs import TabWidget
 from . import resources_rc

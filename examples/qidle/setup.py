@@ -26,6 +26,19 @@ import sys
 from setuptools import setup, find_packages
 
 
+#
+# add ``build_ui command`` (optional, for development only)
+# this command requires the following packages:
+#   - pyqt_distutils
+#   - pyqode-uic
+#
+try:
+    from pyqt_distutils.build_ui import build_ui
+    cmdclass = {'build_ui': build_ui}
+except ImportError:
+    cmdclass = {}
+
+
 def read_version():
     """
     Reads the version without self importing
@@ -70,6 +83,7 @@ setup(
     long_description=long_desc,
     zip_safe=False,
     install_requires=requirements,
+    cmdclass=cmdclass,
     entry_points={'gui_scripts': ['qidle = qidle:main']},
     classifiers=[
         'Development Status :: 5 - Production/Stable',
