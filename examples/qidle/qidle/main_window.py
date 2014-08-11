@@ -150,7 +150,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
         editor = PyCodeEdit(self)
         self.setup_editor(editor)
-        self.tabWidget.add_code_edit(editor, 'New document')
+        self.tabWidget.add_code_edit(editor, 'New document.py')
         self.actionRun.setDisabled(True)
         self.actionConfigure_run.setDisabled(True)
 
