@@ -5,6 +5,7 @@ import os
 import platform
 import sys
 from pyqode.core.api import TextHelper
+from pyqode.core.api.syntax_highlighter import PYGMENTS_STYLES, ColorScheme
 from pyqode.qt import QtCore
 from pyqode.qt import QtWidgets
 from pyqode.core import widgets
@@ -26,6 +27,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.setup_actions()
         self.setup_status_bar_widgets()
         self.on_current_tab_changed()
+        self.styles_group = None
 
     def setup_status_bar_widgets(self):
         self.lbl_interpreter = QtWidgets.QLabel()
@@ -199,6 +201,24 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.menuEdit.addActions(editor.actions())
         self.menuEdit.addSeparator()
         self.setup_menu_interpreters()
+        self.setup_mnu_style(editor)
+
+    def setup_mnu_style(self, editor):
+        """ setup the style menu for an editor tab """
+        menu = QtWidgets.QMenu('Styles', self.menuEdit)
+        group = QtWidgets.QActionGroup(self)
+        self.styles_group = group
+        current_style = editor.syntax_highlighter.color_scheme.name
+        group.triggered.connect(self.on_style_changed)
+        for s in sorted(PYGMENTS_STYLES):
+            a = QtWidgets.QAction(menu)
+            a.setText(s)
+            a.setCheckable(True)
+            if s == current_style:
+                a.setChecked(True)
+            group.addAction(a)
+            menu.addAction(a)
+        self.menuEdit.addMenu(menu)
 
     def setup_mnu_modes(self, editor):
         for mode in editor.modes:
@@ -262,6 +282,20 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.lbl_filename.clear()
             self.lbl_cursor_pos.clear()
 
+    @QtCore.Slot(QtWidgets.QAction)
+    def on_style_changed(self, action):
+        self._style = action.text()
+        self.refresh_color_scheme()
+
+    def refresh_color_scheme(self):
+        if self.styles_group and self.styles_group.checkedAction():
+            style = self.styles_group.checkedAction().text()
+            style = style.replace('&', '')  # qt5 bug on kde?
+        else:
+            style = 'qt'
+        for i in range(self.tabWidget.count()):
+            editor = self.tabWidget.widget(i)
+            editor.syntax_highlighter.color_scheme = ColorScheme(style)
 
     @QtCore.Slot(QtWidgets.QAction)
     def on_interpreter_changed(self, action):
