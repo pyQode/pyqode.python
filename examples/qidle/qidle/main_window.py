@@ -41,8 +41,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """ Connects slots to signals """
         self.actionOpen.triggered.connect(self.on_open)
         self.actionNew.triggered.connect(self.on_new)
-        self.actionSave.triggered.connect(self.tabWidget.save_current)
-        self.actionSave.triggered.connect(self._enable_run)
+        self.actionSave.triggered.connect(self.on_save)
         self.actionSave_as.triggered.connect(self.on_save_as)
         self.actionClose_tab.triggered.connect(self.tabWidget.close)
         self.actionClose_other_tabs.triggered.connect(
@@ -150,7 +149,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
         editor = PyCodeEdit(self)
         self.setup_editor(editor)
-        self.tabWidget.add_code_edit(editor, 'New document.py')
+        self.tabWidget.add_code_edit(editor, 'New document %d.py')
         self.actionRun.setDisabled(True)
         self.actionConfigure_run.setDisabled(True)
 
@@ -168,20 +167,27 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.actionConfigure_run.setEnabled(True)
 
     @QtCore.Slot()
+    def on_save(self):
+        self.tabWidget.save_current()
+        self._enable_run()
+        self._update_status_bar(self.tabWidget.currentWidget())
+
+    @QtCore.Slot()
     def on_save_as(self):
         """
         Save the current editor document as.
         """
         path = self.tabWidget.currentWidget().file.path
         path = os.path.dirname(path) if path else ''
-        filename, filter = QtWidgets.QFileDialog.getSaveFileName(self,
-                                                                 'Save', path)
+        filename, filter = QtWidgets.QFileDialog.getSaveFileName(
+            self, 'Save', path)
         if filename:
             self.tabWidget.save_current(filename)
             self.recent_files_manager.open_file(filename)
             self.menu_recents.update_actions()
             self.actionRun.setEnabled(True)
             self.actionConfigure_run.setEnabled(True)
+            self._update_status_bar(self.tabWidget.currentWidget())
 
     def setup_mnu_edit(self, editor):
         """
@@ -242,6 +248,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.setup_mnu_edit(editor)
             self.setup_mnu_modes(editor)
             self.setup_mnu_panels(editor)
+        self._update_status_bar(editor)
+
+    def _update_status_bar(self, editor):
+        if editor:
             self.lbl_cursor_pos.setText(
                 '%d:%d' % TextHelper(editor).cursor_position())
             self.lbl_encoding.setText(editor.file.encoding)
@@ -251,6 +261,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.lbl_encoding.clear()
             self.lbl_filename.clear()
             self.lbl_cursor_pos.clear()
+
 
     @QtCore.Slot(QtWidgets.QAction)
     def on_interpreter_changed(self, action):
