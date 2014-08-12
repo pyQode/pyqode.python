@@ -18,7 +18,7 @@ class PyInteractiveConsole(InteractiveConsole):
     open_file_requested = QtCore.Signal(str, int)
 
     PROG = QtCore.QRegExp(
-        r'\s*File "[a-zA-Z\/_]*((.\.[a-z]*")|(")), line [0-9]*, in .*')
+        r'\s*File "[a-zA-Z\/_]*((.\.[a-z]*")|(")), line [0-9]*.*')
     FILENAME_PROG = QtCore.QRegExp(r'"[a-zA-Z\/_\.]*"')
     LINE_PROG = QtCore.QRegExp(r'line [0-9]*')
 
