@@ -27,6 +27,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.setup_actions()
         self.setup_status_bar_widgets()
         self.on_current_tab_changed()
+        self.interactiveConsole.open_file_requested.connect(self.open_file)
         self.styles_group = None
 
     def setup_status_bar_widgets(self):
