@@ -5,15 +5,16 @@ import os
 import platform
 import sys
 from pyqode.core.api import TextHelper
-from pyqode.core.qt import QtCore
-from pyqode.core.qt import QtWidgets
+from pyqode.core.api.syntax_highlighter import PYGMENTS_STYLES, ColorScheme
+from pyqode.qt import QtCore
+from pyqode.qt import QtWidgets
 from pyqode.core import widgets
 from pyqode.python.backend import server
-from pyqode.python.code_edit import PyCodeEdit
+from pyqode.python.widgets.code_edit import PyCodeEdit
 from pyqode.python import modes
 from .utils import get_interpreters
 from .settings import Settings
-from .ui.main_window_ui import Ui_MainWindow
+from .forms.main_window_ui import Ui_MainWindow
 
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
@@ -26,6 +27,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.setup_actions()
         self.setup_status_bar_widgets()
         self.on_current_tab_changed()
+        self.interactiveConsole.open_file_requested.connect(self.open_file)
+        self.styles_group = None
 
     def setup_status_bar_widgets(self):
         self.lbl_interpreter = QtWidgets.QLabel()
@@ -41,7 +44,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """ Connects slots to signals """
         self.actionOpen.triggered.connect(self.on_open)
         self.actionNew.triggered.connect(self.on_new)
-        self.actionSave.triggered.connect(self.tabWidget.save_current)
+        self.actionSave.triggered.connect(self.on_save)
         self.actionSave_as.triggered.connect(self.on_save_as)
         self.actionClose_tab.triggered.connect(self.tabWidget.close)
         self.actionClose_other_tabs.triggered.connect(
@@ -55,6 +58,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.interactiveConsole.process_finished.connect(
             self.on_process_finished)
         self.actionConfigure_run.triggered.connect(self.on_configure_run)
+
+    def _enable_run(self):
+        self.actionRun.setEnabled(self.tabWidget.currentWidget().file.path != '')
+        self.actionConfigure_run.setEnabled(self.tabWidget.currentWidget().file.path != '')
 
     def setup_recent_files_menu(self):
         """ Setup the recent files menu and manager """
@@ -106,9 +113,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                  interpreter=Settings().interpreter,
                                  args=['-s', zip_path])
         else:
-            editor.backend.start(server.__file__,
-                                 interpreter=Settings().interpreter,
-                                 args=['-s', zip_path])
+            editor.backend.start(
+                server.__file__, interpreter=Settings().interpreter,
+                args=['-s',
+                      zip_path if 'python2' in Settings().interpreter else ''])
         m = editor.modes.get(modes.GoToAssignmentsMode)
         assert isinstance(m, modes.GoToAssignmentsMode)
         m.out_of_doc.connect(self.on_goto_out_of_doc)
@@ -144,7 +152,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
         editor = PyCodeEdit(self)
         self.setup_editor(editor)
-        self.tabWidget.add_code_edit(editor, 'New document')
+        self.tabWidget.add_code_edit(editor, 'New document %d.py')
         self.actionRun.setDisabled(True)
         self.actionConfigure_run.setDisabled(True)
 
@@ -162,20 +170,27 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.actionConfigure_run.setEnabled(True)
 
     @QtCore.Slot()
+    def on_save(self):
+        self.tabWidget.save_current()
+        self._enable_run()
+        self._update_status_bar(self.tabWidget.currentWidget())
+
+    @QtCore.Slot()
     def on_save_as(self):
         """
         Save the current editor document as.
         """
         path = self.tabWidget.currentWidget().file.path
         path = os.path.dirname(path) if path else ''
-        filename, filter = QtWidgets.QFileDialog.getSaveFileName(self,
-                                                                 'Save', path)
+        filename, filter = QtWidgets.QFileDialog.getSaveFileName(
+            self, 'Save', path)
         if filename:
             self.tabWidget.save_current(filename)
             self.recent_files_manager.open_file(filename)
             self.menu_recents.update_actions()
             self.actionRun.setEnabled(True)
             self.actionConfigure_run.setEnabled(True)
+            self._update_status_bar(self.tabWidget.currentWidget())
 
     def setup_mnu_edit(self, editor):
         """
@@ -187,6 +202,24 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.menuEdit.addActions(editor.actions())
         self.menuEdit.addSeparator()
         self.setup_menu_interpreters()
+        self.setup_mnu_style(editor)
+
+    def setup_mnu_style(self, editor):
+        """ setup the style menu for an editor tab """
+        menu = QtWidgets.QMenu('Styles', self.menuEdit)
+        group = QtWidgets.QActionGroup(self)
+        self.styles_group = group
+        current_style = editor.syntax_highlighter.color_scheme.name
+        group.triggered.connect(self.on_style_changed)
+        for s in sorted(PYGMENTS_STYLES):
+            a = QtWidgets.QAction(menu)
+            a.setText(s)
+            a.setCheckable(True)
+            if s == current_style:
+                a.setChecked(True)
+            group.addAction(a)
+            menu.addAction(a)
+        self.menuEdit.addMenu(menu)
 
     def setup_mnu_modes(self, editor):
         for mode in editor.modes:
@@ -236,6 +269,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.setup_mnu_edit(editor)
             self.setup_mnu_modes(editor)
             self.setup_mnu_panels(editor)
+        self._update_status_bar(editor)
+
+    def _update_status_bar(self, editor):
+        if editor:
             self.lbl_cursor_pos.setText(
                 '%d:%d' % TextHelper(editor).cursor_position())
             self.lbl_encoding.setText(editor.file.encoding)
@@ -245,6 +282,21 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.lbl_encoding.clear()
             self.lbl_filename.clear()
             self.lbl_cursor_pos.clear()
+
+    @QtCore.Slot(QtWidgets.QAction)
+    def on_style_changed(self, action):
+        self._style = action.text()
+        self.refresh_color_scheme()
+
+    def refresh_color_scheme(self):
+        if self.styles_group and self.styles_group.checkedAction():
+            style = self.styles_group.checkedAction().text()
+            style = style.replace('&', '')  # qt5 bug on kde?
+        else:
+            style = 'qt'
+        for i in range(self.tabWidget.count()):
+            editor = self.tabWidget.widget(i)
+            editor.syntax_highlighter.color_scheme = ColorScheme(style)
 
     @QtCore.Slot(QtWidgets.QAction)
     def on_interpreter_changed(self, action):
@@ -273,6 +325,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
         action = self.sender()
         action.panel.enabled = action.isChecked()
+        action.panel.setVisible(action.isChecked())
 
     def on_mode_state_changed(self):
         """

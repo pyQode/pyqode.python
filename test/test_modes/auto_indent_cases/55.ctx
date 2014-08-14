@@ -1,0 +1,8 @@
+class Foo(Egg,| Bar):
+    def foo(self):
+        pass
+->
+class Foo(Egg,
+          |Bar):
+    def foo(self):
+        pass

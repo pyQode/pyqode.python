@@ -2,7 +2,7 @@
 Test the autocomplete mode
 """
 from pyqode.core.api import TextHelper
-from pyqode.core.qt.QtTest import QTest
+from pyqode.qt.QtTest import QTest
 from pyqode.python import modes as pymodes
 
 

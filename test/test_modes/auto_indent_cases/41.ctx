@@ -1,0 +1,16 @@
+elif obj_fullname:
+    self.emit(SIGNAL(
+        "send_to_inspector(QString,QString,QString,QString,bool)"),|
+        obj_fullname, '', '', '', not auto)
+if signature:
+    self.editor.show_calltip('Arguments', signature, signature=True,<Enter>
+                             at_position=position)
+->
+elif obj_fullname:
+    self.emit(SIGNAL(
+        "send_to_inspector(QString,QString,QString,QString,bool)"),
+        |
+        obj_fullname, '', '', '', not auto)
+if signature:
+    self.editor.show_calltip('Arguments', signature, signature=True,<Enter>
+                             at_position=position)

@@ -9,24 +9,30 @@ accomplished, please visit the `issues page on github`_ and the
 :doc:`changelog </changelog>`, respectively.
 
 
-2.0.0
+2.1.0
 -----
 
-The 2.0 version mainly improved stability and usability. No new features were
-added and some were removed (the folding panel has been removed due to some
-peformances issues).
+The 2.1 version adds the following new features:
 
-The public API has been heavily refactored to bring you a more pythonic and
-a cleaner API. The project now have a solid test suite and measure its
-coverage.
+  - code folding (with support for folding docstrings and imports)
+  - new python syntax highlighter (based on the Spyder IDE PythonSH) with
+    additional support for docstrings, decorators and self parameter.
+    The new highlighter is a lot faster than the previous one and has a better
+    docstring highlighting.
+  - new PyInteractiveConsole for running python program. The new console has
+    support for highlighting tracebakc and let you jump to the incriminated
+    file with just one click.
 
+As for every new version, the python auto indent modes has been vastly improved
+(with more than 20 new tests).
 
-Next version
+We also fixed quite a few bugs in QIdle and the comments mode has been
+improved.
+
+Next Version
 ------------
 
-There is nothing decided for the next version. We could add some python
-specific widgets or improve the existing ones. Do not hesitate to post feature
-requests or suggestion on the tracker!
+Next version will focus on adding new features!
 
 
 .. _`issues page on github`: https://github.com/pyQode/pyqode.python

@@ -2,7 +2,8 @@
 Test the autocomplete mode
 """
 from pyqode.core.api import TextHelper
-from pyqode.core.qt.QtTest import QTest
+from pyqode.qt import QtCore
+from pyqode.qt.QtTest import QTest
 from pyqode.python import modes as pymodes
 from ..helpers import editor_open
 
@@ -39,27 +40,3 @@ def test_autocomple_method_parens(editor):
     TextHelper(editor).goto_line(2, len('    def foo'))
     QTest.keyPress(editor, '(')
     assert editor.toPlainText() == 'class\n    def foo(self):'
-
-
-def test_class_docstrings(editor):
-    editor.clear()
-    editor.setPlainText('class Foo:\n    ')
-    TextHelper(editor).goto_line(2, len('    '))
-    QTest.keyPress(editor, '"')
-    QTest.keyPress(editor, '"')
-    assert editor.toPlainText() == 'class Foo:\n    """\n    \n    """'
-
-
-def test_fct_docstrings(editor):
-    editor.clear()
-    editor.setPlainText('def foo(bar, spam, eggs):\n    ')
-    TextHelper(editor).goto_line(2, len('    '))
-    QTest.keyPress(editor, '"')
-    QTest.keyPress(editor, '"')
-    assert editor.toPlainText() == ('def foo(bar, spam, eggs):'
-                                    '\n'
-                                    '    """\n'
-                                    '    \n'
-                                    '    :param bar:\n'
-                                    '    :param spam:\n'
-                                    '    :param eggs:\n    """')

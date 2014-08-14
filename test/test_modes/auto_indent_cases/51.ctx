@@ -1,0 +1,4 @@
+        self.fn_end_game_infos = "ANIMS/End|GameInfos.txa"
+->
+        self.fn_end_game_infos = "ANIMS/End" \
+            "|GameInfos.txa"

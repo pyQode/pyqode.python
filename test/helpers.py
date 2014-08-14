@@ -10,9 +10,10 @@ from os.path import abspath
 from os.path import dirname
 from pyqode.core import api
 
-from pyqode.core.qt.QtTest import QTest
+from pyqode.qt.QtTest import QTest
 from pyqode.core import modes
 from pyqode.core import panels
+from pyqode.python.folding import PythonFoldDetector
 
 
 test_dir = dirname(abspath(__file__))
@@ -42,6 +43,27 @@ def cwd_at(path):
     return decorator
 
 
+def delete_file_on_return(path):
+    """
+    Decorator to run function at `path`.
+
+    :type path: str
+    :arg path: relative path from repository root (e.g., 'pyqode' or 'test').
+    """
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwds):
+            try:
+                return func(*args, **kwds)
+            finally:
+                try:
+                    os.remove(path)
+                except (IOError, OSError):
+                    pass
+        return wrapper
+    return decorator
+
+
 def editor_open(path):
     if not os.path.exists(path):
         try:
@@ -64,22 +86,19 @@ def preserve_editor_config(func):
     @functools.wraps(func)
     def wrapper(editor, *args, **kwds):
         ret = None
+        editor.setReadOnly(False)
         try:
             ret = func(editor, *args, **kwds)
         finally:
             editor.modes.clear()
             editor.panels.clear()
             setup_editor(editor)
+            editor.setReadOnly(False)
             if not editor.backend.connected:
                 editor.backend.start(server_path())
                 wait_for_connected(editor)
         return ret
     return wrapper
-
-
-def preserve_visiblity(func):
-    # todo: decorator to preserve editor visibility
-    pass
 
 
 def require_python2():
@@ -134,6 +153,7 @@ def setup_editor(code_edit):
     code_edit.modes.append(pymodes.DocumentAnalyserMode())
 
     # panels
+    code_edit.panels.append(panels.FoldingPanel())
     code_edit.panels.append(panels.LineNumberPanel())
     code_edit.panels.append(panels.MarkerPanel())
     code_edit.panels.append(panels.SearchAndReplacePanel(),
@@ -151,7 +171,7 @@ def setup_editor(code_edit):
     code_edit.modes.append(modes.WordClickMode())
     code_edit.modes.append(modes.CodeCompletionMode())
     # python specifics
-    code_edit.modes.append(pymodes.PyHighlighterMode(code_edit.document()))
+    code_edit.modes.append(pymodes.PythonSH(code_edit.document()))
     code_edit.modes.append(pymodes.PyAutoCompleteMode())
     code_edit.modes.append(pymodes.PyAutoIndentMode())
     code_edit.modes.append(pymodes.FrostedCheckerMode())
@@ -159,5 +179,8 @@ def setup_editor(code_edit):
     code_edit.modes.append(pymodes.CalltipsMode())
     code_edit.modes.append(pymodes.PyIndenterMode())
     code_edit.modes.append(pymodes.GoToAssignmentsMode())
-    code_edit.panels.append(pypanels.QuickDocPanel(), api.Panel.Position.BOTTOM)
+    code_edit.panels.append(pypanels.QuickDocPanel(),
+                            api.Panel.Position.BOTTOM)
     code_edit.modes.append(pymodes.CommentsMode())
+
+    code_edit.syntax_highlighter.fold_detector = PythonFoldDetector()

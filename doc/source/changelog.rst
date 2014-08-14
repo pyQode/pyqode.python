@@ -5,6 +5,25 @@ Change Log
 
     These lists are not exhaustive.
 
+2.1.0
+-----
+
+New features:
+  - code folding (with support for folding docstrings and imports)
+  - new python syntax highlighter (based on the Spyder IDE PythonSH) with
+    additional support for docstrings, decorators and self parameter.
+    The new highlighter is a lot faster than the previous one and has a better
+    docstring highlighting.
+  - new PyInteractiveConsole for running python program. The new console has
+    support for highlighting tracebakc and let you jump to the incriminated
+    file with just one click.
+
+Bug fixed:
+
+  - many bugs have been fixed in the auto indent mode
+  - many small bugs have been fixed in QIdle
+  - fix cursor position after comment/uncomment (Ctrl+/)
+
 2.0.0
 -----
 

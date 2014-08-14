@@ -2,7 +2,7 @@
 """
 Contains the python indenter.
 """
-from pyqode.core.qt import QtGui
+from pyqode.qt import QtGui
 from pyqode.core.modes import IndenterMode
 
 
@@ -12,8 +12,6 @@ class PyIndenterMode(IndenterMode):
     indents/unindents the **whole** line. This replace the default IndenterMode
     which we found to be better suited for python code editing.
     """
-    # pylint: disable=no-init
-
     def indent(self):
         """
         Performs an indentation

@@ -1,0 +1,4 @@
+text_bar.position = |zf.get_relative_center_pos()
+->
+text_bar.position = \
+    |zf.get_relative_center_pos()

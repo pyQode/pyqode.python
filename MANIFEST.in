@@ -1,9 +1,10 @@
 #
 # MANIFEST.in
 #
-# Manifest template for creating the pyQode source distribution.
-
+# Manifest template for creating the pyqode.python source distribution.
 include MANIFEST.in
+
+# setup, license and readme
 include setup.py
 include LICENSE
 include *.rst
@@ -14,4 +15,5 @@ include .coveragerc
 
 recursive-include doc *
 recursive-include examples *
+recursive-include forms *
 recursive-include test *

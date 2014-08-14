@@ -4,7 +4,7 @@ Contains the go to assignments mode.
 """
 import logging
 import os
-from pyqode.core.qt import QtCore, QtGui, QtWidgets
+from pyqode.qt import QtCore, QtGui, QtWidgets
 from pyqode.core.api import Mode, TextHelper
 from pyqode.core.modes import WordClickMode
 from pyqode.python.backend import workers
@@ -71,7 +71,6 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
         if state:
             self.editor.modes.get(WordClickMode).word_clicked.connect(
                 self.request_goto)
-            self.sep = self.editor.add_separator()
             self.editor.add_action(self.action_goto)
         else:
             try:
@@ -80,7 +79,6 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
             except KeyError:
                 pass  # not installed or already removed
             self.editor.remove_action(self.action_goto)
-            self.editor.remove_action(self.sep)
 
     def request_goto(self, tc=None):
         """

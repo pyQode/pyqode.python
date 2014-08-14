@@ -6,6 +6,19 @@ This setup script packages pyqode.python
 from setuptools import setup, find_packages
 
 
+#
+# add ``build_ui command`` (optional, for development only)
+# this command requires the following packages:
+#   - pyqt_distutils
+#   - pyqode-uic
+#
+try:
+    from pyqt_distutils.build_ui import build_ui
+    cmdclass = {'build_ui': build_ui}
+except ImportError:
+    cmdclass = {}
+
+
 def read_version():
     with open("pyqode/python/__init__.py") as f:
         lines = f.read().splitlines()
@@ -27,7 +40,7 @@ setup(
     name='pyqode.python',
     namespace_packages=['pyqode'],
     version=read_version(),
-    packages=[p for p in find_packages() if not 'test' in p],
+    packages=[p for p in find_packages() if 'test' not in p],
     keywords=["CodeEdit PySide PyQt code editor widget python"],
     package_dir={'pyqode': 'pyqode'},
     url='https://github.com/pyQode/pyqode.python',
@@ -41,6 +54,7 @@ setup(
                   ['pyqode_python = '
                    'pyqode.python.designer_plugin']},
     zip_safe=False,
+    cmdclass=cmdclass,
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Environment :: X11 Applications :: Qt',

@@ -1,0 +1,12 @@
+anim = anim_define_translation(grid, (0, -600),
+                               Time.from_seconds(1),| LoopMode.CLAMP,
+                               Time.from_seconds(1),
+                               LoopMode.CLAMP,
+                               True)
+->
+anim = anim_define_translation(grid, (0, -600),
+                               Time.from_seconds(1),
+                               |LoopMode.CLAMP,
+                               Time.from_seconds(1),
+                               LoopMode.CLAMP,
+                               True)

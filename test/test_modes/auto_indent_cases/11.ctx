@@ -1,6 +1,6 @@
 if main == |'__name__':
     pass
 ->
-if main ==  \
+if main == \
         |'__name__':
     pass

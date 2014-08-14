@@ -3,7 +3,7 @@
 Contains the quick documentation panel
 """
 from docutils.core import publish_parts
-from pyqode.core.qt import QtGui, QtWidgets
+from pyqode.qt import QtCore, QtGui, QtWidgets
 from pyqode.core.api import Panel, TextHelper
 from pyqode.core.api.utils import drift_color
 from pyqode.python.backend.workers import quick_doc
@@ -18,34 +18,8 @@ class QuickDocPanel(Panel):
 
     QTextEdit
     {
-        background-color: %(tooltip)s;
-        color: %(color)s;
-    }
-
-    QPushButton
-    {
-        color: %(color)s;
-        background-color: transparent;
-        padding: 5px;
-        border: none;
-    }
-
-    QPushButton:hover
-    {
-        background-color: %(highlight)s;
-        border: none;
-        border-radius: 5px;
-        color: %(color)s;
-    }
-
-    QPushButton:pressed, QCheckBox:pressed
-    {
-        border: 1px solid %(bck)s;
-    }
-
-    QPushButton:disabled
-    {
-        color: %(highlight)s;
+        background-color: %s;
+        color: %s;
     }
     """
 
@@ -69,7 +43,8 @@ class QuickDocPanel(Panel):
         # to close the panel
         self.bt_close = QtWidgets.QPushButton()
         self.bt_close.setIcon(QtGui.QIcon.fromTheme(
-            "application-exit", QtGui.QIcon(":/pyqode-icons/rc/close.png")))
+            "window-close", QtGui.QIcon(":/pyqode-icons/rc/close.png")))
+        self.bt_close.setIconSize(QtCore.QSize(16, 16))
         self.bt_close.clicked.connect(self.hide)
         child_layout.addWidget(self.bt_close)
         child_layout.addStretch()
@@ -83,13 +58,10 @@ class QuickDocPanel(Panel):
             self._on_action_quick_doc_triggered)
 
     def _reset_stylesheet(self):
-        highlight = drift_color(self.editor.palette().window().color())
-        stylesheet = self.STYLESHEET % {
-            "tooltip": self.editor.palette().toolTipBase().color().name(),
-            "bck": self.editor.palette().window().color().name(),
-            "color": self.editor.palette().windowText().color().name(),
-            "highlight": highlight.name()}
-        self.setStyleSheet(stylesheet)
+        p = self.text_edit.palette()
+        p.setColor(p.Base, self.editor.palette().toolTipBase().color())
+        p.setColor(p.Text, self.editor.palette().toolTipText().color())
+        self.text_edit.setPalette(p)
 
     def on_install(self, editor):
         super(QuickDocPanel, self).on_install(editor)
@@ -119,6 +91,7 @@ class QuickDocPanel(Panel):
             quick_doc, request_data, on_receive=self._on_results_available)
 
     def _on_results_available(self, status, results):
+        self._reset_stylesheet()
         if status:
             self.setVisible(True)
             if results:
@@ -134,7 +107,6 @@ class QuickDocPanel(Panel):
                         '</tr>\n<tr class="field"><td>&nbsp;</td>', '')
                     if string:
                         skip_error_msg = False
-                        print(string)
                         lines = []
                         for l in string.splitlines():
                             if (l.startswith('<div class="system-message"') or

@@ -1,0 +1,10 @@
+    if (not static):
+        self.__dict__[name] = value|
+    else:
+        raise AttributeError("You cannot add attributes to %s" % self)
+->
+    if (not static):
+        self.__dict__[name] = value
+        |
+    else:
+        raise AttributeError("You cannot add attributes to %s" % self)

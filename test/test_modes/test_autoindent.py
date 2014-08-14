@@ -20,8 +20,8 @@ E.g.::
 """
 import glob
 from pyqode.core.api import TextHelper
-from pyqode.core.qt import QtCore, QtWidgets
-from pyqode.core.qt.QtTest import QTest
+from pyqode.qt import QtCore, QtWidgets
+from pyqode.qt.QtTest import QTest
 import pytest
 from test.helpers import cwd_at
 
@@ -91,6 +91,7 @@ class Case:
 def collect_cases():
     cases = []
     for file_path in sorted(glob.glob('auto_indent_cases/*.ctx')):
+        # if '44' in file_path:
         cases.append(Case(file_path))
     return cases
 
@@ -101,11 +102,3 @@ def test_auto_indent(editor, test_case):
     editor.setFocus(True)
     test_case.run(editor)
 
-
-
-
-
-# CASES = [
-#     (AutoIndentCase("print(foo, (1, 2))", 'print(\n    foo, (1, 2))', 1, len("print(")), ),
-#     (AutoIndentCase("print(foo, (1, 2))", 'print(foo,\n      (1, 2))', 1, len("print(foo,")), )
-# ]
