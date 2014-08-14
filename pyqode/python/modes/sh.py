@@ -1,22 +1,24 @@
 """
 This module contains a native python syntax highlighter, strongly inspired from
-spyderlib.widgets.source_code.syntax_higlighter.PythonSH and slighltly modified
-to highlight decorator, self attribute and sphinx doc tags.
+spyderlib.widgets.source_code.syntax_higlighter.PythonSH but modified to
+highlight docstrings with a different color than the string color and to
+highlight decorators and self parameters.
 
 It is approximately 3 time faster then :class:`pyqode.core.modes.PygmentsSH`.
 
 """
 import builtins
 import re
-from pyqode.qt import QtGui
-from pyqode.core.api import SyntaxHighlighter as BaseSH, TextHelper
-from pyqode.core.api import TextBlockHelper
 import sys
+from pyqode.qt import QtGui
+from pyqode.core.api import SyntaxHighlighter as BaseSH
+from pyqode.core.api import TextBlockHelper
 
 
 def any(name, alternates):
     """Return a named group pattern matching list of alternates."""
     return "(?P<%s>" % name + "|".join(alternates) + ")"
+
 
 kwlist = [
     'self',
@@ -89,8 +91,6 @@ def make_python_patterns(additional_keywords=[], additional_builtins=[]):
                      ufstring3, ufstring4, string, number,
                      any("SYNC", [r"\n"])])
 
-CELL_SEPARATORS = ('#%%', '# %%', '# <codecell>', '# In[')
-
 
 #
 # Pygments Syntax highlighter
@@ -114,7 +114,6 @@ class PythonSH(BaseSH):
         super().__init__(parent, color_scheme)
         self.import_statements = []
         self.global_import_statements = []
-        self.found_cell_separators = False
 
     def highlight_block(self, text, block):
         prev_block = block.previous()
@@ -133,10 +132,9 @@ class PythonSH(BaseSH):
             text = r"' " + text
         else:
             offset = 0
-            prev_state = self.NORMAL
 
         import_stmt = None
-
+        # set docstring dynamic attribute, used by the fold detector.
         block.docstring = False
 
         self.setFormat(0, len(text), self.formats["normal"])
@@ -169,16 +167,20 @@ class PythonSH(BaseSH):
                         state = self.INSIDE_DQSTRING
                     else:
                         if '"""' in value:
+                            # highlight docstring with a different color
                             block.docstring = True
                             self.setFormat(start, end - start,
                                            self.formats["docstring"])
                         elif key == 'decorator':
+                            # highlight decorators
                             self.setFormat(start, end - start,
                                            self.formats["decorator"])
                         elif value == 'self':
+                            # highlight self attribute
                             self.setFormat(start, end - start,
                                            self.formats["self"])
                         else:
+                            # highlight all other tokens
                             self.setFormat(start, end - start,
                                            self.formats[key])
                         if key == "keyword":
@@ -207,9 +209,8 @@ class PythonSH(BaseSH):
                                     start, end = match1.span(1)
                                     self.setFormat(start, end - start,
                                                    self.formats["keyword"])
-
+            # next match
             match = self.PROG.search(text, match.end())
-
         TextBlockHelper.set_state(block, state)
 
         # update import zone
@@ -245,5 +246,4 @@ class PythonSH(BaseSH):
     def rehighlight(self):
         self.import_statements = []
         self.global_import_statements = []
-        self.found_cell_separators = False
         super().rehighlight()
