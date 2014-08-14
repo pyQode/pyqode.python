@@ -31,6 +31,8 @@ class PyCodeEdit(api.CodeEdit):
     DARK_STYLE = 0
     LIGHT_STYLE = 1
 
+    mimetypes = ['text/x-python']
+
     def __init__(self, parent=None):
         super(PyCodeEdit, self).__init__(parent)
         self.file = pymanagers.PyFileManager(self)
