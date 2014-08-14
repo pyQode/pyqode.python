@@ -17,11 +17,6 @@ class PyInteractiveConsole(InteractiveConsole):
     #: Client code should open the requested file in the editor.
     open_file_requested = QtCore.Signal(str, int)
 
-    PROG = QtCore.QRegExp(
-        r'\s*File "[a-zA-Z\/_]*((.\.[a-z]*")|(")), line [0-9]*.*')
-    FILENAME_PROG = QtCore.QRegExp(r'"[a-zA-Z\/_\.]*"')
-    LINE_PROG = QtCore.QRegExp(r'line [0-9]*')
-
     class UserData(QtGui.QTextBlockUserData):
         def __init__(self, filename, line, start, end):
             super().__init__()
@@ -29,6 +24,10 @@ class PyInteractiveConsole(InteractiveConsole):
             self.line = line
             self.start_pos_in_block = start
             self.end_pos_in_block = end
+            self.PROG = QtCore.QRegExp(
+                r'\s*File "[a-zA-Z\/_]*((.\.[a-z]*")|(")), line [0-9]*.*')
+            self.FILENAME_PROG = QtCore.QRegExp(r'"[a-zA-Z\/_\.]*"')
+            self.LINE_PROG = QtCore.QRegExp(r'line [0-9]*')
 
     def __init__(self, parent=None):
         super().__init__(parent)

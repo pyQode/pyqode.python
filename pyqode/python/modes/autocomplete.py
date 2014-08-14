@@ -8,6 +8,7 @@ class PyAutoCompleteMode(AutoCompleteMode):
     """
     Extends :class:`pyqode.core.modes.AutoCompleteMode` to add
     support for method/function call:
+
         - function completion adds "):" to the function definition.
         - method completion adds "self):" to the method definition.
     """
