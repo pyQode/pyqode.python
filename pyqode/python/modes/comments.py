@@ -82,6 +82,8 @@ class CommentsMode(api.Mode):
             cursor.movePosition(QtGui.QTextCursor.EndOfLine)
             cursor.setPosition(cursor.position() + 1)
         cursor.setPosition(sel_start)
+        l = 2  # len('# ') == 2
+        performed = 0
         for i in range(nb_lines):
             cursor.movePosition(QtGui.QTextCursor.StartOfLine)
             cursor.movePosition(QtGui.QTextCursor.EndOfLine, cursor.KeepAnchor)
@@ -94,25 +96,28 @@ class CommentsMode(api.Mode):
                     cursor.movePosition(cursor.Right, cursor.KeepAnchor, 2)
                     cursor.insertText("")
                     if i == 0:
-                        sel_start -= 1
-                    sel_end -= 1
+                        sel_start -= l
+                    sel_end -= l
                 # comment
                 else:
                     cursor.movePosition(QtGui.QTextCursor.StartOfLine)
                     cursor.setPosition(cursor.position() + indent)
                     cursor.insertText("# ")
                     if i == 0:
-                        sel_start += 1
-                    sel_end += 1
+                        sel_start += l
+                    sel_end += l
+            performed += 1
             # next line
             cursor.movePosition(QtGui.QTextCursor.EndOfLine)
-            cursor.setPosition(cursor.position() + 1)
-        cursor.setPosition(sel_start + (1 if not comment else -1))
-        cursor.setPosition(sel_start + (1 if not comment else -1))
+            if not cursor.atEnd():
+                cursor.setPosition(cursor.position() + 1)
         cursor.endEditBlock()
         if has_sel:
-            pos = sel_end if not reversed_sel else sel_start
-            cursor.setPosition(pos, QtGui.QTextCursor.MoveAnchor)
+            cursor.setPosition(sel_start)
+            cursor.setPosition(sel_end, QtGui.QTextCursor.KeepAnchor)
         else:
-            cursor.movePosition(cursor.Down, cursor.MoveAnchor, 1)
+            if not cursor.atEnd():
+                if performed:
+                    cursor.setPosition(sel_start + (l if not comment else -l))
+                cursor.movePosition(cursor.Down, cursor.MoveAnchor, 1)
         self.editor.setTextCursor(cursor)
