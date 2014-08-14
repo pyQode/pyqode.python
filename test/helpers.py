@@ -101,11 +101,6 @@ def preserve_editor_config(func):
     return wrapper
 
 
-def preserve_visiblity(func):
-    # todo: decorator to preserve editor visibility
-    pass
-
-
 def require_python2():
     """
     Skips the test if there is no python2 interpreter.

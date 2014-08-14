@@ -41,7 +41,8 @@ def calltips(request_data):
         results = (str(sig.module_name), str(sig.name),
                    [p.description for p in sig.params], sig.index,
                    sig.bracket_start, column)
-        # todo: add support for multiple signatures
+        # todo: add support for multiple signatures, for that we need a custom
+        # widget for showing calltips.
         return True, results
     return False, []
 
