@@ -104,7 +104,7 @@ class PyAutoIndentMode(AutoIndentMode):
     def _parens_count_for_block(self, col, block):
         open_p = []
         closed_p = []
-        lists = get_block_symbol_data(block)
+        lists = get_block_symbol_data(self.editor, block)
         for symbols in lists:
             for paren in symbols:
                 if paren.position >= col:
@@ -165,7 +165,7 @@ class PyAutoIndentMode(AutoIndentMode):
         mapping = {'(': (')', 0), '[': (']', 1), '{': ('}', 2)}
         while ln >= 1:
             tc_trav.movePosition(tc_trav.StartOfLine, tc_trav.MoveAnchor)
-            lists = get_block_symbol_data(tc_trav.block())
+            lists = get_block_symbol_data(self.editor, tc_trav.block())
             all_symbols = []
             for symbols in lists:
                 all_symbols += [s for s in symbols]
