@@ -6,7 +6,6 @@ Contains the worker classes/functions executed on the server side.
 import logging
 import os
 import jedi
-# pylint: disable=C0103, global-variable-not-assigned
 
 
 def _logger():
@@ -247,7 +246,6 @@ def run_pep8(request_data):
         return False, []
     else:
         messages = []
-        # pylint: disable=unused-variable
         for line_number, offset, code, text, doc in results:
             messages.append(('[PEP8] %s' % text, WARNING, line_number))
         return True, messages
@@ -276,7 +274,6 @@ def run_frosted(request_data):
                            _ast.PyCF_ONLY_AST)
         except SyntaxError as value:
             msg = '[pyFlakes] %s' % value.args[0]
-            # pylint: disable=unused-variable
             (lineno, offset, text) = value.lineno, value.offset, value.text
             # If there's an encoding problem with the file, the text is None
             if text is None:
@@ -289,7 +286,6 @@ def run_frosted(request_data):
                 ret_val.append((msg, ERROR, lineno))
         else:
             # Okay, it's syntactically valid.  Now check it.
-            # pylint: disable=no-value-for-parameter
             w = checker.Checker(tree, os.path.split(path)[1])
             w.messages.sort(key=lambda m: m.lineno)
             for warning in w.messages:
@@ -355,7 +351,6 @@ class JediCompletionProvider:
 
     .. _`jedi`: https://github.com/davidhalter/jedi
     """
-    # pylint: disable=no-init, unused-argument
 
     @staticmethod
     def complete(code, line, column, path, encoding, prefix):

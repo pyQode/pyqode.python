@@ -11,8 +11,6 @@ class PyAutoCompleteMode(AutoCompleteMode):
         - function completion adds "):" to the function definition.
         - method completion adds "self):" to the method definition.
     """
-    # pylint: disable=no-init, missing-docstring
-
     def _in_method_call(self):
         helper = TextHelper(self.editor)
         line_nbr = helper.current_line_nbr() - 1

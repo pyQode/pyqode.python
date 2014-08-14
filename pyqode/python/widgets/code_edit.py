@@ -10,10 +10,9 @@ from pyqode.python import managers as pymanagers
 from pyqode.python import modes as pymodes
 from pyqode.python import panels as pypanels
 from pyqode.python.folding import PythonFoldDetector
-# pylint: disable=unused-import
 # load pyqode.python resources (code completion icons)
 # DO NOT REMOVE
-from pyqode.python.forms import pyqode_python_icons_rc
+from pyqode.python._forms import pyqode_python_icons_rc
 
 
 class PyCodeEdit(api.CodeEdit):
@@ -80,5 +79,4 @@ class PyCodeEdit(api.CodeEdit):
         Extends QCodeEdit.setPlainText to allow user to setPlainText without
         mimetype (since the python syntax highlighter does not use it).
         """
-        # pylint: disable=invalid-name, no-self-use
         super().setPlainText(txt, mimetype, encoding)
