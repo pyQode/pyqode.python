@@ -9,7 +9,7 @@ from pyqode.python.widgets import code_edit
 def test_calltips():
     data = {
         'code': "open(",
-        'line': 1,
+        'line': 0,
         'column': len('open('),
         'path': None
     }
@@ -21,7 +21,7 @@ def test_calltips():
 def test_calltips_with_closing_paren():
     data = {
         'code': "open()",
-        'line': 1,
+        'line': 0,
         'column': len('open()'),
         'path': None
     }
@@ -33,7 +33,7 @@ def test_calltips_with_closing_paren():
 def test_goto_assignments():
     data = {
         'code': "foo = 10;print(foo)",
-        'line': 1,
+        'line': 0,
         'column': len('foo = 10;print(foo)') - 1,
         'path': None
     }
@@ -47,7 +47,7 @@ def test_goto_assignments():
 
     data = {
         'code': "foo = 10;print(foo)",
-        'line': 1,
+        'line': 0,
         'column': len('foo = 10;print(foo)'),
         'path': None
     }
@@ -90,7 +90,7 @@ def test_defined_names():
 def test_quick_doc():
     data = {
         'code': "open",
-        'line': 1,
+        'line': 0,
         'column': 1,
         'path': None
     }
@@ -143,7 +143,7 @@ def test_run_frosted():
 
 def test_completions():
     provider = workers.JediCompletionProvider()
-    completions = provider.complete('import ', 1, len('import '), None,
+    completions = provider.complete('import ', 0, len('import '), None,
                                     'utf-8', '')
     assert len(completions) > 10
 

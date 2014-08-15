@@ -29,7 +29,7 @@ def calltips(request_data):
     :returns tuple(module_name, call_name, params)
     """
     code = request_data['code']
-    line = request_data['line']
+    line = request_data['line'] + 1
     column = request_data['column']
     path = request_data['path']
     # encoding = request_data['encoding']
@@ -52,7 +52,7 @@ def goto_assignments(request_data):
     Go to assignements worker.
     """
     code = request_data['code']
-    line = request_data['line']
+    line = request_data['line'] + 1
     column = request_data['column']
     path = request_data['path']
     # encoding = request_data['encoding']
@@ -209,7 +209,7 @@ def quick_doc(request_data):
     Worker that returns the documentation of the symbol under cursor.
     """
     code = request_data['code']
-    line = request_data['line']
+    line = request_data['line'] + 1
     column = request_data['column']
     path = request_data['path']
     # encoding = 'utf-8'
@@ -362,7 +362,7 @@ class JediCompletionProvider:
         """
         ret_val = []
         try:
-            script = jedi.Script(code, line, column, path, encoding)
+            script = jedi.Script(code, line + 1, column, path, encoding)
             completions = script.completions()
             print('completions: %r' % completions)
         except jedi.NotFoundError:

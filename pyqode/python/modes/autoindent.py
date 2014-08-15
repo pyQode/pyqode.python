@@ -160,10 +160,10 @@ class PyAutoIndentMode(AutoIndentMode):
     def _get_first_open_paren(self, tc, column):
         pos = None
         char = None
-        ln = tc.blockNumber() + 1
+        ln = tc.blockNumber()
         tc_trav = QTextCursor(tc)
         mapping = {'(': (')', 0), '[': (']', 1), '{': ('}', 2)}
-        while ln >= 1:
+        while ln >= 0:
             tc_trav.movePosition(tc_trav.StartOfLine, tc_trav.MoveAnchor)
             lists = get_block_symbol_data(self.editor, tc_trav.block())
             all_symbols = []
@@ -194,7 +194,7 @@ class PyAutoIndentMode(AutoIndentMode):
                             return pos, char
             # check previous line
             tc_trav.movePosition(tc_trav.Up, tc_trav.MoveAnchor)
-            ln = tc_trav.blockNumber() + 1
+            ln = tc_trav.blockNumber()
             column = len(self._helper.line_text(ln))
         return pos, char
 

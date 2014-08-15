@@ -82,7 +82,7 @@ class QuickDocPanel(Panel):
         tc = TextHelper(self.editor).word_under_cursor(select_whole_word=True)
         request_data = {
             'code': self.editor.toPlainText(),
-            'line': tc.blockNumber() + 1,
+            'line': tc.blockNumber(),
             'column': tc.columnNumber(),
             'path': self.editor.file.path,
             'encoding': self.editor.file.encoding
