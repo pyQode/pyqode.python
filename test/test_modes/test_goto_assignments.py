@@ -80,7 +80,7 @@ def test_multiple_results(editor):
     code = "import os\nos.path.abspath('..')"
     editor.setPlainText(code)
     mode = get_mode(editor)
-    TextHelper(editor).goto_line(1, 9)
+    TextHelper(editor).goto_line(1, 4)
     QTest.qWait(1000)
     mode.request_goto()
     assert flg_multi is False
