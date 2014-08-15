@@ -42,7 +42,7 @@ def test_goto_assignments():
     assert len(results) == 1
     definition = results[0]
     module, line, column, full_name = definition
-    assert line == 1
+    assert line == 0
     assert column == 0
 
     data = {
@@ -110,6 +110,7 @@ def test_run_pep8():
         {'code': 'print("foo"); print("bar")\n', 'path': None})
     assert status is True
     assert len(messages) == 1
+    assert messages[0][2] == 0
 
 
 def test_run_frosted():
@@ -130,6 +131,7 @@ def test_run_frosted():
          'encoding': 'utf-8'})
     assert status is True
     assert len(messages) == 1
+    assert messages[0][2] == 0
 
     # unused import
     status, messages = workers.run_frosted(
@@ -139,6 +141,7 @@ def test_run_frosted():
     assert len(messages) == 1
     msg, status, line = messages[0]
     assert 'sys imported but unused' in msg.lower()
+    assert line == 0
 
 
 def test_completions():
