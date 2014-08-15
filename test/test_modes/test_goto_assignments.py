@@ -5,12 +5,15 @@ from pyqode.core.api import TextHelper
 from pyqode.qt import QtCore, QtWidgets
 from pyqode.qt.QtTest import QTest
 from pyqode.python import modes as pymodes
+from test.helpers import preserve_editor_config, editor_open
 
 
 def get_mode(editor):
     return editor.modes.get(pymodes.GoToAssignmentsMode)
 
 
+@preserve_editor_config
+@editor_open(__file__)
 def test_enabled(editor):
     mode = get_mode(editor)
     assert mode.enabled
@@ -18,6 +21,8 @@ def test_enabled(editor):
     mode.enabled = True
 
 
+@preserve_editor_config
+@editor_open(__file__)
 def test_goto_variable(editor):
     editor.clear()
     code = "a = 15\nprint(a)"
@@ -37,6 +42,8 @@ def _on_out_of_doc(*args):
     out = True
 
 
+@preserve_editor_config
+@editor_open(__file__)
 def test_goto_out_of_doc(editor):
     global out
     out = False
@@ -54,6 +61,7 @@ def test_goto_out_of_doc(editor):
 
 flg_multi = False
 
+
 def accept_dlg():
     global flg_multi
     flg_multi = True
@@ -64,7 +72,8 @@ def accept_dlg():
             QTest.keyPress(w, QtCore.Qt.Key_Tab)
             QTest.keyPress(w, QtCore.Qt.Key_Return)
 
-
+@preserve_editor_config
+@editor_open(__file__)
 def test_multiple_results(editor):
     global flg_multi
     editor.clear()
@@ -87,7 +96,8 @@ def _on_no_results(*args):
     global no_results
     no_results = True
 
-
+@preserve_editor_config
+@editor_open(__file__)
 def test_no_results(editor):
     global no_results
     no_results = False
@@ -103,6 +113,8 @@ def test_no_results(editor):
     assert no_results is True
 
 
+@preserve_editor_config
+@editor_open(__file__)
 def test_make_unique(editor):
     seq = ['a', 'b', 'c', 'a']
     mode = get_mode(editor)
