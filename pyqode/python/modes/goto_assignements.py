@@ -94,7 +94,7 @@ class GoToAssignmentsMode(Mode, QtCore.QObject):
         if not self._pending:
             request_data = {
                 'code': self.editor.toPlainText(),
-                'line': tc.blockNumber() + 1,
+                'line': tc.blockNumber(),
                 'column': tc.columnNumber(),
                 'path': self.editor.file.path,
                 'encoding': self.editor.file.encoding

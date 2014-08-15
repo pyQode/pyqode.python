@@ -22,7 +22,7 @@ def test_comment_single(editor):
     mode = get_mode(editor)
     mode.comment()
     assert editor.toPlainText() == '# import os\n'
-    assert TextHelper(editor).current_line_nbr() == 2
+    assert TextHelper(editor).current_line_nbr() == 1
 
 
 def test_uncomment_single(editor):

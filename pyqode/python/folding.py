@@ -38,8 +38,6 @@ class PythonFoldDetector(IndentFoldDetector):
         return lvl
 
     def detect_fold_level(self, prev_block, block):
-        if block.blockNumber() == 23:
-            pass
         # Python is an indent based language so use indentation for folding
         # makes sense but we restrict new regions to indentation after a ':',
         # that way only the real logical blocks are displayed.

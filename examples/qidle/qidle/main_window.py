@@ -273,8 +273,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def _update_status_bar(self, editor):
         if editor:
+            l, c = TextHelper(editor).cursor_position()
             self.lbl_cursor_pos.setText(
-                '%d:%d' % TextHelper(editor).cursor_position())
+                '%d:%d' % (l + 1, c + 1))
             self.lbl_encoding.setText(editor.file.encoding)
             self.lbl_filename.setText(editor.file.path)
             self.lbl_interpreter.setText(Settings().interpreter)
@@ -384,5 +385,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def on_cursor_pos_changed(self):
         editor = self.tabWidget.currentWidget()
         if editor:
+            l, c = TextHelper(editor).cursor_position()
             self.lbl_cursor_pos.setText(
-                '%d:%d' % TextHelper(editor).cursor_position())
+                '%d:%d' % (l + 1, c + 1))

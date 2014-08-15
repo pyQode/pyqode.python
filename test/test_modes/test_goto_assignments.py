@@ -26,6 +26,7 @@ def test_goto_variable(editor):
     TextHelper(editor).goto_line(2, len('print(a)') - 2)
     mode.request_goto()
     QTest.qWait(1000)
+    assert TextHelper(editor).current_line_nbr() == 0
 
 
 out = False
@@ -43,7 +44,7 @@ def test_goto_out_of_doc(editor):
     code = "a = 15\nprint(a)"
     editor.setPlainText(code)
     mode = get_mode(editor)
-    TextHelper(editor).goto_line(2, len('print(a)') - 4)
+    TextHelper(editor).goto_line(1, len('print(a)') - 4)
     mode.out_of_doc.connect(_on_out_of_doc)
     assert out is False
     mode.request_goto()
@@ -51,7 +52,11 @@ def test_goto_out_of_doc(editor):
     assert out is True
 
 
+flg_multi = False
+
 def accept_dlg():
+    global flg_multi
+    flg_multi = True
     widgets = QtWidgets.QApplication.instance().topLevelWidgets()
     for w in widgets:
         if isinstance(w, QtWidgets.QDialog):
@@ -61,14 +66,18 @@ def accept_dlg():
 
 
 def test_multiple_results(editor):
+    global flg_multi
     editor.clear()
     code = "import os\nos.path.abspath('..')"
     editor.setPlainText(code)
     mode = get_mode(editor)
-    TextHelper(editor).goto_line(2, 4)
+    TextHelper(editor).goto_line(1, 9)
+    QTest.qWait(1000)
     mode.request_goto()
+    assert flg_multi is False
     QtCore.QTimer.singleShot(1000, accept_dlg)
     QTest.qWait(1000)
+    assert flg_multi is True
 
 
 no_results = False
@@ -87,7 +96,7 @@ def test_no_results(editor):
     editor.setPlainText(code)
     mode = get_mode(editor)
     mode.no_results_found.connect(_on_no_results)
-    TextHelper(editor).goto_line(1, len('import foo') -2)
+    TextHelper(editor).goto_line(0, len('import foo') -2)
     assert no_results is False
     mode.request_goto()
     QTest.qWait(1000)
