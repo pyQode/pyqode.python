@@ -121,8 +121,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         assert isinstance(m, modes.GoToAssignmentsMode)
         m.out_of_doc.connect(self.on_goto_out_of_doc)
 
-    @QtCore.Slot(str)
-    def open_file(self, path):
+    def open_file(self, path, line=None):
         """
         Creates a new GenericCodeEdit, opens the requested file and adds it
         to the tab widget.
@@ -143,6 +142,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.menu_recents.update_actions()
             else:
                 self.tabWidget.setCurrentIndex(index)
+        if line is not None:
+            TextHelper(self.tabWidget.currentWidget()).goto_line(line)
         return editor
 
     @QtCore.Slot()

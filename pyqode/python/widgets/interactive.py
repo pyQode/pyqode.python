@@ -24,15 +24,15 @@ class PyInteractiveConsole(InteractiveConsole):
             self.line = line
             self.start_pos_in_block = start
             self.end_pos_in_block = end
-            self.PROG = QtCore.QRegExp(
-                r'\s*File "[a-zA-Z\/_]*((.\.[a-z]*")|(")), line [0-9]*.*')
-            self.FILENAME_PROG = QtCore.QRegExp(r'"[a-zA-Z\/_\.]*"')
-            self.LINE_PROG = QtCore.QRegExp(r'line [0-9]*')
 
     def __init__(self, parent=None):
         super().__init__(parent)
         self.set_writer(self._write)
         self.setMouseTracking(True)
+        self.PROG = QtCore.QRegExp(
+            r'\s*File "[a-zA-Z\/_]*((.\.[a-z]*")|(")), line [0-9]*.*')
+        self.FILENAME_PROG = QtCore.QRegExp(r'"[a-zA-Z\/_\.]*"')
+        self.LINE_PROG = QtCore.QRegExp(r'line [0-9]*')
 
     def _write(self, text_edit, text, color):
         def write(text_edit, text, color):
@@ -66,7 +66,7 @@ class PyInteractiveConsole(InteractiveConsole):
                     self.LINE_PROG.indexIn(line)
                     start = self.LINE_PROG.pos(0)
                     end = start + len(self.LINE_PROG.cap(0))
-                    l = int(line[start:end].replace('line ', ''))
+                    l = int(line[start:end].replace('line ', '')) - 1
 
                     self.FILENAME_PROG.indexIn(line)
                     start = self.FILENAME_PROG.pos(0)
