@@ -181,8 +181,8 @@ def defined_names(request_data):
                     line, column = sub_d.start_pos
                     if sub_d.full_name == "":
                         sub_d.full_name = sub_d.name
-                    sub_definition = Definition(sub_d.name, icon, line, column,
-                                                sub_d.full_name)
+                    sub_definition = Definition(sub_d.name, icon, line - 1,
+                                                column, sub_d.full_name)
                     definition.add_child(sub_definition)
             except AttributeError:
                 pass
