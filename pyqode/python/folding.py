@@ -37,6 +37,14 @@ class PythonFoldDetector(IndentFoldDetector):
                         prev_block.previous()))
         return lvl
 
+    def _handle_imports(self, block, lvl, prev_block):
+        txt = block.text()
+        indent = len(txt) - len(txt.lstrip())
+        if (hasattr(block, 'import_stmt') and prev_block and
+                'import ' in prev_block.text() and indent == 0):
+            return 1
+        return lvl
+
     def detect_fold_level(self, prev_block, block):
         # Python is an indent based language so use indentation for folding
         # makes sense but we restrict new regions to indentation after a ':',
@@ -49,4 +57,5 @@ class PythonFoldDetector(IndentFoldDetector):
                 self._strip_comments(prev_block).endswith(':')):
             lvl = prev_lvl
         lvl = self._handle_docstrings(block, lvl, prev_block)
+        lvl = self._handle_imports(block, lvl, prev_block)
         return lvl

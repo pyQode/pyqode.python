@@ -217,31 +217,7 @@ class PythonSH(BaseSH):
         if import_stmt is not None:
             block.import_stmt = import_stmt
             self.import_statements.append(block)
-            txt = block.text()
-            if len(txt) - len(txt.strip()) == 0:
-                self.global_import_statements.append(block)
-
-        # update import statements
-        if ((not self.editor.file.opening or
-                block == self.document().lastBlock()) and
-                len(self.global_import_statements) > 1):
-            end = 0
-            start = sys.maxsize
-            for block in self.global_import_statements:
-                n = block.blockNumber()
-                if n > end:
-                    end = n
-                if n < start:
-                    start = n
-            block = self.document().findBlockByNumber(start)
-            TextBlockHelper.set_fold_lvl(block, 0)
-            TextBlockHelper.set_fold_trigger(block, True)
-            for line in range(start + 1, end + 1):
-                block = self.document().findBlockByNumber(line)
-                TextBlockHelper.set_fold_lvl(block, 1)
-                TextBlockHelper.set_fold_trigger(block, False)
-            if block.next().isValid():
-                TextBlockHelper.set_fold_lvl(block.next(), 0)
+            block.import_stmt = True
 
     def rehighlight(self):
         self.import_statements = []
