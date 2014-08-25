@@ -120,7 +120,7 @@ class PyAutoIndentMode(AutoIndentMode):
     def _between_paren(self, tc, col):
         block = tc.block()
         nb_open = nb_closed = 0
-        while block.isValid():  # and nb_open >= nb_closed:
+        while block.isValid() and block.text().strip():
             o, c, _, _ = self._parens_count_for_block(col, block)
             nb_open += o
             nb_closed += c
