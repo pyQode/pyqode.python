@@ -163,7 +163,7 @@ class PyAutoIndentMode(AutoIndentMode):
         ln = tc.blockNumber()
         tc_trav = QTextCursor(tc)
         mapping = {'(': (')', 0), '[': (']', 1), '{': ('}', 2)}
-        while ln >= 0:
+        while ln >= 0 and tc.block().text().strip():
             tc_trav.movePosition(tc_trav.StartOfLine, tc_trav.MoveAnchor)
             lists = get_block_symbol_data(self.editor, tc_trav.block())
             all_symbols = []
