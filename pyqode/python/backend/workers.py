@@ -373,5 +373,5 @@ class JediCompletionProvider:
                 'name': completion.name,
                 'icon': icon_from_typename(
                     completion.name, completion.type),
-                'tooltip': completion.full_name})
+                'tooltip': completion.description})
         return ret_val
