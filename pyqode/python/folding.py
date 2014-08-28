@@ -20,11 +20,14 @@ class PythonFoldDetector(IndentFoldDetector):
             if is_start:
                 TextBlockHelper.get_fold_lvl(prev_block) + 1
             else:
-                pblock = block
-                while not is_start and pblock.isValid():
+                pblock = block.previous()
+                while pblock.isValid() and pblock.text().strip() == '':
                     pblock = pblock.previous()
-                    is_start = pblock.text().strip().startswith('"""')
-                return TextBlockHelper.get_fold_lvl(pblock) + 1
+                is_start = pblock.text().strip().startswith('"""')
+                if is_start:
+                    return TextBlockHelper.get_fold_lvl(pblock) + 1
+                else:
+                    return TextBlockHelper.get_fold_lvl(pblock)
         # fix end of docstring
         elif prev_block and prev_block.text().strip().endswith('"""'):
             single_line = self.single_line_docstring.match(
