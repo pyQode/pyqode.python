@@ -61,7 +61,6 @@ class PyCodeEdit(api.CodeEdit):
         self.modes.append(modes.RightMarginMode())
         self.modes.append(modes.ZoomMode())
         self.modes.append(modes.SymbolMatcherMode())
-        self.modes.append(modes.WordClickMode())
         self.modes.append(modes.CodeCompletionMode())
         # python specifics
         self.modes.append(pymodes.PythonSH(self.document()))
