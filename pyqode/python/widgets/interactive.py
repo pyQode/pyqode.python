@@ -33,6 +33,7 @@ class PyInteractiveConsole(InteractiveConsole):
             r'\s*File "[a-zA-Z\/_]*((.\.[a-z]*")|(")), line [0-9]*.*')
         self.FILENAME_PROG = QtCore.QRegExp(r'"[a-zA-Z\/_\.]*"')
         self.LINE_PROG = QtCore.QRegExp(r'line [0-9]*')
+        self.setLineWrapMode(self.NoWrap)
 
     def _write(self, text_edit, text, color):
         def write(text_edit, text, color):
@@ -57,27 +58,26 @@ class PyInteractiveConsole(InteractiveConsole):
             block = self.document().lastBlock()
             data = self.UserData(text, line, start, end)
             block.setUserData(data)
+        text = text.replace('\n', '{@}\n')
+        for i, line in enumerate(text.split('{@}')):
+            # check if File and highlight it in blue, also store it
+            if self.PROG.indexIn(line) != -1:
+                # get line number
+                self.LINE_PROG.indexIn(line)
+                start = self.LINE_PROG.pos(0)
+                end = start + len(self.LINE_PROG.cap(0))
+                l = int(line[start:end].replace('line ', '')) - 1
 
-        for line in text.splitlines():
-            if color == self.stderr_color:
-                # check if File and highlight it in blue, also store it
-                if self.PROG.indexIn(line) != -1:
-                    # get line number
-                    self.LINE_PROG.indexIn(line)
-                    start = self.LINE_PROG.pos(0)
-                    end = start + len(self.LINE_PROG.cap(0))
-                    l = int(line[start:end].replace('line ', '')) - 1
-
-                    self.FILENAME_PROG.indexIn(line)
-                    start = self.FILENAME_PROG.pos(0)
-                    end = start + len(self.FILENAME_PROG.cap(0))
-                    write(self, line[:start + 1], color)
-                    write_with_underline(self, line[start + 1:end - 1],
-                                         QtGui.QColor('blue'), l,
-                                         start, end)
-                    write(self, line[end - 1:] + '\n', color)
-                    continue
-            write(text_edit, line + '\n', color)
+                self.FILENAME_PROG.indexIn(line)
+                start = self.FILENAME_PROG.pos(0)
+                end = start + len(self.FILENAME_PROG.cap(0))
+                write(self, line[:start + 1], color)
+                write_with_underline(self, line[start + 1:end - 1],
+                                     QtGui.QColor('blue'), l,
+                                     start, end)
+                write(self, line[end - 1:], color)
+            else:
+                write(text_edit, line, color)
 
     def mouseMoveEvent(self, e):
         """
