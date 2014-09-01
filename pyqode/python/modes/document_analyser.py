@@ -42,12 +42,14 @@ class DocumentAnalyserMode(Mode, QtCore.QObject):
             self.editor.blockCountChanged.disconnect(
                 self._on_line_count_changed)
             self.editor.new_text_set.disconnect(self._run_analysis)
+            self._jobRunner.cancel_requests()
 
     def _on_line_count_changed(self, e):
         self._jobRunner.request_job(self._run_analysis)
 
     def _run_analysis(self):
-        if self.editor and self.editor.toPlainText() and self.editor.file:
+        if self.enabled and self.editor and self.editor.toPlainText() and \
+                self.editor.file:
             request_data = {
                 'code': self.editor.toPlainText(),
                 'path': self.editor.file.path,
