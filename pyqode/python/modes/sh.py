@@ -166,7 +166,7 @@ class PythonSH(BaseSH):
                                        self.formats["string"])
                         state = self.INSIDE_DQSTRING
                     else:
-                        if '"""' in value:
+                        if '"""' in value and key != 'comment':
                             # highlight docstring with a different color
                             block.docstring = True
                             self.setFormat(start, end - start,
