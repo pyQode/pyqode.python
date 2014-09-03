@@ -141,6 +141,22 @@ class Definition(object):
                 and self.line == other.line and self.column == other.column)
 
 
+def _extract_def(d):
+    d_line, d_column = d.start_pos
+    # use full name for import type
+    definition = Definition(d.name, icon_from_typename(d.name, d.type),
+                            d_line - 1, d_column, d.full_name)
+    # check for methods in class or nested methods/classes
+    if d.type == "class" or d.type == 'function':
+        try:
+            sub_definitions = d.defined_names()
+            for sub_d in sub_definitions:
+                definition.add_child(_extract_def(sub_d))
+        except AttributeError:
+            pass
+    return definition
+
+
 def defined_names(request_data):
     """
     Returns the list of defined names for the document.
@@ -161,33 +177,16 @@ def defined_names(request_data):
             return False
 
     global _old_definitions
-    code = request_data['code']
-    path = request_data['path']
-    # encoding = request_data['encoding']
-    encoding = 'utf-8'
     ret_val = []
-    toplvl_definitions = jedi.defined_names(code, path, encoding)
+    path = request_data['path']
+    toplvl_definitions = jedi.defined_names(
+        request_data['code'], path, 'utf-8')
     for d in toplvl_definitions:
-        d_line, d_column = d.start_pos
-        # use full name for import type
-        definition = Definition(d.name, icon_from_typename(d.name, d.type),
-                                d_line - 1, d_column, d.full_name)
-        # check for methods in class
-        if d.type == "class" or d.type == 'function':
-            try:
-                sub_definitions = d.defined_names()
-                for sub_d in sub_definitions:
-                    icon = icon_from_typename(sub_d.name, sub_d.type)
-                    line, column = sub_d.start_pos
-                    if sub_d.full_name == "":
-                        sub_d.full_name = sub_d.name
-                    sub_definition = Definition(sub_d.name, icon, line - 1,
-                                                column, sub_d.full_name)
-                    definition.add_child(sub_definition)
-            except AttributeError:
-                pass
+        definition = _extract_def(d)
         if d.type != 'import':
+            # ignore imports
             ret_val.append(definition)
+
     try:
         old_definitions = _old_definitions["%s_definitions" % path]
     except KeyError:
