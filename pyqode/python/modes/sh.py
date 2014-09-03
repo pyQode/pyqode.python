@@ -65,7 +65,7 @@ def make_python_patterns(additional_keywords=[], additional_builtins=[]):
                    if not name.startswith('_')] + additional_builtins
     builtin = r"([^.'\"\\#]\b|^)" + any("builtin", builtinlist) + r"\b"
     comment = any("comment", [r"#[^\n]*"])
-    instance = any("instance", [r"\bself\b"])
+    instance = any("instance", [r"\bself\b", r"\bcls\b"])
     decorator = any('decorator', [r'@\w*', r'.setter'])
     number = any("number",
                  [r"\b[+-]?[0-9]+[lLjJ]?\b",
@@ -175,7 +175,7 @@ class PythonSH(BaseSH):
                             # highlight decorators
                             self.setFormat(start, end - start,
                                            self.formats["decorator"])
-                        elif value == 'self':
+                        elif value in ['self', 'cls']:
                             # highlight self attribute
                             self.setFormat(start, end - start,
                                            self.formats["self"])
