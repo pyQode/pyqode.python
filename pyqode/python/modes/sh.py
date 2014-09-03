@@ -64,6 +64,7 @@ def make_python_patterns(additional_keywords=[], additional_builtins=[]):
     builtinlist = [str(name) for name in dir(builtins)
                    if not name.startswith('_')] + additional_builtins
     builtin = r"([^.'\"\\#]\b|^)" + any("builtin", builtinlist) + r"\b"
+    builtin_fct = any("builtin_fct", [r'_{2}[a-zA-Z_]*_{2}'])
     comment = any("comment", [r"#[^\n]*"])
     instance = any("instance", [r"\bself\b", r"\bcls\b"])
     decorator = any('decorator', [r'@\w*', r'.setter'])
@@ -86,12 +87,11 @@ def make_python_patterns(additional_keywords=[], additional_builtins=[]):
     ufstring2 = any("uf_dqstring", [uf_dqstring])
     ufstring3 = any("uf_sq3string", [uf_sq3string])
     ufstring4 = any("uf_dq3string", [uf_dq3string])
-    return "|".join([instance, decorator, kw, builtin, comment, ufstring1,
+    return "|".join([instance, decorator, kw, builtin, builtin_fct,
+                     comment, ufstring1,
                      ufstring2,
                      ufstring3, ufstring4, string, number,
                      any("SYNC", [r"\n"])])
-
-
 #
 # Pygments Syntax highlighter
 #
@@ -165,6 +165,12 @@ class PythonSH(BaseSH):
                         self.setFormat(start, end - start,
                                        self.formats["string"])
                         state = self.INSIDE_DQSTRING
+                    elif key == 'builtin_fct':
+                        # trick to highlight __init__, __add__ and so on with
+                        # builtin color
+                        print(key, value, start, end)
+                        self.setFormat(start, end - start,
+                                       self.formats["builtin"])
                     else:
                         if '"""' in value and key != 'comment':
                             # highlight docstring with a different color
