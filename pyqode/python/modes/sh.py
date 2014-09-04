@@ -168,7 +168,6 @@ class PythonSH(BaseSH):
                     elif key == 'builtin_fct':
                         # trick to highlight __init__, __add__ and so on with
                         # builtin color
-                        print(key, value, start, end)
                         self.setFormat(start, end - start,
                                        self.formats["builtin"])
                     else:
