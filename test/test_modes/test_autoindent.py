@@ -44,7 +44,7 @@ class Context:
     def _get_cursor_pos(self, code):
         for i, line in enumerate(code.splitlines()):
             if '|' in line:
-                line_nbr = i + 1
+                line_nbr = i
                 column_nbr = line.find('|')
                 return line_nbr, column_nbr
         return 1, 0

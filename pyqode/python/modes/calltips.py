@@ -37,7 +37,7 @@ class CalltipsMode(Mode, QtCore.QObject):
         if (event.key() == QtCore.Qt.Key_ParenLeft or
                 event.key() == QtCore.Qt.Key_Comma):
             tc = self.editor.textCursor()
-            line = tc.blockNumber() + 1
+            line = tc.blockNumber()
             col = tc.columnNumber()
             fn = self.editor.file.path
             encoding = self.editor.file.encoding
@@ -45,9 +45,9 @@ class CalltipsMode(Mode, QtCore.QObject):
             # jedi has a bug if the statement has a closing parenthesis
             # remove it!
             lines = source.splitlines()
-            l = lines[line - 1].rstrip()
+            l = lines[line].rstrip()
             if l.endswith(")"):
-                lines[line - 1] = l[:-1]
+                lines[line] = l[:-1]
             source = "\n".join(lines)
             self._request_calltip(source, line, col, fn, encoding)
 

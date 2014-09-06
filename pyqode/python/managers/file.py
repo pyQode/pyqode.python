@@ -3,6 +3,7 @@ Contains the python specific FileManager.
 """
 import ast
 import re
+from pyqode.core.api import TextBlockHelper
 from pyqode.core.managers import FileManager
 
 
@@ -13,6 +14,8 @@ class PyFileManager(FileManager):
     encoding tag.
 
     """
+    #: True to fold import statements on open.
+    fold_imports = True
 
     def detect_encoding(self, path):
         """
@@ -44,3 +47,14 @@ class PyFileManager(FileManager):
             encoding = self.detect_encoding(path)
         super().open(path, encoding=encoding,
                      use_cached_encoding=use_cached_encoding)
+        # fold imports
+        if (self.fold_imports and
+                self.editor.syntax_highlighter.import_statements):
+            try:
+                folding_panel = self.editor.panels.get('FoldingPanel')
+            except KeyError:
+                pass
+            else:
+                for stmt in self.editor.syntax_highlighter.import_statements:
+                    if TextBlockHelper.is_fold_trigger(stmt):
+                        folding_panel.toggle_fold_trigger(stmt)

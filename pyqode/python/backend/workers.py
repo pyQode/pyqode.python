@@ -29,7 +29,7 @@ def calltips(request_data):
     :returns tuple(module_name, call_name, params)
     """
     code = request_data['code']
-    line = request_data['line']
+    line = request_data['line'] + 1
     column = request_data['column']
     path = request_data['path']
     # encoding = request_data['encoding']
@@ -52,7 +52,7 @@ def goto_assignments(request_data):
     Go to assignements worker.
     """
     code = request_data['code']
-    line = request_data['line']
+    line = request_data['line'] + 1
     column = request_data['column']
     path = request_data['path']
     # encoding = request_data['encoding']
@@ -63,7 +63,8 @@ def goto_assignments(request_data):
     except jedi.NotFoundError:
         pass
     else:
-        ret_val = [(d.module_path, d.line, d.column, d.full_name)
+        ret_val = [(d.module_path, d.line - 1 if d.line else None,
+                    d.column, d.full_name)
                    for d in definitions]
         return True, ret_val
 
@@ -140,6 +141,22 @@ class Definition(object):
                 and self.line == other.line and self.column == other.column)
 
 
+def _extract_def(d):
+    d_line, d_column = d.start_pos
+    # use full name for import type
+    definition = Definition(d.name, icon_from_typename(d.name, d.type),
+                            d_line - 1, d_column, d.full_name)
+    # check for methods in class or nested methods/classes
+    if d.type == "class" or d.type == 'function':
+        try:
+            sub_definitions = d.defined_names()
+            for sub_d in sub_definitions:
+                definition.add_child(_extract_def(sub_d))
+        except AttributeError:
+            pass
+    return definition
+
+
 def defined_names(request_data):
     """
     Returns the list of defined names for the document.
@@ -160,33 +177,16 @@ def defined_names(request_data):
             return False
 
     global _old_definitions
-    code = request_data['code']
-    path = request_data['path']
-    # encoding = request_data['encoding']
-    encoding = 'utf-8'
     ret_val = []
-    toplvl_definitions = jedi.defined_names(code, path, encoding)
+    path = request_data['path']
+    toplvl_definitions = jedi.defined_names(
+        request_data['code'], path, 'utf-8')
     for d in toplvl_definitions:
-        d_line, d_column = d.start_pos
-        # use full name for import type
-        definition = Definition(d.name, icon_from_typename(d.name, d.type),
-                                d_line, d_column, d.full_name)
-        # check for methods in class
-        if d.type == "class" or d.type == 'function':
-            try:
-                sub_definitions = d.defined_names()
-                for sub_d in sub_definitions:
-                    icon = icon_from_typename(sub_d.name, sub_d.type)
-                    line, column = sub_d.start_pos
-                    if sub_d.full_name == "":
-                        sub_d.full_name = sub_d.name
-                    sub_definition = Definition(sub_d.name, icon, line, column,
-                                                sub_d.full_name)
-                    definition.add_child(sub_definition)
-            except AttributeError:
-                pass
+        definition = _extract_def(d)
         if d.type != 'import':
+            # ignore imports
             ret_val.append(definition)
+
     try:
         old_definitions = _old_definitions["%s_definitions" % path]
     except KeyError:
@@ -209,7 +209,7 @@ def quick_doc(request_data):
     Worker that returns the documentation of the symbol under cursor.
     """
     code = request_data['code']
-    line = request_data['line']
+    line = request_data['line'] + 1
     column = request_data['column']
     path = request_data['path']
     # encoding = 'utf-8'
@@ -248,7 +248,7 @@ def run_pep8(request_data):
     else:
         messages = []
         for line_number, offset, code, text, doc in results:
-            messages.append(('[PEP8] %s' % text, WARNING, line_number))
+            messages.append(('[PEP8] %s' % text, WARNING, line_number - 1))
         return True, messages
 
 
@@ -275,7 +275,7 @@ def run_frosted(request_data):
                            _ast.PyCF_ONLY_AST)
         except SyntaxError as value:
             msg = '[pyFlakes] %s' % value.args[0]
-            (lineno, offset, text) = value.lineno, value.offset, value.text
+            (lineno, offset, text) = value.lineno - 1, value.offset, value.text
             # If there's an encoding problem with the file, the text is None
             if text is None:
                 # Avoid using msg, since for the only known case, it
@@ -292,7 +292,7 @@ def run_frosted(request_data):
             for warning in w.messages:
                 msg = "[pyFlakes] %s: %s" % (
                     warning.type.error_code, warning.message.split(':')[-1])
-                line = warning.lineno
+                line = warning.lineno - 1
                 status = (WARNING if warning.type.error_code.startswith('W')
                           else ERROR)
                 ret_val.append((msg, status, line))
@@ -362,7 +362,7 @@ class JediCompletionProvider:
         """
         ret_val = []
         try:
-            script = jedi.Script(code, line, column, path, encoding)
+            script = jedi.Script(code, line + 1, column, path, encoding)
             completions = script.completions()
             print('completions: %r' % completions)
         except jedi.NotFoundError:
@@ -372,5 +372,5 @@ class JediCompletionProvider:
                 'name': completion.name,
                 'icon': icon_from_typename(
                     completion.name, completion.type),
-                'tooltip': completion.full_name})
+                'tooltip': completion.description})
         return ret_val

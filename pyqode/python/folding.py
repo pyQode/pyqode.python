@@ -20,11 +20,14 @@ class PythonFoldDetector(IndentFoldDetector):
             if is_start:
                 TextBlockHelper.get_fold_lvl(prev_block) + 1
             else:
-                pblock = block
-                while not is_start and pblock.isValid():
+                pblock = block.previous()
+                while pblock.isValid() and pblock.text().strip() == '':
                     pblock = pblock.previous()
-                    is_start = pblock.text().strip().startswith('"""')
-                return TextBlockHelper.get_fold_lvl(pblock) + 1
+                is_start = pblock.text().strip().startswith('"""')
+                if is_start:
+                    return TextBlockHelper.get_fold_lvl(pblock) + 1
+                else:
+                    return TextBlockHelper.get_fold_lvl(pblock)
         # fix end of docstring
         elif prev_block and prev_block.text().strip().endswith('"""'):
             single_line = self.single_line_docstring.match(
@@ -37,9 +40,15 @@ class PythonFoldDetector(IndentFoldDetector):
                         prev_block.previous()))
         return lvl
 
+    def _handle_imports(self, block, lvl, prev_block):
+        txt = block.text()
+        indent = len(txt) - len(txt.lstrip())
+        if (hasattr(block, 'import_stmt') and prev_block and
+                'import ' in prev_block.text() and indent == 0):
+            return 1
+        return lvl
+
     def detect_fold_level(self, prev_block, block):
-        if block.blockNumber() == 23:
-            pass
         # Python is an indent based language so use indentation for folding
         # makes sense but we restrict new regions to indentation after a ':',
         # that way only the real logical blocks are displayed.
@@ -51,4 +60,5 @@ class PythonFoldDetector(IndentFoldDetector):
                 self._strip_comments(prev_block).endswith(':')):
             lvl = prev_lvl
         lvl = self._handle_docstrings(block, lvl, prev_block)
+        lvl = self._handle_imports(block, lvl, prev_block)
         return lvl

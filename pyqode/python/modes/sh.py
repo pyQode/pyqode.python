@@ -64,8 +64,9 @@ def make_python_patterns(additional_keywords=[], additional_builtins=[]):
     builtinlist = [str(name) for name in dir(builtins)
                    if not name.startswith('_')] + additional_builtins
     builtin = r"([^.'\"\\#]\b|^)" + any("builtin", builtinlist) + r"\b"
+    builtin_fct = any("builtin_fct", [r'_{2}[a-zA-Z_]*_{2}'])
     comment = any("comment", [r"#[^\n]*"])
-    instance = any("instance", [r"\bself\b"])
+    instance = any("instance", [r"\bself\b", r"\bcls\b"])
     decorator = any('decorator', [r'@\w*', r'.setter'])
     number = any("number",
                  [r"\b[+-]?[0-9]+[lLjJ]?\b",
@@ -86,12 +87,11 @@ def make_python_patterns(additional_keywords=[], additional_builtins=[]):
     ufstring2 = any("uf_dqstring", [uf_dqstring])
     ufstring3 = any("uf_sq3string", [uf_sq3string])
     ufstring4 = any("uf_dq3string", [uf_dq3string])
-    return "|".join([instance, decorator, kw, builtin, comment, ufstring1,
+    return "|".join([instance, decorator, kw, builtin, builtin_fct,
+                     comment, ufstring1,
                      ufstring2,
                      ufstring3, ufstring4, string, number,
                      any("SYNC", [r"\n"])])
-
-
 #
 # Pygments Syntax highlighter
 #
@@ -165,8 +165,13 @@ class PythonSH(BaseSH):
                         self.setFormat(start, end - start,
                                        self.formats["string"])
                         state = self.INSIDE_DQSTRING
+                    elif key == 'builtin_fct':
+                        # trick to highlight __init__, __add__ and so on with
+                        # builtin color
+                        self.setFormat(start, end - start,
+                                       self.formats["builtin"])
                     else:
-                        if '"""' in value:
+                        if '"""' in value and key != 'comment':
                             # highlight docstring with a different color
                             block.docstring = True
                             self.setFormat(start, end - start,
@@ -175,7 +180,7 @@ class PythonSH(BaseSH):
                             # highlight decorators
                             self.setFormat(start, end - start,
                                            self.formats["decorator"])
-                        elif value == 'self':
+                        elif value in ['self', 'cls']:
                             # highlight self attribute
                             self.setFormat(start, end - start,
                                            self.formats["self"])
@@ -217,31 +222,7 @@ class PythonSH(BaseSH):
         if import_stmt is not None:
             block.import_stmt = import_stmt
             self.import_statements.append(block)
-            txt = block.text()
-            if len(txt) - len(txt.strip()) == 0:
-                self.global_import_statements.append(block)
-
-        # update import statements
-        if ((not self.editor.file.opening or
-                block == self.document().lastBlock()) and
-                len(self.global_import_statements) > 1):
-            end = 0
-            start = sys.maxsize
-            for block in self.global_import_statements:
-                n = block.blockNumber()
-                if n > end:
-                    end = n
-                if n < start:
-                    start = n
-            block = self.document().findBlockByNumber(start)
-            TextBlockHelper.set_fold_lvl(block, 0)
-            TextBlockHelper.set_fold_trigger(block, True)
-            for line in range(start + 1, end + 1):
-                block = self.document().findBlockByNumber(line)
-                TextBlockHelper.set_fold_lvl(block, 1)
-                TextBlockHelper.set_fold_trigger(block, False)
-            if block.next().isValid():
-                TextBlockHelper.set_fold_lvl(block.next(), 0)
+            block.import_stmt = True
 
     def rehighlight(self):
         self.import_statements = []

@@ -26,7 +26,11 @@ class PyAutoCompleteMode(AutoCompleteMode):
 
     def _handle_fct_def(self):
         if self._in_method_call():
-            txt = "self):"
+            th = TextHelper(self.editor)
+            if '@classmethod' in th.line_text(th.current_line_nbr() - 1):
+                txt = "cls):"
+            else:
+                txt = "self):"
         else:
             txt = "):"
         cursor = self.editor.textCursor()

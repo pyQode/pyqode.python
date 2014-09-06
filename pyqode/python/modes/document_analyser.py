@@ -5,7 +5,7 @@ from pyqode.core.api import Mode
 from pyqode.core.api import DelayJobRunner
 from pyqode.core.backend import NotConnected
 from pyqode.python.backend.workers import Definition, defined_names
-from pyqode.qt import QtCore
+from pyqode.qt import QtCore, QtGui, QtWidgets
 
 
 def _logger():
@@ -42,12 +42,14 @@ class DocumentAnalyserMode(Mode, QtCore.QObject):
             self.editor.blockCountChanged.disconnect(
                 self._on_line_count_changed)
             self.editor.new_text_set.disconnect(self._run_analysis)
+            self._jobRunner.cancel_requests()
 
     def _on_line_count_changed(self, e):
         self._jobRunner.request_job(self._run_analysis)
 
     def _run_analysis(self):
-        if self.editor and self.editor.toPlainText() and self.editor.file:
+        if self.enabled and self.editor and self.editor.toPlainText() and \
+                self.editor.file:
             request_data = {
                 'code': self.editor.toPlainText(),
                 'path': self.editor.file.path,
@@ -86,3 +88,24 @@ class DocumentAnalyserMode(Mode, QtCore.QObject):
                 nd.full_name = "  " + nd.full_name
                 ret_val.append(nd)
         return ret_val
+
+    def to_tree_widget_items(self):
+        """
+        Returns the results as a list of top level QTreeWidgetItem.
+
+        This is a convenience function that you can use to update a document
+        tree widget wheneve the document changed.
+        """
+        def convert(name, editor):
+            ti = QtWidgets.QTreeWidgetItem()
+            ti.setText(0, name.name)
+            ti.setIcon(0, QtGui.QIcon(name.icon))
+            name.block = editor.document().findBlockByNumber(name.line)
+            ti.setData(0, QtCore.Qt.UserRole, name)
+
+            for ch in name.children:
+                ti_ch = convert(ch, editor)
+                ti.addChild(ti_ch)
+
+            return ti
+        return [convert(d, self.editor) for d in self.results]

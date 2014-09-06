@@ -66,7 +66,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def setup_recent_files_menu(self):
         """ Setup the recent files menu and manager """
         self.recent_files_manager = widgets.RecentFilesManager(
-            'pyqode', 'qidle')
+            'pyQode', 'qidle')
         self.menu_recents = widgets.MenuRecentFiles(
             self.menuFile, title='Recents',
             recent_files_manager=self.recent_files_manager)
@@ -121,8 +121,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         assert isinstance(m, modes.GoToAssignmentsMode)
         m.out_of_doc.connect(self.on_goto_out_of_doc)
 
-    @QtCore.Slot(str)
-    def open_file(self, path):
+    def open_file(self, path, line=None):
         """
         Creates a new GenericCodeEdit, opens the requested file and adds it
         to the tab widget.
@@ -143,6 +142,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.menu_recents.update_actions()
             else:
                 self.tabWidget.setCurrentIndex(index)
+        if line is not None:
+            TextHelper(self.tabWidget.currentWidget()).goto_line(line)
         return editor
 
     @QtCore.Slot()
@@ -273,8 +274,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def _update_status_bar(self, editor):
         if editor:
+            l, c = TextHelper(editor).cursor_position()
             self.lbl_cursor_pos.setText(
-                '%d:%d' % TextHelper(editor).cursor_position())
+                '%d:%d' % (l + 1, c + 1))
             self.lbl_encoding.setText(editor.file.encoding)
             self.lbl_filename.setText(editor.file.path)
             self.lbl_interpreter.setText(Settings().interpreter)
@@ -339,8 +341,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Show about dialog
         """
         QtWidgets.QMessageBox.about(
-            self, 'pyQode qidle',
-            'This qidle application is an example of what you can do with '
+            self, 'QIdle',
+            'This QIdle application is an example of what you can do with '
             'pyqode.python.')
 
     def on_run(self):
@@ -384,5 +386,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def on_cursor_pos_changed(self):
         editor = self.tabWidget.currentWidget()
         if editor:
+            l, c = TextHelper(editor).cursor_position()
             self.lbl_cursor_pos.setText(
-                '%d:%d' % TextHelper(editor).cursor_position())
+                '%d:%d' % (l + 1, c + 1))

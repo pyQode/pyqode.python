@@ -9,7 +9,7 @@ from pyqode.python.widgets import code_edit
 def test_calltips():
     data = {
         'code': "open(",
-        'line': 1,
+        'line': 0,
         'column': len('open('),
         'path': None
     }
@@ -21,7 +21,7 @@ def test_calltips():
 def test_calltips_with_closing_paren():
     data = {
         'code': "open()",
-        'line': 1,
+        'line': 0,
         'column': len('open()'),
         'path': None
     }
@@ -33,7 +33,7 @@ def test_calltips_with_closing_paren():
 def test_goto_assignments():
     data = {
         'code': "foo = 10;print(foo)",
-        'line': 1,
+        'line': 0,
         'column': len('foo = 10;print(foo)') - 1,
         'path': None
     }
@@ -42,12 +42,12 @@ def test_goto_assignments():
     assert len(results) == 1
     definition = results[0]
     module, line, column, full_name = definition
-    assert line == 1
+    assert line == 0
     assert column == 0
 
     data = {
         'code': "foo = 10;print(foo)",
-        'line': 1,
+        'line': 0,
         'column': len('foo = 10;print(foo)'),
         'path': None
     }
@@ -90,7 +90,7 @@ def test_defined_names():
 def test_quick_doc():
     data = {
         'code': "open",
-        'line': 1,
+        'line': 0,
         'column': 1,
         'path': None
     }
@@ -110,6 +110,7 @@ def test_run_pep8():
         {'code': 'print("foo"); print("bar")\n', 'path': None})
     assert status is True
     assert len(messages) == 1
+    assert messages[0][2] == 0
 
 
 def test_run_frosted():
@@ -130,6 +131,7 @@ def test_run_frosted():
          'encoding': 'utf-8'})
     assert status is True
     assert len(messages) == 1
+    assert messages[0][2] == 0
 
     # unused import
     status, messages = workers.run_frosted(
@@ -139,11 +141,12 @@ def test_run_frosted():
     assert len(messages) == 1
     msg, status, line = messages[0]
     assert 'sys imported but unused' in msg.lower()
+    assert line == 0
 
 
 def test_completions():
     provider = workers.JediCompletionProvider()
-    completions = provider.complete('import ', 1, len('import '), None,
+    completions = provider.complete('import ', 0, len('import '), None,
                                     'utf-8', '')
     assert len(completions) > 10
 

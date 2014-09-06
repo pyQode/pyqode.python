@@ -9,25 +9,23 @@ accomplished, please visit the `issues page on github`_ and the
 :doc:`changelog </changelog>`, respectively.
 
 
-2.1.0
+2.2.0
 -----
 
-The 2.1 version adds the following new features:
+This is mainly a bug fix version but it introduces a possible backward
+incompatible change. We changed a confusing internal convention where line
+numbers are 1 based and column number 0 based. Now both line and column numbers
+are 0 based. This change has been done in order to make integrating pyqode
+in other application an easier task. This follow the Qt Text API convention.
+The only API concerned by this changed is the TextHelper API. If you were not
+using TextHelper, this change won't impact your code. Otherwise you will have
+to update all the line numbers arguments to be 0 based.
 
-  - code folding (with support for folding docstrings and imports)
-  - new python syntax highlighter (based on the Spyder IDE PythonSH) with
-    additional support for docstrings, decorators and self parameter.
-    The new highlighter is a lot faster than the previous one and has a better
-    docstring highlighting.
-  - new PyInteractiveConsole for running python program. The new console has
-    support for highlighting tracebakc and let you jump to the incriminated
-    file with just one click.
+The only real new feature is caching of cursor position. We you re-open a document,
+pyqode will try to move the cursor to the last stored position.
 
-As for every new version, the python auto indent modes has been vastly improved
-(with more than 20 new tests).
-
-We also fixed quite a few bugs in QIdle and the comments mode has been
-improved.
+On top of that, we spend sometime polishing the widget and we added a few new
+signals and methods to the API.
 
 Next Version
 ------------
