@@ -18,7 +18,7 @@ class PyAutoIndentMode(AutoIndentMode):
         self._helper = None
 
     def on_install(self, editor):
-        super().on_install(editor)
+        super(PyAutoIndentMode, self).on_install(editor)
         self._helper = TextHelper(editor)
 
     def _get_indent(self, cursor):

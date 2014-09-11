@@ -19,7 +19,7 @@ from .forms.main_window_ui import Ui_MainWindow
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self):
-        super().__init__()
+        super(MainWindow, self).__init__()
         # Load our UI (made in Qt Designer)
         self.setupUi(self)
         self.dockWidget.hide()
@@ -74,21 +74,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.menuFile.insertMenu(self.actionSave, self.menu_recents)
         self.menuFile.insertSeparator(self.actionSave)
 
-    def setup_menu_interpreters(self):
-        mnu = QtWidgets.QMenu('Select Python interpreter', self.menuEdit)
-        group = QtWidgets.QActionGroup(self)
-        group.triggered.connect(self.on_interpreter_changed)
-        for interpreter in get_interpreters():
-            a = QtWidgets.QAction(mnu)
-            a.setText(interpreter)
-            a.setCheckable(True)
-            if interpreter == Settings().interpreter:
-                a.setChecked(True)
-            group.addAction(a)
-            mnu.addAction(a)
-        self.menuEdit.addSeparator()
-        self.menuEdit.addMenu(mnu)
-
     def closeEvent(self, QCloseEvent):
         """
         Delegates the close event to the tabWidget to be sure we do not quit
@@ -103,20 +88,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         :param editor: editor to setup.
         """
         editor.cursorPositionChanged.connect(self.on_cursor_pos_changed)
-        zip_path = os.path.join(os.getcwd(), 'libraries.zip')
-        if not os.path.exists(zip_path):
-            if platform.system().lower() == 'linux':
-                zip_path = '/usr/share/qidle/libraries.zip'
-        if hasattr(sys, "frozen"):
-            server_path = os.path.join(os.getcwd(), 'server.py')
-            editor.backend.start(server_path,
-                                 interpreter=Settings().interpreter,
-                                 args=['-s', zip_path])
-        else:
-            editor.backend.start(
-                server.__file__, interpreter=Settings().interpreter,
-                args=['-s',
-                      zip_path if 'python2' in Settings().interpreter else ''])
+        editor.backend.start(
+            server.__file__, interpreter=sys.executable)
         m = editor.modes.get(modes.GoToAssignmentsMode)
         assert isinstance(m, modes.GoToAssignmentsMode)
         m.out_of_doc.connect(self.on_goto_out_of_doc)
@@ -202,7 +175,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
         self.menuEdit.addActions(editor.actions())
         self.menuEdit.addSeparator()
-        self.setup_menu_interpreters()
         self.setup_mnu_style(editor)
 
     def setup_mnu_style(self, editor):
@@ -279,7 +251,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 '%d:%d' % (l + 1, c + 1))
             self.lbl_encoding.setText(editor.file.encoding)
             self.lbl_filename.setText(editor.file.path)
-            self.lbl_interpreter.setText(Settings().interpreter)
+            self.lbl_interpreter.setText(sys.executable)
         else:
             self.lbl_encoding.clear()
             self.lbl_filename.clear()
@@ -299,27 +271,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         for i in range(self.tabWidget.count()):
             editor = self.tabWidget.widget(i)
             editor.syntax_highlighter.color_scheme = ColorScheme(style)
-
-    @QtCore.Slot(QtWidgets.QAction)
-    def on_interpreter_changed(self, action):
-        """
-        Change the selected interpreter and restart server of opened editor to
-        use the new interpreter.
-
-        :param action: interpreter action that has been triggered
-        """
-        interpreter = action.text()
-        Settings().interpreter = interpreter
-        # restart server with the new interpreter
-        for i in range(self.tabWidget.count()):
-            editor = self.tabWidget.widget(i)
-            editor.backend.stop()
-            self.setup_editor(editor)
-            self.lbl_interpreter.setText(interpreter)
-            m = editor.modes.get(modes.PEP8CheckerMode)
-            m.request_analysis()
-            m = editor.modes.get(modes.FrostedCheckerMode)
-            m.request_analysis()
 
     def on_panel_state_changed(self):
         """

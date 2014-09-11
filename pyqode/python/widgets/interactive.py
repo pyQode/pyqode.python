@@ -19,14 +19,14 @@ class PyInteractiveConsole(InteractiveConsole):
 
     class UserData(QtGui.QTextBlockUserData):
         def __init__(self, filename, line, start, end):
-            super().__init__()
+            super(PyInteractiveConsole.UserData, self).__init__()
             self.filename = filename
             self.line = line
             self.start_pos_in_block = start
             self.end_pos_in_block = end
 
     def __init__(self, parent=None):
-        super().__init__(parent)
+        super(PyInteractiveConsole, self).__init__(parent)
         self.set_writer(self._write)
         self.setMouseTracking(True)
         self.PROG = QtCore.QRegExp(
@@ -84,7 +84,7 @@ class PyInteractiveConsole(InteractiveConsole):
         Extends mouseMoveEvent to display a pointing hand cursor when the
         mouse cursor is over a file location
         """
-        super().mouseMoveEvent(e)
+        super(PyInteractiveConsole, self).mouseMoveEvent(e)
         cursor = self.cursorForPosition(e.pos())
         assert isinstance(cursor, QtGui.QTextCursor)
         p = cursor.positionInBlock()
@@ -102,7 +102,7 @@ class PyInteractiveConsole(InteractiveConsole):
         Emits open_file_requested if the press event occured  over
         a file location string.
         """
-        super().mousePressEvent(e)
+        super(PyInteractiveConsole, self).mousePressEvent(e)
         cursor = self.cursorForPosition(e.pos())
         p = cursor.positionInBlock()
         usd = cursor.block().userData()
@@ -111,6 +111,6 @@ class PyInteractiveConsole(InteractiveConsole):
                 self.open_file_requested.emit(usd.filename, usd.line)
 
     def leaveEvent(self, e):
-        super().leaveEvent(e)
+        super(PyInteractiveConsole, self).leaveEvent(e)
         if QtWidgets.QApplication.overrideCursor() is not None:
             QtWidgets.QApplication.restoreOverrideCursor()

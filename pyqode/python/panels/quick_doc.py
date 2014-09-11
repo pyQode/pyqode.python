@@ -69,7 +69,7 @@ class QuickDocPanel(Panel):
         self.setVisible(False)
 
     def on_state_changed(self, state):
-        super().on_state_changed(state)
+        super(QuickDocPanel, self).on_state_changed(state)
         if state:
             self.editor.add_action(self.action_quick_doc)
         else:

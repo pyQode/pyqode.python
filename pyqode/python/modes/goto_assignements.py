@@ -62,7 +62,7 @@ class GoToAssignmentsMode(WordClickMode):
     no_results_found = QtCore.Signal()
 
     def __init__(self):
-        super().__init__()
+        super(GoToAssignmentsMode, self).__init__()
         self._definitions = []
         self._goto_requested = False
         self.action_goto = QtWidgets.QAction("Go to assignments", self)
@@ -72,7 +72,7 @@ class GoToAssignmentsMode(WordClickMode):
         self._runner = DelayJobRunner(delay=1)
 
     def on_state_changed(self, state):
-        super().on_state_changed(state)
+        super(GoToAssignmentsMode, self).on_state_changed(state)
         if state:
             self.editor.add_action(self.action_goto)
         else:
@@ -145,7 +145,7 @@ class GoToAssignmentsMode(WordClickMode):
         return checked
 
     def _clear_selection(self):
-        super()._clear_selection()
+        super(GoToAssignmentsMode, self)._clear_selection()
         self._definitions[:] = []
 
     def _validate_definitions(self, definitions):

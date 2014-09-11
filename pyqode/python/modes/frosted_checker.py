@@ -11,4 +11,4 @@ class FrostedCheckerMode(CheckerMode):
     This checker mode runs pyflakes on the fly to check your python syntax.
     """
     def __init__(self):
-        super().__init__(run_frosted, delay=1200)
+        super(FrostedCheckerMode, self).__init__(run_frosted, delay=1200)

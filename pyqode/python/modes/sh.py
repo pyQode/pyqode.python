@@ -111,7 +111,7 @@ class PythonSH(BaseSH):
     OECOMMENT = re.compile('^(# ?--[-]+|##[#]+ )[ -]*[^- ]+')
 
     def __init__(self, parent, color_scheme=None):
-        super().__init__(parent, color_scheme)
+        super(PythonSH, self).__init__(parent, color_scheme)
         self.import_statements = []
         self.global_import_statements = []
 
@@ -227,4 +227,4 @@ class PythonSH(BaseSH):
     def rehighlight(self):
         self.import_statements = []
         self.global_import_statements = []
-        super().rehighlight()
+        super(PythonSH, self).rehighlight()

@@ -131,14 +131,30 @@ class Definition(object):
         return 'Definition(%r, %r, %r, %r)' % (self.name, self.icon,
                                                self.line, self.column)
 
-    def __eq__(self, other):
+    def equals(self, other):
+        _logger().debug('EQUATE')
         if len(self.children) != len(other.children):
+            _logger().debug('nb children is different')
             return False
         for self_child, other_child in zip(self.children, other.children):
-            if self_child != other_child:
+            if not self_child.equals(other_child):
+                _logger().debug('children is different')
                 return False
-        return (self.name == other.name and self.full_name == other.full_name
-                and self.line == other.line and self.column == other.column)
+        if self.name != other.name:
+            _logger().debug('names are different')
+            return False
+        if self.full_name != other.full_name:
+            _logger().debug('full names are different')
+            return False
+        if self.line != other.line:
+            _logger().debug('lines are different: %d != %d',
+                            self.line,
+                            other.line)
+            return False
+        if self.column != other.column:
+            _logger().debug('columns are different')
+        _logger().debug('no changes detected')
+        return True
 
 
 def _extract_def(d):
@@ -172,7 +188,8 @@ def defined_names(request_data):
         else:
             # compare every definition. If one is different, break
             for def_a, def_b in zip(a, b):
-                if def_a != def_b:
+                if not def_a.equals(def_b):
+                    _logger().debug('%r different than %r', def_a, def_b)
                     return True
             return False
 
@@ -198,7 +215,7 @@ def defined_names(request_data):
             _logger().debug("No changes detected")
         else:
             _old_definitions["%s_definitions" % path] = ret_val
-            _logger().debug("Document structure changed")
+            _logger().debug("Document structure changed %s")
             status = True
             ret_val = [d.to_dict() for d in ret_val]
     return status, ret_val

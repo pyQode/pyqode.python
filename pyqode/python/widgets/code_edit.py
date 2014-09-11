@@ -80,4 +80,4 @@ class PyCodeEdit(api.CodeEdit):
         Extends QCodeEdit.setPlainText to allow user to setPlainText without
         mimetype (since the python syntax highlighter does not use it).
         """
-        super().setPlainText(txt, mimetype, encoding)
+        super(PyCodeEdit, self).setPlainText(txt, mimetype, encoding)

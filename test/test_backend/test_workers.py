@@ -2,6 +2,10 @@
 Test all workers in pyqode.python.backend.workers.
 """
 import sys
+try:
+    from future.builtins import str, open
+except:
+    pass
 from pyqode.python.backend import workers
 from pyqode.python.widgets import code_edit
 
@@ -58,8 +62,8 @@ def test_goto_assignments():
 
 def test_defined_names():
     code = ""
-    filename = code_edit.__file__
-    with open(filename, 'r') as file:
+    filename = __file__
+    with open(filename, 'r', encoding='utf-8') as file:
         code = file.read()
     status, results = workers.defined_names({'code': code, 'path': filename})
     assert status is True
@@ -76,8 +80,8 @@ def test_defined_names():
     # no changes should be detected, returning an empty list with a status
     # set to False
     status, results = workers.defined_names({'code': code, 'path': filename})
-    assert status is False
     assert results is None
+    assert status is False
 
     # now that the code changed, defined_names should return
     # (True, [xxx, yyy, ...])
