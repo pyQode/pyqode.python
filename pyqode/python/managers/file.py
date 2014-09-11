@@ -45,8 +45,8 @@ class PyFileManager(FileManager):
     def open(self, path, encoding=None, use_cached_encoding=True):
         if encoding is None:
             encoding = self.detect_encoding(path)
-        super(PyFileManager, self).open(path, encoding=encoding,
-                     use_cached_encoding=use_cached_encoding)
+        super(PyFileManager, self).open(
+            path, encoding=encoding, use_cached_encoding=use_cached_encoding)
         # fold imports
         if (self.fold_imports and
                 self.editor.syntax_highlighter.import_statements):

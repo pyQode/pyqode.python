@@ -92,6 +92,8 @@ def make_python_patterns(additional_keywords=[], additional_builtins=[]):
                      ufstring2,
                      ufstring3, ufstring4, string, number,
                      any("SYNC", [r"\n"])])
+
+
 #
 # Pygments Syntax highlighter
 #

@@ -151,8 +151,8 @@ class GoToAssignmentsMode(WordClickMode):
     def _validate_definitions(self, definitions):
         if definitions:
             if len(definitions) == 1:
-                return definitions[0].line is not None and \
-                       definitions[0].module_path
+                return (definitions[0].line is not None and
+                        definitions[0].module_path)
             return True
         return False
 
