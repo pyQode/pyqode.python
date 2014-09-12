@@ -76,13 +76,6 @@ def test_defined_names():
         if i:
             assert d != definitions[i-1]
 
-
-    # no changes should be detected, returning an empty list with a status
-    # set to False
-    status, results = workers.defined_names({'code': code, 'path': filename})
-    assert results is None
-    assert status is False
-
     # now that the code changed, defined_names should return
     # (True, [xxx, yyy, ...])
     code += "\ndef foo():\n    print('bar')"

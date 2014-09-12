@@ -36,15 +36,14 @@ class DocumentAnalyserMode(Mode, QtCore.QObject):
 
     def on_state_changed(self, state):
         if state:
-            self.editor.blockCountChanged.connect(self._on_line_count_changed)
             self.editor.new_text_set.connect(self._run_analysis)
+            self.editor.textChanged.connect(self._request_analysis)
         else:
-            self.editor.blockCountChanged.disconnect(
-                self._on_line_count_changed)
+            self.editor.textChanged.disconnect(self._request_analysis)
             self.editor.new_text_set.disconnect(self._run_analysis)
             self._jobRunner.cancel_requests()
 
-    def _on_line_count_changed(self, e):
+    def _request_analysis(self):
         self._jobRunner.request_job(self._run_analysis)
 
     def _run_analysis(self):
@@ -105,7 +104,8 @@ class DocumentAnalyserMode(Mode, QtCore.QObject):
 
             for ch in name.children:
                 ti_ch = convert(ch, editor)
-                ti.addChild(ti_ch)
+                if ti_ch:
+                    ti.addChild(ti_ch)
 
             return ti
         return [convert(d, self.editor) for d in self.results]
