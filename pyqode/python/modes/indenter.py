@@ -33,7 +33,7 @@ class PyIndenterMode(IndenterMode):
         Performs an indentation
         """
         if not self.tab_always_indent:
-            super().indent()
+            super(PyIndenterMode, self).indent()
         else:
             cursor = self.editor.textCursor()
             assert isinstance(cursor, QtGui.QTextCursor)
@@ -63,4 +63,4 @@ class PyIndenterMode(IndenterMode):
                 cursor.select(cursor.LineUnderCursor)
             self.unindent_selection(cursor)
         else:
-            super().unindent()
+            super(PyIndenterMode, self).unindent()
