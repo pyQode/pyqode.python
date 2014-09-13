@@ -62,6 +62,7 @@ class PyCodeEdit(api.CodeEdit):
         self.modes.append(modes.ZoomMode())
         self.modes.append(modes.SymbolMatcherMode())
         self.modes.append(modes.CodeCompletionMode())
+        self.modes.append(modes.OccurrencesHighlighterMode())
         # python specifics
         self.modes.append(pymodes.PythonSH(self.document()))
         self.modes.append(pymodes.PyAutoIndentMode())
