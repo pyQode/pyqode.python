@@ -24,7 +24,7 @@ class PyIndenterMode(IndenterMode):
         self._tab_always_indent = value
 
     def __init__(self):
-        super(PyIndenterMode).__init__()
+        super(PyIndenterMode, self).__init__()
         self._tab_always_indent = None
         self.tab_always_indent = True
 
