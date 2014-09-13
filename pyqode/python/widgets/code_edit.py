@@ -63,6 +63,7 @@ class PyCodeEdit(api.CodeEdit):
         self.modes.append(modes.SymbolMatcherMode())
         self.modes.append(modes.CodeCompletionMode())
         self.modes.append(modes.OccurrencesHighlighterMode())
+        self.modes.append(modes.SmartBackSpaceMode())
         # python specifics
         self.modes.append(pymodes.PythonSH(self.document()))
         self.modes.append(pymodes.PyAutoIndentMode())
