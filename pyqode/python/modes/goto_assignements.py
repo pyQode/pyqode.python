@@ -61,12 +61,14 @@ class GoToAssignmentsMode(WordClickMode):
     #: Signal emitted when no results could be found.
     no_results_found = QtCore.Signal()
 
+    shortcut = 'Alt+F2'
+
     def __init__(self):
         super(GoToAssignmentsMode, self).__init__()
         self._definitions = []
         self._goto_requested = False
         self.action_goto = QtWidgets.QAction("Go to assignments", self)
-        self.action_goto.setShortcut("F2")
+        self.action_goto.setShortcut(self.shortcut)
         self.action_goto.triggered.connect(self.request_goto)
         self.word_clicked.connect(self._on_word_clicked)
         self._runner = DelayJobRunner(delay=1)
