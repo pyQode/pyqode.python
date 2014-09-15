@@ -47,9 +47,9 @@ script:
         git clone https://github.com/pyQode/pyqode.core.git;
         cd pyqode.core;
         git checkout develop;
-        pip install --quiet -e .;
+        pip install -e .;
         cd ..;
-        pip install --quiet -e .;
+        pip install -e .;
         py.test --cov pyqode --cov-report=term;
     else
         tox;
