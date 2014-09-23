@@ -3,6 +3,6 @@ if True:
         pass
 ->
 if True:
-    if (main == 
+    if (main ==
             |'__name__'):
         pass

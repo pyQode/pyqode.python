@@ -37,11 +37,8 @@ class PyAutoIndentMode(AutoIndentMode):
             return pre, post
         # between parens
         elif self._between_paren(cursor, column):
-            try:
-                pre, post = self._handle_indent_between_paren(
-                    column, line, fullline, cursor)
-            except TypeError:
-                return pre, post
+            return self._handle_indent_between_paren(
+                column, line, (pre, post), cursor)
         else:
             lastword = self._get_last_word(cursor)
             lastwordu = self._get_last_word_unstripped(cursor)
@@ -224,63 +221,61 @@ class PyAutoIndentMode(AutoIndentMode):
         char = tc2.selectedText()
         return char
 
-    def _handle_indent_between_paren(self, column, line, fullline, tc):
+    @staticmethod
+    def _get_prev_char(tc):
+        tc2 = QTextCursor(tc)
+        tc2.movePosition(QTextCursor.PreviousCharacter, QTextCursor.KeepAnchor)
+        char = tc2.selectedText()
+        return char
+
+    def _handle_indent_between_paren(self, column, line, parent_impl, tc):
         """
         Handle indent between symbols such as parenthesis, braces,...
         """
-        # elements might be separated by ',' 'or' 'and'
+        pre, post = parent_impl
         next_char = self._get_next_char(tc)
-        nextcharisclosingsymbol = next_char in [']', ')', '}']
-        (ol, oc), (cl, cc) = self._get_paren_pos(tc, column)
-        closingline = self._helper.line_text(cl)
-        openingline = self._helper.line_text(ol)
-        openingline = re.sub(r'".*"', "", openingline)
-        openingline = re.sub(r"'.*'", "", openingline)
-        openingindent = len(openingline) - len(openingline.lstrip())
-        tokens = [t.strip() for t in re.split(', |and |or ',
-                                              line[oc:column]) if t]
-        # align with first token pos
-        if len(closingline) > cc and closingline[cc] == ":":
-            if ('def ' in openingline or
-                    'class ' in openingline) and oc != tc.positionInBlock():
-                post = oc * ' '
-            else:
-                post = openingindent * " " + 8 * " "
-        else:
-            # press enter before a '}', ']', ')'
-            # which close an affectation (tuple, list , dict)
-            if nextcharisclosingsymbol and re.match('.*=[\s][\W].*',
-                                                    openingline):
-                post = openingindent * " "
-            else:
-                # align elems in list, tuple, dict
-                if re.match('.*=[\s][\W].*', openingline) and ol - cl == 1:
-                    post = openingindent * " " + self.editor.tab_length * " "
-                # align elems in fct declaration (we align with first
-                # token)
-                else:
-                    if len(tokens):
-                        otext = TextHelper(self.editor).line_text(ol)
-                        if (ol == TextHelper(self.editor).current_line_nbr() or
-                                otext[-1] not in ['(', '{', '[']):
-                            # align with last opened paren
-                            post = oc * " "
-                        else:
-                            # align with first open paren
-                            indent = TextHelper(self.editor).line_indent()
-                            post = indent * ' '
-                    else:
-                        indent = (len(openingindent * " " +
-                                      self.editor.tab_length * " ") //
-                                  self.editor.tab_length *
-                                  self.editor.tab_length)
-                        post = indent * ' '
-        pre = ""
-        in_string_def, char = self._is_in_string_def(fullline, column)
-        if in_string_def:
-            pre = char
-            post += char
+        prev_char = self._get_prev_char(tc)
+        prev_open = prev_char in ['[', '(', '{']
+        next_close = next_char in [']', ')', '}']
+        (open_line, open_symbol_col), (close_line, close_col) = \
+            self._get_paren_pos(tc, column)
+        open_line_txt = self._helper.line_text(open_line)
+        open_line_indent = len(open_line_txt) - len(open_line_txt.lstrip())
+        if prev_open:
+            post = (open_line_indent + self.editor.tab_length) * ' '
+        elif next_close:
+            post = open_line_indent * ' '
+        elif tc.block().blockNumber() == open_line:
+            post = open_symbol_col * ' '
+
+        # adapt indent if cursor on closing line and next line have same
+        # indent -> PEP8 compliance
+        if close_line and close_col:
+            txt = self._helper.line_text(close_line)
+            bn = tc.block().blockNumber()
+            flg = bn == close_line
+            next_indent = self._helper.line_indent(bn + 1) * ' '
+            if flg and txt.strip().endswith(':') and next_indent == post:
+                # | look at how the previous line ( ``':'):`` ) was
+                # over-indented, this is actually what we are trying to
+                # achieve here
+                post += self.editor.tab_length * ' '
+
+        # breaking string
+        if next_char in ['"', "'"]:
+            tc.movePosition(tc.Left)
+        if self._helper.is_comment_or_string(tc, formats=['string']):
+            trav = QTextCursor(tc)
+            while self._helper.is_comment_or_string(
+                    trav, formats=['string']):
+                trav.movePosition(trav.Left)
+            trav.movePosition(trav.Right)
+            symbol = '%s' % self._get_next_char(trav)
+            pre += symbol
+            post += symbol
+
         return pre, post
+
 
     @staticmethod
     def _at_block_start(tc, line):
@@ -305,7 +300,7 @@ class PyAutoIndentMode(AutoIndentMode):
         # breaking strings enclosed by parens is done in the
         # _handle_between_paren method
         n = self.editor.tab_length
-        pre = '" \\'
+        pre = '%s \\' % char
         post += n * ' '
         if fullline.endswith(':'):
             post += n * " "
