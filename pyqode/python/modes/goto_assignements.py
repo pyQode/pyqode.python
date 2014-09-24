@@ -114,8 +114,6 @@ class GoToAssignmentsMode(WordClickMode):
             pass
 
     def _goto(self, definition):
-        print('goto', definition.module_path, definition.line,
-              definition.column)
         fp = ''
         if self.editor.file.path:
             fp = os.path.normpath(self.editor.file.path.replace(".pyc", ".py"))
