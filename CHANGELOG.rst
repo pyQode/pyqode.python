@@ -1,3 +1,17 @@
+2.3.0
+-----
+
+New features:
+
+    - add support for python2. You may now use python2 for writing a pyqode
+      app (backend AND frontend)!
+    - make use of the new modes introduced in pyqode.core (occurrences
+      highlighter, extended selection, global checker panel,...)
+    - automatically fold docstring when opening a document
+    - many improvements to the auto indent mode. It is more robust and should
+      resists malformed code (e.g. unclosed parentheses,...)
+
+
 2.2.0
 -----
 
