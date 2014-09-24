@@ -6,7 +6,7 @@ import logging
 import os
 from pyqode.qt import QtCore, QtGui, QtWidgets
 from pyqode.core.api import Mode, TextHelper, DelayJobRunner
-from pyqode.core.backend import NotConnected
+from pyqode.core.backend import NotRunning
 from pyqode.core.modes import WordClickMode
 from pyqode.python.backend import workers
 
@@ -110,7 +110,7 @@ class GoToAssignmentsMode(WordClickMode):
             self.editor.backend.send_request(
                 workers.goto_assignments, request_data,
                 on_receive=self._on_results_available)
-        except NotConnected:
+        except NotRunning:
             pass
 
     def _goto(self, definition):

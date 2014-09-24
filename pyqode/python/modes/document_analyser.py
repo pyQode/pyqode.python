@@ -3,7 +3,7 @@ import logging
 from pyqode.core import api
 from pyqode.core.api import Mode
 from pyqode.core.api import DelayJobRunner
-from pyqode.core.backend import NotConnected
+from pyqode.core.backend import NotRunning
 from pyqode.python.backend.workers import Definition, defined_names
 from pyqode.qt import QtCore, QtGui, QtWidgets
 
@@ -58,7 +58,7 @@ class DocumentAnalyserMode(Mode, QtCore.QObject):
                 self.editor.backend.send_request(
                     defined_names, request_data,
                     on_receive=self._on_results_available)
-            except NotConnected:
+            except NotRunning:
                 QtCore.QTimer.singleShot(100, self._run_analysis)
         else:
             self.results = []
