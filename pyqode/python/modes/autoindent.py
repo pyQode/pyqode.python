@@ -65,7 +65,9 @@ class PyAutoIndentMode(AutoIndentMode):
                   not self._at_block_end(cursor, fullline)):
                 post, pre = self._handle_indent_in_statement(
                     fullline, lastwordu, post, pre)
-            elif lastword == "return" or lastword == "pass":
+            elif ((self._at_block_end(cursor, fullline) and
+                    fullline.strip().startswith('return ')) or
+                    lastword == "pass"):
                 post = post[:-self.editor.tab_length]
         return pre, post
 
