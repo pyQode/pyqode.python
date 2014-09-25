@@ -29,8 +29,11 @@ class PyAutoIndentMode(AutoIndentMode):
         if self._at_block_start(cursor, line):
             return pre, post
         # return pressed in comments
+        c2 = QTextCursor(cursor)
+        if c2.atBlockEnd():
+            c2.movePosition(c2.Left)
         if (self._helper.is_comment_or_string(
-                cursor, formats=['comment', 'docstring']) or
+                c2, formats=['comment', 'docstring']) or
                 fullline.endswith('"""')):
             if line.strip().startswith("#") and column != len(fullline):
                 post += '# '
