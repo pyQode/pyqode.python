@@ -35,6 +35,7 @@ class PyInteractiveConsole(InteractiveConsole):
         self.FILENAME_PROG = QtCore.QRegExp(r'"[a-zA-Z\/_\.\d]*"')
         self.LINE_PROG = QtCore.QRegExp(r'line [0-9]*')
         self.setLineWrapMode(self.NoWrap)
+        self._module_color = QtGui.QColor('blue')
 
     def _write(self, text_edit, text, color):
         def write(text_edit, text, color):
@@ -59,10 +60,9 @@ class PyInteractiveConsole(InteractiveConsole):
             block = self.document().lastBlock()
             data = self.UserData(text, line, start, end)
             block.setUserData(data)
+
         text = text.replace('\n', '{@}\n')
         for i, line in enumerate(text.split('{@}')):
-            if i == 17:
-                pass
             # check if File and highlight it in blue, also store it
             if self.PROG.indexIn(line) != -1:
                 # get line number
@@ -76,7 +76,7 @@ class PyInteractiveConsole(InteractiveConsole):
                 end = start + len(self.FILENAME_PROG.cap(0))
                 write(self, line[:start + 1], color)
                 write_with_underline(self, line[start + 1:end - 1],
-                                     QtGui.QColor('blue'), l,
+                                     self._module_color, l,
                                      start, end)
                 write(self, line[end - 1:], color)
             else:
@@ -117,3 +117,10 @@ class PyInteractiveConsole(InteractiveConsole):
         super(PyInteractiveConsole, self).leaveEvent(e)
         if QtWidgets.QApplication.overrideCursor() is not None:
             QtWidgets.QApplication.restoreOverrideCursor()
+
+    def apply_color_scheme(self, color_scheme):
+        super(PyInteractiveConsole, self).apply_color_scheme(color_scheme)
+        if color_scheme.background.lightness() < 128:
+            self._module_color = QtGui.QColor('#0681e0')
+        else:
+            self._module_color = QtGui.QColor('blue')
