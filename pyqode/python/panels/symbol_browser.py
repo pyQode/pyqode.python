@@ -59,17 +59,21 @@ class SymbolBrowserPanel(Panel):
     def _on_document_changed(self):
         if not self or not self.editor:
             return
-        mode = self.editor.modes.get('DocumentAnalyserMode')
-        definitions = mode.flattened_results
-        self.combo_box.clear()
-        if definitions:
-            self.combo_box.addItem(" < Select a symbol >")
+        try:
+            mode = self.editor.modes.get('DocumentAnalyserMode')
+        except KeyError:
+            pass
         else:
-            self.combo_box.addItem("No symbols")
-        for d in definitions:
-            self.combo_box.addItem(QtGui.QIcon(d.icon), d.name, d)
-        self._definitions = definitions
-        self._sync_combo_box(TextHelper(self.editor).current_line_nbr())
+            definitions = mode.flattened_results
+            self.combo_box.clear()
+            if definitions:
+                self.combo_box.addItem(" < Select a symbol >")
+            else:
+                self.combo_box.addItem("No symbols")
+            for d in definitions:
+                self.combo_box.addItem(QtGui.QIcon(d.icon), d.name, d)
+            self._definitions = definitions
+            self._sync_combo_box(TextHelper(self.editor).current_line_nbr())
 
     @QtCore.Slot(int)
     def _on_definition_activated(self, index):
