@@ -281,7 +281,6 @@ class PyAutoIndentMode(AutoIndentMode):
 
         return pre, post
 
-
     @staticmethod
     def _at_block_start(tc, line):
         """
