@@ -1,3 +1,22 @@
+2.3.0
+-----
+
+New features:
+
+    - add support for python2. You may now use python2 for writing a pyqode
+      app (backend AND frontend)!
+    - make use of the new modes introduced in pyqode.core (occurrences
+      highlighter, extended selection, global checker panel,...)
+    - automatically fold docstring when opening a document
+    - many improvements to the auto indent mode. It is more robust and should
+      resists malformed code (e.g. unclosed parentheses,...)
+
+Fixed bugs:
+    - fix cursor position after unindent
+    - fix a few bugs with autoindent
+    - fix pyinteractive console colors on dark color schemes
+
+
 2.2.0
 -----
 
@@ -21,7 +40,7 @@ Fixed bugs:
     - fix performance issue with docstring folding
     - fix performance issue with auto indent
     - fix code completion tooltip: use description instead of full name
-    - SH: fix highlighting of commented docstrings
+    - fix highlighting of commented docstrings
 
 2.1.0
 -----

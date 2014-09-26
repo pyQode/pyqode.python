@@ -12,12 +12,12 @@ strucuture tree view,...
 
 To **run** the example, just run::
 
-    python3 qidle.py
+    python qidle.py
 
 
 To **install** the package *on linux*, just run::
 
-    sudo python3 setup.py install
+    sudo python setup.py install
 
 To **freeze the application on Windows**, you first need to install cx_Freeze.
 Then you can run::

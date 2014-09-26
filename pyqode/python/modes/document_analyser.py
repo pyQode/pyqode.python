@@ -3,7 +3,7 @@ import logging
 from pyqode.core import api
 from pyqode.core.api import Mode
 from pyqode.core.api import DelayJobRunner
-from pyqode.core.backend import NotConnected
+from pyqode.core.backend import NotRunning
 from pyqode.python.backend.workers import Definition, defined_names
 from pyqode.qt import QtCore, QtGui, QtWidgets
 
@@ -36,15 +36,14 @@ class DocumentAnalyserMode(Mode, QtCore.QObject):
 
     def on_state_changed(self, state):
         if state:
-            self.editor.blockCountChanged.connect(self._on_line_count_changed)
             self.editor.new_text_set.connect(self._run_analysis)
+            self.editor.textChanged.connect(self._request_analysis)
         else:
-            self.editor.blockCountChanged.disconnect(
-                self._on_line_count_changed)
+            self.editor.textChanged.disconnect(self._request_analysis)
             self.editor.new_text_set.disconnect(self._run_analysis)
             self._jobRunner.cancel_requests()
 
-    def _on_line_count_changed(self, e):
+    def _request_analysis(self):
         self._jobRunner.request_job(self._run_analysis)
 
     def _run_analysis(self):
@@ -59,7 +58,7 @@ class DocumentAnalyserMode(Mode, QtCore.QObject):
                 self.editor.backend.send_request(
                     defined_names, request_data,
                     on_receive=self._on_results_available)
-            except NotConnected:
+            except NotRunning:
                 QtCore.QTimer.singleShot(100, self._run_analysis)
         else:
             self.results = []
@@ -105,7 +104,8 @@ class DocumentAnalyserMode(Mode, QtCore.QObject):
 
             for ch in name.children:
                 ti_ch = convert(ch, editor)
-                ti.addChild(ti_ch)
+                if ti_ch:
+                    ti.addChild(ti_ch)
 
             return ti
         return [convert(d, self.editor) for d in self.results]

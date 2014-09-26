@@ -6,7 +6,7 @@ import logging
 import os
 from pyqode.qt import QtCore, QtGui, QtWidgets
 from pyqode.core.api import Mode, TextHelper, DelayJobRunner
-from pyqode.core.backend import NotConnected
+from pyqode.core.backend import NotRunning
 from pyqode.core.modes import WordClickMode
 from pyqode.python.backend import workers
 
@@ -61,18 +61,20 @@ class GoToAssignmentsMode(WordClickMode):
     #: Signal emitted when no results could be found.
     no_results_found = QtCore.Signal()
 
+    shortcut = 'Alt+F2'
+
     def __init__(self):
-        super().__init__()
+        super(GoToAssignmentsMode, self).__init__()
         self._definitions = []
         self._goto_requested = False
         self.action_goto = QtWidgets.QAction("Go to assignments", self)
-        self.action_goto.setShortcut("F2")
+        self.action_goto.setShortcut(self.shortcut)
         self.action_goto.triggered.connect(self.request_goto)
         self.word_clicked.connect(self._on_word_clicked)
         self._runner = DelayJobRunner(delay=1)
 
     def on_state_changed(self, state):
-        super().on_state_changed(state)
+        super(GoToAssignmentsMode, self).on_state_changed(state)
         if state:
             self.editor.add_action(self.action_goto)
         else:
@@ -108,12 +110,10 @@ class GoToAssignmentsMode(WordClickMode):
             self.editor.backend.send_request(
                 workers.goto_assignments, request_data,
                 on_receive=self._on_results_available)
-        except NotConnected:
+        except NotRunning:
             pass
 
     def _goto(self, definition):
-        print('goto', definition.module_path, definition.line,
-              definition.column)
         fp = ''
         if self.editor.file.path:
             fp = os.path.normpath(self.editor.file.path.replace(".pyc", ".py"))
@@ -145,14 +145,14 @@ class GoToAssignmentsMode(WordClickMode):
         return checked
 
     def _clear_selection(self):
-        super()._clear_selection()
+        super(GoToAssignmentsMode, self)._clear_selection()
         self._definitions[:] = []
 
     def _validate_definitions(self, definitions):
         if definitions:
             if len(definitions) == 1:
-                return definitions[0].line is not None and \
-                       definitions[0].module_path
+                return (definitions[0].line is not None and
+                        definitions[0].module_path)
             return True
         return False
 

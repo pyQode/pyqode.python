@@ -19,21 +19,23 @@ class PyInteractiveConsole(InteractiveConsole):
 
     class UserData(QtGui.QTextBlockUserData):
         def __init__(self, filename, line, start, end):
-            super().__init__()
+            super(PyInteractiveConsole.UserData, self).__init__()
             self.filename = filename
             self.line = line
             self.start_pos_in_block = start
             self.end_pos_in_block = end
 
     def __init__(self, parent=None):
-        super().__init__(parent)
+        super(PyInteractiveConsole, self).__init__(parent)
         self.set_writer(self._write)
         self.setMouseTracking(True)
         self.PROG = QtCore.QRegExp(
-            r'\s*File "[a-zA-Z\/_]*((.\.[a-z]*")|(")), line [0-9]*.*')
-        self.FILENAME_PROG = QtCore.QRegExp(r'"[a-zA-Z\/_\.]*"')
+            r'\s*File "[a-zA-Z\/_\d]*((.\.[a-zA-Z\/_\d]*")|(")), '
+            r'line [0-9]*.*')
+        self.FILENAME_PROG = QtCore.QRegExp(r'"[a-zA-Z\/_\.\d]*"')
         self.LINE_PROG = QtCore.QRegExp(r'line [0-9]*')
         self.setLineWrapMode(self.NoWrap)
+        self._module_color = QtGui.QColor('blue')
 
     def _write(self, text_edit, text, color):
         def write(text_edit, text, color):
@@ -58,6 +60,7 @@ class PyInteractiveConsole(InteractiveConsole):
             block = self.document().lastBlock()
             data = self.UserData(text, line, start, end)
             block.setUserData(data)
+
         text = text.replace('\n', '{@}\n')
         for i, line in enumerate(text.split('{@}')):
             # check if File and highlight it in blue, also store it
@@ -73,7 +76,7 @@ class PyInteractiveConsole(InteractiveConsole):
                 end = start + len(self.FILENAME_PROG.cap(0))
                 write(self, line[:start + 1], color)
                 write_with_underline(self, line[start + 1:end - 1],
-                                     QtGui.QColor('blue'), l,
+                                     self._module_color, l,
                                      start, end)
                 write(self, line[end - 1:], color)
             else:
@@ -84,7 +87,7 @@ class PyInteractiveConsole(InteractiveConsole):
         Extends mouseMoveEvent to display a pointing hand cursor when the
         mouse cursor is over a file location
         """
-        super().mouseMoveEvent(e)
+        super(PyInteractiveConsole, self).mouseMoveEvent(e)
         cursor = self.cursorForPosition(e.pos())
         assert isinstance(cursor, QtGui.QTextCursor)
         p = cursor.positionInBlock()
@@ -102,7 +105,7 @@ class PyInteractiveConsole(InteractiveConsole):
         Emits open_file_requested if the press event occured  over
         a file location string.
         """
-        super().mousePressEvent(e)
+        super(PyInteractiveConsole, self).mousePressEvent(e)
         cursor = self.cursorForPosition(e.pos())
         p = cursor.positionInBlock()
         usd = cursor.block().userData()
@@ -111,6 +114,13 @@ class PyInteractiveConsole(InteractiveConsole):
                 self.open_file_requested.emit(usd.filename, usd.line)
 
     def leaveEvent(self, e):
-        super().leaveEvent(e)
+        super(PyInteractiveConsole, self).leaveEvent(e)
         if QtWidgets.QApplication.overrideCursor() is not None:
             QtWidgets.QApplication.restoreOverrideCursor()
+
+    def apply_color_scheme(self, color_scheme):
+        super(PyInteractiveConsole, self).apply_color_scheme(color_scheme)
+        if color_scheme.background.lightness() < 128:
+            self._module_color = QtGui.QColor('#0681e0')
+        else:
+            self._module_color = QtGui.QColor('blue')

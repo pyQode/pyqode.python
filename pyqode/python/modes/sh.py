@@ -92,6 +92,8 @@ def make_python_patterns(additional_keywords=[], additional_builtins=[]):
                      ufstring2,
                      ufstring3, ufstring4, string, number,
                      any("SYNC", [r"\n"])])
+
+
 #
 # Pygments Syntax highlighter
 #
@@ -111,9 +113,10 @@ class PythonSH(BaseSH):
     OECOMMENT = re.compile('^(# ?--[-]+|##[#]+ )[ -]*[^- ]+')
 
     def __init__(self, parent, color_scheme=None):
-        super().__init__(parent, color_scheme)
+        super(PythonSH, self).__init__(parent, color_scheme)
         self.import_statements = []
         self.global_import_statements = []
+        self.docstrings = []
 
     def highlight_block(self, text, block):
         prev_block = block.previous()
@@ -141,7 +144,6 @@ class PythonSH(BaseSH):
 
         state = self.NORMAL
         match = self.PROG.search(text)
-        block.docstring_start = False
         while match:
             for key, value in list(match.groupdict().items()):
                 if value:
@@ -223,8 +225,11 @@ class PythonSH(BaseSH):
             block.import_stmt = import_stmt
             self.import_statements.append(block)
             block.import_stmt = True
+        elif block.docstring:
+            self.docstrings.append(block)
 
     def rehighlight(self):
-        self.import_statements = []
-        self.global_import_statements = []
-        super().rehighlight()
+        self.import_statements[:] = []
+        self.global_import_statements[:] = []
+        self.docstrings[:] = []
+        super(PythonSH, self).rehighlight()

@@ -1,8 +1,4 @@
-class Foo(|Bar):
-    def foo(self):
-        pass
+print('Ha|ha')
 ->
-class Foo(
-        |Bar):
-    def foo(self):
-        pass
+print('Ha'
+      '|ha')

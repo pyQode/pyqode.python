@@ -1,0 +1,6 @@
+def fct():
+    return 4|
+->
+def fct():
+    return 4
+|

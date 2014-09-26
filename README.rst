@@ -42,6 +42,7 @@ Requirements
 
 pyqode.python depends on the following libraries:
 
+ - python 2.7 or python 3 (>= 3.2)
  - pyqode.core
  - jedi
  - pep8

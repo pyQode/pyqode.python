@@ -17,6 +17,9 @@ class PyFileManager(FileManager):
     #: True to fold import statements on open.
     fold_imports = True
 
+    #: True to fold docstring on open
+    fold_docstrings = True
+
     def detect_encoding(self, path):
         """
         For the implementation of encoding definitions in Python, look at:
@@ -45,16 +48,22 @@ class PyFileManager(FileManager):
     def open(self, path, encoding=None, use_cached_encoding=True):
         if encoding is None:
             encoding = self.detect_encoding(path)
-        super().open(path, encoding=encoding,
-                     use_cached_encoding=use_cached_encoding)
-        # fold imports
-        if (self.fold_imports and
-                self.editor.syntax_highlighter.import_statements):
-            try:
-                folding_panel = self.editor.panels.get('FoldingPanel')
-            except KeyError:
-                pass
-            else:
-                for stmt in self.editor.syntax_highlighter.import_statements:
-                    if TextBlockHelper.is_fold_trigger(stmt):
-                        folding_panel.toggle_fold_trigger(stmt)
+        super(PyFileManager, self).open(
+            path, encoding=encoding, use_cached_encoding=use_cached_encoding)
+        try:
+            folding_panel = self.editor.panels.get('FoldingPanel')
+        except KeyError:
+            pass
+        else:
+            # fold imports and/or docstrings
+            blocks_to_fold = []
+            sh = self.editor.syntax_highlighter
+
+            if self.fold_imports and sh.import_statements:
+                blocks_to_fold += sh.import_statements
+            if self.fold_docstrings and sh.docstrings:
+                blocks_to_fold += sh.docstrings
+
+            for block in blocks_to_fold:
+                if TextBlockHelper.is_fold_trigger(block):
+                    folding_panel.toggle_fold_trigger(block)

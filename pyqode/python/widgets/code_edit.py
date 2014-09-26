@@ -46,6 +46,8 @@ class PyCodeEdit(api.CodeEdit):
         self.panels.append(panels.FoldingPanel())
         self.panels.append(panels.LineNumberPanel())
         self.panels.append(panels.CheckerPanel())
+        self.panels.append(panels.GlobalCheckerPanel(),
+                           panels.GlobalCheckerPanel.Position.RIGHT)
         self.panels.append(panels.SearchAndReplacePanel(),
                            panels.SearchAndReplacePanel.Position.BOTTOM)
         self.panels.append(pypanels.SymbolBrowserPanel(),
@@ -62,6 +64,9 @@ class PyCodeEdit(api.CodeEdit):
         self.modes.append(modes.ZoomMode())
         self.modes.append(modes.SymbolMatcherMode())
         self.modes.append(modes.CodeCompletionMode())
+        self.modes.append(modes.OccurrencesHighlighterMode())
+        self.modes.append(modes.SmartBackSpaceMode())
+        self.modes.append(modes.ExtendedSelectionMode())
         # python specifics
         self.modes.append(pymodes.PythonSH(self.document()))
         self.modes.append(pymodes.PyAutoIndentMode())
@@ -80,4 +85,6 @@ class PyCodeEdit(api.CodeEdit):
         Extends QCodeEdit.setPlainText to allow user to setPlainText without
         mimetype (since the python syntax highlighter does not use it).
         """
-        super().setPlainText(txt, mimetype, encoding)
+        self.syntax_highlighter.docstrings[:] = []
+        self.syntax_highlighter.import_statements[:] = []
+        super(PyCodeEdit, self).setPlainText(txt, mimetype, encoding)

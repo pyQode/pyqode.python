@@ -131,15 +131,6 @@ class Definition(object):
         return 'Definition(%r, %r, %r, %r)' % (self.name, self.icon,
                                                self.line, self.column)
 
-    def __eq__(self, other):
-        if len(self.children) != len(other.children):
-            return False
-        for self_child, other_child in zip(self.children, other.children):
-            if self_child != other_child:
-                return False
-        return (self.name == other.name and self.full_name == other.full_name
-                and self.line == other.line and self.column == other.column)
-
 
 def _extract_def(d):
     d_line, d_column = d.start_pos
@@ -151,7 +142,9 @@ def _extract_def(d):
         try:
             sub_definitions = d.defined_names()
             for sub_d in sub_definitions:
-                definition.add_child(_extract_def(sub_d))
+                if (d.type == 'function' and sub_d.type == 'function') or \
+                        d.type == 'class':
+                    definition.add_child(_extract_def(sub_d))
         except AttributeError:
             pass
     return definition
@@ -161,21 +154,6 @@ def defined_names(request_data):
     """
     Returns the list of defined names for the document.
     """
-    def _compare_definitions(a, b):
-        """
-        Compare two definition lists.
-
-        Returns True if they are different.
-        """
-        if len(a) != len(b):
-            return True
-        else:
-            # compare every definition. If one is different, break
-            for def_a, def_b in zip(a, b):
-                if def_a != def_b:
-                    return True
-            return False
-
     global _old_definitions
     ret_val = []
     path = request_data['path']
@@ -187,20 +165,9 @@ def defined_names(request_data):
             # ignore imports
             ret_val.append(definition)
 
-    try:
-        old_definitions = _old_definitions["%s_definitions" % path]
-    except KeyError:
-        old_definitions = []
-    status = False
-    if ret_val:
-        if not _compare_definitions(ret_val, old_definitions):
-            ret_val = None
-            _logger().debug("No changes detected")
-        else:
-            _old_definitions["%s_definitions" % path] = ret_val
-            _logger().debug("Document structure changed")
-            status = True
-            ret_val = [d.to_dict() for d in ret_val]
+    _logger().debug("Document structure changed %s")
+    status = True
+    ret_val = [d.to_dict() for d in ret_val]
     return status, ret_val
 
 

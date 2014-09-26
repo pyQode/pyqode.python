@@ -39,7 +39,7 @@ def pytest_runtest_setup(item):
 # -------------------
 # Setup logging
 # -------------------
-logging.basicConfig(level=logging.INFO,
+logging.basicConfig(level=logging.DEBUG,
                     filename='pytest.log',
                     filemode='w')
 
