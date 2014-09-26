@@ -35,7 +35,7 @@ def readme():
 # get requirements
 requirements = [
     'pyqode.qt',
-    'pyqode.core>=2.1.0',
+    'pyqode.core>=2.3.0',
     'jedi>=0.8',
     'pep8',
     'frosted',
