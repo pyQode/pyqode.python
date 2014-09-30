@@ -10,7 +10,8 @@ from pyqode.python.backend.workers import quick_doc
 
 
 class QuickDocPanel(Panel):
-    """
+    """ Shows the python documentation for the word under the text cursor.
+
     This panel quickly shows the documentation of the symbol under
     cursor.
     """

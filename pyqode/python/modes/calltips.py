@@ -14,7 +14,8 @@ def _logger():
 
 
 class CalltipsMode(Mode, QtCore.QObject):
-    """
+    """ Shows function calltips.
+
     This mode shows function/method call tips in a QToolTip using
     :meth:`jedi.Script.call_signatures`.
     """

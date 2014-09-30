@@ -7,7 +7,8 @@ from pyqode.core.modes import IndenterMode
 
 
 class PyIndenterMode(IndenterMode):
-    """
+    """ Implements tab/shift+tab.
+
     Implements python specific indentation, tab/back-tab always
     indents/unindents the **whole** line. This replace the default
     IndenterMode which we found to be better suited for python code editing.

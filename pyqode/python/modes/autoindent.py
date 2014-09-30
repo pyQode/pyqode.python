@@ -8,7 +8,8 @@ from pyqode.core.modes.matcher import SymbolMatcherMode
 
 
 class PyAutoIndentMode(AutoIndentMode):
-    """
+    """ Automatically indents text, respecting the PEP8 conventions.
+
     Customised :class:`pyqode.core.modes.AutoIndentMode` for python
     that tries its best to follow the pep8 indentation guidelines.
 

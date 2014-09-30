@@ -12,8 +12,7 @@ def _logger():
 
 
 class SymbolBrowserPanel(Panel):
-    """
-    Show a combo box with the file definitions.
+    """ Shows a combo box with the definitions found in the document.
 
     Allow quick navigation in the file and sync with the cursor
     position.

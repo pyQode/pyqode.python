@@ -43,7 +43,8 @@ class Assignment(object):
 
 
 class GoToAssignmentsMode(WordClickMode):
-    """
+    """ Adds go to definition capabilities to the editor.
+
     Goes to the assignments (using jedi.Script.goto_assignments). If there are
     more than one assignments, an input dialog is used to ask the user to
     choose the desired assignment.

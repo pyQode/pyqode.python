@@ -98,7 +98,7 @@ def make_python_patterns(additional_keywords=[], additional_builtins=[]):
 # Pygments Syntax highlighter
 #
 class PythonSH(BaseSH):
-    """Python Syntax Highlighter"""
+    """ Highlights python syntax in the editor. """
     mimetype = 'text/x-python'
 
     # Syntax highlighting rules:

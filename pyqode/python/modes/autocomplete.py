@@ -5,7 +5,8 @@ from pyqode.core.modes import AutoCompleteMode
 
 
 class PyAutoCompleteMode(AutoCompleteMode):
-    """
+    """ Auto complete parentheses and method definitions.
+
     Extends :class:`pyqode.core.modes.AutoCompleteMode` to add
     support for method/function call:
 
