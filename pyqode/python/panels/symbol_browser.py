@@ -53,8 +53,7 @@ class SymbolBrowserPanel(Panel):
                     'DocumentAnalyserMode').document_changed.disconnect(
                         self._on_document_changed)
             except KeyError:
-                _logger().warning("No DocumentAnalyserMode found, install it "
-                                  "before SymbolBrowserPanel!")
+                pass
 
     def _on_document_changed(self):
         if not self or not self.editor:
