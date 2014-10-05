@@ -3,8 +3,8 @@
 import re
 from pyqode.core.api import TextHelper, get_block_symbol_data
 from pyqode.qt.QtGui import QTextCursor
-from pyqode.core.modes.autoindent import AutoIndentMode
-from pyqode.core.modes.matcher import SymbolMatcherMode
+from pyqode.core.modes import AutoIndentMode, SymbolMatcherMode
+from pyqode.core.modes.matcher import CLOSE, PAREN, SQUARE, BRACE, OPEN
 
 
 class PyAutoIndentMode(AutoIndentMode):
@@ -149,7 +149,11 @@ class PyAutoIndentMode(AutoIndentMode):
         tc.movePosition(tc.Left, tc.KeepAnchor)
         char = tc.selectedText()
         tc.movePosition(tc.Right, tc.MoveAnchor)
-        mapping = {')': ('(', 0), '}': ('{', 1), ']': ('[', 2)}
+        mapping = {
+            ')': (OPEN, PAREN),
+            ']': (OPEN, SQUARE),
+            '}': (OPEN, BRACE)
+        }
         try:
             character, char_type = mapping[char]
         except KeyError:
@@ -165,7 +169,11 @@ class PyAutoIndentMode(AutoIndentMode):
         char = None
         ln = tc.blockNumber()
         tc_trav = QTextCursor(tc)
-        mapping = {'(': (')', 0), '[': (']', 1), '{': ('}', 2)}
+        mapping = {
+            '(': (CLOSE, PAREN),
+            '[': (CLOSE, SQUARE),
+            '{': (CLOSE, BRACE)
+        }
         while ln >= 0 and tc.block().text().strip():
             tc_trav.movePosition(tc_trav.StartOfLine, tc_trav.MoveAnchor)
             lists = get_block_symbol_data(self.editor, tc_trav.block())
@@ -203,21 +211,15 @@ class PyAutoIndentMode(AutoIndentMode):
 
     def _get_paren_pos(self, tc, column):
         pos, char = self._get_first_open_paren(tc, column)
-        if char == '(':
-            ptype = 0
-            closingchar = ')'
-        elif char == '[':
-            ptype = 1
-            closingchar = ']'
-        else:
-            ptype = 2
-            closingchar = '}'
+        mapping = {'(': PAREN, '[': SQUARE, '{': BRACE}
         tc2 = QTextCursor(tc)
         tc2.setPosition(pos)
+        import sys
+        print(char, mapping[char], sys.stderr)
         ol, oc = self.editor.modes.get(SymbolMatcherMode).symbol_pos(
-            tc2, char, ptype)
+            tc2, OPEN, mapping[char])
         cl, cc = self.editor.modes.get(SymbolMatcherMode).symbol_pos(
-            tc2, closingchar, ptype)
+            tc2, CLOSE, mapping[char])
         return (ol, oc), (cl, cc)
 
     @staticmethod
