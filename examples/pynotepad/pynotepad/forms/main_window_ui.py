@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/colin/Development/pyQode/python/examples/qidle/forms/main_window.ui'
+# Form implementation generated from reading ui file '/home/colin/Development/pyQode/python/examples/pynotepad/forms/main_window.ui'
 #
 # Created: Mon Aug 11 13:13:55 2014
 #      by: PyQt5 UI code generator 5.3.1
@@ -145,7 +145,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "Qidle"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "pynotepad"))
         self.menuFile.setTitle(_translate("MainWindow", "File"))
         self.menuEdit.setTitle(_translate("MainWindow", "Edit"))
         self.menuModes.setTitle(_translate("MainWindow", "Modes"))

@@ -17,7 +17,7 @@
 # OpenCobolIDE. If not, see http://www.gnu.org/licenses/.
 #
 """
-Setup script for qidle
+Setup script for pynotepad
 
 You will need to install PyQt4 on your own.
 """
@@ -43,7 +43,7 @@ def read_version():
     """
     Reads the version without self importing
     """
-    with open("qidle/__init__.py") as f:
+    with open("pynotepad/__init__.py") as f:
         lines = f.read().splitlines()
         for l in lines:
             if "__version__" in l:
@@ -64,27 +64,27 @@ requirements = ['pygments>=1.6', 'pyqode.core', 'chardet']
 
 data_files = []
 if sys.platform == "linux" and is_run_as_root():
-    data_files.append(('/usr/share/applications', ['share/qidle.desktop']))
-    data_files.append(('/usr/share/pixmaps', ['share/qidle.png']))
-    data_files.append(('/usr/share/qidle', ['libraries.zip']))
+    data_files.append(('/usr/share/applications', ['share/pynotepad.desktop']))
+    data_files.append(('/usr/share/pixmaps', ['share/pynotepad.png']))
+    data_files.append(('/usr/share/pynotepad', ['libraries.zip']))
 
 
 setup(
-    name='qidle',
+    name='pynotepad',
     version=read_version(),
     packages=find_packages(),
-    keywords=["qidle editor text source code"],
+    keywords=["pynotepad editor text source code"],
     data_files=data_files,
-    url='https://github.com/pyQode/pyqode.core/examples/qidle',
+    url='https://github.com/pyQode/pyqode.core/examples/pynotepad',
     license='MIT',
     author='Colin Duquesnoy',
     author_email='colin.duquesnoy@gmail.com',
-    description='A simple qidle based on pyQode',
+    description='A simple pynotepad based on pyQode',
     long_description=long_desc,
     zip_safe=False,
     install_requires=requirements,
     cmdclass=cmdclass,
-    entry_points={'gui_scripts': ['qidle = qidle:main']},
+    entry_points={'gui_scripts': ['pynotepad = pynotepad:main']},
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Environment :: X11 Applications :: Qt',

@@ -5,14 +5,12 @@ It uses *most of the pyqode.python features* and comes with packaging scripts
 to show you how to setup a pyqode.python application and how to distribute it (
 especially on Windows with cx_Freeze)
 
-This application is a clone of idle, it provides basic functionality such
-as writing and running a script, code completion, on the fly pep8/pyflakes
-checkers, a python console (based on IPython), quick documentation panel, file
-strucuture tree view,...
+This application provides basic functionality such as writing and running a
+script.
 
 To **run** the example, just run::
 
-    python qidle.py
+    python pynotepad.py
 
 
 To **install** the package *on linux*, just run::

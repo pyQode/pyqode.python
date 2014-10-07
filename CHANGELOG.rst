@@ -58,7 +58,7 @@ New features:
 Bug fixed:
 
   - many bugs have been fixed in the auto indent mode
-  - many small bugs have been fixed in QIdle
+  - many small bugs have been fixed in pynotepad
   - fix cursor position after comment/uncomment (Ctrl+/)
 
 2.0.0

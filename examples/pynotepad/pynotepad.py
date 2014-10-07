@@ -4,9 +4,9 @@ import logging
 import sys
 filename = None
 if sys.platform == 'win32':
-    filename = 'qidle.log'
+    filename = 'pynotepad.log'
 logging.basicConfig(level=logging.INFO, filename=filename)
-from qidle import main
+from pynotepad import main
 
 
 if __name__ == '__main__':

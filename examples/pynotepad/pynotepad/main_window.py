@@ -66,7 +66,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def setup_recent_files_menu(self):
         """ Setup the recent files menu and manager """
         self.recent_files_manager = widgets.RecentFilesManager(
-            'pyQode', 'qidle')
+            'pyQode', 'pynotepad')
         self.menu_recents = widgets.MenuRecentFiles(
             self.menuFile, title='Recents',
             recent_files_manager=self.recent_files_manager)
@@ -292,8 +292,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Show about dialog
         """
         QtWidgets.QMessageBox.about(
-            self, 'QIdle',
-            'This QIdle application is an example of what you can do with '
+            self, 'pynotepad',
+            'This pynotepad application is an example of what you can do with '
             'pyqode.python.')
 
     def on_run(self):

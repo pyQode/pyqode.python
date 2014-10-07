@@ -9,7 +9,7 @@ import sys
 
 class Settings:
     def __init__(self):
-        self.settings = QSettings('pyqode', 'qidle')
+        self.settings = QSettings('pyqode', 'pynotepad')
 
     @property
     def interpreter(self):
