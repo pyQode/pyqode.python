@@ -72,7 +72,7 @@ def editor(request):
     logging.info('################ setup session editor ################')
 
     _widget = PyCodeEdit()
-    _widget.backend.start(server.__file__)
+    # _widget.backend.start(server.__file__)
     _widget.resize(800, 600)
     _widget.show()
     _app.setActiveWindow(_widget)
