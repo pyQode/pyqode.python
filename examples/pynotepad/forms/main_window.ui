@@ -20,7 +20,7 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="1" column="0">
-     <widget class="TabWidget" name="tabWidget"/>
+     <widget class="SplittableCodeEditTabWidget" name="tabWidget"/>
     </item>
    </layout>
   </widget>
@@ -45,9 +45,6 @@
     <addaction name="actionConfigure_run"/>
     <addaction name="actionRun"/>
     <addaction name="separator"/>
-    <addaction name="actionClose_tab"/>
-    <addaction name="actionClose_other_tabs"/>
-    <addaction name="actionClose_all_tabs"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
@@ -176,30 +173,6 @@
     <bool>true</bool>
    </property>
   </action>
-  <action name="actionClose_tab">
-   <property name="text">
-    <string>Close tab</string>
-   </property>
-   <property name="iconVisibleInMenu">
-    <bool>true</bool>
-   </property>
-  </action>
-  <action name="actionClose_other_tabs">
-   <property name="text">
-    <string>Close other tabs</string>
-   </property>
-   <property name="iconVisibleInMenu">
-    <bool>true</bool>
-   </property>
-  </action>
-  <action name="actionClose_all_tabs">
-   <property name="text">
-    <string>Close all tabs</string>
-   </property>
-   <property name="iconVisibleInMenu">
-    <bool>true</bool>
-   </property>
-  </action>
   <action name="actionQuit">
    <property name="icon">
     <iconset resource="resources.qrc">
@@ -265,9 +238,9 @@
    <header>pyqode.python.widgets</header>
   </customwidget>
   <customwidget>
-   <class>TabWidget</class>
+   <class>SplittableCodeEditTabWidget</class>
    <extends>QTabWidget</extends>
-   <header>pyqode.core.widgets.tabs</header>
+   <header>pyqode.core.widgets</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

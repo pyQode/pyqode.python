@@ -22,6 +22,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         super(MainWindow, self).__init__()
         # Load our UI (made in Qt Designer)
         self.setupUi(self)
+        self.tabWidget.register_code_edit(PyCodeEdit)
         self.dockWidget.hide()
         self.setup_recent_files_menu()
         self.setup_actions()
@@ -46,13 +47,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.actionNew.triggered.connect(self.on_new)
         self.actionSave.triggered.connect(self.on_save)
         self.actionSave_as.triggered.connect(self.on_save_as)
-        self.actionClose_tab.triggered.connect(self.tabWidget.close)
-        self.actionClose_other_tabs.triggered.connect(
-            self.tabWidget.close_others)
-        self.actionClose_all_tabs.triggered.connect(self.tabWidget.close_all)
         self.actionQuit.triggered.connect(
             QtWidgets.QApplication.instance().quit)
-        self.tabWidget.currentChanged.connect(self.on_current_tab_changed)
+        self.tabWidget.current_changed.connect(self.on_current_tab_changed)
         self.actionAbout.triggered.connect(self.on_about)
         self.actionRun.triggered.connect(self.on_run)
         self.interactiveConsole.process_finished.connect(
@@ -60,8 +57,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.actionConfigure_run.triggered.connect(self.on_configure_run)
 
     def _enable_run(self):
-        self.actionRun.setEnabled(self.tabWidget.currentWidget().file.path != '')
-        self.actionConfigure_run.setEnabled(self.tabWidget.currentWidget().file.path != '')
+        self.actionRun.setEnabled(self.tabWidget.current_widget().file.path != '')
+        self.actionConfigure_run.setEnabled(self.tabWidget.current_widget().file.path != '')
 
     def setup_recent_files_menu(self):
         """ Setup the recent files menu and manager """
@@ -88,8 +85,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         :param editor: editor to setup.
         """
         editor.cursorPositionChanged.connect(self.on_cursor_pos_changed)
-        editor.backend.start(
-            server.__file__, interpreter=sys.executable)
         m = editor.modes.get(modes.GoToAssignmentsMode)
         assert isinstance(m, modes.GoToAssignmentsMode)
         m.out_of_doc.connect(self.on_goto_out_of_doc)
@@ -105,18 +100,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
         editor = None
         if path:
-            index = self.tabWidget.index_from_filename(path)
-            if index == -1:
-                editor = PyCodeEdit(self)
+            editor = self.tabWidget.open_document(path)
+            if editor:
                 self.setup_editor(editor)
-                editor.file.open(path)
-                self.tabWidget.add_code_edit(editor)
-                self.recent_files_manager.open_file(path)
-                self.menu_recents.update_actions()
-            else:
-                self.tabWidget.setCurrentIndex(index)
+            self.recent_files_manager.open_file(path)
+            self.menu_recents.update_actions()
         if line is not None:
-            TextHelper(self.tabWidget.currentWidget()).goto_line(line)
+            TextHelper(self.tabWidget.current_widget()).goto_line(line)
         return editor
 
     @QtCore.Slot()
@@ -124,9 +114,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
         Add a new empty code editor to the tab widget
         """
-        editor = PyCodeEdit(self)
-        self.setup_editor(editor)
-        self.tabWidget.add_code_edit(editor, 'New document %d.py')
+        self.setup_editor(self.tabWidget.create_new_document(extension='.py'))
         self.actionRun.setDisabled(True)
         self.actionConfigure_run.setDisabled(True)
 
@@ -147,14 +135,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def on_save(self):
         self.tabWidget.save_current()
         self._enable_run()
-        self._update_status_bar(self.tabWidget.currentWidget())
+        self._update_status_bar(self.tabWidget.current_widget())
 
     @QtCore.Slot()
     def on_save_as(self):
         """
         Save the current editor document as.
         """
-        path = self.tabWidget.currentWidget().file.path
+        path = self.tabWidget.current_widget().file.path
         path = os.path.dirname(path) if path else ''
         filename, filter = QtWidgets.QFileDialog.getSaveFileName(
             self, 'Save', path)
@@ -164,7 +152,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.menu_recents.update_actions()
             self.actionRun.setEnabled(True)
             self.actionConfigure_run.setEnabled(True)
-            self._update_status_bar(self.tabWidget.currentWidget())
+            self._update_status_bar(self.tabWidget.current_widget())
 
     def setup_mnu_edit(self, editor):
         """
@@ -226,18 +214,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.menuEdit.clear()
         self.menuModes.clear()
         self.menuPanels.clear()
-        editor = self.tabWidget.currentWidget()
+        editor = self.tabWidget.current_widget()
         self.menuEdit.setEnabled(editor is not None)
         self.menuModes.setEnabled(editor is not None)
         self.menuPanels.setEnabled(editor is not None)
         self.actionSave.setEnabled(editor is not None)
         self.actionSave_as.setEnabled(editor is not None)
-        self.actionClose_tab.setEnabled(editor is not None)
-        self.actionClose_all_tabs.setEnabled(editor is not None)
         self.actionConfigure_run.setEnabled(editor is not None)
         self.actionRun.setEnabled(editor is not None)
-        self.actionClose_other_tabs.setEnabled(
-            editor is not None and self.tabWidget.count() > 1)
         if editor:
             self.setup_mnu_edit(editor)
             self.setup_mnu_modes(editor)
@@ -268,8 +252,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             style = style.replace('&', '')  # qt5 bug on kde?
         else:
             style = 'qt'
-        for i in range(self.tabWidget.count()):
-            editor = self.tabWidget.widget(i)
+        for editor in self.tabWidget.widgets(include_clones=True):
             editor.syntax_highlighter.color_scheme = ColorScheme(style)
 
     def on_panel_state_changed(self):
@@ -300,7 +283,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
         Run the current current script
         """
-        filename = self.tabWidget.currentWidget().file.path
+        filename = self.tabWidget.current_widget().file.path
         wd = os.path.dirname(filename)
         args = Settings().get_run_config_for_file(filename)
         self.interactiveConsole.start_process(
@@ -324,7 +307,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.actionConfigure_run.setEnabled(True)
 
     def on_configure_run(self):
-        path = self.tabWidget.currentWidget().file.path
+        path = self.tabWidget.current_widget().file.path
         args = Settings().get_run_config_for_file(path)
         text, status = QtWidgets.QInputDialog.getText(
             self, 'Run configuration', 'Script arguments:',
@@ -335,7 +318,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     @QtCore.Slot()
     def on_cursor_pos_changed(self):
-        editor = self.tabWidget.currentWidget()
+        editor = self.tabWidget.current_widget()
         if editor:
             l, c = TextHelper(editor).cursor_position()
             self.lbl_cursor_pos.setText(

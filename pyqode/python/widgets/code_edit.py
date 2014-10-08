@@ -2,6 +2,9 @@
 """
 This package contains the python code editor widget
 """
+import sys
+from pyqode.core.api import ColorScheme
+from pyqode.python.backend import server
 from pyqode.qt import QtCore, QtGui
 from pyqode.core import api
 from pyqode.core import modes
@@ -33,8 +36,12 @@ class PyCodeEdit(api.CodeEdit):
 
     mimetypes = ['text/x-python']
 
-    def __init__(self, parent=None):
-        super(PyCodeEdit, self).__init__(parent)
+    def __init__(self, parent=None, server_script=server.__file__,
+                 interpreter=sys.executable, args=None,
+                 create_default_actions=True, color_scheme='qt'):
+        super(PyCodeEdit, self).__init__(
+            parent, create_default_actions=create_default_actions)
+        self.backend.start(server_script, interpreter, args)
         self.file = pymanagers.PyFileManager(self)
         self.setLineWrapMode(self.NoWrap)
         self.setWindowTitle("pyQode - Python Editor")
@@ -68,7 +75,8 @@ class PyCodeEdit(api.CodeEdit):
         self.modes.append(modes.SmartBackSpaceMode())
         self.modes.append(modes.ExtendedSelectionMode())
         # python specifics
-        self.modes.append(pymodes.PythonSH(self.document()))
+        self.modes.append(pymodes.PythonSH(
+            self.document(), color_scheme=ColorScheme(color_scheme)))
         self.modes.append(pymodes.PyAutoIndentMode())
         self.modes.append(pymodes.PyAutoCompleteMode())
         self.modes.append(pymodes.FrostedCheckerMode())
@@ -77,7 +85,6 @@ class PyCodeEdit(api.CodeEdit):
         self.modes.append(pymodes.PyIndenterMode())
         self.modes.append(pymodes.GoToAssignmentsMode())
         self.modes.append(pymodes.CommentsMode())
-
         self.syntax_highlighter.fold_detector = PythonFoldDetector()
 
     def setPlainText(self, txt, mimetype='text/x-python', encoding='utf-8'):
@@ -88,3 +95,11 @@ class PyCodeEdit(api.CodeEdit):
         self.syntax_highlighter.docstrings[:] = []
         self.syntax_highlighter.import_statements[:] = []
         super(PyCodeEdit, self).setPlainText(txt, mimetype, encoding)
+
+    def clone(self):
+        clone = self.__class__(
+            parent=self.parent(), server_script=self.backend.server_script,
+            interpreter=self.backend.interpreter, args=self.backend.args,
+            color_scheme=self.syntax_highlighter.color_scheme.name)
+        # clone.panels.get(panels.FoldingPanel).expand_all()
+        return clone

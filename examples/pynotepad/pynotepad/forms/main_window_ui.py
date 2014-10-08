@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/colin/Development/pyQode/python/examples/pynotepad/forms/main_window.ui'
+# Form implementation generated from reading ui file 'D:\Projects\pyqode\python\examples\pynotepad\forms\main_window.ui'
 #
-# Created: Mon Aug 11 13:13:55 2014
-#      by: PyQt5 UI code generator 5.3.1
+# Created: Wed Oct  8 11:19:55 2014
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -20,7 +20,7 @@ class Ui_MainWindow(object):
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
         self.gridLayout.setObjectName("gridLayout")
-        self.tabWidget = TabWidget(self.centralwidget)
+        self.tabWidget = SplittableCodeEditTabWidget(self.centralwidget)
         self.tabWidget.setObjectName("tabWidget")
         self.gridLayout.addWidget(self.tabWidget, 1, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
@@ -79,15 +79,6 @@ class Ui_MainWindow(object):
         self.actionSave_as.setIcon(icon4)
         self.actionSave_as.setIconVisibleInMenu(True)
         self.actionSave_as.setObjectName("actionSave_as")
-        self.actionClose_tab = QtWidgets.QAction(MainWindow)
-        self.actionClose_tab.setIconVisibleInMenu(True)
-        self.actionClose_tab.setObjectName("actionClose_tab")
-        self.actionClose_other_tabs = QtWidgets.QAction(MainWindow)
-        self.actionClose_other_tabs.setIconVisibleInMenu(True)
-        self.actionClose_other_tabs.setObjectName("actionClose_other_tabs")
-        self.actionClose_all_tabs = QtWidgets.QAction(MainWindow)
-        self.actionClose_all_tabs.setIconVisibleInMenu(True)
-        self.actionClose_all_tabs.setObjectName("actionClose_all_tabs")
         self.actionQuit = QtWidgets.QAction(MainWindow)
         icon5 = QtGui.QIcon()
         icon5.addPixmap(QtGui.QPixmap(":/icons/close.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -120,9 +111,6 @@ class Ui_MainWindow(object):
         self.menuFile.addAction(self.actionConfigure_run)
         self.menuFile.addAction(self.actionRun)
         self.menuFile.addSeparator()
-        self.menuFile.addAction(self.actionClose_tab)
-        self.menuFile.addAction(self.actionClose_other_tabs)
-        self.menuFile.addAction(self.actionClose_all_tabs)
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionQuit)
         self.menu.addAction(self.actionAbout)
@@ -162,9 +150,6 @@ class Ui_MainWindow(object):
         self.actionSave.setShortcut(_translate("MainWindow", "Ctrl+S"))
         self.actionSave_as.setText(_translate("MainWindow", "Save as"))
         self.actionSave_as.setShortcut(_translate("MainWindow", "Ctrl+Shift+S"))
-        self.actionClose_tab.setText(_translate("MainWindow", "Close tab"))
-        self.actionClose_other_tabs.setText(_translate("MainWindow", "Close other tabs"))
-        self.actionClose_all_tabs.setText(_translate("MainWindow", "Close all tabs"))
         self.actionQuit.setText(_translate("MainWindow", "Quit"))
         self.actionQuit.setShortcut(_translate("MainWindow", "Ctrl+Q"))
         self.actionAbout.setText(_translate("MainWindow", "About"))
@@ -174,5 +159,5 @@ class Ui_MainWindow(object):
         self.actionConfigure_run.setText(_translate("MainWindow", "Configure run"))
 
 from pyqode.python.widgets import PyInteractiveConsole
-from pyqode.core.widgets.tabs import TabWidget
+from pyqode.core.widgets import SplittableCodeEditTabWidget
 from . import resources_rc
