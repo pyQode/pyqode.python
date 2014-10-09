@@ -101,5 +101,4 @@ class PyCodeEdit(api.CodeEdit):
             parent=self.parent(), server_script=self.backend.server_script,
             interpreter=self.backend.interpreter, args=self.backend.args,
             color_scheme=self.syntax_highlighter.color_scheme.name)
-        # clone.panels.get(panels.FoldingPanel).expand_all()
         return clone

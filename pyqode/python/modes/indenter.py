@@ -23,6 +23,12 @@ class PyIndenterMode(IndenterMode):
     @tab_always_indent.setter
     def tab_always_indent(self, value):
         self._tab_always_indent = value
+        if self.editor:
+            for c in self.editor.clones:
+                try:
+                    c.modes.get(self.__class__).tab_always_indent = value
+                except KeyError:
+                    pass
 
     def __init__(self):
         super(PyIndenterMode, self).__init__()
@@ -70,3 +76,6 @@ class PyIndenterMode(IndenterMode):
             self.editor.setTextCursor(c)
         else:
             super(PyIndenterMode, self).unindent()
+
+    def clone_settings(self, original):
+        self.tab_always_indent = original.tab_always_indent

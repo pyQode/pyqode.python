@@ -252,7 +252,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             style = style.replace('&', '')  # qt5 bug on kde?
         else:
             style = 'qt'
-        for editor in self.tabWidget.widgets(include_clones=True):
+        for editor in self.tabWidget.widgets():
             editor.syntax_highlighter.color_scheme = ColorScheme(style)
 
     def on_panel_state_changed(self):

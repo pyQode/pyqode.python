@@ -68,3 +68,8 @@ class PyFileManager(FileManager):
             for block in blocks_to_fold:
                 if TextBlockHelper.is_fold_trigger(block):
                     folding_panel.toggle_fold_trigger(block)
+
+    def clone_settings(self, original):
+        super(PyFileManager, self).clone_settings(original)
+        self.fold_docstrings = original.fold_docstrings
+        self.fold_imports = original.fold_imports
