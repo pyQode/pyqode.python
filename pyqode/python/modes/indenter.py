@@ -65,15 +65,9 @@ class PyIndenterMode(IndenterMode):
         """
         if self.tab_always_indent:
             cursor = self.editor.textCursor()
-            p = cursor.position()
-            assert isinstance(cursor, QtGui.QTextCursor)
             if not cursor.hasSelection():
                 cursor.select(cursor.LineUnderCursor)
             self.unindent_selection(cursor)
-            p -= self.editor.tab_length
-            c = self.editor.textCursor()
-            c.setPosition(p)
-            self.editor.setTextCursor(c)
         else:
             super(PyIndenterMode, self).unindent()
 
