@@ -11,11 +11,11 @@ About
     :target: https://pypi.python.org/pypi/pyqode.python/
     :alt: Number of PyPI downloads
 
-.. image:: https://travis-ci.org/pyQode/pyqode.python.svg?branch=master
+.. image:: https://travis-ci.org/pyQode/pyqode.python.svg?branch=develop
     :target: https://travis-ci.org/pyQode/pyqode.python
     :alt: Travis-CI build status
 
-.. image:: https://coveralls.io/repos/pyQode/pyqode.python/badge.png?branch=master
+.. image:: https://coveralls.io/repos/pyQode/pyqode.python/badge.png?branch=develop
     :target: https://coveralls.io/r/pyQode/pyqode.python?branch=master
     :alt: Coverage Status
 
@@ -24,13 +24,13 @@ About
 Features:
 ---------
 
-  * calltips mode (using `Jedi`_)
-  * code completion provider (using `Jedi`_)
-  * code folding mode
-  * auto indent mode
-  * on the fly code checkers (frosted (fork of PyFlakes), PEP8)
-  * a customisable python specific syntax highlighter
-  * a pre-configured QPythonCodeEdit (with the corresponding Qt Designer plugin)
+* calltips mode (using `Jedi`_)
+* code completion provider (using `Jedi`_)
+* code folding mode
+* auto indent mode
+* on the fly code checkers (frosted (fork of PyFlakes), PEP8)
+* a customisable python specific syntax highlighter
+* a pre-configured QPythonCodeEdit (with the corresponding Qt Designer plugin)
 
 License
 -------
@@ -42,19 +42,19 @@ Requirements
 
 pyqode.python depends on the following libraries:
 
- - python 2.7 or python 3 (>= 3.2)
- - pyqode.core
- - jedi
- - pep8
- - frosted
- - docutils
+- python 2.7 or python 3 (>= 3.2)
+- pyqode.core
+- jedi
+- pep8
+- frosted
+- docutils
 
 Installation
 ------------
 
 ::
 
-    $ pip3 install pyqode.python
+    $ pip install pyqode.python
 
 
 Resources
