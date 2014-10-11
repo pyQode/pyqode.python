@@ -11,11 +11,11 @@ About
     :target: https://pypi.python.org/pypi/pyqode.python/
     :alt: Number of PyPI downloads
 
-.. image:: https://travis-ci.org/pyQode/pyqode.python.svg?branch=develop
+.. image:: https://travis-ci.org/pyQode/pyqode.python.svg?branch=master
     :target: https://travis-ci.org/pyQode/pyqode.python
     :alt: Travis-CI build status
 
-.. image:: https://coveralls.io/repos/pyQode/pyqode.python/badge.png?branch=develop
+.. image:: https://coveralls.io/repos/pyQode/pyqode.python/badge.png?branch=master
     :target: https://coveralls.io/r/pyQode/pyqode.python?branch=master
     :alt: Coverage Status
 
