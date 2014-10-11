@@ -69,11 +69,11 @@ Resources
 Snapshots
 ---------
 
-Here is a snapshot of the QIdle example application (snapshots
+Here is a snapshot of the pynotepad example application (snapshots
 taken on a Gnome 3 desktop):
 
-.. image:: doc/source/_static/qidle.png
-    :alt: Preview of QIdle, the pyQode clone of idle (example app)
+.. image:: doc/source/_static/pynotepad.png
+    :alt: Preview of pynotepad, the pyQode clone of idle (example app)
 
 
 .. _Downloads: https://github.com/pyQode/pyqode.python/releases

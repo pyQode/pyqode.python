@@ -286,6 +286,7 @@ def icon_from_typename(name, icon_type):
              'KEYWORD': ':/pyqode_python_icons/rc/keyword.png',
              'PARAM': ':/pyqode_python_icons/rc/var.png',
              'ARRAY': ':/pyqode_python_icons/rc/var.png',
+             'INSTANCEELEMENT': ':/pyqode_python_icons/rc/var.png',
              'INSTANCE': ':/pyqode_python_icons/rc/var.png',
              'PARAM-PRIV': ':/pyqode_python_icons/rc/var.png',
              'PARAM-PROT': ':/pyqode_python_icons/rc/var.png',

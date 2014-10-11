@@ -7,7 +7,8 @@ from pyqode.core.modes import IndenterMode
 
 
 class PyIndenterMode(IndenterMode):
-    """
+    """ Implements tab/shift+tab.
+
     Implements python specific indentation, tab/back-tab always
     indents/unindents the **whole** line. This replace the default
     IndenterMode which we found to be better suited for python code editing.
@@ -22,6 +23,12 @@ class PyIndenterMode(IndenterMode):
     @tab_always_indent.setter
     def tab_always_indent(self, value):
         self._tab_always_indent = value
+        if self.editor:
+            for c in self.editor.clones:
+                try:
+                    c.modes.get(self.__class__).tab_always_indent = value
+                except KeyError:
+                    pass
 
     def __init__(self):
         super(PyIndenterMode, self).__init__()
@@ -58,14 +65,11 @@ class PyIndenterMode(IndenterMode):
         """
         if self.tab_always_indent:
             cursor = self.editor.textCursor()
-            p = cursor.position()
-            assert isinstance(cursor, QtGui.QTextCursor)
             if not cursor.hasSelection():
                 cursor.select(cursor.LineUnderCursor)
             self.unindent_selection(cursor)
-            p -= self.editor.tab_length
-            c = self.editor.textCursor()
-            c.setPosition(p)
-            self.editor.setTextCursor(c)
         else:
             super(PyIndenterMode, self).unindent()
+
+    def clone_settings(self, original):
+        self.tab_always_indent = original.tab_always_indent

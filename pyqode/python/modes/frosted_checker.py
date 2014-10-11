@@ -7,7 +7,8 @@ from pyqode.python.backend.workers import run_frosted
 
 
 class FrostedCheckerMode(CheckerMode):
-    """
+    """ Runs pyflakes on you code while you're typing
+
     This checker mode runs pyflakes on the fly to check your python syntax.
     """
     def __init__(self):

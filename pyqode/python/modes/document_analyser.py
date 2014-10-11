@@ -13,7 +13,8 @@ def _logger():
 
 
 class DocumentAnalyserMode(Mode, QtCore.QObject):
-    """
+    """ Analyses the document outline as a tree of statements.
+
     This mode analyses the structure of a document (a tree of
     :class:`pyqode.python.backend.workers.Definition`.
 

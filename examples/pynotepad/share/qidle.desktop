@@ -1,0 +1,9 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=pynotepad
+Comment=pynotepad, idle made with pyQode
+Exec=pynotepad
+Terminal=false
+Type=Application
+Icon=/usr/share/pixmaps/pynotepad.png
+Categories=Development;IDE;

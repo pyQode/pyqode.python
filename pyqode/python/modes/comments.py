@@ -5,8 +5,7 @@ from pyqode.qt import QtGui, QtCore, QtWidgets
 
 
 class CommentsMode(api.Mode):
-    """
-    Mode that allow to comment/uncomment a set of lines using Ctrl+/.
+    """ Comments/uncomments a set of lines using Ctrl+/.
     """
     def __init__(self):
         super(CommentsMode, self).__init__()

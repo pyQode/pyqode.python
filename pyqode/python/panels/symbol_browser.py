@@ -12,8 +12,7 @@ def _logger():
 
 
 class SymbolBrowserPanel(Panel):
-    """
-    Show a combo box with the file definitions.
+    """ Shows a combo box with the definitions found in the document.
 
     Allow quick navigation in the file and sync with the cursor
     position.
@@ -53,8 +52,7 @@ class SymbolBrowserPanel(Panel):
                     'DocumentAnalyserMode').document_changed.disconnect(
                         self._on_document_changed)
             except KeyError:
-                _logger().warning("No DocumentAnalyserMode found, install it "
-                                  "before SymbolBrowserPanel!")
+                pass
 
     def _on_document_changed(self):
         if not self or not self.editor:

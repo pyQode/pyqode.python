@@ -98,7 +98,7 @@ def make_python_patterns(additional_keywords=[], additional_builtins=[]):
 # Pygments Syntax highlighter
 #
 class PythonSH(BaseSH):
-    """Python Syntax Highlighter"""
+    """ Highlights python syntax in the editor. """
     mimetype = 'text/x-python'
 
     # Syntax highlighting rules:
@@ -195,9 +195,9 @@ class PythonSH(BaseSH):
                                 match1 = self.IDPROG.match(text, end)
                                 if match1:
                                     start1, end1 = match1.span(1)
-                                    fmt = self.formats["definition"]
-                                    if value == "class":
-                                        fmt.setFontWeight(QtGui.QFont.Bold)
+                                    fmt_key = ('definition' if value == 'class'
+                                               else 'function')
+                                    fmt = self.formats[fmt_key]
                                     self.setFormat(start1, end1 - start1, fmt)
                             elif value == "import":
                                 import_stmt = text.strip()
