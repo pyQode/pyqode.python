@@ -2,7 +2,6 @@
 -----
 
 New features:
-
     - add support for python2. You may now use python2 for writing a pyqode
       app (backend AND frontend)!
     - make use of the new modes introduced in pyqode.core (occurrences
@@ -56,7 +55,6 @@ New features:
     file with just one click.
 
 Bug fixed:
-
   - many bugs have been fixed in the auto indent mode
   - many small bugs have been fixed in pynotepad
   - fix cursor position after comment/uncomment (Ctrl+/)
@@ -80,7 +78,6 @@ Fixed bugs:
 -----
 
 New features:
-
     - the comments mode is now PEP8 compliant
     - the documentation panel now uses docutils to get an html representation
       of docstrings
@@ -88,7 +85,6 @@ New features:
     - lots of improvements to the auto indent mode
 
 Fixed bugs:
-
     - Add support for jedi 0.8 (which has not been released yet, compatibility
       with jedi 0.7 has been kept)
     - many bug fixes to the auto indent mode
@@ -98,18 +94,15 @@ Fixed bugs:
 -----
 
 Fixed bugs:
-
     - more fixes to auto completion
     - fixes for auto indentation mode
     - fix type error in document layout parser.
     - Fix calltips when there is a closing parenthesis
 
-
 1.2.0
 -----
 
 Fixed bugs:
-
     - Fix various bugs with auto complete
     - Fix bugs with code completion in comments and strings
     - Fix for designer plugin
