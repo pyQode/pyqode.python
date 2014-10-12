@@ -25,7 +25,10 @@ calltips, ...).
 - `Issue tracker`_
 - `Wiki`_
 - `API reference`_
+- `Contributing`_
+- `Changelog`_
 - `Screenshots`_
+
 
 Features:
 ---------
@@ -102,3 +105,5 @@ Here is the list of available test environments:
 .. _API reference: http://pyqodepython.readthedocs.org/en/latest/
 .. _pyQode: https://github.com/pyQode/pyQode
 .. _Jedi: https://github.com/davidhalter/jedi
+.. _Changelog: https://github.com/pyQode/pyqode.python/blob/master/CHANGELOG.rst
+.. _Contributing: https://github.com/pyQode/pyqode.python/blob/master/CONTRIBUTING.rst
