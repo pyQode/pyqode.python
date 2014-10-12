@@ -112,16 +112,18 @@ Fixed bugs:
 
 New features:
     - add the following new modes:
+    
       - PyAutoCompleteMode
       - CommentsMode
       - DocumentAnalyserMode
       - GoToAssignmentsMode
     - add the following new panels:
+    
       - QuickDocPanel
       - SymbolBrowserPanel
     - CodeCompletion: provides method to interact with the subprocess interpreter
     - CodeCompletion: preload hooks
-    - Add :class:`pyqode.python.Boostrapper` class to help start the code completion with a list of modules to
+    - Add `Boostrapper` class to help start the code completion with a list of modules to
       preload + example with a splash screen.
 
 Fixed bugs:
