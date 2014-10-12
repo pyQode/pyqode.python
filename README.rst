@@ -19,7 +19,13 @@ About
     :target: https://coveralls.io/r/pyQode/pyqode.python?branch=master
     :alt: Coverage Status
 
-*pyqode.python* adds **python** support to `pyqode.core`_ (code completion, calltips, ...).
+*pyqode.python* adds **python** support to `pyQode`_ (code completion,
+calltips, ...).
+
+- `Issue tracker`_
+- `Wiki`_
+- `API reference`_
+- `Screenshots`_
 
 Features:
 ---------
@@ -35,7 +41,7 @@ Features:
 License
 -------
 
-pyQode is licensed under the MIT license.
+pyQode is licensed under the **MIT license**.
 
 Requirements
 ------------
@@ -57,31 +63,42 @@ Installation
     $ pip install pyqode.python
 
 
-Resources
----------
+Testing
+-------
 
--  `Downloads`_
--  `Source repository`_
--  `Wiki`_
--  `Documentation`_
+pyqode.python has a test suite and measure its coverage.
 
+To run the tests, you must first install tox and pytest::
 
-Snapshots
----------
+    $ pip install tox pytest
 
-Here is a snapshot of the pynotepad example application (snapshots
-taken on a Gnome 3 desktop):
+You might also want to install pytest-cov and pytest-pep8.
 
-.. image:: doc/source/_static/pynotepad.png
-    :alt: Preview of pynotepad, the pyQode clone of idle (example app)
+Then you can run the tests by running the following command::
 
+    $ tox
 
-.. _Downloads: https://github.com/pyQode/pyqode.python/releases
-.. _Source repository: https://github.com/pyQode/pyqode.python/
-.. _Wiki: https://github.com/pyQode/pyqode.core/wiki
-.. _official pyqode extension package: https://github.com/pyQode/pyqode.core/wiki/Extensions#official-packages
-.. _pyqode.core: https://github.com/pyQode/pyqode.core
+To run the tests for a specifc environment, use the -e option. E.g. to run
+tests with python 2.7 and pyqt4, you would run::
+
+    $ tox -e py27-pyqt4
+
+Here is the list of available test environments:
+
+- py27-pyqt4
+- py27-pyqt5
+- py32-pyqt4
+- py32-pyqt5
+- py33-pyqt4
+- py33-pyqt5
+- py34-pyqt4
+- py34-pyqt5
+- cov
+- pep8
+
+.. _Screenshots: https://github.com/pyQode/pyQode/wiki/Screenshots-and-videos#pyqodepython-screenshots
+.. _Issue tracker: https://github.com/pyQode/pyQode/issues
+.. _Wiki: https://github.com/pyQode/pyQode/wiki
+.. _API reference: http://pyqodepython.readthedocs.org/en/latest/
+.. _pyQode: https://github.com/pyQode/pyQode
 .. _Jedi: https://github.com/davidhalter/jedi
-.. _`Documentation`: http://pyqodepython.readthedocs.org/en/latest/
-.. _master: https://github.com/pyQode/pyqode.python/tree/master
-.. _develop: https://github.com/pyQode/pyqode.python/tree/develop
