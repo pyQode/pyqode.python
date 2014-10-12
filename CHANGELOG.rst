@@ -112,13 +112,13 @@ Fixed bugs:
 
 New features:
     - add the following new modes:
-        - :class:`pyqode.python.PyAutoCompleteMode`
-        - :class:`pyqode.python.CommentsMode`
-        - :class:`pyqode.python.DocumentAnalyserMode`
-        - :class:`pyqode.python.GoToAssignmentsMode`
+      - :class:`pyqode.python.PyAutoCompleteMode`
+      - :class:`pyqode.python.CommentsMode`
+      - :class:`pyqode.python.DocumentAnalyserMode`
+      - :class:`pyqode.python.GoToAssignmentsMode`
     - add the following new panels:
-        - :class:`pyqode.python.QuickDocPanel`
-        - :class:`pyqode.python.SymbolBrowserPanel`
+      - :class:`pyqode.python.QuickDocPanel`
+      - :class:`pyqode.python.SymbolBrowserPanel`
     - CodeCompletion: provides method to interact with the subprocess interpreter
     - CodeCompletion: preload hooks
     - Add :class:`pyqode.python.Boostrapper` class to help start the code completion with a list of modules to
