@@ -8,3 +8,10 @@ This packages contains the available python widgets:
 
 from .code_edit import PyCodeEdit
 from .interactive import PyInteractiveConsole
+from .outline import PyOutlineTreeWidget
+
+__all__ = [
+    'PyCodeEdit',
+    'PyInteractiveConsole',
+    'PyOutlineTreeWidget'
+]
