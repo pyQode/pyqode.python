@@ -57,8 +57,6 @@ class PyCodeEdit(api.CodeEdit):
                            panels.GlobalCheckerPanel.Position.RIGHT)
         self.panels.append(panels.SearchAndReplacePanel(),
                            panels.SearchAndReplacePanel.Position.BOTTOM)
-        self.panels.append(pypanels.SymbolBrowserPanel(),
-                           pypanels.SymbolBrowserPanel.Position.TOP)
         self.panels.append(panels.EncodingPanel(), api.Panel.Position.TOP)
         self.add_separator()
         self.panels.append(pypanels.QuickDocPanel(), api.Panel.Position.BOTTOM)
