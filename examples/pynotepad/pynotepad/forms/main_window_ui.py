@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/colin/dev/pyqode/python/examples/pynotepad/forms/main_window.ui'
 #
-# Created: Tue Nov  4 09:59:38 2014
+# Created: Tue Nov  4 11:20:06 2014
 #      by: PyQt5 UI code generator 5.3.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -19,6 +19,8 @@ class Ui_MainWindow(object):
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
+        self.gridLayout.setContentsMargins(0, 0, 0, 0)
+        self.gridLayout.setHorizontalSpacing(0)
         self.gridLayout.setObjectName("gridLayout")
         self.tabWidget = SplittableCodeEditTabWidget(self.centralwidget)
         self.tabWidget.setObjectName("tabWidget")
@@ -170,7 +172,7 @@ class Ui_MainWindow(object):
         self.actionRun.setToolTip(_translate("MainWindow", "Run current script"))
         self.actionConfigure_run.setText(_translate("MainWindow", "Configure run"))
 
-from pyqode.core.widgets import SplittableCodeEditTabWidget
 from pyqode.python.widgets import PyInteractiveConsole
 from pyqode.python.widgets.outline import PyOutlineTreeWidget
+from pyqode.core.widgets import SplittableCodeEditTabWidget
 from . import resources_rc
