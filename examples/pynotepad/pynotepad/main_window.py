@@ -50,6 +50,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.actionQuit.triggered.connect(
             QtWidgets.QApplication.instance().quit)
         self.tabWidget.current_changed.connect(self.on_current_tab_changed)
+        self.tabWidget.last_tab_closed.connect(self.on_last_tab_closed)
         self.actionAbout.triggered.connect(self.on_about)
         self.actionRun.triggered.connect(self.on_run)
         self.interactiveConsole.process_finished.connect(
@@ -85,9 +86,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         :param editor: editor to setup.
         """
         editor.cursorPositionChanged.connect(self.on_cursor_pos_changed)
-        m = editor.modes.get(modes.GoToAssignmentsMode)
-        assert isinstance(m, modes.GoToAssignmentsMode)
-        m.out_of_doc.connect(self.on_goto_out_of_doc)
+        try:
+            m = editor.modes.get(modes.GoToAssignmentsMode)
+        except KeyError:
+            pass
+        else:
+            assert isinstance(m, modes.GoToAssignmentsMode)
+            m.out_of_doc.connect(self.on_goto_out_of_doc)
 
     def open_file(self, path, line=None):
         """
@@ -207,6 +212,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.menuPanels.addAction(a)
 
     @QtCore.Slot()
+    def on_last_tab_closed(self):
+        self.widgetOutline.set_editor(None)
+
+    @QtCore.Slot()
     def on_current_tab_changed(self):
         """
         Update action states when the current tab changed.
@@ -222,10 +231,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.actionSave_as.setEnabled(editor is not None)
         self.actionConfigure_run.setEnabled(editor is not None)
         self.actionRun.setEnabled(editor is not None)
-        if editor:
+        if editor is not None:
             self.setup_mnu_edit(editor)
             self.setup_mnu_modes(editor)
             self.setup_mnu_panels(editor)
+        self.widgetOutline.set_editor(editor)
         self._update_status_bar(editor)
 
     def _update_status_bar(self, editor):

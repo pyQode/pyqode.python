@@ -30,7 +30,7 @@
      <x>0</x>
      <y>0</y>
      <width>847</width>
-     <height>20</height>
+     <height>35</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -109,6 +109,21 @@
     <layout class="QGridLayout" name="gridLayout_2">
      <item row="0" column="0">
       <widget class="PyInteractiveConsole" name="interactiveConsole"/>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="dockWidgetOutline">
+   <property name="windowTitle">
+    <string>Structure</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_2">
+    <layout class="QGridLayout" name="gridLayout_3">
+     <item row="0" column="0">
+      <widget class="PyOutlineTreeWidget" name="widgetOutline" native="true"/>
      </item>
     </layout>
    </widget>
@@ -241,6 +256,12 @@
    <class>SplittableCodeEditTabWidget</class>
    <extends>QTabWidget</extends>
    <header>pyqode.core.widgets</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>PyOutlineTreeWidget</class>
+   <extends>QWidget</extends>
+   <header>pyqode.python.widgets.outline</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

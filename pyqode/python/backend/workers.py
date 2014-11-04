@@ -135,7 +135,12 @@ class Definition(object):
 def _extract_def(d):
     d_line, d_column = d.start_pos
     # use full name for import type
-    definition = Definition(d.name, icon_from_typename(d.name, d.type),
+    if d.type == 'function':
+        params = [p.name for p in d.params]
+        name = d.name + '(' + ', '.join(params) + ')'
+    else:
+        name = d.name
+    definition = Definition(name, icon_from_typename(d.name, d.type),
                             d_line - 1, d_column, d.full_name)
     # check for methods in class or nested methods/classes
     if d.type == "class" or d.type == 'function':
@@ -162,7 +167,6 @@ def defined_names(request_data):
     for d in toplvl_definitions:
         definition = _extract_def(d)
         if d.type != 'import':
-            # ignore imports
             ret_val.append(definition)
 
     _logger().debug("Document structure changed %s")

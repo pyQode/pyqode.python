@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'D:\Projects\pyqode\python\examples\pynotepad\forms\main_window.ui'
+# Form implementation generated from reading ui file '/home/colin/dev/pyqode/python/examples/pynotepad/forms/main_window.ui'
 #
-# Created: Wed Oct  8 11:19:55 2014
-#      by: PyQt5 UI code generator 5.2.1
+# Created: Tue Nov  4 09:59:38 2014
+#      by: PyQt5 UI code generator 5.3.2
 #
 # WARNING! All changes made in this file will be lost!
 
-from pyqode.core.qt import QtCore, QtGui, QtWidgets
+from pyqode.qt import QtCore, QtGui, QtWidgets
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -25,7 +25,7 @@ class Ui_MainWindow(object):
         self.gridLayout.addWidget(self.tabWidget, 1, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 847, 20))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 847, 35))
         self.menubar.setObjectName("menubar")
         self.menuFile = QtWidgets.QMenu(self.menubar)
         self.menuFile.setObjectName("menuFile")
@@ -55,6 +55,17 @@ class Ui_MainWindow(object):
         self.gridLayout_2.addWidget(self.interactiveConsole, 0, 0, 1, 1)
         self.dockWidget.setWidget(self.dockWidgetContents)
         MainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(8), self.dockWidget)
+        self.dockWidgetOutline = QtWidgets.QDockWidget(MainWindow)
+        self.dockWidgetOutline.setObjectName("dockWidgetOutline")
+        self.dockWidgetContents_2 = QtWidgets.QWidget()
+        self.dockWidgetContents_2.setObjectName("dockWidgetContents_2")
+        self.gridLayout_3 = QtWidgets.QGridLayout(self.dockWidgetContents_2)
+        self.gridLayout_3.setObjectName("gridLayout_3")
+        self.widgetOutline = PyOutlineTreeWidget(self.dockWidgetContents_2)
+        self.widgetOutline.setObjectName("widgetOutline")
+        self.gridLayout_3.addWidget(self.widgetOutline, 0, 0, 1, 1)
+        self.dockWidgetOutline.setWidget(self.dockWidgetContents_2)
+        MainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(1), self.dockWidgetOutline)
         self.actionNew = QtWidgets.QAction(MainWindow)
         icon1 = QtGui.QIcon()
         icon1.addPixmap(QtGui.QPixmap(":/icons/document-new.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -142,6 +153,7 @@ class Ui_MainWindow(object):
         self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar"))
         self.toolBar.setToolTip(_translate("MainWindow", "Configure run action for current editor"))
         self.dockWidget.setWindowTitle(_translate("MainWindow", "Run output"))
+        self.dockWidgetOutline.setWindowTitle(_translate("MainWindow", "Structure"))
         self.actionNew.setText(_translate("MainWindow", "New"))
         self.actionNew.setShortcut(_translate("MainWindow", "Ctrl+N"))
         self.actionOpen.setText(_translate("MainWindow", "Open"))
@@ -158,6 +170,7 @@ class Ui_MainWindow(object):
         self.actionRun.setToolTip(_translate("MainWindow", "Run current script"))
         self.actionConfigure_run.setText(_translate("MainWindow", "Configure run"))
 
-from pyqode.python.widgets import PyInteractiveConsole
 from pyqode.core.widgets import SplittableCodeEditTabWidget
+from pyqode.python.widgets import PyInteractiveConsole
+from pyqode.python.widgets.outline import PyOutlineTreeWidget
 from . import resources_rc

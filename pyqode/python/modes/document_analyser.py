@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import logging
 from pyqode.core import api
-from pyqode.core.api import Mode
+from pyqode.core.api import Mode, TextBlockUserData, TextBlockHelper
 from pyqode.core.api import DelayJobRunner
 from pyqode.core.backend import NotRunning
 from pyqode.python.backend.workers import Definition, defined_names
@@ -89,24 +89,39 @@ class DocumentAnalyserMode(Mode, QtCore.QObject):
                 ret_val.append(nd)
         return ret_val
 
-    def to_tree_widget_items(self):
+    def to_tree_widget_items(self, to_collapse=None):
         """
         Returns the results as a list of top level QTreeWidgetItem.
 
         This is a convenience function that you can use to update a document
         tree widget wheneve the document changed.
         """
-        def convert(name, editor):
+        def convert(name, editor, to_collapse):
             ti = QtWidgets.QTreeWidgetItem()
             ti.setText(0, name.name)
             ti.setIcon(0, QtGui.QIcon(name.icon))
             name.block = editor.document().findBlockByNumber(name.line)
             ti.setData(0, QtCore.Qt.UserRole, name)
+            block_data = name.block.userData()
+            if block_data is None:
+                block_data = TextBlockUserData()
+                name.block.setUserData(block_data)
+            block_data.tree_item = ti
+
+            if to_collapse is not None and \
+                    TextBlockHelper.get_fold_trigger_state(name.block):
+                to_collapse.append(ti)
 
             for ch in name.children:
-                ti_ch = convert(ch, editor)
+                ti_ch, to_collapse = convert(ch, editor, to_collapse)
                 if ti_ch:
                     ti.addChild(ti_ch)
+            return ti, to_collapse
 
-            return ti
-        return [convert(d, self.editor) for d in self.results]
+        items = []
+        for d in self.results:
+            value, to_collapse = convert(d, self.editor, to_collapse)
+            items.append(value)
+        if to_collapse is not None:
+            return items, to_collapse
+        return items
