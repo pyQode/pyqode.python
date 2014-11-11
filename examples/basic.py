@@ -1,9 +1,21 @@
 """
 A basic example that show you how to create a basic python code editor widget,
 from scratch.
+
+Editor features:
+    - syntax highlighting
+    - code completion (using jedi)
+    - code folding
+    - auto indentation
+    - auto complete
+    - comments mode (ctrl+/)
+    - calltips mode
+    - linters (pyflakes and pep8) modes + display panel
+    - line number panel
+    - builtin search and replace panel
 """
 # optionally, set the qt api to use (in ['pyqt4', 'pyqt5', 'pyside'])
-# import os; os.environ['QT_API'] = 'pyside'
+import os; os.environ['QT_API'] = 'pyside'
 import sys
 from pyqode.qt import QtWidgets
 from pyqode.python.backend import server
@@ -13,7 +25,10 @@ from pyqode.python import modes as pymodes, panels as pypanels
 
 class MyPythonCodeEdit(api.CodeEdit):
     def __init__(self):
-        super().__init__()
+        super(MyPythonCodeEdit, self).__init__()
+
+        # starts the default pyqode.python server (which enable the jedi code
+        # completion worker).
         self.backend.start(server.__file__)
 
         # some other modes/panels require the analyser mode, the best is to
@@ -49,7 +64,6 @@ class MyPythonCodeEdit(api.CodeEdit):
         self.modes.append(pymodes.CommentsMode())
         self.modes.append(pymodes.CalltipsMode())
         self.modes.append(pymodes.FrostedCheckerMode())
-        self.modes.append(pymodes.GoToAssignmentsMode())
         self.modes.append(pymodes.PEP8CheckerMode())
         self.modes.append(pymodes.PyAutoCompleteMode())
         self.modes.append(pymodes.PyAutoIndentMode())
