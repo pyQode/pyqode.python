@@ -15,7 +15,7 @@ Editor features:
     - builtin search and replace panel
 """
 # optionally, set the qt api to use (in ['pyqt4', 'pyqt5', 'pyside'])
-import os; os.environ['QT_API'] = 'pyside'
+# import os; os.environ['QT_API'] = 'pyside'
 import sys
 from pyqode.qt import QtWidgets
 from pyqode.python.backend import server
