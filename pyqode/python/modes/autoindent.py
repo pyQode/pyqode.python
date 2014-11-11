@@ -134,14 +134,14 @@ class PyAutoIndentMode(AutoIndentMode):
     @staticmethod
     def _get_last_word(tc):
         tc2 = QTextCursor(tc)
-        tc2.movePosition(QTextCursor.Left, 1)
+        tc2.movePosition(QTextCursor.Left, tc.MoveAnchor, 1)
         tc2.movePosition(QTextCursor.WordLeft, tc.KeepAnchor)
         return tc2.selectedText().strip()
 
     @staticmethod
     def _get_last_word_unstripped(tc):
         tc2 = QTextCursor(tc)
-        tc2.movePosition(QTextCursor.Left, 1)
+        tc2.movePosition(QTextCursor.Left, tc.MoveAnchor, 1)
         tc2.movePosition(QTextCursor.WordLeft, tc.KeepAnchor)
         return tc2.selectedText()
 
