@@ -8,5 +8,10 @@ dedicated workers for the backend.
 """
 __version__ = '2.4.dev'
 
-# load pyqode.python resources (code completion icons)
-from pyqode.python._forms import pyqode_python_icons_rc  # DO NOT REMOVE!!!
+try:
+    # load pyqode.python resources (code completion icons)
+    from pyqode.python._forms import pyqode_python_icons_rc  # DO NOT REMOVE!!!
+except ImportError:
+    # PyQt/PySide might not be available for the interpreter that run the
+    # backend
+    pass
