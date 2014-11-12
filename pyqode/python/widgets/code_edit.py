@@ -13,9 +13,6 @@ from pyqode.python import managers as pymanagers
 from pyqode.python import modes as pymodes
 from pyqode.python import panels as pypanels
 from pyqode.python.folding import PythonFoldDetector
-# load pyqode.python resources (code completion icons)
-# DO NOT REMOVE
-from pyqode.python._forms import pyqode_python_icons_rc
 
 
 class PyCodeEdit(api.CodeEdit):
