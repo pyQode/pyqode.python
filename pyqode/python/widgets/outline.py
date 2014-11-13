@@ -40,13 +40,13 @@ class PyOutlineTreeWidget(QtWidgets.QTreeWidget):
         if self._analyser:
             try:
                 self._analyser.document_changed.disconnect(self._on_changed)
-            except TypeError:
+            except (TypeError, RuntimeError):
                 pass
         if self._folding_panel:
             try:
                 self._folding_panel.trigger_state_changed.disconnect(
                     self._on_block_state_changed)
-            except TypeError:
+            except (TypeError, RuntimeError):
                 pass
         self._editor = editor
         if self._editor is not None:

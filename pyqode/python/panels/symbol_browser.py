@@ -75,7 +75,7 @@ class SymbolBrowserPanel(Panel):
         if definition:
             TextHelper(self.editor).goto_line(
                 definition.line, column=definition.column)
-            self.editor.setFocus(True)
+            self.editor.setFocus()
 
     def _sync_combo_box(self, line):
         i = -1

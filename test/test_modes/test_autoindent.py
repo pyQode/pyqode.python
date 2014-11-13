@@ -99,6 +99,6 @@ def collect_cases():
 @pytest.mark.parametrize('test_case', collect_cases())
 def test_auto_indent(editor, test_case):
     QtWidgets.QApplication.setActiveWindow(editor)
-    editor.setFocus(True)
+    editor.setFocus()
     test_case.run(editor)
 
