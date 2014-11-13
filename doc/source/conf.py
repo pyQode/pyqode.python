@@ -280,7 +280,7 @@ texinfo_documents = [
 
 intersphinx_mapping = {
     'python': ('http://python.readthedocs.org/en/v2.7.2/', None),
-    'pyqodecore': ('http://pyqodecore.readthedocs.org/en/latest/', None),
+    'pyqodecore': ('https://pythonhosted.org/pyqode.core/', None),
     'jedi': ('http://jedi.readthedocs.org/en/latest/', None)}
 
 

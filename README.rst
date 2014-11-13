@@ -102,7 +102,7 @@ Here is the list of available test environments:
 .. _Screenshots: https://github.com/pyQode/pyQode/wiki/Screenshots-and-videos#pyqodepython-screenshots
 .. _Issue tracker: https://github.com/pyQode/pyQode/issues
 .. _Wiki: https://github.com/pyQode/pyQode/wiki
-.. _API reference: http://pyqodepython.readthedocs.org/en/latest/
+.. _API reference: https://pythonhosted.org/pyqode.python/
 .. _pyQode: https://github.com/pyQode/pyQode
 .. _Jedi: https://github.com/davidhalter/jedi
 .. _Changelog: https://github.com/pyQode/pyqode.python/blob/master/CHANGELOG.rst
