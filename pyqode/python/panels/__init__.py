@@ -11,6 +11,6 @@ from pyqode.python.panels.symbol_browser import SymbolBrowserPanel
 from pyqode.python.panels.quick_doc import QuickDocPanel
 
 __all__ = [
-    'SymbolBrowserPanel',
     'QuickDocPanel',
+    'SymbolBrowserPanel',
 ]

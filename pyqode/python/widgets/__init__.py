@@ -5,13 +5,13 @@ This packages contains the available python widgets:
     - PyInteractiveConsole
 
 """
-
-from .code_edit import PyCodeEdit
+from .code_edit import PyCodeEditBase, PyCodeEdit
 from .interactive import PyInteractiveConsole
 from .outline import PyOutlineTreeWidget
 
 __all__ = [
     'PyCodeEdit',
+    'PyCodeEditBase',
     'PyInteractiveConsole',
     'PyOutlineTreeWidget'
 ]

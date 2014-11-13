@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 The backend package contains everything needed to implement the
-server side of pyqode.
+server side of a python editor.
 
 """
 from .workers import calltips

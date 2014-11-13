@@ -7,17 +7,17 @@ from pyqode.core.modes import IndenterMode
 
 
 class PyIndenterMode(IndenterMode):
-    """ Implements tab/shift+tab.
-
-    Implements python specific indentation, tab/back-tab always
-    indents/unindents the **whole** line. This replace the default
-    IndenterMode which we found to be better suited for python code editing.
-
-    To use the default behaviour, just set the ``tab_always_indent`` property
-    to False
+    """
+    Extends the core indenter to add the ability to always indent the whole
+    line instead of inserting a tab at the cursor position. This behaviour can
+    be turned off at runtime by setting :attr:`tab_always_indent` to False.
     """
     @property
     def tab_always_indent(self):
+        """
+        When this flag is set to True, any call to indent will indent the whole
+        line instead of inserting a tab at the cursor position.
+        """
         return self._tab_always_indent
 
     @tab_always_indent.setter

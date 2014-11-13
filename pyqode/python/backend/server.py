@@ -1,21 +1,20 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Server main script customised for pyqode.python.
+Main server script for a pyqode.python backend. You can directly use this
+script in your application if it fits your needs or use it as a starting point
+for writing your own server.
 
-Users of pyqode.python can directly use this script. If you need to append
-directories to sys.path, use the '-s' command line arguments, e.g.::
+::
 
-    python server.py 8080 -s /home/your_name/MyProj /home/your_name/MyLib
+    usage: server.py [-h] [-s [SYSPATH [SYSPATH ...]]] port
 
+    positional arguments:
+      port                  the local tcp port to use to run the server
 
-The server can be run with a custom python interpreter, this is needed if you
-want to support python 2 syntax or virtualenv. This means that pyqode.core,
-pyqode.python and all their pure python dependencies (not PyQt) must be
-installed in the targeted env (virtualenv or python2 site package). Another
-option is to bundle all dependencies in a zip archive that the server will
-append to sys path, that way you don't clutter the use1r env with IDE specific
-package but you have to write a new server to do that.
+    optional arguments:
+      -h, --help            show this help message and exit
+      -s [SYSPATH [SYSPATH ...]], --syspath [SYSPATH [SYSPATH ...]]
 
 """
 import argparse

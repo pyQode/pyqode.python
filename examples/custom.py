@@ -22,10 +22,10 @@ import sys
 from pyqode.qt import QtWidgets
 from pyqode.python.backend import server
 from pyqode.core import api, modes, panels
-from pyqode.python import modes as pymodes, panels as pypanels
+from pyqode.python import modes as pymodes, panels as pypanels, widgets
 
 
-class MyPythonCodeEdit(api.CodeEdit):
+class MyPythonCodeEdit(widgets.PyCodeEditBase):
     def __init__(self):
         super(MyPythonCodeEdit, self).__init__()
 
@@ -70,7 +70,6 @@ class MyPythonCodeEdit(api.CodeEdit):
         self.modes.append(pymodes.PyAutoCompleteMode())
         self.modes.append(pymodes.PyAutoIndentMode())
         self.modes.append(pymodes.PyIndenterMode())
-        self.modes.append(pymodes.PythonSH(self.document()))
 
 
 app = QtWidgets.QApplication(sys.argv)

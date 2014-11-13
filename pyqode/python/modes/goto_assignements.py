@@ -17,12 +17,12 @@ def _logger():
 
 class Assignment(object):
     """
-    Assignment definition.
+    Defines an assignment. Used by :class:`GoToAssignmentsMode`.
     """
     def __init__(self, path, line, column, full_name):
-        #: Module path
         if path:
             path = path.replace(".pyc", ".py")
+        #: File path of the module where the assignment can be found
         self.module_path = path
         #: Line number
         self.line = line
@@ -43,17 +43,14 @@ class Assignment(object):
 
 
 class GoToAssignmentsMode(WordClickMode):
-    """ Adds go to definition capabilities to the editor.
+    """
+    Goes to the assignments (using jedi.Script.goto_assignments) when the user
+    execute the shortcut or click word. If there are more than one assignments,
+    an input dialog is used to ask the user to choose the desired assignment.
 
-    Goes to the assignments (using jedi.Script.goto_assignments). If there are
-    more than one assignments, an input dialog is used to ask the user to
-    choose the desired assignment.
-
-    This mode will emit
-    :attr:`pyqode.python.modes.GoToAssignmentsMode.out_of_doc` if the
-    definition can not be reached in the current document. IDE will typically
-    open a new editor tab and go to the definition.
-
+    This mode will emit the :attr:`out_of_doc` signal if the definition can
+    not be reached in the current document. IDE will typically connects a slot
+    that open a new editor tab and goes to the definition position.
     """
     #: Signal emitted when the definition cannot be reached in the current
     #: document

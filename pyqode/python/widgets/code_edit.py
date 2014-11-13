@@ -15,18 +15,38 @@ from pyqode.python import panels as pypanels
 from pyqode.python.folding import PythonFoldDetector
 
 
-class PyCodeEdit(api.CodeEdit):
+class PyCodeEditBase(api.CodeEdit):
     """
-    Extends CodeEdit with a hardcoded set of modes and panels specifics to
-    a python code editor widget.
-
-    It also implements utility methods to switch from a white style to a dark
-    style and inversely.
+    Base class for creating a python code editor widget. The base class
+    takes care of setting up the syntax highlighter.
 
     .. note:: This code editor widget use PEP 0263 to detect file encoding.
               If the opened file does not respects the PEP 0263,
               :py:func:`locale.getpreferredencoding` is used as the default
               encoding.
+    """
+
+    def __init__(self, parent=None, create_default_actions=True,
+                 color_scheme='qt'):
+        super(PyCodeEditBase, self).__init__(parent, create_default_actions)
+        self.file = pymanagers.PyFileManager(self)
+        self.modes.append(pymodes.PythonSH(
+            self.document(), color_scheme=ColorScheme(color_scheme)))
+
+    def setPlainText(self, txt, mimetype='text/x-python', encoding='utf-8'):
+        """
+        Extends QCodeEdit.setPlainText to allow user to setPlainText without
+        mimetype (since the python syntax highlighter does not use it).
+        """
+        self.syntax_highlighter.docstrings[:] = []
+        self.syntax_highlighter.import_statements[:] = []
+        super(PyCodeEditBase, self).setPlainText(txt, mimetype, encoding)
+
+
+class PyCodeEdit(PyCodeEditBase):
+    """
+    Extends PyCodeEditBase with a set of hardcoded modes and panels specifics
+    to a python code editor widget.
     """
     DARK_STYLE = 0
     LIGHT_STYLE = 1
@@ -37,9 +57,9 @@ class PyCodeEdit(api.CodeEdit):
                  interpreter=sys.executable, args=None,
                  create_default_actions=True, color_scheme='qt'):
         super(PyCodeEdit, self).__init__(
-            parent, create_default_actions=create_default_actions)
+            parent=parent, create_default_actions=create_default_actions,
+            color_scheme=color_scheme)
         self.backend.start(server_script, interpreter, args)
-        self.file = pymanagers.PyFileManager(self)
         self.setLineWrapMode(self.NoWrap)
         self.setWindowTitle("pyQode - Python Editor")
 
@@ -70,8 +90,6 @@ class PyCodeEdit(api.CodeEdit):
         self.modes.append(modes.SmartBackSpaceMode())
         self.modes.append(modes.ExtendedSelectionMode())
         # python specifics
-        self.modes.append(pymodes.PythonSH(
-            self.document(), color_scheme=ColorScheme(color_scheme)))
         self.modes.append(pymodes.PyAutoIndentMode())
         self.modes.append(pymodes.PyAutoCompleteMode())
         self.modes.append(pymodes.FrostedCheckerMode())
@@ -81,15 +99,6 @@ class PyCodeEdit(api.CodeEdit):
         self.modes.append(pymodes.GoToAssignmentsMode())
         self.modes.append(pymodes.CommentsMode())
         self.syntax_highlighter.fold_detector = PythonFoldDetector()
-
-    def setPlainText(self, txt, mimetype='text/x-python', encoding='utf-8'):
-        """
-        Extends QCodeEdit.setPlainText to allow user to setPlainText without
-        mimetype (since the python syntax highlighter does not use it).
-        """
-        self.syntax_highlighter.docstrings[:] = []
-        self.syntax_highlighter.import_statements[:] = []
-        super(PyCodeEdit, self).setPlainText(txt, mimetype, encoding)
 
     def clone(self):
         clone = self.__class__(

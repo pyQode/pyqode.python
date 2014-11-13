@@ -10,7 +10,7 @@ in your path on Windows)
 """
 # This only works with PyQt, PySide does not support the QtDesigner module
 from pyqode.python.widgets.code_edit import PyCodeEdit
-from pyqode.core.designer_plugins import WidgetPlugin
+from pyqode.core._designer_plugins import WidgetPlugin
 
 
 class PyCodeEditPlugin(WidgetPlugin):

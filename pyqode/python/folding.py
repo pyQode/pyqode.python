@@ -1,12 +1,24 @@
 """
-Contains the python code folding mode
+This module contains the python code fold detector.
 """
 import re
 from pyqode.core.api import IndentFoldDetector, TextBlockHelper, TextHelper
 
 
 class PythonFoldDetector(IndentFoldDetector):
-    single_line_docstring = re.compile(r'""".*"""')
+    """
+    Python specific fold detector.
+
+    Python is an indent based language so we use indentation for detecting
+    the outline but we discard regions with higher indentation if they do not
+    follow a trailing ':'. That way, only the real logical blocks are
+    displayed.
+
+    We also add some trickery to make import regions and docstring appear with
+    an higher fold level than they should be (in order to make them foldable).
+    """
+    #: regex which identifies a single line docstring
+    _single_line_docstring = re.compile(r'""".*"""')
 
     def _strip_comments(self, prev_block):
         txt = prev_block.text().strip() if prev_block else ''
@@ -30,7 +42,7 @@ class PythonFoldDetector(IndentFoldDetector):
                     return TextBlockHelper.get_fold_lvl(pblock)
         # fix end of docstring
         elif prev_block and prev_block.text().strip().endswith('"""'):
-            single_line = self.single_line_docstring.match(
+            single_line = self._single_line_docstring.match(
                 prev_block.text().strip())
             if single_line:
                 TextBlockHelper.set_fold_lvl(prev_block, lvl)
@@ -49,6 +61,14 @@ class PythonFoldDetector(IndentFoldDetector):
         return lvl
 
     def detect_fold_level(self, prev_block, block):
+        """
+        Perfoms fold level detection for current block (take previous block
+        into account).
+
+        :param prev_block: previous block, None if `block` is the first block.
+        :param block: block to analyse.
+        :return: block fold level
+        """
         # Python is an indent based language so use indentation for folding
         # makes sense but we restrict new regions to indentation after a ':',
         # that way only the real logical blocks are displayed.

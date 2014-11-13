@@ -18,15 +18,15 @@ from .pep8_checker import PEP8CheckerMode
 
 
 __all__ = [
-    'PyAutoCompleteMode',
-    'PyAutoIndentMode',
+    'Assignment',
     'CalltipsMode',
     'CommentsMode',
     'DocumentAnalyserMode',
     'FrostedCheckerMode',
-    'Assignment',
     'GoToAssignmentsMode',
+    'PEP8CheckerMode',
+    'PyAutoCompleteMode',
+    'PyAutoIndentMode',
     'PyIndenterMode',
     'PythonSH',
-    'PEP8CheckerMode',
 ]

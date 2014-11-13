@@ -5,7 +5,7 @@ This scripts configures the test suite. We do two things:
     - setup the logging module
     - create ONE SINGLE INSTANCE of QApplication:
       this implies that you must use **QApplication.instance** in your
-      test scripts.
+      test scripts (or the app fixture).
 """
 import logging
 import os

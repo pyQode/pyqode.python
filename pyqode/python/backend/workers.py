@@ -136,8 +136,11 @@ def _extract_def(d):
     d_line, d_column = d.start_pos
     # use full name for import type
     if d.type == 'function':
-        params = [p.name for p in d.params]
-        name = d.name + '(' + ', '.join(params) + ')'
+        try:
+            params = [p.name for p in d.params]
+            name = d.name + '(' + ', '.join(params) + ')'
+        except AttributeError:
+            name = d.name
     else:
         name = d.name
     definition = Definition(name, icon_from_typename(d.name, d.type),
