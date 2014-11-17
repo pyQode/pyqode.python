@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/colin/dev/pyqode/python/examples/pynotepad/forms/main_window.ui'
 #
-# Created: Tue Nov  4 11:20:06 2014
+# Created: Mon Nov 17 08:49:07 2014
 #      by: PyQt5 UI code generator 5.3.2
 #
 # WARNING! All changes made in this file will be lost!
