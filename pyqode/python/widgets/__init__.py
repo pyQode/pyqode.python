@@ -9,6 +9,7 @@ from .code_edit import PyCodeEditBase, PyCodeEdit
 from .interactive import PyInteractiveConsole
 from .outline import PyOutlineTreeWidget
 
+
 __all__ = [
     'PyCodeEdit',
     'PyCodeEditBase',
