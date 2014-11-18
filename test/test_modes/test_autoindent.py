@@ -91,14 +91,11 @@ class Case:
 def collect_cases():
     cases = []
     for file_path in sorted(glob.glob('auto_indent_cases/*.ctx')):
-        # if '44' in file_path:
         cases.append(Case(file_path))
     return cases
 
 
 @pytest.mark.parametrize('test_case', collect_cases())
 def test_auto_indent(editor, test_case):
-    QtWidgets.QApplication.setActiveWindow(editor)
-    editor.setFocus()
     test_case.run(editor)
 

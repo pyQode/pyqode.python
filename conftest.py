@@ -8,7 +8,6 @@ This scripts configures the test suite. We do two things:
       test scripts (or the app fixture).
 """
 import logging
-import os
 import sys
 import pytest
 
@@ -19,22 +18,6 @@ try:
 except ImportError:
     pass
 
-
-# -------------------
-# Setup runtest
-# -------------------
-def pytest_runtest_setup(item):
-    """
-    Display test method name in active window title bar
-    """
-    global _widget
-    module, line, method = item.location
-    module = module.replace('.py', '.')
-    title = module + method
-    widgets = QApplication.instance().topLevelWidgets()
-    for w in widgets:
-        w.setWindowTitle(title)
-    logging.info("------------------- %s -------------------", title)
 
 # -------------------
 # Setup logging
@@ -61,21 +44,21 @@ def app(request):
     return app
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture()
 def editor(request):
     global _app, _widget
-    from pyqode.core import modes
+    from pyqode.core import modes, cache
     from pyqode.python.widgets.code_edit import PyCodeEdit
-    from pyqode.python.backend import server
+    from pyqode.python.panels import SymbolBrowserPanel
     from pyqode.qt.QtTest import QTest
 
-    logging.info('################ setup session editor ################')
+    cache.Cache().clear()
 
     _widget = PyCodeEdit()
-    # _widget.backend.start(server.__file__)
+    _widget.panels.append(SymbolBrowserPanel(),
+                          SymbolBrowserPanel.Position.TOP)
     _widget.resize(800, 600)
-    _widget.show()
-    _app.setActiveWindow(_widget)
+
     while not _widget.backend.connected:
         QTest.qWait(100)
 
@@ -84,13 +67,8 @@ def editor(request):
 
     def fin():
         global _widget
-        logging.info('################ teardown session editor ###############'
-                     '#')
-        _widget.backend.stop()
-        while _widget.backend.connected:
-            QTest.qWait(100)
+        _widget.close()
         del _widget
 
     request.addfinalizer(fin)
-
     return _widget

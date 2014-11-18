@@ -5,14 +5,13 @@ from pyqode.core.api import TextHelper
 from pyqode.qt import QtCore, QtWidgets
 from pyqode.qt.QtTest import QTest
 from pyqode.python import modes as pymodes
-from test.helpers import preserve_editor_config, editor_open
+from test.helpers import editor_open
 
 
 def get_mode(editor):
     return editor.modes.get(pymodes.GoToAssignmentsMode)
 
 
-@preserve_editor_config
 @editor_open(__file__)
 def test_enabled(editor):
     mode = get_mode(editor)
@@ -21,7 +20,6 @@ def test_enabled(editor):
     mode.enabled = True
 
 
-@preserve_editor_config
 @editor_open(__file__)
 def test_goto_variable(editor):
     editor.clear()
@@ -42,7 +40,6 @@ def _on_out_of_doc(*args):
     out = True
 
 
-@preserve_editor_config
 @editor_open(__file__)
 def test_goto_out_of_doc(editor):
     global out
@@ -72,7 +69,6 @@ def accept_dlg():
             QTest.keyPress(w, QtCore.Qt.Key_Tab)
             QTest.keyPress(w, QtCore.Qt.Key_Return)
 
-@preserve_editor_config
 @editor_open(__file__)
 def test_multiple_results(editor):
     global flg_multi
@@ -89,7 +85,6 @@ def test_multiple_results(editor):
     assert flg_multi is True
 
 
-@preserve_editor_config
 @editor_open(__file__)
 def test_make_unique(editor):
     seq = ['a', 'b', 'c', 'a']

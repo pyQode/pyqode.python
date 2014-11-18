@@ -5,13 +5,13 @@ from pyqode.qt.QtTest import QTest
 from pyqode.core.api import TextHelper
 from pyqode.python import modes as pymodes
 
-from ..helpers import editor_open, preserve_editor_config
+from ..helpers import editor_open
 
 
 def get_mode(editor):
     return editor.modes.get(pymodes.CommentsMode)
 
-@preserve_editor_config
+
 @editor_open(__file__)
 def test_enabled(editor):
     mode = get_mode(editor)
@@ -20,7 +20,6 @@ def test_enabled(editor):
     mode.enabled = True
 
 
-@preserve_editor_config
 @editor_open(__file__)
 def test_comment_single(editor):
     editor.setPlainText('import os')
@@ -34,7 +33,6 @@ def test_comment_single(editor):
     assert TextHelper(editor).current_line_nbr() == 0
 
 
-@preserve_editor_config
 @editor_open(__file__)
 def test_uncomment_single(editor):
     editor.clear()
@@ -54,7 +52,6 @@ def test_uncomment_single(editor):
     assert editor.toPlainText() == '# #import os\n'
 
 
-@preserve_editor_config
 @editor_open(__file__)
 def test_comment_selection(editor):
     editor.clear()
