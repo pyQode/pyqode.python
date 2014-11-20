@@ -65,7 +65,7 @@ class DocumentAnalyserMode(Mode, QtCore.QObject):
             self.results = []
             self.document_changed.emit()
 
-    def _on_results_available(self, status, results):
+    def _on_results_available(self, results):
         if results:
             results = [Definition().from_dict(ddict) for ddict in results]
         self.results = results

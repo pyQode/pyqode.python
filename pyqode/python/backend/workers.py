@@ -43,8 +43,8 @@ def calltips(request_data):
                    sig.bracket_start, column)
         # todo: add support for multiple signatures, for that we need a custom
         # widget for showing calltips.
-        return True, results
-    return False, []
+        return results
+    return []
 
 
 def goto_assignments(request_data):
@@ -66,7 +66,7 @@ def goto_assignments(request_data):
         ret_val = [(d.module_path, d.line - 1 if d.line else None,
                     d.column, d.full_name)
                    for d in definitions]
-        return True, ret_val
+        return ret_val
 
 
 _old_definitions = {}
@@ -171,11 +171,9 @@ def defined_names(request_data):
         definition = _extract_def(d)
         if d.type != 'import':
             ret_val.append(definition)
-
     _logger().debug("Document structure changed %s")
-    status = True
     ret_val = [d.to_dict() for d in ret_val]
-    return status, ret_val
+    return ret_val
 
 
 def quick_doc(request_data):
@@ -195,7 +193,7 @@ def quick_doc(request_data):
         return []
     else:
         ret_val = [d.doc for d in definitions]
-        return True, ret_val
+        return ret_val
 
 
 def run_pep8(request_data):
@@ -218,12 +216,12 @@ def run_pep8(request_data):
     except Exception:
         _logger().exception('Failed to run PEP8 analysis with data=%r'
                             % request_data)
-        return False, []
+        return []
     else:
         messages = []
         for line_number, offset, code, text, doc in results:
             messages.append(('[PEP8] %s' % text, WARNING, line_number - 1))
-        return True, messages
+        return messages
 
 
 def run_frosted(request_data):
@@ -241,7 +239,7 @@ def run_frosted(request_data):
     path = request_data['path']
     encoding = request_data['encoding']
     if not code or not encoding or not path:
-        status = False
+        return []
     else:
         # First, compile into an AST and handle syntax errors.
         try:
@@ -270,9 +268,8 @@ def run_frosted(request_data):
                 status = (WARNING if warning.type.error_code.startswith('W')
                           else ERROR)
                 ret_val.append((msg, status, line))
-        status = True
     prev_results = ret_val
-    return status, ret_val
+    return ret_val
 
 
 def icon_from_typename(name, icon_type):

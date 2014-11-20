@@ -91,35 +91,35 @@ class QuickDocPanel(Panel):
         self.editor.backend.send_request(
             quick_doc, request_data, on_receive=self._on_results_available)
 
-    def _on_results_available(self, status, results):
+    def _on_results_available(self, results):
         self._reset_stylesheet()
-        if status:
-            self.setVisible(True)
-            if results:
-                if len(results) and results[0] != "":
-                    string = "\n\n".join(results)
-                    string = publish_parts(
-                        string, writer_name='html',
-                        settings_overrides={'output_encoding': 'unicode'})[
-                            'html_body']
-                    string = string.replace('colspan="2"', 'colspan="0"')
-                    string = string.replace("<th ", '<th align="left" ')
-                    string = string.replace(
-                        '</tr>\n<tr class="field"><td>&nbsp;</td>', '')
-                    if string:
-                        skip_error_msg = False
-                        lines = []
-                        for l in string.splitlines():
-                            if (l.startswith('<div class="system-message"') or
-                                    l.startswith(
-                                        '<div class="last system-message"')):
-                                skip_error_msg = True
-                                continue
-                            if skip_error_msg:
-                                if l.endswith('</div>'):
-                                    skip_error_msg = False
-                            else:
-                                lines.append(l)
-                        self.text_edit.setText('\n'.join(lines))
-                        return
-            self.text_edit.setText("Documentation not found")
+        self.setVisible(True)
+        if results:
+            if len(results) and results[0] != "":
+                string = "\n\n".join(results)
+                string = publish_parts(
+                    string, writer_name='html',
+                    settings_overrides={'output_encoding': 'unicode'})[
+                        'html_body']
+                string = string.replace('colspan="2"', 'colspan="0"')
+                string = string.replace("<th ", '<th align="left" ')
+                string = string.replace(
+                    '</tr>\n<tr class="field"><td>&nbsp;</td>', '')
+                if string:
+                    skip_error_msg = False
+                    lines = []
+                    for l in string.splitlines():
+                        if (l.startswith('<div class="system-message"') or
+                                l.startswith(
+                                    '<div class="last system-message"')):
+                            skip_error_msg = True
+                            continue
+                        if skip_error_msg:
+                            if l.endswith('</div>'):
+                                skip_error_msg = False
+                        else:
+                            lines.append(l)
+                    self.text_edit.setText('\n'.join(lines))
+                    return
+            else:
+                self.text_edit.setText("Documentation not found")

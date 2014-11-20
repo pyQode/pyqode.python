@@ -61,17 +61,16 @@ class CalltipsMode(Mode, QtCore.QObject):
                 {'code': source, 'line': line, 'column': col, 'path': None,
                  'encoding': encoding}, on_receive=self._on_results_available)
 
-    def _on_results_available(self, status, results):
-        if status:
-            _logger().debug("Calltip request finished")
-            self.__requestCnt -= 1
-            if results:
-                call = {"call.module.name": results[0],
-                        "call.call_name": results[1],
-                        "call.params": results[2],
-                        "call.index": results[3],
-                        "call.bracket_start": results[4]}
-                self.tooltipDisplayRequested.emit(call, results[5])
+    def _on_results_available(self, results):
+        _logger().debug("Calltip request finished")
+        self.__requestCnt -= 1
+        if results:
+            call = {"call.module.name": results[0],
+                    "call.call_name": results[1],
+                    "call.params": results[2],
+                    "call.index": results[3],
+                    "call.bracket_start": results[4]}
+            self.tooltipDisplayRequested.emit(call, results[5])
 
     def _is_last_chard_end_of_word(self):
         try:

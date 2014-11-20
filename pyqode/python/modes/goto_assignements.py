@@ -154,7 +154,7 @@ class GoToAssignmentsMode(WordClickMode):
             return True
         return False
 
-    def _on_results_available(self, status, definitions):
+    def _on_results_available(self, definitions):
         _logger().debug("Got %r" % definitions)
         definitions = [Assignment(path, line, col, full_name)
                        for path, line, col, full_name in definitions]
