@@ -17,8 +17,7 @@ def test_calltips():
         'column': len('open('),
         'path': None
     }
-    status, results = workers.calltips(data)
-    assert status is True
+    results = workers.calltips(data)
     assert len(results) == 6
 
 
@@ -29,8 +28,7 @@ def test_calltips_with_closing_paren():
         'column': len('open()'),
         'path': None
     }
-    status, results = workers.calltips(data)
-    assert status is False
+    results = workers.calltips(data)
     assert len(results) == 0
 
 
@@ -41,8 +39,7 @@ def test_goto_assignments():
         'column': len('foo = 10;print(foo)') - 1,
         'path': None
     }
-    status, results = workers.goto_assignments(data)
-    assert status is True
+    results = workers.goto_assignments(data)
     assert len(results) == 1
     definition = results[0]
     module, line, column, full_name = definition
@@ -55,8 +52,7 @@ def test_goto_assignments():
         'column': len('foo = 10;print(foo)'),
         'path': None
     }
-    status, results = workers.goto_assignments(data)
-    assert status is True
+    results = workers.goto_assignments(data)
     assert len(results) == 0
 
 
@@ -65,8 +61,7 @@ def test_defined_names():
     filename = __file__
     with open(filename, 'r', encoding='utf-8') as file:
         code = file.read()
-    status, results = workers.defined_names({'code': code, 'path': filename})
-    assert status is True
+    results = workers.defined_names({'code': code, 'path': filename})
     assert len(results)
     definitions = []
     for i, definition in enumerate(results):
@@ -79,8 +74,7 @@ def test_defined_names():
     # now that the code changed, defined_names should return
     # (True, [xxx, yyy, ...])
     code += "\ndef foo():\n    print('bar')"
-    status, results = workers.defined_names({'code': code, 'path': filename})
-    assert status is True
+    results = workers.defined_names({'code': code, 'path': filename})
     assert len(results)
 
 
@@ -91,50 +85,43 @@ def test_quick_doc():
         'column': 1,
         'path': None
     }
-    status, results = workers.quick_doc(data)
-    assert status is True
+    results = workers.quick_doc(data)
     assert len(results) == 1
     assert isinstance(results[0], str)
 
 
 def test_run_pep8():
-    status, messages = workers.run_pep8(
+    messages = workers.run_pep8(
         {'code': 'print("foo")\n', 'path': None})
-    assert status is True
     assert len(messages) == 0
 
-    status, messages = workers.run_pep8(
+    messages = workers.run_pep8(
         {'code': 'print("foo"); print("bar")\n', 'path': None})
-    assert status is True
     assert len(messages) == 1
     assert messages[0][2] == 0
 
 
 def test_run_frosted():
-    status, messages = workers.run_frosted(
+    messages = workers.run_frosted(
         {'code': None, 'path': __file__, 'encoding': 'utf-8'})
-    assert status is False
     assert len(messages) == 0
 
     # OK
-    status, messages = workers.run_frosted(
+    messages = workers.run_frosted(
         {'code': 'print("foo")\n', 'path': __file__, 'encoding': 'utf-8'})
-    assert status is True
     assert len(messages) == 0
 
     # Syntax error
-    status, messages = workers.run_frosted(
+    messages = workers.run_frosted(
         {'code': 'print("foo\n', 'path': __file__,
          'encoding': 'utf-8'})
-    assert status is True
     assert len(messages) == 1
     assert messages[0][2] == 0
 
     # unused import
-    status, messages = workers.run_frosted(
+    messages = workers.run_frosted(
         {'code': 'import sys; print("foo");\n', 'path': __file__,
          'encoding': 'utf-8'})
-    assert status is True
     assert len(messages) == 1
     msg, status, line = messages[0]
     assert 'sys imported but unused' in msg.lower()
