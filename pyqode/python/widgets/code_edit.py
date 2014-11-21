@@ -106,3 +106,6 @@ class PyCodeEdit(PyCodeEditBase):
             interpreter=self.backend.interpreter, args=self.backend.args,
             color_scheme=self.syntax_highlighter.color_scheme.name)
         return clone
+
+    def __repr__(self):
+        return 'PyCodeEdit(path=%r)' % self.file.path
