@@ -121,6 +121,10 @@ class PyAutoIndentMode(AutoIndentMode):
         return len(open_p), len(closed_p), open_p, closed_p
 
     def _between_paren(self, tc, col):
+        try:
+            self.editor.modes.get('SymbolMatcherMode')
+        except KeyError:
+            return False
         block = tc.block()
         nb_open = nb_closed = 0
         while block.isValid() and block.text().strip():
