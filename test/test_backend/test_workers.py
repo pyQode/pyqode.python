@@ -2,6 +2,8 @@
 Test all workers in pyqode.python.backend.workers.
 """
 import sys
+from pyqode.core.modes import CheckerMessages
+
 try:
     from future.builtins import str, open
 except:
@@ -117,6 +119,7 @@ def test_run_frosted():
          'encoding': 'utf-8'})
     assert len(messages) == 1
     assert messages[0][2] == 0
+    assert messages[0][1] == CheckerMessages.ERROR
 
     # unused import
     messages = workers.run_frosted(
