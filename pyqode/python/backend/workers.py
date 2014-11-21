@@ -5,6 +5,7 @@ Contains the worker classes/functions executed on the server side.
 """
 import logging
 import os
+import tempfile
 import jedi
 
 
@@ -238,7 +239,11 @@ def run_frosted(request_data):
     code = request_data['code']
     path = request_data['path']
     encoding = request_data['encoding']
-    if not code or not encoding or not path:
+    if not encoding:
+        encoding = 'utf-8'
+    if not path:
+        path = os.path.join(tempfile.gettempdir(), 'temp.py')
+    if not code:
         return []
     else:
         # First, compile into an AST and handle syntax errors.
