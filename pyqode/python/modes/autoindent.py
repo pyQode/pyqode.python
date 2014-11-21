@@ -219,7 +219,6 @@ class PyAutoIndentMode(AutoIndentMode):
         tc2 = QTextCursor(tc)
         tc2.setPosition(pos)
         import sys
-        print(char, mapping[char], sys.stderr)
         ol, oc = self.editor.modes.get(SymbolMatcherMode).symbol_pos(
             tc2, OPEN, mapping[char])
         cl, cc = self.editor.modes.get(SymbolMatcherMode).symbol_pos(
