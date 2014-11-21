@@ -51,6 +51,10 @@ class CalltipsMode(Mode, QtCore.QObject):
                 lines[line] = l[:-1]
             source = "\n".join(lines)
             self._request_calltip(source, line, col, fn, encoding)
+        elif (event.key() in [
+                QtCore.Qt.Key_ParenRight,
+                QtCore.Qt.Key_Backspace, QtCore.Qt.Key_Delete]):
+            QtWidgets.QToolTip.hideText()
 
     def _request_calltip(self, source, line, col, fn, encoding):
         if self.__requestCnt == 0:
