@@ -63,6 +63,8 @@ def make_python_patterns(additional_keywords=[], additional_builtins=[]):
     kw = r"\b" + any("keyword", kwlist + additional_keywords) + r"\b"
     builtinlist = [str(name) for name in dir(builtins)
                    if not name.startswith('_')] + additional_builtins
+    for v in ['None', 'True', 'False']:
+        builtinlist.remove(v)
     builtin = r"([^.'\"\\#]\b|^)" + any("builtin", builtinlist) + r"\b"
     builtin_fct = any("builtin_fct", [r'_{2}[a-zA-Z_]*_{2}'])
     comment = any("comment", [r"#[^\n]*"])
@@ -173,7 +175,7 @@ class PythonSH(BaseSH):
                         # trick to highlight __init__, __add__ and so on with
                         # builtin color
                         self.setFormat(start, end - start,
-                                       self.formats["builtin"])
+                                       self.formats["constant"])
                     else:
                         if '"""' in value and key != 'comment':
                             # highlight docstring with a different color
