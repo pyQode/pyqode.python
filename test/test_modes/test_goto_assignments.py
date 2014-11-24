@@ -28,7 +28,7 @@ def test_goto_variable(editor):
     mode = get_mode(editor)
     TextHelper(editor).goto_line(2, len('print(a)') - 2)
     mode.request_goto()
-    QTest.qWait(1000)
+    QTest.qWait(5000)
     assert TextHelper(editor).current_line_nbr() == 0
 
 
@@ -52,7 +52,7 @@ def test_goto_out_of_doc(editor):
     mode.out_of_doc.connect(_on_out_of_doc)
     assert out is False
     mode.request_goto()
-    QTest.qWait(1000)
+    QTest.qWait(5000)
     assert out is True
 
 
