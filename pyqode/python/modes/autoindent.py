@@ -275,7 +275,10 @@ class PyAutoIndentMode(AutoIndentMode):
         # breaking string
         if next_char in ['"', "'"]:
             tc.movePosition(tc.Left)
-        if self._helper.is_comment_or_string(tc, formats=['string']):
+        is_string = self._helper.is_comment_or_string(tc, formats=['string'])
+        if next_char in ['"', "'"]:
+            tc.movePosition(tc.Right)
+        if is_string:
             trav = QTextCursor(tc)
             while self._helper.is_comment_or_string(
                     trav, formats=['string']):

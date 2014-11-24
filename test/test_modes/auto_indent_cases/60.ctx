@@ -1,0 +1,4 @@
+logging.debug(|'Value: %d', 4)
+->
+logging.debug(
+    |'Value: %d', 4)
