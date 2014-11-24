@@ -47,5 +47,5 @@ class PyAutoCompleteMode(AutoCompleteMode):
             self._handle_fct_def()
         else:
             line = TextHelper(self.editor).current_line_text().strip()
-            if line != '"""' and line != "'''":
+            if not line.endswith(('"""', "'''")):
                 super(PyAutoCompleteMode, self)._on_post_key_pressed(event)
