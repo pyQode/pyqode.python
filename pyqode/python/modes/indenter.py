@@ -44,8 +44,6 @@ class PyIndenterMode(IndenterMode):
         else:
             cursor = self.editor.textCursor()
             assert isinstance(cursor, QtGui.QTextCursor)
-            if not cursor.hasSelection():
-                cursor.select(cursor.LineUnderCursor)
             if cursor.hasSelection():
                 self.indent_selection(cursor)
             else:
