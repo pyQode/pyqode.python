@@ -30,9 +30,8 @@ class CalltipsMode(Mode, QtCore.QObject):
         self.__requestCnt = 0
 
     def on_state_changed(self, state):
-        if "PYQODE_NO_COMPLETION_SERVER" not in os.environ:
-            if state:
-                self.editor.key_released.connect(self._on_key_released)
+        if state:
+            self.editor.key_released.connect(self._on_key_released)
 
     def _on_key_released(self, event):
         if (event.key() == QtCore.Qt.Key_ParenLeft or
@@ -53,6 +52,7 @@ class CalltipsMode(Mode, QtCore.QObject):
             self._request_calltip(source, line, col, fn, encoding)
         elif (event.key() in [
                 QtCore.Qt.Key_ParenRight,
+                QtCore.Qt.Key_Return,
                 QtCore.Qt.Key_Backspace, QtCore.Qt.Key_Delete]):
             QtWidgets.QToolTip.hideText()
 
