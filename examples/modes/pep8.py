@@ -1,19 +1,15 @@
 """
-Minimal example showing the use of the FrostedCheckerMode.
-
-We use Frosted (a fork of pyFlakes) that provides an easier API for running
-pyFlakes on strings (instead of files).
+Minimal example showing the use of the PEP8CheckerMode.
 """
 import logging
-from pyqode.core.panels import CheckerPanel
-
 logging.basicConfig(level=logging.DEBUG)
 import sys
 
 from pyqode.qt import QtWidgets
 from pyqode.core.api import CodeEdit
+from pyqode.core.panels import CheckerPanel
 from pyqode.python.backend import server
-from pyqode.python.modes import FrostedCheckerMode, PythonSH
+from pyqode.python.modes import PEP8CheckerMode, PythonSH
 
 
 if __name__ == '__main__':
@@ -21,11 +17,12 @@ if __name__ == '__main__':
     editor = CodeEdit()
     editor.backend.start(server.__file__)
     editor.resize(800, 600)
-    print(editor.modes.append(FrostedCheckerMode()))
+    print(editor.modes.append(PEP8CheckerMode()))
     editor.modes.append(PythonSH(editor.document()))  # looks better
     editor.panels.append(CheckerPanel())
     editor.show()
-    editor.setPlainText('print("foo\n', 'text/x-python', 'utf-8')
+    editor.setPlainText('class Foo:\n\n\ndef __init__(self):\n\npass',
+                        'text/x-python', 'utf-8')
     app.exec_()
     editor.close()
     del editor
