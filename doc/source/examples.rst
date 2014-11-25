@@ -29,6 +29,91 @@ Basic example that show you how to build a custom python code editor widget
 .. literalinclude:: /../../examples/custom.py
    :linenos:
 
+Modes
+-----
+
+Auto complete
++++++++++++++
+
+.. literalinclude:: /../../examples/modes/autocomplete.py
+   :linenos:
+
+Auto indent
++++++++++++
+
+.. literalinclude:: /../../examples/modes/autoindent.py
+   :linenos:
+
+Call tips
++++++++++
+
+.. literalinclude:: /../../examples/modes/calltips.py
+   :linenos:
+
+Comment/Uncomment
++++++++++++++++++
+
+.. literalinclude:: /../../examples/modes/comments.py
+   :linenos:
+
+Go to assignment
+++++++++++++++++
+
+.. literalinclude:: /../../examples/modes/goto.py
+   :linenos:
+
+PEP8 linter
++++++++++++
+
+.. literalinclude:: /../../examples/modes/pep8.py
+   :linenos:
+
+PyFlakes linter
++++++++++++++++
+
+.. literalinclude:: /../../examples/modes/pyflakes.py
+   :linenos:
+
+Syntax highlighter
+++++++++++++++++++
+
+.. literalinclude:: /../../examples/modes/syntax_highlighter.py
+   :linenos:
+
+
+Panels
+------
+
+Documentation
++++++++++++++
+
+.. literalinclude:: /../../examples/panels/quick_doc.py
+   :linenos:
+
+Symbol browser
+++++++++++++++
+
+.. literalinclude:: /../../examples/panels/symbol_browser.py
+   :linenos:
+
+Widgets
+-------
+
+Interactive console
++++++++++++++++++++
+
+.. literalinclude:: /../../examples/widgets/interactive_console.py
+   :linenos:
+
+.. literalinclude:: /../../examples/widgets/interactive_process.py
+   :linenos:
+
+Outline
++++++++
+
+.. literalinclude:: /../../examples/widgets/outline.py
+   :linenos:
+
 PyNotepad
 ---------
 
