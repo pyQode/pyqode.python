@@ -84,12 +84,17 @@ class PyOutlineTreeWidget(QtWidgets.QTreeWidget):
             return
         data = block.userData()
         if data is not None:
-            item_state = not data.tree_item.isExpanded()
-            if item_state != state:
-                if state:
-                    self.collapseItem(data.tree_item)
-                else:
-                    self.expandItem(data.tree_item)
+            try:
+                item_state = not data.tree_item.isExpanded()
+                if item_state != state:
+                    if state:
+                        self.collapseItem(data.tree_item)
+                    else:
+                        self.expandItem(data.tree_item)
+            except AttributeError:
+                # a block that is not represented in the tree view has
+                # folded/unfolded, just ignore it
+                pass
 
     def _on_changed(self):
         """
