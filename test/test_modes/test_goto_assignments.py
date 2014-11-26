@@ -77,11 +77,11 @@ def test_multiple_results(editor):
     editor.setPlainText(code)
     mode = get_mode(editor)
     TextHelper(editor).goto_line(1, 4)
-    QTest.qWait(1000)
+    QTest.qWait(5000)
     mode.request_goto()
     assert flg_multi is False
     QtCore.QTimer.singleShot(1000, accept_dlg)
-    QTest.qWait(1000)
+    QTest.qWait(5000)
     assert flg_multi is True
 
 
