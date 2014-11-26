@@ -30,8 +30,6 @@ class PyCodeEditBase(api.CodeEdit):
                  color_scheme='qt'):
         super(PyCodeEditBase, self).__init__(parent, create_default_actions)
         self.file = pymanagers.PyFileManager(self)
-        self.modes.append(pymodes.PythonSH(
-            self.document(), color_scheme=ColorScheme(color_scheme)))
 
     def setPlainText(self, txt, mimetype='text/x-python', encoding='utf-8'):
         """
@@ -98,6 +96,8 @@ class PyCodeEdit(PyCodeEditBase):
         self.modes.append(pymodes.PyIndenterMode())
         self.modes.append(pymodes.GoToAssignmentsMode())
         self.modes.append(pymodes.CommentsMode())
+        self.modes.append(pymodes.PythonSH(
+            self.document(), color_scheme=ColorScheme(color_scheme)))
         self.syntax_highlighter.fold_detector = PythonFoldDetector()
 
     def clone(self):
