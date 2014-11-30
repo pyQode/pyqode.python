@@ -4,7 +4,7 @@
 This setup script packages pyqode.python
 """
 from setuptools import setup, find_packages
-
+from pyqode.python import __version__
 
 #
 # add ``build_ui command`` (optional, for development only)
@@ -17,15 +17,6 @@ try:
     cmdclass = {'build_ui': build_ui}
 except ImportError:
     cmdclass = {}
-
-
-def read_version():
-    with open("pyqode/python/__init__.py") as f:
-        lines = f.read().splitlines()
-        for l in lines:
-            if "__version__" in l:
-                return l.split("=")[1].strip().replace('"', '').replace(
-                    "'", '')
 
 
 def readme():
@@ -45,7 +36,7 @@ requirements = [
 setup(
     name='pyqode.python',
     namespace_packages=['pyqode'],
-    version=read_version(),
+    version=__version__,
     packages=[p for p in find_packages() if 'test' not in p],
     keywords=["CodeEdit PySide PyQt code editor widget python"],
     package_dir={'pyqode': 'pyqode'},
@@ -72,6 +63,7 @@ setup(
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3.2',
         'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.4',
         'Topic :: Software Development :: Libraries :: Application Frameworks',
         'Topic :: Software Development :: Widget Sets',
         'Topic :: Text Editors :: Integrated Development Environments (IDE)'

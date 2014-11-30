@@ -69,7 +69,7 @@ Installation
 
 ::
 
-    $ pip install pyqode.python
+    $ pip install pyqode.python --upgrade
 
 
 Testing

@@ -1,3 +1,28 @@
+Changelog
+=========
+
+2.4.0
+-----
+
+New features:
+
+- add outline tree view
+- improvements to the syntax highlighter: make use of the new formats types
+- add more examples
+
+Fixed bugs:
+
+- fix default encoding on windows
+- fix lost of selection after unindent
+- fix file path regex for exception traceback highlighting in the python
+  interactive console
+- fix some bugs with pyside
+- fix some bugs with python 2
+- fix some bugs with auto indent mode
+- fix some bugs with auto completes of triple quotes (both single and double
+  quotes)
+
+
 2.3.0
 -----
 
