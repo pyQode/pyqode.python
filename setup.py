@@ -26,8 +26,8 @@ def readme():
 # get requirements
 requirements = [
     'pyqode.qt',
-    'pyqode.core>=2.3.0',
-    'jedi>=0.8',
+    'pyqode.core',
+    'jedi',
     'pep8',
     'frosted',
     'docutils'
