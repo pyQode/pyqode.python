@@ -1,0 +1,4 @@
+gterm.RpcHandler(rpc.FCTID_RC_BONUS_CROWNS_SET_STATE,|)
+->
+gterm.RpcHandler(rpc.FCTID_RC_BONUS_CROWNS_SET_STATE,
+                 |)
