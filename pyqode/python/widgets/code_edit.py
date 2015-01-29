@@ -26,8 +26,7 @@ class PyCodeEditBase(api.CodeEdit):
               encoding.
     """
 
-    def __init__(self, parent=None, create_default_actions=True,
-                 color_scheme='qt'):
+    def __init__(self, parent=None, create_default_actions=True):
         super(PyCodeEditBase, self).__init__(parent, create_default_actions)
         self.file = pymanagers.PyFileManager(self)
 
@@ -53,11 +52,12 @@ class PyCodeEdit(PyCodeEditBase):
 
     def __init__(self, parent=None, server_script=server.__file__,
                  interpreter=sys.executable, args=None,
-                 create_default_actions=True, color_scheme='qt'):
+                 create_default_actions=True, color_scheme='qt',
+                 reuse_backend=False):
         super(PyCodeEdit, self).__init__(
-            parent=parent, create_default_actions=create_default_actions,
-            color_scheme=color_scheme)
-        self.backend.start(server_script, interpreter, args)
+            parent=parent, create_default_actions=create_default_actions)
+        self.backend.start(server_script, interpreter, args,
+                           reuse=reuse_backend)
         self.setLineWrapMode(self.NoWrap)
         self.setWindowTitle("pyQode - Python Editor")
 
