@@ -87,6 +87,7 @@ class PyCodeEdit(PyCodeEditBase):
         self.modes.append(modes.OccurrencesHighlighterMode())
         self.modes.append(modes.SmartBackSpaceMode())
         self.modes.append(modes.ExtendedSelectionMode())
+        self.modes.append(modes.CaseConverterMode())
         # python specifics
         self.modes.append(pymodes.PyAutoIndentMode())
         self.modes.append(pymodes.PyAutoCompleteMode())
