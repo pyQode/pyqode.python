@@ -1,6 +1,22 @@
 Changelog
 =========
 
+2.4.1
+-----
+
+New features:
+
+- implement pyQode/pyQode#21
+- add CaseConverterMode to PyCodeEdit
+
+Fixed bugs:
+
+- fix buffering issue with PyInteractiveConsole, now ``PYTHONBUFFERED`` is always set to 1.
+- fix auto-indent bug: if a parentheses is closed but the cursor if after a "," and just before ")"
+  indentation was not right. The solution is to check for ',' and ignore whitespaces before the
+  previous character.
+
+
 2.4.0
 -----
 
