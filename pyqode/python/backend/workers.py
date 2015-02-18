@@ -210,7 +210,7 @@ def run_pep8(request_data):
     path = request_data['path']
     # setup our custom style guide with our custom checker which returns a list
     # of strings instread of spitting the results at stdout
-    pep8style = pep8.StyleGuide(parse_argv=False, config_file=True,
+    pep8style = pep8.StyleGuide(parse_argv=False, config_file='',
                                 checker_class=CustomChecker)
     try:
         results = pep8style.input_file(path, lines=code.splitlines(True))
