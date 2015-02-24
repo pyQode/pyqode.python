@@ -1,7 +1,7 @@
 # This foo class is here so that the document analyser got nodes with children
 # DO NOT REMOVE IT
 from pyqode.qt.QtTest import QTest
-from pyqode.python import modes as pymodes
+from pyqode.core import modes
 from ..helpers import editor_open
 
 
@@ -11,7 +11,7 @@ class Foo:
 
 
 def get_mode(editor):
-    return editor.modes.get(pymodes.DocumentAnalyserMode)
+    return editor.modes.get(modes.OutlineMode)
 
 
 def test_enabled(editor):
