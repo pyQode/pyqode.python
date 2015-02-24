@@ -129,7 +129,7 @@
    <widget class="QWidget" name="dockWidgetContents_2">
     <layout class="QGridLayout" name="gridLayout_3">
      <item row="0" column="0">
-      <widget class="PyOutlineTreeWidget" name="widgetOutline" native="true"/>
+      <widget class="OutlineTreeWidget" name="widgetOutline" native="true"/>
      </item>
     </layout>
    </widget>
@@ -265,9 +265,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>PyOutlineTreeWidget</class>
+   <class>OutlineTreeWidget</class>
    <extends>QWidget</extends>
-   <header>pyqode.python.widgets.outline</header>
+   <header>pyqode.core.widgets.outline</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

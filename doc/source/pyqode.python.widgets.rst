@@ -30,11 +30,3 @@ PyInteractiveConsole
     :members:
     :undoc-members:
     :show-inheritance:
-
-PyOutlineTreeWidget
-+++++++++++++++++++
-
-.. autoclass:: pyqode.python.widgets.PyOutlineTreeWidget
-    :members:
-    :undoc-members:
-    :show-inheritance:

@@ -8,7 +8,8 @@ be installed on the editor widget otherwise no data will be displayed.
 import sys
 from pyqode.qt import QtCore, QtWidgets
 from pyqode.core.api import code_edit
-from pyqode.python.widgets import PyCodeEdit, PyOutlineTreeWidget
+from pyqode.core.widgets import OutlineTreeWidget
+from pyqode.python.widgets import PyCodeEdit
 
 
 app = QtWidgets.QApplication(sys.argv)
@@ -17,7 +18,7 @@ editor = PyCodeEdit()
 editor.file.open(code_edit.__file__)
 window.setCentralWidget(editor)
 window.resize(800, 600)
-outline = PyOutlineTreeWidget()
+outline = OutlineTreeWidget()
 outline.set_editor(editor)
 dock_outline = QtWidgets.QDockWidget('Outline')
 dock_outline.setWidget(outline)

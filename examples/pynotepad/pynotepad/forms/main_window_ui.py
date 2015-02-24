@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/colin/dev/pyqode/python/examples/pynotepad/forms/main_window.ui'
+# Form implementation generated from reading ui file '/home/colin/pyqode/python/examples/pynotepad/forms/main_window.ui'
 #
-# Created: Mon Nov 17 08:49:07 2014
-#      by: PyQt5 UI code generator 5.3.2
+# Created: Tue Feb 24 21:30:08 2015
+#      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -63,7 +63,7 @@ class Ui_MainWindow(object):
         self.dockWidgetContents_2.setObjectName("dockWidgetContents_2")
         self.gridLayout_3 = QtWidgets.QGridLayout(self.dockWidgetContents_2)
         self.gridLayout_3.setObjectName("gridLayout_3")
-        self.widgetOutline = PyOutlineTreeWidget(self.dockWidgetContents_2)
+        self.widgetOutline = OutlineTreeWidget(self.dockWidgetContents_2)
         self.widgetOutline.setObjectName("widgetOutline")
         self.gridLayout_3.addWidget(self.widgetOutline, 0, 0, 1, 1)
         self.dockWidgetOutline.setWidget(self.dockWidgetContents_2)
@@ -172,7 +172,7 @@ class Ui_MainWindow(object):
         self.actionRun.setToolTip(_translate("MainWindow", "Run current script"))
         self.actionConfigure_run.setText(_translate("MainWindow", "Configure run"))
 
+from pyqode.core.widgets.outline import OutlineTreeWidget
 from pyqode.python.widgets import PyInteractiveConsole
-from pyqode.python.widgets.outline import PyOutlineTreeWidget
 from pyqode.core.widgets import SplittableCodeEditTabWidget
 from . import resources_rc
