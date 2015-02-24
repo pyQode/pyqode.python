@@ -3,6 +3,7 @@ Test all workers in pyqode.python.backend.workers.
 """
 import sys
 from pyqode.core.modes import CheckerMessages
+from pyqode.core.share import Definition
 
 try:
     from future.builtins import str, open
@@ -59,7 +60,6 @@ def test_goto_assignments():
 
 
 def test_defined_names():
-    code = ""
     filename = __file__
     with open(filename, 'r', encoding='utf-8') as file:
         code = file.read()
@@ -67,8 +67,7 @@ def test_defined_names():
     assert len(results)
     definitions = []
     for i, definition in enumerate(results):
-        d = workers.Definition()
-        d.from_dict(definition)
+        d = Definition.from_dict(definition)
         definitions.append(d)
         if i:
             assert d != definitions[i-1]

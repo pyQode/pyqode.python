@@ -12,6 +12,7 @@ from pyqode.core import panels
 from pyqode.python import managers as pymanagers
 from pyqode.python import modes as pymodes
 from pyqode.python import panels as pypanels
+from pyqode.python.backend.workers import defined_names
 from pyqode.python.folding import PythonFoldDetector
 
 
@@ -62,7 +63,7 @@ class PyCodeEdit(PyCodeEditBase):
         self.setWindowTitle("pyQode - Python Editor")
 
         # install those modes first as they are required by other modes/panels
-        self.modes.append(pymodes.DocumentAnalyserMode())
+        self.modes.append(modes.OutlineMode(defined_names))
 
         # panels
         self.panels.append(panels.FoldingPanel())
