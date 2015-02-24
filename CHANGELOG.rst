@@ -1,6 +1,13 @@
 Changelog
 =========
 
+2.4.2
+-----
+
+Fixed bugs:
+
+- fix an issue with newest version of pep8.py
+
 2.4.1
 -----
 
