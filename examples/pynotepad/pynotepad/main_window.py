@@ -28,8 +28,24 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.setup_actions()
         self.setup_status_bar_widgets()
         self.on_current_tab_changed()
+        self.intepreter_group = QtWidgets.QActionGroup(self.menuPython_interpreter)
+        for interpreter in get_interpreters():
+            a = self.menuPython_interpreter.addAction(interpreter)
+            a.setCheckable(True)
+            a.setChecked(interpreter in Settings().interpreter)
+            self.intepreter_group.addAction(a)
+
+        self.intepreter_group.triggered.connect(self.on_interpreter_toggled)
         self.interactiveConsole.open_file_requested.connect(self.open_file)
         self.styles_group = None
+
+    def on_interpreter_toggled(self, action):
+        interpreter = action.text()
+        for editor in self.tabWidget.widgets(include_clones=True):
+            editor.backend.stop()
+            editor.backend.start(editor.backend.server_script,
+                                 interpreter=interpreter, args=editor.backend.args)
+        Settings().interpreter = interpreter
 
     def setup_status_bar_widgets(self):
         self.lbl_interpreter = QtWidgets.QLabel()
@@ -105,7 +121,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
         editor = None
         if path:
-            editor = self.tabWidget.open_document(path)
+            editor = self.tabWidget.open_document(
+                path, interpreter=Settings().interpreter)
             if editor:
                 self.setup_editor(editor)
             self.recent_files_manager.open_file(path)
@@ -119,7 +136,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
         Add a new empty code editor to the tab widget
         """
-        self.setup_editor(self.tabWidget.create_new_document(extension='.py'))
+        self.setup_editor(self.tabWidget.create_new_document(
+            extension='.py', interpreter=Settings().interpreter))
         self.actionRun.setDisabled(True)
         self.actionConfigure_run.setDisabled(True)
 
