@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/colin/pyqode/python/examples/pynotepad/forms/main_window.ui'
+# Form implementation generated from reading ui file '/home/colin/Documents/pyqode/python/examples/pynotepad/forms/main_window.ui'
 #
-# Created: Tue Feb 24 21:30:08 2015
+# Created: Thu Feb 26 08:16:23 2015
 #      by: PyQt5 UI code generator 5.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -27,10 +27,12 @@ class Ui_MainWindow(object):
         self.gridLayout.addWidget(self.tabWidget, 1, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 847, 35))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 847, 27))
         self.menubar.setObjectName("menubar")
         self.menuFile = QtWidgets.QMenu(self.menubar)
         self.menuFile.setObjectName("menuFile")
+        self.menuPython_interpreter = QtWidgets.QMenu(self.menuFile)
+        self.menuPython_interpreter.setObjectName("menuPython_interpreter")
         self.menuEdit = QtWidgets.QMenu(self.menubar)
         self.menuEdit.setObjectName("menuEdit")
         self.menuModes = QtWidgets.QMenu(self.menubar)
@@ -116,6 +118,10 @@ class Ui_MainWindow(object):
         self.actionConfigure_run.setIcon(icon8)
         self.actionConfigure_run.setIconVisibleInMenu(True)
         self.actionConfigure_run.setObjectName("actionConfigure_run")
+        self.actionPython_2 = QtWidgets.QAction(MainWindow)
+        self.actionPython_2.setObjectName("actionPython_2")
+        self.actionPython_3 = QtWidgets.QAction(MainWindow)
+        self.actionPython_3.setObjectName("actionPython_3")
         self.menuFile.addAction(self.actionNew)
         self.menuFile.addAction(self.actionOpen)
         self.menuFile.addAction(self.actionSave)
@@ -124,6 +130,7 @@ class Ui_MainWindow(object):
         self.menuFile.addAction(self.actionConfigure_run)
         self.menuFile.addAction(self.actionRun)
         self.menuFile.addSeparator()
+        self.menuFile.addAction(self.menuPython_interpreter.menuAction())
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionQuit)
         self.menu.addAction(self.actionAbout)
@@ -148,6 +155,7 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "pynotepad"))
         self.menuFile.setTitle(_translate("MainWindow", "File"))
+        self.menuPython_interpreter.setTitle(_translate("MainWindow", "Python interpreter"))
         self.menuEdit.setTitle(_translate("MainWindow", "Edit"))
         self.menuModes.setTitle(_translate("MainWindow", "Modes"))
         self.menuPanels.setTitle(_translate("MainWindow", "Panels"))
@@ -171,8 +179,10 @@ class Ui_MainWindow(object):
         self.actionRun.setText(_translate("MainWindow", "Run"))
         self.actionRun.setToolTip(_translate("MainWindow", "Run current script"))
         self.actionConfigure_run.setText(_translate("MainWindow", "Configure run"))
+        self.actionPython_2.setText(_translate("MainWindow", "Python 2"))
+        self.actionPython_3.setText(_translate("MainWindow", "Python 3"))
 
-from pyqode.core.widgets.outline import OutlineTreeWidget
 from pyqode.python.widgets import PyInteractiveConsole
+from pyqode.core.widgets.outline import OutlineTreeWidget
 from pyqode.core.widgets import SplittableCodeEditTabWidget
 from . import resources_rc
