@@ -1,6 +1,15 @@
 Changelog
 =========
 
+2.5.0
+-----
+
+New features:
+    - Unified API for document outline (see pyQode/pyQode#24)
+
+Fixed bugs:
+    - fix a bug with interpreter selection in the pynotepad example (see pyQode/pyQode#25)
+
 2.4.2
 -----
 
