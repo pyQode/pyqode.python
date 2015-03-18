@@ -30,7 +30,7 @@ class PyInteractiveConsole(InteractiveConsole):
         self.set_writer(self._write)
         self.setMouseTracking(True)
         self.PROG = QtCore.QRegExp(
-            r'\s*File "[a-zA-Z\/_\d:\\]*((.\.[a-zA-Z\/_\d:\\]*")|(")), line [0-9]*.*')
+            r'\s*File "[a-zA-Z\/_\d:\\\.]*((.\.[a-zA-Z\/_\d:\\]*")|(")), line [0-9]*.*')
         self.FILENAME_PROG = QtCore.QRegExp(r'"[a-zA-Z\/_\.\d:\\]*"')
         self.LINE_PROG = QtCore.QRegExp(r'line [0-9]*')
         self.setLineWrapMode(self.NoWrap)
