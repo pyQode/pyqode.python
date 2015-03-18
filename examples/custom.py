@@ -23,6 +23,8 @@ from pyqode.qt import QtWidgets
 from pyqode.python.backend import server
 from pyqode.core import api, modes, panels
 from pyqode.python import modes as pymodes, panels as pypanels, widgets
+from pyqode.python.folding import PythonFoldDetector
+from pyqode.python.backend.workers import defined_names
 
 
 class MyPythonCodeEdit(widgets.PyCodeEditBase):
@@ -35,7 +37,7 @@ class MyPythonCodeEdit(widgets.PyCodeEditBase):
 
         # some other modes/panels require the analyser mode, the best is to
         # install it first
-        self.modes.append(pymodes.DocumentAnalyserMode())
+        self.modes.append(modes.OutlineMode(defined_names))
 
         #--- core panels
         self.panels.append(panels.FoldingPanel())
@@ -70,6 +72,8 @@ class MyPythonCodeEdit(widgets.PyCodeEditBase):
         self.modes.append(pymodes.PyAutoCompleteMode())
         self.modes.append(pymodes.PyAutoIndentMode())
         self.modes.append(pymodes.PyIndenterMode())
+        self.modes.append(pymodes.PythonSH(self.document()))
+        self.syntax_highlighter.fold_detector = PythonFoldDetector()
 
 
 app = QtWidgets.QApplication(sys.argv)
@@ -79,3 +83,4 @@ editor.file.open(__file__)
 window.setCentralWidget(editor)
 window.show()
 app.exec_()
+editor.close()
