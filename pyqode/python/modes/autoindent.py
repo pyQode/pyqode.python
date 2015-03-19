@@ -332,7 +332,7 @@ class PyAutoIndentMode(AutoIndentMode):
             # e.g indent is None (meaning the line does not ends with ):, ]:
             # or }:
             kw = ["if", "class", "def", "while", "for", "else", "elif",
-                  "except", "finally", "try"]
+                  "except", "finally", "try", "with"]
             l = fullline
             ln = cursor.blockNumber()
 

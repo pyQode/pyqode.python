@@ -1,0 +1,8 @@
+
+    print('haha')
+    with open(path, 'w') as f:|
+->
+
+    print('haha')
+    with open(path, 'w') as f:
+        |
