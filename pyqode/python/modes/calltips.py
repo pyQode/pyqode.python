@@ -53,6 +53,14 @@ class CalltipsMode(Mode, QtCore.QObject):
         elif (event.key() in [
                 QtCore.Qt.Key_ParenRight,
                 QtCore.Qt.Key_Return,
+                QtCore.Qt.Key_Left,
+                QtCore.Qt.Key_Right,
+                QtCore.Qt.Key_Up,
+                QtCore.Qt.Key_Down,
+                QtCore.Qt.Key_End,
+                QtCore.Qt.Key_Home,
+                QtCore.Qt.Key_PageDown,
+                QtCore.Qt.Key_PageUp,
                 QtCore.Qt.Key_Backspace, QtCore.Qt.Key_Delete]):
             QtWidgets.QToolTip.hideText()
 
