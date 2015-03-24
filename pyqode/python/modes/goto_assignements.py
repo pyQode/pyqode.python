@@ -4,8 +4,9 @@ Contains the go to assignments mode.
 """
 import logging
 import os
+import qtawesome as qta
 from pyqode.qt import QtCore, QtGui, QtWidgets
-from pyqode.core.api import Mode, TextHelper, DelayJobRunner
+from pyqode.core.api import Mode, TextHelper, DelayJobRunner, CodeEdit
 from pyqode.core.backend import NotRunning
 from pyqode.core.modes import WordClickMode
 from pyqode.python.backend import workers
@@ -68,6 +69,9 @@ class GoToAssignmentsMode(WordClickMode):
         self.action_goto = QtWidgets.QAction("Go to assignments", self)
         self.action_goto.setShortcut(self.shortcut)
         self.action_goto.triggered.connect(self.request_goto)
+        self.action_goto.setIcon(qta.icon(
+            'fa.share', color=CodeEdit.qtawesome_color,
+            color_disabled=CodeEdit.qtawesome_disabled_color))
         self.word_clicked.connect(self._on_word_clicked)
         self._runner = DelayJobRunner(delay=1)
 
