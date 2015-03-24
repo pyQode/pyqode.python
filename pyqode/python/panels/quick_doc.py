@@ -2,8 +2,8 @@
 """
 Contains the quick documentation panel
 """
-import qtawesome as qta
 from docutils.core import publish_parts
+from pyqode.core import icons
 from pyqode.qt import QtCore, QtGui, QtWidgets
 from pyqode.core.api import Panel, TextHelper, CodeEdit
 from pyqode.python.backend.workers import quick_doc
@@ -42,13 +42,8 @@ class QuickDocPanel(Panel):
         # A QPushButton (inside a child layout for a better alignment)
         # to close the panel
         self.bt_close = QtWidgets.QPushButton()
-        if CodeEdit.use_qtawesome:
-            self.bt_close.setIcon(
-                qta.icon('fa.close', color=CodeEdit.qtawesome_color,
-                         color_disabled=CodeEdit.qtawesome_disabled_color))
-        else:
-            self.bt_close.setIcon(QtGui.QIcon.fromTheme(
-                'window-close', QtGui.QIcon(':/pyqode-icons/rc/close.png')))
+        self.bt_close.setIcon(icons.icon(
+            'window-close', ':/pyqode-icons/rc/close.png', 'fa.close'))
         self.bt_close.setIconSize(QtCore.QSize(16, 16))
         self.bt_close.clicked.connect(self.hide)
         child_layout.addWidget(self.bt_close)
@@ -58,9 +53,9 @@ class QuickDocPanel(Panel):
         # Action
         self.action_quick_doc = QtWidgets.QAction('Show documentation', self)
         self.action_quick_doc.setShortcut('Alt+Q')
-        self.action_quick_doc.setIcon(qta.icon(
-            'fa.book', color=CodeEdit.qtawesome_color,
-            color_disabled=CodeEdit.qtawesome_disabled_color))
+        icon = icons.icon(qta_name='fa.book')
+        if icon:
+            self.action_quick_doc.setIcon(icon)
 
         self.action_quick_doc.triggered.connect(
             self._on_action_quick_doc_triggered)
