@@ -232,6 +232,8 @@ def icon_from_typename(name, icon_type):
              'IMPORT': ':/pyqode_python_icons/rc/namespace.png',
              'STATEMENT': ':/pyqode_python_icons/rc/var.png',
              'FORFLOW': ':/pyqode_python_icons/rc/var.png',
+             'FORSTMT': ':/pyqode_python_icons/rc/var.png',
+             'GLOBALSTMT': ':/pyqode_python_icons/rc/var.png',
              'MODULE': ':/pyqode_python_icons/rc/namespace.png',
              'KEYWORD': ':/pyqode_python_icons/rc/keyword.png',
              'PARAM': ':/pyqode_python_icons/rc/var.png',
