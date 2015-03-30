@@ -95,7 +95,7 @@ def _extract_def(d):
                 if (d.type == 'function' and sub_d.type == 'function') or \
                         d.type == 'class':
                     definition.add_child(_extract_def(sub_d))
-        except AttributeError:
+        except (AttributeError, IndexError):
             pass
     return definition
 
