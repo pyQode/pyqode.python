@@ -24,7 +24,7 @@ class PyAutoIndentMode(AutoIndentMode):
 
     def _get_indent(self, cursor):
         ln, column = self._helper.cursor_position()
-        fullline = self._get_full_line(cursor)
+        fullline = self._get_full_line(cursor).rstrip()
         line = fullline[:column]
         pre, post = AutoIndentMode._get_indent(self, cursor)
         if self._at_block_start(cursor, line):
@@ -46,6 +46,8 @@ class PyAutoIndentMode(AutoIndentMode):
         else:
             lastword = self._get_last_word(cursor)
             lastwordu = self._get_last_word_unstripped(cursor)
+            end_with_op = fullline.endswith(
+                ('+', '-', '*', '/', '=', 'and', 'or'))
             in_string_def, char = self._is_in_string_def(fullline, column)
             if in_string_def:
                 post, pre = self._handle_indent_inside_string(
@@ -62,12 +64,13 @@ class PyAutoIndentMode(AutoIndentMode):
             elif (fullline.endswith((')', '}', ']')) and
                     lastword.endswith((')', '}', ']'))):
                 post = self._handle_indent_after_paren(cursor, post)
-            elif ("\\" not in fullline and "#" not in fullline and
-                  not self._at_block_end(cursor, fullline)):
+            elif (not fullline.endswith("\\") and
+                    (end_with_op or
+                     not self._at_block_end(cursor, fullline))):
                 post, pre = self._handle_indent_in_statement(
                     fullline, lastwordu, post, pre)
             elif ((self._at_block_end(cursor, fullline) and
-                    fullline.strip().startswith('return ')) or
+                    fullline.strip().startswith('return')) or
                     lastword == "pass"):
                 post = post[:-self.editor.tab_length]
         return pre, post
