@@ -98,4 +98,3 @@ def collect_cases():
 @pytest.mark.parametrize('test_case', collect_cases())
 def test_auto_indent(editor, test_case):
     test_case.run(editor)
-

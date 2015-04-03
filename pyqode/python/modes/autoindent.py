@@ -47,7 +47,7 @@ class PyAutoIndentMode(AutoIndentMode):
             lastword = self._get_last_word(cursor)
             lastwordu = self._get_last_word_unstripped(cursor)
             end_with_op = fullline.endswith(
-                ('+', '-', '*', '/', '=', 'and', 'or'))
+                ('+', '-', '*', '/', '=', 'and', 'or', '%'))
             in_string_def, char = self._is_in_string_def(fullline, column)
             if in_string_def:
                 post, pre = self._handle_indent_inside_string(
