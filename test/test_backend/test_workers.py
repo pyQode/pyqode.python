@@ -126,7 +126,7 @@ def test_run_frosted():
          'encoding': 'utf-8'})
     assert len(messages) == 1
     msg, status, line = messages[0]
-    assert 'sys imported but unused' in msg.lower()
+    assert "'sys' imported but unused" in msg
     assert line == 0
 
 

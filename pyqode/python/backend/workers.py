@@ -208,12 +208,9 @@ def run_pyflakes(request_data):
             w = checker.Checker(tree, os.path.split(path)[1])
             w.messages.sort(key=lambda m: m.lineno)
             for warning in w.messages:
-                msg = "[pyFlakes] %s: %s" % (
-                    warning.type.error_code, warning.message.split(':')[-1])
+                msg = "[pyFlakes] %s" % str(warning).split(':')[-1].strip()
                 line = warning.lineno - 1
-                status = (WARNING if warning.type.error_code.startswith('W')
-                          else ERROR)
-                ret_val.append((msg, status, line))
+                ret_val.append((msg, WARNING, line))
     prev_results = ret_val
     return ret_val
 
