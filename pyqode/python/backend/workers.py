@@ -165,6 +165,16 @@ def run_pep8(request_data):
             messages.append(('[PEP8] %s' % text, WARNING, line_number - 1))
         return messages
 
+from pyflakes import messages
+
+PYFLAKES_ERROR_MESSAGES = [
+    messages.DoctestSyntaxError,
+    messages.ReturnWithArgsInsideGenerator,
+    messages.UndefinedExport,
+    messages.UndefinedName,
+    messages.UndefinedLocal
+]
+
 
 def run_pyflakes(request_data):
     """
@@ -207,10 +217,13 @@ def run_pyflakes(request_data):
             # Okay, it's syntactically valid.  Now check it.
             w = checker.Checker(tree, os.path.split(path)[1])
             w.messages.sort(key=lambda m: m.lineno)
-            for warning in w.messages:
-                msg = "[pyFlakes] %s" % str(warning).split(':')[-1].strip()
-                line = warning.lineno - 1
-                ret_val.append((msg, WARNING, line))
+            for message in w.messages:
+                msg = "[pyFlakes] %s" % str(message).split(':')[-1].strip()
+                line = message.lineno - 1
+                status = WARNING \
+                    if message.__class__ not in PYFLAKES_ERROR_MESSAGES \
+                    else ERROR
+                ret_val.append((msg, status, line))
     prev_results = ret_val
     return ret_val
 
