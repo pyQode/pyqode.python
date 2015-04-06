@@ -10,7 +10,7 @@ from .calltips import CalltipsMode
 from .comments import CommentsMode
 from .frosted_checker import PyFlakesChecker
 # for backward compatibility, will be removed in a future release
-from .frosted_checker import PyFlakesChecker as FrostedChecker
+from .frosted_checker import PyFlakesChecker as FrostedCheckerMode
 from .goto_assignements import Assignment
 from .goto_assignements import GoToAssignmentsMode
 from .indenter import PyIndenterMode
@@ -32,7 +32,7 @@ __all__ = [
     'CalltipsMode',
     'CommentsMode',
     'PyFlakesChecker',
-    'FrostedChecker',
+    'FrostedCheckerMode',
     'GoToAssignmentsMode',
     'PEP8CheckerMode',
     'PyAutoCompleteMode',

@@ -3,7 +3,6 @@
 """
 Contains the worker classes/functions executed on the server side.
 """
-from pies.overrides import *
 import logging
 import os
 import tempfile
