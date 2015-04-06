@@ -29,7 +29,7 @@ requirements = [
     'pyqode.core',
     'jedi',
     'pep8',
-    'frosted',
+    'pyflakes',
     'docutils'
 ]
 

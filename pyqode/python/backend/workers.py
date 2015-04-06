@@ -3,6 +3,7 @@
 """
 Contains the worker classes/functions executed on the server side.
 """
+from pies.overrides import *
 import logging
 import os
 import tempfile
@@ -166,13 +167,13 @@ def run_pep8(request_data):
         return messages
 
 
-def run_frosted(request_data):
+def run_pyflakes(request_data):
     """
     Worker that run a frosted (the fork of pyflakes) code analysis on the
     current editor text.
     """
     global prev_results
-    from frosted import checker
+    from pyflakes import checker
     import _ast
     WARNING = 1
     ERROR = 2

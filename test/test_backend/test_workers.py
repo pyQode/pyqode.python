@@ -103,17 +103,17 @@ def test_run_pep8():
 
 
 def test_run_frosted():
-    messages = workers.run_frosted(
+    messages = workers.run_pyflakes(
         {'code': None, 'path': __file__, 'encoding': 'utf-8'})
     assert len(messages) == 0
 
     # OK
-    messages = workers.run_frosted(
+    messages = workers.run_pyflakes(
         {'code': 'print("foo")\n', 'path': __file__, 'encoding': 'utf-8'})
     assert len(messages) == 0
 
     # Syntax error
-    messages = workers.run_frosted(
+    messages = workers.run_pyflakes(
         {'code': 'print("foo\n', 'path': __file__,
          'encoding': 'utf-8'})
     assert len(messages) == 1
@@ -121,7 +121,7 @@ def test_run_frosted():
     assert messages[0][1] == CheckerMessages.ERROR
 
     # unused import
-    messages = workers.run_frosted(
+    messages = workers.run_pyflakes(
         {'code': 'import sys; print("foo");\n', 'path': __file__,
          'encoding': 'utf-8'})
     assert len(messages) == 1

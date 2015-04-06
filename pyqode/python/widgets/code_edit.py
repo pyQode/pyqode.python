@@ -92,7 +92,7 @@ class PyCodeEdit(PyCodeEditBase):
         # python specifics
         self.modes.append(pymodes.PyAutoIndentMode())
         self.modes.append(pymodes.PyAutoCompleteMode())
-        self.modes.append(pymodes.FrostedCheckerMode())
+        self.modes.append(pymodes.PyFlakesChecker())
         self.modes.append(pymodes.PEP8CheckerMode())
         self.modes.append(pymodes.CalltipsMode())
         self.modes.append(pymodes.PyIndenterMode())
