@@ -1,0 +1,10 @@
+[
+    {
+        "environment": {},
+        "interpreter_options": [],
+        "name": "pynotepad",
+        "script": "examples/pynotepad/pynotepad.py",
+        "script_parameters": [],
+        "working_dir": "examples/pynotepad"
+    }
+]

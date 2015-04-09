@@ -35,3 +35,8 @@ __pycache__
 .tox
 *.log
 htmlcov
+
+*.tar.gz
+deb_dist
+*.usr
+*~
