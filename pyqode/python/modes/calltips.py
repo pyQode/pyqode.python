@@ -102,18 +102,20 @@ class CalltipsMode(Mode, QtCore.QObject):
         if not call or self._is_last_chard_end_of_word():
             return
         # create a formatted calltip (current index appear in bold)
-        calltip = "<nobr>{0}.{1}(".format(call['call.module.name'],
-                                          call['call.call_name'])
+        calltip = "<p style='white-space:pre'>{0}.{1}(".format(
+            call['call.module.name'], call['call.call_name'])
         for i, param in enumerate(call['call.params']):
-            major, minor = jedi.__version__.split('.')[:2]
-            if i != 0 and major == 0 and minor <= 8:
-                calltip += ", "
+            print(param)
+            if i < len(call['call.params']) - 1 and not param.endswith(','):
+                param += ", "
+            if param.endswith(','):
+                param += ' '  # pep8 calltip
             if i == call['call.index']:
                 calltip += "<b>"
             calltip += param
             if i == call['call.index']:
                 calltip += "</b>"
-        calltip += ')</nobr>'
+        calltip += ')</p>'
         # set tool tip position at the start of the bracket
         char_width = self.editor.fontMetrics().width('A')
         w_offset = (col - call['call.bracket_start'][1]) * char_width
