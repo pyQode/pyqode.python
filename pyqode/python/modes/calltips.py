@@ -3,6 +3,7 @@
 Contains the JediCompletionProvider class implementation.
 """
 import logging
+import jedi
 import os
 from pyqode.core.api import Mode, TextHelper
 from pyqode.python.backend import workers
@@ -104,7 +105,8 @@ class CalltipsMode(Mode, QtCore.QObject):
         calltip = "<nobr>{0}.{1}(".format(call['call.module.name'],
                                           call['call.call_name'])
         for i, param in enumerate(call['call.params']):
-            if i != 0:
+            major, minor = jedi.__version__.split('.')[:2]
+            if i != 0 and major == 0 and minor <= 8:
                 calltip += ", "
             if i == call['call.index']:
                 calltip += "<b>"
