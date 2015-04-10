@@ -92,13 +92,13 @@ class PyAutoIndentMode(AutoIndentMode):
 
     @staticmethod
     def _is_paren_open(paren):
-        return (paren.character == "(" or paren.character == "["
-                or paren.character == '{')
+        return (paren.character == "(" or paren.character == "[" or
+                paren.character == '{')
 
     @staticmethod
     def _is_paren_closed(paren):
-        return (paren.character == ")" or paren.character == "]"
-                or paren.character == '}')
+        return (paren.character == ")" or paren.character == "]" or
+                paren.character == '}')
 
     @staticmethod
     def _get_full_line(tc):
@@ -241,7 +241,7 @@ class PyAutoIndentMode(AutoIndentMode):
         tc2.movePosition(QTextCursor.PreviousCharacter, QTextCursor.KeepAnchor)
         char = tc2.selectedText()
         while char == ' ':
-            tc2.movePosition(QTextCursor.PreviousCharacter, QTextCursor.KeepAnchor)
+            tc2.movePosition(tc2.PreviousCharacter, tc2.KeepAnchor)
             char = tc2.selectedText()
         return char.strip()
 

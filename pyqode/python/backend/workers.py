@@ -8,6 +8,7 @@ import os
 import tempfile
 import jedi
 from pyqode.core.share import Definition
+from pyflakes import messages
 
 
 def _logger():
@@ -165,7 +166,6 @@ def run_pep8(request_data):
             messages.append(('[PEP8] %s' % text, WARNING, line_number - 1))
         return messages
 
-from pyflakes import messages
 
 PYFLAKES_ERROR_MESSAGES = [
     messages.DoctestSyntaxError,
