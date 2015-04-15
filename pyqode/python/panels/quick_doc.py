@@ -4,8 +4,8 @@ Contains the quick documentation panel
 """
 from docutils.core import publish_parts
 from pyqode.core import icons
-from pyqode.qt import QtCore, QtGui, QtWidgets
-from pyqode.core.api import Panel, TextHelper, CodeEdit
+from pyqode.qt import QtCore, QtWidgets
+from pyqode.core.api import Panel, TextHelper
 from pyqode.python.backend.workers import quick_doc
 
 
@@ -15,14 +15,6 @@ class QuickDocPanel(Panel):
     This panel quickly shows the documentation of the symbol under
     cursor.
     """
-    STYLESHEET = '''
-    QTextEdit
-    {
-        background-color: %s;
-        color: %s;
-    }
-    '''
-
     _KEYS = ['panelBackground', 'background', 'panelForeground',
              'panelHighlight']
 
@@ -60,15 +52,8 @@ class QuickDocPanel(Panel):
         self.action_quick_doc.triggered.connect(
             self._on_action_quick_doc_triggered)
 
-    def _reset_stylesheet(self):
-        p = self.text_edit.palette()
-        p.setColor(p.Base, self.editor.palette().toolTipBase().color())
-        p.setColor(p.Text, self.editor.palette().toolTipText().color())
-        self.text_edit.setPalette(p)
-
     def on_install(self, editor):
         super(QuickDocPanel, self).on_install(editor)
-        self._reset_stylesheet()
         self.setVisible(False)
 
     def on_state_changed(self, state):
@@ -77,9 +62,6 @@ class QuickDocPanel(Panel):
             self.editor.add_action(self.action_quick_doc)
         else:
             self.editor.remove_action(self.action_quick_doc)
-
-    def refresh_style(self):
-        self._reset_stylesheet()
 
     def _on_action_quick_doc_triggered(self):
         tc = TextHelper(self.editor).word_under_cursor(select_whole_word=True)
@@ -94,7 +76,6 @@ class QuickDocPanel(Panel):
             quick_doc, request_data, on_receive=self._on_results_available)
 
     def _on_results_available(self, results):
-        self._reset_stylesheet()
         self.setVisible(True)
         if len(results) and results[0] != '':
             string = '\n\n'.join(results)
