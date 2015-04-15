@@ -64,7 +64,6 @@ pyqode.python depends on the following libraries:
 - jedi
 - pep8
 - frosted
-- docutils
 
 Installation
 ------------

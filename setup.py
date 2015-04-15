@@ -35,8 +35,7 @@ requirements = [
     'pyqode.core',
     'jedi',
     'pep8',
-    'pyflakes',
-    'docutils'
+    'pyflakes'
 ]
 
 setup(
