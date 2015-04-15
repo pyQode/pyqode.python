@@ -2,9 +2,10 @@
 """
 Contains the quick documentation panel
 """
+from docutils.core import publish_parts
 from pyqode.core import icons
-from pyqode.qt import QtCore, QtWidgets
-from pyqode.core.api import Panel, TextHelper
+from pyqode.qt import QtCore, QtGui, QtWidgets
+from pyqode.core.api import Panel, TextHelper, CodeEdit
 from pyqode.python.backend.workers import quick_doc
 
 
@@ -61,6 +62,8 @@ class QuickDocPanel(Panel):
 
     def _reset_stylesheet(self):
         p = self.text_edit.palette()
+        p.setColor(p.Base, self.editor.palette().toolTipBase().color())
+        p.setColor(p.Text, self.editor.palette().toolTipText().color())
         self.text_edit.setPalette(p)
 
     def on_install(self, editor):
@@ -95,7 +98,29 @@ class QuickDocPanel(Panel):
         self.setVisible(True)
         if len(results) and results[0] != '':
             string = '\n\n'.join(results)
-            self.text_edit.setText(string)
-            return
+            string = publish_parts(
+                string, writer_name='html',
+                settings_overrides={'output_encoding': 'unicode'})[
+                    'html_body']
+            string = string.replace('colspan="2"', 'colspan="0"')
+            string = string.replace('<th ', '<th align="left" ')
+            string = string.replace(
+                '</tr>\n<tr class="field"><td>&nbsp;</td>', '')
+            if string:
+                skip_error_msg = False
+                lines = []
+                for l in string.splitlines():
+                    if (l.startswith('<div class="system-message"') or
+                            l.startswith(
+                                '<div class="last system-message"')):
+                        skip_error_msg = True
+                        continue
+                    if skip_error_msg:
+                        if l.endswith('</div>'):
+                            skip_error_msg = False
+                    else:
+                        lines.append(l)
+                self.text_edit.setText('\n'.join(lines))
+                return
         else:
             self.text_edit.setText('Documentation not found')
