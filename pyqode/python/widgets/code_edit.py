@@ -66,19 +66,19 @@ class PyCodeEdit(PyCodeEditBase):
         self.modes.append(modes.OutlineMode(defined_names))
 
         # panels
+        self.panels.append(panels.SearchAndReplacePanel(),
+                           panels.SearchAndReplacePanel.Position.BOTTOM)
         self.panels.append(panels.FoldingPanel())
         self.panels.append(panels.LineNumberPanel())
         self.panels.append(panels.CheckerPanel())
         self.panels.append(panels.GlobalCheckerPanel(),
                            panels.GlobalCheckerPanel.Position.RIGHT)
-        self.panels.append(panels.SearchAndReplacePanel(),
-                           panels.SearchAndReplacePanel.Position.BOTTOM)
-        self.panels.append(panels.EncodingPanel(), api.Panel.Position.TOP)
         self.add_separator()
-        self.panels.append(pypanels.QuickDocPanel(), api.Panel.Position.BOTTOM)
 
         # modes
         # generic
+        self.modes.append(modes.ExtendedSelectionMode())
+        self.modes.append(modes.CaseConverterMode())
         self.modes.append(modes.CaretLineHighlighterMode())
         self.modes.append(modes.FileWatcherMode())
         self.modes.append(modes.RightMarginMode())
@@ -87,8 +87,6 @@ class PyCodeEdit(PyCodeEditBase):
         self.modes.append(modes.CodeCompletionMode())
         self.modes.append(modes.OccurrencesHighlighterMode())
         self.modes.append(modes.SmartBackSpaceMode())
-        self.modes.append(modes.ExtendedSelectionMode())
-        self.modes.append(modes.CaseConverterMode())
         # python specifics
         self.modes.append(pymodes.PyAutoIndentMode())
         self.modes.append(pymodes.PyAutoCompleteMode())
@@ -101,6 +99,9 @@ class PyCodeEdit(PyCodeEditBase):
         self.modes.append(pymodes.PythonSH(
             self.document(), color_scheme=ColorScheme(color_scheme)))
         self.syntax_highlighter.fold_detector = PythonFoldDetector()
+        self.panels.append(pypanels.QuickDocPanel(), api.Panel.Position.BOTTOM)
+        self.panels.append(panels.EncodingPanel(), api.Panel.Position.TOP)
+
 
     def clone(self):
         clone = self.__class__(
