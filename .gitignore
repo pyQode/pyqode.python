@@ -36,7 +36,15 @@ __pycache__
 *.log
 htmlcov
 
+# stdeb files
 *.tar.gz
 deb_dist
-*.usr
+
+
+# gedit temp files
 *~
+
+# hackedit project files
+.hackedit
+
+
