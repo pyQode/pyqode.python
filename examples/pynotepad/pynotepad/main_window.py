@@ -221,6 +221,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         :param editor:
         """
         for panel in editor.panels:
+            if panel.dynamic:
+                continue
             a = QtWidgets.QAction(self.menuModes)
             a.setText(panel.name)
             a.setCheckable(True)

@@ -19,7 +19,7 @@ class QuickDocPanel(Panel):
              'panelHighlight']
 
     def __init__(self):
-        super(QuickDocPanel, self).__init__()
+        super(QuickDocPanel, self).__init__(dynamic=True)
         # layouts
         layout = QtWidgets.QHBoxLayout()
         self.setLayout(layout)
