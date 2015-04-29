@@ -105,7 +105,6 @@ class CalltipsMode(Mode, QtCore.QObject):
         calltip = "<p style='white-space:pre'>{0}.{1}(".format(
             call['call.module.name'], call['call.call_name'])
         for i, param in enumerate(call['call.params']):
-            print(param)
             if i < len(call['call.params']) - 1 and not param.endswith(','):
                 param += ", "
             if param.endswith(','):
