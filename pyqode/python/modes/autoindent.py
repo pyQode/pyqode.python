@@ -34,8 +34,8 @@ class PyAutoIndentMode(AutoIndentMode):
         if c2.atBlockEnd():
             c2.movePosition(c2.Left)
         if (self._helper.is_comment_or_string(
-                c2, formats=['comment', 'docstring'])
-                or fullline.endswith(('"""', "'''"))):
+                c2, formats=['comment', 'docstring']) or
+                fullline.endswith(('"""', "'''"))):
             if line.strip().startswith("#") and column != len(fullline):
                 post += '# '
             return pre, post

@@ -102,7 +102,6 @@ class PyCodeEdit(PyCodeEditBase):
         self.panels.append(pypanels.QuickDocPanel(), api.Panel.Position.BOTTOM)
         self.panels.append(panels.EncodingPanel(), api.Panel.Position.TOP)
 
-
     def clone(self):
         clone = self.__class__(
             parent=self.parent(), server_script=self.backend.server_script,
