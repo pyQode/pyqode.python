@@ -156,7 +156,8 @@ class PythonSH(BaseSH):
                     end = max([0, end + offset])
                     if key == "uf_sq3string":
                         self.setFormat(start, end - start,
-                                       self.formats["string"])
+                                       self.formats["docstring"])
+                        block.docstring = True
                         state = self.INSIDE_SQ3STRING
                     elif key == "uf_dq3string":
                         self.setFormat(start, end - start,
@@ -177,7 +178,8 @@ class PythonSH(BaseSH):
                         self.setFormat(start, end - start,
                                        self.formats["constant"])
                     else:
-                        if '"""' in value and key != 'comment':
+                        if ('"""' in value or "'''" in value) and \
+                                key != 'comment':
                             # highlight docstring with a different color
                             block.docstring = True
                             self.setFormat(start, end - start,

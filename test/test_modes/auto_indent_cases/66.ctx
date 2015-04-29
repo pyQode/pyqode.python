@@ -1,0 +1,9 @@
+a = '''import| pyqode.core
+print(pyqode.core.__version__)
+'''
+
+->
+a = '''import
+pyqode.core
+print(pyqode.core.__version__)
+'''
