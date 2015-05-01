@@ -1,6 +1,22 @@
 Changelog
 =========
 
+2.6.0
+-----
+
+New features:
+    - Switch from Frosted to PyFlakes
+
+Fixed bugs:
+    - Fix unimplemented code completion icon types (Jedi 0.9)
+    - Improve calltips behaviour
+    - Fix custom editor example
+    - PyInteractiveConsole: fix traceback regex to work with dotted package
+      names (e.g. pyqode.core directory name when installed in development
+      mode)
+    - Fix a couple of corner cases in autoindent mode
+    - Fix quick doc panel colors on Ubuntu
+
 2.5.0
 -----
 
