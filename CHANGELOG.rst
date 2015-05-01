@@ -6,6 +6,7 @@ Changelog
 
 New features:
     - Switch from Frosted to PyFlakes
+    - Wheel support
 
 Fixed bugs:
     - Fix unimplemented code completion icon types (Jedi 0.9)
