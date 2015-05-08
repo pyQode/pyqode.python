@@ -199,23 +199,23 @@ class PythonSH(BaseSH):
                                                else 'function')
                                     fmt = self.formats[fmt_key]
                                     self.setFormat(start1, end1 - start1, fmt)
-                            elif value == "import":
-                                import_stmt = text.strip()
-                                # color all the "as" words on same line, except
-                                # if in a comment; cheap approximation to the
-                                # truth
-                                if '#' in text:
-                                    endpos = text.index('#')
-                                else:
-                                    endpos = len(text)
-                                while True:
-                                    match1 = self.ASPROG.match(text, end,
-                                                               endpos)
-                                    if not match1:
-                                        break
-                                    start, end = match1.span(1)
-                                    self.setFormat(start, end - start,
-                                                   self.formats["namespace"])
+                        if key == 'namespace':
+                            import_stmt = text.strip()
+                            # color all the "as" words on same line, except
+                            # if in a comment; cheap approximation to the
+                            # truth
+                            if '#' in text:
+                                endpos = text.index('#')
+                            else:
+                                endpos = len(text)
+                            while True:
+                                match1 = self.ASPROG.match(text, end,
+                                                           endpos)
+                                if not match1:
+                                    break
+                                start, end = match1.span(1)
+                                self.setFormat(start, end - start,
+                                               self.formats["namespace"])
             # next match
             match = self.PROG.search(text, match.end())
         TextBlockHelper.set_state(block, state)
