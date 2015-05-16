@@ -1,5 +1,13 @@
 Changelog
 =========
+2.6.1
+-----
+New features/improvements:
+    - improve syntax highlighter: ['and', 'or', 'not', 'in', 'is'] and ['from', 'import', 'as']
+      the results are closer to what you can get with the pygments lexer
+
+Fixed bugs:
+    - fix another corner case with auto indent
 
 2.6.0
 -----
