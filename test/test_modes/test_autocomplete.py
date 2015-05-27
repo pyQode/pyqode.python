@@ -29,7 +29,7 @@ def test_basic(editor):
 def test_autocomple_func_parens(editor):
     editor.clear()
     editor.setPlainText('def foo')
-    TextHelper(editor).goto_line(1, len('def foo'))
+    TextHelper(editor).goto_line(0, len('def foo'))
     QTest.keyPress(editor, '(')
     assert editor.toPlainText() == 'def foo():'
 
@@ -37,6 +37,6 @@ def test_autocomple_func_parens(editor):
 def test_autocomple_method_parens(editor):
     editor.clear()
     editor.setPlainText('class\n    def foo')
-    TextHelper(editor).goto_line(2, len('    def foo'))
+    TextHelper(editor).goto_line(1, len('    def foo'))
     QTest.keyPress(editor, '(')
     assert editor.toPlainText() == 'class\n    def foo(self):'
