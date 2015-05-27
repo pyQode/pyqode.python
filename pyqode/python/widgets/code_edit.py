@@ -36,8 +36,11 @@ class PyCodeEditBase(api.CodeEdit):
         Extends QCodeEdit.setPlainText to allow user to setPlainText without
         mimetype (since the python syntax highlighter does not use it).
         """
-        self.syntax_highlighter.docstrings[:] = []
-        self.syntax_highlighter.import_statements[:] = []
+        try:
+            self.syntax_highlighter.docstrings[:] = []
+            self.syntax_highlighter.import_statements[:] = []
+        except AttributeError:
+            pass
         super(PyCodeEditBase, self).setPlainText(txt, mimetype, encoding)
 
 
