@@ -228,6 +228,16 @@ def run_pyflakes(request_data):
     return ret_val
 
 
+ICON_CLASS = ('code-class', ':/pyqode_python_icons/rc/class.png')
+ICON_FUNC = ('code-function', ':/pyqode_python_icons/rc/func.png')
+ICON_FUNC_PRIVATE = ('code-function', ':/pyqode_python_icons/rc/func_priv.png')
+ICON_FUNC_PROTECTED = ('code-function',
+                       ':/pyqode_python_icons/rc/func_prot.png')
+ICON_NAMESPACE = ('code-context', ':/pyqode_python_icons/rc/namespace.png')
+ICON_VAR = ('code-variable', ':/pyqode_python_icons/rc/var.png')
+ICON_KEYWORD = ('quickopen', ':/pyqode_python_icons/rc/keyword.png')
+
+
 def icon_from_typename(name, icon_type):
     """
     Returns the icon resource filename that corresponds to the given typename.
@@ -238,25 +248,27 @@ def icon_from_typename(name, icon_type):
 
     :returns: The associate icon resource filename or None.
     """
-    ICONS = {'CLASS': ':/pyqode_python_icons/rc/class.png',
-             'IMPORT': ':/pyqode_python_icons/rc/namespace.png',
-             'STATEMENT': ':/pyqode_python_icons/rc/var.png',
-             'FORFLOW': ':/pyqode_python_icons/rc/var.png',
-             'FORSTMT': ':/pyqode_python_icons/rc/var.png',
-             'WITHSTMT': ':/pyqode_python_icons/rc/var.png',
-             'GLOBALSTMT': ':/pyqode_python_icons/rc/var.png',
-             'MODULE': ':/pyqode_python_icons/rc/namespace.png',
-             'KEYWORD': ':/pyqode_python_icons/rc/keyword.png',
-             'PARAM': ':/pyqode_python_icons/rc/var.png',
-             'ARRAY': ':/pyqode_python_icons/rc/var.png',
-             'INSTANCEELEMENT': ':/pyqode_python_icons/rc/var.png',
-             'INSTANCE': ':/pyqode_python_icons/rc/var.png',
-             'PARAM-PRIV': ':/pyqode_python_icons/rc/var.png',
-             'PARAM-PROT': ':/pyqode_python_icons/rc/var.png',
-             'FUNCTION': ':/pyqode_python_icons/rc/func.png',
-             'DEF': ':/pyqode_python_icons/rc/func.png',
-             'FUNCTION-PRIV': ':/pyqode_python_icons/rc/func_priv.png',
-             'FUNCTION-PROT': ':/pyqode_python_icons/rc/func_prot.png'}
+    ICONS = {
+        'CLASS': ICON_CLASS,
+        'IMPORT': ICON_NAMESPACE,
+        'STATEMENT': ICON_VAR,
+        'FORFLOW': ICON_VAR,
+        'FORSTMT': ICON_VAR,
+        'WITHSTMT': ICON_VAR,
+        'GLOBALSTMT': ICON_VAR,
+        'MODULE': ICON_NAMESPACE,
+        'KEYWORD': ICON_KEYWORD,
+        'PARAM': ICON_VAR,
+        'ARRAY': ICON_VAR,
+        'INSTANCEELEMENT': ICON_VAR,
+        'INSTANCE': ICON_VAR,
+        'PARAM-PRIV': ICON_VAR,
+        'PARAM-PROT': ICON_VAR,
+        'FUNCTION': ICON_FUNC,
+        'DEF': ICON_FUNC,
+        'FUNCTION-PRIV': ICON_FUNC_PRIVATE,
+        'FUNCTION-PROT': ICON_FUNC_PROTECTED
+    }
     ret_val = None
     icon_type = icon_type.upper()
     # jedi 0.8 introduced NamedPart class, which have a string instead of being
