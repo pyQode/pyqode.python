@@ -18,6 +18,9 @@ __version__ = '1.1.0'
 
 
 def main():
+    if hasattr(sys, 'frozen'):
+        sys.stdout = open('pynotepad_stdout.txt', 'w')
+        sys.stderr = open('pynotepad_stderr.txt', 'w')
     app = QApplication(sys.argv)
     if not Settings().interpreter:
         Settings().interpreter = sys.executable

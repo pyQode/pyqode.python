@@ -28,7 +28,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.setup_actions()
         self.setup_status_bar_widgets()
         self.on_current_tab_changed()
-        self.intepreter_group = QtWidgets.QActionGroup(self.menuPython_interpreter)
+        self.intepreter_group = QtWidgets.QActionGroup(
+            self.menuPython_interpreter)
         for interpreter in get_interpreters():
             a = self.menuPython_interpreter.addAction(interpreter)
             a.setCheckable(True)
@@ -43,8 +44,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         interpreter = action.text()
         for editor in self.tabWidget.widgets(include_clones=True):
             editor.backend.stop()
-            editor.backend.start(editor.backend.server_script,
-                                 interpreter=interpreter, args=editor.backend.args)
+            editor.backend.start(
+                editor.backend.server_script,
+                interpreter=interpreter, args=editor.backend.args)
         Settings().interpreter = interpreter
 
     def setup_status_bar_widgets(self):
@@ -74,8 +76,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.actionConfigure_run.triggered.connect(self.on_configure_run)
 
     def _enable_run(self):
-        self.actionRun.setEnabled(self.tabWidget.current_widget().file.path != '')
-        self.actionConfigure_run.setEnabled(self.tabWidget.current_widget().file.path != '')
+        self.actionRun.setEnabled(
+            self.tabWidget.current_widget().file.path != '')
+        self.actionConfigure_run.setEnabled(
+            self.tabWidget.current_widget().file.path != '')
 
     def setup_recent_files_menu(self):
         """ Setup the recent files menu and manager """
@@ -121,8 +125,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
         editor = None
         if path:
+            interpreter, pyserver, args = self._get_backend_parameters()
             editor = self.tabWidget.open_document(
-                path, interpreter=Settings().interpreter)
+                path, None, interpreter=interpreter, server_script=pyserver,
+                args=args)
             if editor:
                 self.setup_editor(editor)
             self.recent_files_manager.open_file(path)
@@ -131,13 +137,31 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             TextHelper(self.tabWidget.current_widget()).goto_line(line)
         return editor
 
+    def _get_backend_parameters(self):
+        """
+        Gets the pyqode backend parameters (interpreter and script).
+        """
+        frozen = hasattr(sys, 'frozen')
+        interpreter = Settings().interpreter
+        if frozen and interpreter == sys.executable:
+            interpreter = None
+        pyserver = server.__file__ if interpreter is not None else 'server.exe'
+        args = []
+        if interpreter and frozen:
+            pyserver = 'server.py'
+            args.append('--syspath')
+            args.append(os.path.join(os.getcwd(), 'library.zip'))
+        return interpreter, pyserver, args
+
     @QtCore.Slot()
     def on_new(self):
         """
         Add a new empty code editor to the tab widget
         """
+        interpreter, pyserver, args = self._get_backend_parameters()
         self.setup_editor(self.tabWidget.create_new_document(
-            extension='.py', interpreter=Settings().interpreter))
+            extension='.py', interpreter=interpreter, server_script=pyserver,
+            args=args))
         self.actionRun.setDisabled(True)
         self.actionConfigure_run.setDisabled(True)
 
