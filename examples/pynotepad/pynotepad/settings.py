@@ -13,7 +13,10 @@ class Settings:
 
     @property
     def interpreter(self):
-        return self.settings.value('interpreter', '')
+        interpreter = self.settings.value('interpreter', '')
+        if not os.path.exists(interpreter):
+            interpreter = ''
+        return interpreter
 
     @interpreter.setter
     def interpreter(self, value):

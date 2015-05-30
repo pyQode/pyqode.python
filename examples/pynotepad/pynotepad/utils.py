@@ -15,6 +15,8 @@ def get_interpreters():
         for path in paths:
             if 'python' in path.lower():
                 if 'scripts' in path.lower():
-                     path = os.path.abspath(os.path.join(path, os.pardir))
-                executables.add(os.path.join(path, 'python.exe'))
+                    path = os.path.abspath(os.path.join(path, os.pardir))
+            executable = os.path.join(path, 'python.exe')
+            if os.path.exists(executable):
+                executables.add(executable)
     return executables
