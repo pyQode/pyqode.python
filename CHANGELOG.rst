@@ -1,5 +1,14 @@
 Changelog
 =========
+2.6.2
+-----
+
+Improve linux icon theme integration (will use code-xxx icons for code
+completion icons and outline widget)
+
+Fix a few issues in the pynotepad example and add a freeze_setup that works
+with python3 and PyQt5 (but not yet with python2 and PySide).
+
 2.6.1
 -----
 New features/improvements:
@@ -194,13 +203,13 @@ Fixed bugs:
 
 New features:
     - add the following new modes:
-    
+
       - PyAutoCompleteMode
       - CommentsMode
       - DocumentAnalyserMode
       - GoToAssignmentsMode
     - add the following new panels:
-    
+
       - QuickDocPanel
       - SymbolBrowserPanel
     - CodeCompletion: provides method to interact with the subprocess interpreter
