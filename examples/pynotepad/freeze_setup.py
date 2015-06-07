@@ -39,7 +39,7 @@ print('pygment styles', pygments_styles)
 # Build options
 options = {
     "excludes": ["PyQt5.uic.port_v3", "PySide", "tcltk", "jedi"],
-    "namespace_packages": ["pyqode.core"],
+    "namespace_packages": ["pyqode"],
     "include_msvcr": True,
     "build_exe": "bin",
     "includes": ["pkg_resources"] + pygments_styles
@@ -71,7 +71,7 @@ else:
 import jedi
 try:
     shutil.copytree(os.path.dirname(jedi.__file__), 'bin/jedi')
-except FileExistsError:
+except OSError:
     pass
 
 # also copy server.py in order to be able to run on external interpreters
