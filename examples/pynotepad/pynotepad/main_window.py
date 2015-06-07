@@ -143,14 +143,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """
         frozen = hasattr(sys, 'frozen')
         interpreter = Settings().interpreter
-        if frozen and interpreter == sys.executable:
+        if frozen:
             interpreter = None
         pyserver = server.__file__ if interpreter is not None else 'server.exe'
         args = []
-        if interpreter and frozen:
-            pyserver = 'server.py'
-            args.append('--syspath')
-            args.append(os.path.join(os.getcwd(), 'library.zip'))
         return interpreter, pyserver, args
 
     @QtCore.Slot()
