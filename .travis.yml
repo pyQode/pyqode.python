@@ -35,11 +35,13 @@ install:
   - pip install pytest-pep8
   # pyqode.qt in dev mode
   - git clone https://github.com/pyQode/pyqode.qt.git
+  - git checkout dev
   - pushd pyqode.qt
   - pip install -e .
   - popd
   # pyqode.core in dev mode
   - git clone https://github.com/pyQode/pyqode.core.git
+  - git checkout dev
   - pushd pyqode.core
   - pip install -e .
   - popd
