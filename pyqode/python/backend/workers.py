@@ -163,7 +163,7 @@ def run_pep8(request_data):
     else:
         messages = []
         for line_number, offset, code, text, doc in results:
-            if code in ['W291', 'W293']:
+            if code in ['W291', 'W292', 'W293', 'W391']:
                 continue
             messages.append(('[PEP8] %s: %s' % (code, text), WARNING,
                              line_number - 1))
