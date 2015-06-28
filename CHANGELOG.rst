@@ -1,5 +1,15 @@
 Changelog
 =========
+2.6.3
+-----
+New features:
+    - add a freeze script that works with pyside to the pynotepad example
+
+Fixed bugs:
+    - ignore PEP8 warnings: 'W291', 'W292', 'W293', 'W391'.
+      Those warnings are meaningless since pyqode will now clean trailing white spaces and ensure a single unique
+      blank line at the end of the file when it saves content to disk.
+
 2.6.2
 -----
 
