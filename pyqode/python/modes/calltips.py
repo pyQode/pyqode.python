@@ -33,6 +33,8 @@ class CalltipsMode(Mode, QtCore.QObject):
     def on_state_changed(self, state):
         if state:
             self.editor.key_released.connect(self._on_key_released)
+        else:
+            self.editor.key_released.disconnect(self._on_key_released)
 
     def _on_key_released(self, event):
         if (event.key() == QtCore.Qt.Key_ParenLeft or
