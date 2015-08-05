@@ -55,10 +55,18 @@ def test_uncomment_single(editor):
 @editor_open(__file__)
 def test_comment_selection(editor):
     editor.clear()
-    editor.setPlainText('import os;\n  \ndef foo():\n    print("bar")')
+    editor.setPlainText('''import os
+
+def foo():
+    print("bar")
+''')
     QTest.qWait(100)
     mode = get_mode(editor)
     editor.selectAll()
     mode.comment()
     QTest.qWait(100)
-    assert editor.toPlainText() == '# import os;\n  \n# def foo():\n#     print("bar")'
+    assert editor.toPlainText() == '''# import os
+
+# def foo():
+#     print("bar")
+'''

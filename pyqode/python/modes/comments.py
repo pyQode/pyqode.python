@@ -71,7 +71,7 @@ class CommentsMode(api.Mode):
             indent = len(l) - len(l.lstrip())
             if indent < min_indent and l:
                 min_indent = indent
-            if not l.lstrip().startswith('#') and l:
+            if not l.lstrip().startswith('# ') and l:
                 comment = True
         return min_indent, comment, len(lines)
 
