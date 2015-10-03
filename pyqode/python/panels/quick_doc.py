@@ -59,9 +59,9 @@ class QuickDocPanel(Panel):
     def on_state_changed(self, state):
         super(QuickDocPanel, self).on_state_changed(state)
         if state:
-            self.editor.add_action(self.action_quick_doc)
+            self.editor.add_action(self.action_quick_doc, sub_menu='Python')
         else:
-            self.editor.remove_action(self.action_quick_doc)
+            self.editor.remove_action(self.action_quick_doc, sub_menu='Python')
 
     def _on_action_quick_doc_triggered(self):
         tc = TextHelper(self.editor).word_under_cursor(select_whole_word=True)

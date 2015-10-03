@@ -78,9 +78,9 @@ class GoToAssignmentsMode(WordClickMode):
     def on_state_changed(self, state):
         super(GoToAssignmentsMode, self).on_state_changed(state)
         if state:
-            self.editor.add_action(self.action_goto)
+            self.editor.add_action(self.action_goto, sub_menu='Python')
         else:
-            self.editor.remove_action(self.action_goto)
+            self.editor.remove_action(self.action_goto, sub_menu='Python')
 
     def request_goto(self):
         """
