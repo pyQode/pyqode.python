@@ -41,6 +41,8 @@ class PyInteractiveConsole(InteractiveConsole):
             env = {}
         if 'PYTHONUNBUFFERED' not in env:
             env['PYTHONUNBUFFERED'] = '1'
+        if 'QT_LOGGING_TO_CONSOLE' not in env:
+            env['QT_LOGGING_TO_CONSOLE'] = '1'
         super(PyInteractiveConsole, self).start_process(
             process, args, cwd, env)
 
