@@ -1,6 +1,7 @@
 """
 This module contains the main window implementation.
 """
+import weakref
 import os
 import platform
 import sys
@@ -232,7 +233,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             a.setCheckable(True)
             a.setChecked(mode.enabled)
             a.changed.connect(self.on_mode_state_changed)
-            a.mode = mode
+            a.mode = weakref.proxy(mode)
             self.menuModes.addAction(a)
 
     def setup_mnu_panels(self, editor):
@@ -248,7 +249,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             a.setCheckable(True)
             a.setChecked(panel.enabled)
             a.changed.connect(self.on_panel_state_changed)
-            a.panel = panel
+            a.panel = weakref.proxy(panel)
             self.menuPanels.addAction(a)
 
     @QtCore.Slot()
