@@ -70,14 +70,12 @@ class CalltipsMode(Mode, QtCore.QObject):
     def _request_calltip(self, source, line, col, fn, encoding):
         if self.__requestCnt == 0:
             self.__requestCnt += 1
-            _logger().debug("Calltip requested")
             self.editor.backend.send_request(
                 workers.calltips,
                 {'code': source, 'line': line, 'column': col, 'path': None,
                  'encoding': encoding}, on_receive=self._on_results_available)
 
     def _on_results_available(self, results):
-        _logger().debug("Calltip request finished")
         self.__requestCnt -= 1
         if results:
             call = {"call.module.name": results[0],

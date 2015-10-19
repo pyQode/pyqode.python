@@ -115,7 +115,6 @@ def defined_names(request_data):
         definition = _extract_def(d, path)
         if d.type != 'import':
             ret_val.append(definition)
-    _logger().debug("Document structure changed %s")
     ret_val = [d.to_dict() for d in ret_val]
     return ret_val
 
