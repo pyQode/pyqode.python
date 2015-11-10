@@ -75,7 +75,7 @@ def goto_assignments(request_data):
 _old_definitions = {}
 
 
-def _extract_def(d):
+def _extract_def(d, path):
     d_line, d_column = d.start_pos
     # use full name for import type
     if d.type == 'function':
@@ -87,7 +87,8 @@ def _extract_def(d):
     else:
         name = d.name
     definition = Definition(name, d_line - 1, d_column,
-                            icon_from_typename(d.name, d.type))
+                            icon_from_typename(d.name, d.type),
+                            file_path=path)
     # check for methods in class or nested methods/classes
     if d.type == "class" or d.type == 'function':
         try:
@@ -95,7 +96,7 @@ def _extract_def(d):
             for sub_d in sub_definitions:
                 if (d.type == 'function' and sub_d.type == 'function') or \
                         d.type == 'class':
-                    definition.add_child(_extract_def(sub_d))
+                    definition.add_child(_extract_def(sub_d, path))
         except (AttributeError, IndexError):
             pass
     return definition
@@ -111,10 +112,9 @@ def defined_names(request_data):
     toplvl_definitions = jedi.defined_names(
         request_data['code'], path, 'utf-8')
     for d in toplvl_definitions:
-        definition = _extract_def(d)
+        definition = _extract_def(d, path)
         if d.type != 'import':
             ret_val.append(definition)
-    _logger().debug("Document structure changed %s")
     ret_val = [d.to_dict() for d in ret_val]
     return ret_val
 

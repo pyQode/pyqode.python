@@ -1,5 +1,16 @@
 Changelog
 =========
+2.7.0
+-----
+
+Fixed bugs:
+    - PyInteractiveConsole: fix regex if path contains a '-' (e.g. "/usr/.../dist-packages/module.py")
+    - PyInteractiveConsole: make sure to set QT_LOGGING_TO_CONSOLE otherwise
+      the traceback does not show up with PyQt >= 5.5
+    - PyCommentMode: fix preserve selection if multiple lines were selected
+    - SH: Fix import builtins not working with python 2.7 on OSX
+    - fix many potential memory leaks by breaking the circular dependencies
+      correctly before removing a mode/panel
 2.6.3
 -----
 New features:
