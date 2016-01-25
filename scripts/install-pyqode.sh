@@ -3,6 +3,6 @@ for package in 'pyqode.qt' 'pyqode.core'
 do
     git clone https://github.com/pyQode/${package}
     pushd ${package}
-    pip3 install -e .
+    pip install -e .
     popd
 done
