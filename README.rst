@@ -105,6 +105,7 @@ We test the following combinations on Travis-CI:
 +--------------------------+---------+---------+
 | GNU/Linux - Python 3.4   | yes     | yes     |
 +--------------------------+---------+---------+
+
 .. _Screenshots: https://github.com/pyQode/pyQode/wiki/Screenshots-and-videos#pyqodepython-screenshots
 .. _Issue tracker: https://github.com/pyQode/pyQode/issues
 .. _Wiki: https://github.com/pyQode/pyQode/wiki
