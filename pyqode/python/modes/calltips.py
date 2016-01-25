@@ -48,7 +48,11 @@ class CalltipsMode(Mode, QtCore.QObject):
             # jedi has a bug if the statement has a closing parenthesis
             # remove it!
             lines = source.splitlines()
-            l = lines[line].rstrip()
+            try:
+                l = lines[line].rstrip()
+            except IndexError:
+                # at the beginning of the last line (empty)
+                return
             if l.endswith(")"):
                 lines[line] = l[:-1]
             source = "\n".join(lines)
