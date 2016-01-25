@@ -76,7 +76,7 @@ setup(
     description=DESCRIPTION,
     long_description=readme(),
     install_requires=requirements,
-    tests_require=['pytest-xdist', 'pytest-cov', 'pytest-pep8', 'pytest'],
+    tests_require=['pytest-cov', 'pytest-pep8', 'pytest'],
     entry_points={'pyqode_plugins':
                   ['pyqode_python = '
                    'pyqode.python.designer_plugin']},
