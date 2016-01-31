@@ -12,5 +12,6 @@
     "pyrcc": "pyqode-rcc",
     "pyrcc_options": "",
     "pyuic": "pyqode-uic",
-    "pyuic_options": "--from-imports"
+    "pyuic_options": "--from-imports",
+    "hooks": ["gettext"]
 }

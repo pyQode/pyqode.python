@@ -43,7 +43,8 @@ class QuickDocPanel(Panel):
         layout.addLayout(child_layout)
 
         # Action
-        self.action_quick_doc = QtWidgets.QAction('Show documentation', self)
+        self.action_quick_doc = QtWidgets.QAction(
+            _('Show documentation'), self)
         self.action_quick_doc.setShortcut('Alt+Q')
         icon = icons.icon(qta_name='fa.book')
         if icon:
@@ -104,4 +105,4 @@ class QuickDocPanel(Panel):
                 self.text_edit.setText('\n'.join(lines))
                 return
         else:
-            self.text_edit.setText('Documentation not found')
+            self.text_edit.setText(_('Documentation not found'))

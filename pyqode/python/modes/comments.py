@@ -10,7 +10,7 @@ class CommentsMode(api.Mode):
     """
     def __init__(self):
         super(CommentsMode, self).__init__()
-        self.action = QtWidgets.QAction("Comment/Uncomment", self.editor)
+        self.action = QtWidgets.QAction(_("Comment/Uncomment"), self.editor)
         self.action.setShortcut("Ctrl+/")
         icon = icons.icon(qta_name='fa.comment')
         if icon:

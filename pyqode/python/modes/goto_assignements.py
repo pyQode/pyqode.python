@@ -66,7 +66,7 @@ class GoToAssignmentsMode(WordClickMode):
         super(GoToAssignmentsMode, self).__init__()
         self._definitions = []
         self._goto_requested = False
-        self.action_goto = QtWidgets.QAction("Go to assignments", self)
+        self.action_goto = QtWidgets.QAction(_("Go to assignments"), self)
         self.action_goto.setShortcut(self.shortcut)
         self.action_goto.triggered.connect(self.request_goto)
         icon = icons.icon(qta_name='fa.share')
@@ -184,8 +184,8 @@ class GoToAssignmentsMode(WordClickMode):
                 "More than 1 assignments in different modules, user "
                 "need to make a choice: %s" % definitions)
             def_str, result = QtWidgets.QInputDialog.getItem(
-                self.editor, "Choose a definition",
-                "Choose the definition you want to go to:",
+                self.editor, _("Choose a definition"),
+                _("Choose the definition you want to go to:"),
                 [str(d) for d in definitions])
             if result:
                 for definition in definitions:
