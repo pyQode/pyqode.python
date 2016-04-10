@@ -150,6 +150,10 @@ def run_pep8(request_data):
     WARNING = 1
     code = request_data['code']
     path = request_data['path']
+    max_line_length = request_data['max_line_length']
+    ignore_rules = request_data['ignore_rules']
+    ignore_rules += ['W291', 'W292', 'W293', 'W391']
+    pep8.MAX_LINE_LENGTH = max_line_length
     # setup our custom style guide with our custom checker which returns a list
     # of strings instread of spitting the results at stdout
     pep8style = pep8.StyleGuide(parse_argv=False, config_file='',
@@ -163,7 +167,7 @@ def run_pep8(request_data):
     else:
         messages = []
         for line_number, offset, code, text, doc in results:
-            if code in ['W291', 'W292', 'W293', 'W391']:
+            if code in ignore_rules:
                 continue
             messages.append(('[PEP8] %s: %s' % (code, text), WARNING,
                              line_number - 1))
