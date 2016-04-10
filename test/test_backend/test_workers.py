@@ -94,18 +94,21 @@ def test_quick_doc():
 
 def test_run_pep8():
     messages = workers.run_pep8(
-        {'code': 'print("foo")\n', 'path': None})
+        {'code': 'print("foo")\n', 'path': None,
+         'max_line_length': 79, 'ignore_rules': []})
     assert len(messages) == 0
 
     messages = workers.run_pep8(
-        {'code': 'print("foo"); print("bar")\n', 'path': None})
+        {'code': 'print("foo"); print("bar")\n', 'path': None,
+         'max_line_length': 79, 'ignore_rules': []})
     assert len(messages) == 1
     assert messages[0][2] == 0
 
 
-def test_run_frosted():
+def test_run_pyflakes():
     messages = workers.run_pyflakes(
-        {'code': None, 'path': __file__, 'encoding': 'utf-8'})
+        {'code': None, 'path': __file__, 'encoding': 'utf-8',
+         'max_line_length': 79, 'ignore_rules': []})
     assert len(messages) == 0
 
     # OK
