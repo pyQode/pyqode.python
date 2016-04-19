@@ -1,6 +1,13 @@
 Changelog
 =========
 
+2.9.0
+-----
+
+New features:
+
+- use margin position in linter to define pep8.MAX_LINE_LENGTH
+
 2.8.0
 -----
 
