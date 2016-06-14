@@ -12,6 +12,8 @@ class PyInteractiveConsole(InteractiveConsole):
     press on a filename in a traceback, the signal open_file_requested is
     emitted with the file path to open and the line where the user want to go.
 
+    .. deprecated: since version 2.10.0, you should use pyqode.core.widgets.OutputWindow
+
     """
     #: Signal emitted when the user pressed on a traceback file location.
     #: Client code should open the requested file in the editor.
