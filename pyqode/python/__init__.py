@@ -7,4 +7,4 @@ completion, documentation lookups, code linters, and so on...).
 
 """
 
-__version__ = '2.10.0.dev0'
+__version__ = '2.10.0'

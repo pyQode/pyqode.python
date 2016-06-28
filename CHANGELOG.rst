@@ -1,6 +1,13 @@
 Changelog
 =========
 
+2.10.0
+------
+
+New features:
+
+- add an interactive python console widget
+
 2.9.0
 -----
 
