@@ -1,6 +1,12 @@
 Changelog
 =========
 
+2.10.1
+------
+
+Remove smart backspace and indenter mode from PyConsole so that the behaviour is closer to
+what you'd have when running python in a terminal.
+
 2.10.0
 ------
 
