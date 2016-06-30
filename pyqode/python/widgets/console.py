@@ -62,9 +62,7 @@ class PyConsole(output_window.OutputWindow):
                            arguments=['-i'], print_command=False, use_pseudo_terminal=True)
 
     def _init_code_edit(self, backend):
-        self.modes.append(modes.SmartBackSpaceMode())
         self.modes.append(modes.SymbolMatcherMode())
-        self.modes.append(pymodes.PyIndenterMode())
         self.modes.append(CodeCompletionMode())
         super(PyConsole, self)._init_code_edit(backend)
         self.modes.append(SyntaxHighlighter(self.document(), color_scheme=ColorScheme(self._pygment_color_scheme)))
