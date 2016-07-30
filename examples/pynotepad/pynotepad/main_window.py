@@ -150,7 +150,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         args = []
         return interpreter, pyserver, args
 
-    @QtCore.Slot()
     def on_new(self):
         """
         Add a new empty code editor to the tab widget
@@ -162,7 +161,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.actionRun.setDisabled(True)
         self.actionConfigure_run.setDisabled(True)
 
-    @QtCore.Slot()
     def on_open(self):
         """
         Shows an open file dialog and open the file if the dialog was
@@ -175,13 +173,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.actionRun.setEnabled(True)
         self.actionConfigure_run.setEnabled(True)
 
-    @QtCore.Slot()
     def on_save(self):
         self.tabWidget.save_current()
         self._enable_run()
         self._update_status_bar(self.tabWidget.current_widget())
 
-    @QtCore.Slot()
     def on_save_as(self):
         """
         Save the current editor document as.
@@ -252,11 +248,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             a.panel = weakref.proxy(panel)
             self.menuPanels.addAction(a)
 
-    @QtCore.Slot()
     def on_last_tab_closed(self):
         self.widgetOutline.set_editor(None)
 
-    @QtCore.Slot()
     def on_current_tab_changed(self):
         """
         Update action states when the current tab changed.
@@ -292,7 +286,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.lbl_filename.clear()
             self.lbl_cursor_pos.clear()
 
-    @QtCore.Slot(QtWidgets.QAction)
     def on_style_changed(self, action):
         self._style = action.text()
         self.refresh_color_scheme()
@@ -367,7 +360,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             args = text.split(' ')
             Settings().set_run_config_for_file(path, args)
 
-    @QtCore.Slot()
     def on_cursor_pos_changed(self):
         editor = self.tabWidget.current_widget()
         if editor:
