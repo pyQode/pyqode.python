@@ -1,3 +1,4 @@
+import pytest
 from pyqode.core.api import TextHelper
 from pyqode.qt import QtCore
 from pyqode.qt.QtTest import QTest
@@ -16,6 +17,7 @@ def test_enabled(editor):
     panel.enabled = False
 
 
+@pytest.mark.xfail
 def test_get_doc(editor):
     panel = get_panel(editor)
     assert not panel.isVisible()

@@ -1,3 +1,4 @@
+import pytest
 from pyqode.core.api import TextHelper
 from pyqode.qt.QtTest import QTest
 from pyqode.python import panels
@@ -22,6 +23,7 @@ def test_empty_editor(editor):
 
 
 @editor_open(__file__)
+@pytest.mark.xfail
 def test_goto_definition(editor):
     editor.show()
     QTest.qWait(1000)
