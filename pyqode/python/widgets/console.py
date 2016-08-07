@@ -34,13 +34,7 @@ class CodeCompletionMode(modes.CodeCompletionMode):
     Extend base code completion mode to insert the completion in the user buffer of the
     input handler
     """
-    def _insert_completion(self, completion):
-        cursor = self._helper.word_under_cursor(select_whole_word=False)
-        prefix = cursor.selectedText()
-        super(CodeCompletionMode, self)._insert_completion(completion)
-        for ch in prefix:
-            self.editor._input_handler.backspace()
-        self.editor._input_handler.insert_text(completion)
+    pass
 
 
 class PyConsole(output_window.OutputWindow):
@@ -64,6 +58,8 @@ class PyConsole(output_window.OutputWindow):
     def _init_code_edit(self, backend):
         self.modes.append(modes.SymbolMatcherMode())
         self.modes.append(CodeCompletionMode())
+        self.modes.append(pymodes.PyAutoCompleteMode())
+        self.modes.append(modes.IndenterMode())
         super(PyConsole, self)._init_code_edit(backend)
         self.modes.append(SyntaxHighlighter(self.document(), color_scheme=ColorScheme(self._pygment_color_scheme)))
         try:
