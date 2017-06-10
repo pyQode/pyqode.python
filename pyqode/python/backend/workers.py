@@ -76,7 +76,7 @@ _old_definitions = {}
 
 
 def _extract_def(d, path):
-    d_line, d_column = d.start_pos
+    d_line, d_column = d.line, d.column
     # use full name for import type
     if d.type == 'function':
         try:
