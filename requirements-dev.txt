@@ -4,4 +4,4 @@ PyQt5
 pytest
 pytest-cov
 coveralls
-jedi==0.8.1
+jedi
