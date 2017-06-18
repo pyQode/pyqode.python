@@ -60,6 +60,19 @@ def test_goto_assignments():
     assert len(results) == 0
 
 
+def test_extract_def():
+    code = """
+    import pyqode.python.widgets
+    import PyQt5.QtWidgets as QtWidgets
+    app = QtWidgets.QApplication([])
+    editor = pyqode.python.widgets.PyCyodeEdit()
+    editor.file.open(__file__)
+    editor.show()
+    app.exec()
+    """
+    results = workers._extract_def(workers.defined_names({'code': code, 'path': __file__}),"")
+    assert results
+
 def test_defined_names():
     filename = __file__
     with open(filename, 'r', encoding='utf-8') as file:
