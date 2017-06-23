@@ -2,6 +2,8 @@
 Test all workers in pyqode.python.backend.workers.
 """
 import sys
+
+import jedi
 from pyqode.core.modes import CheckerMessages
 from pyqode.core.share import Definition
 
@@ -70,8 +72,9 @@ def test_extract_def():
     editor.show()
     app.exec()
     """
-    results = workers._extract_def(workers.defined_names({'code': code, 'path': __file__}),"")
-    assert results
+    for definition in jedi.defined_names(code):
+        result = workers._extract_def(definition, "")
+        assert result
 
 def test_defined_names():
     filename = __file__
