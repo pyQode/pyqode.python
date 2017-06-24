@@ -2,6 +2,8 @@
 Test all workers in pyqode.python.backend.workers.
 """
 import sys
+
+import jedi
 from pyqode.core.modes import CheckerMessages
 from pyqode.core.share import Definition
 
@@ -59,6 +61,20 @@ def test_goto_assignments():
     results = workers.goto_assignments(data)
     assert len(results) == 0
 
+
+def test_extract_def():
+    code = """
+    import pyqode.python.widgets
+    import PyQt5.QtWidgets as QtWidgets
+    app = QtWidgets.QApplication([])
+    editor = pyqode.python.widgets.PyCyodeEdit()
+    editor.file.open(__file__)
+    editor.show()
+    app.exec()
+    """
+    for definition in jedi.defined_names(code):
+        result = workers._extract_def(definition, "")
+        assert result
 
 def test_defined_names():
     filename = __file__
