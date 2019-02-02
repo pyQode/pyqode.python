@@ -1,6 +1,11 @@
 Changelog
 =========
 
+2.10.2
+------
+
+pyQode now works with jedi versions > 0.10; older versions are no longer supported.
+
 2.10.1
 ------
 

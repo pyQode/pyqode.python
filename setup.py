@@ -40,6 +40,7 @@ class PyTest(TestCommand):
         errno = pytest.main(self.pytest_args)
         sys.exit(errno)
 
+
 cmdclass['test'] = PyTest
 
 
@@ -94,6 +95,9 @@ setup(
         'Programming Language :: Python :: 3.2',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
         'Topic :: Software Development :: Libraries :: Application Frameworks',
         'Topic :: Software Development :: Widget Sets',
         'Topic :: Text Editors :: Integrated Development Environments (IDE)'
