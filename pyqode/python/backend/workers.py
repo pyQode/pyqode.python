@@ -92,7 +92,7 @@ def _extract_def(d, path):
     # check for methods in class or nested methods/classes
     if d.type == "class" or d.type == 'function':
         try:
-            sub_definitions = d.defined_names()
+            sub_definitions = d.names()
             for sub_d in sub_definitions:
                 if (d.type == 'function' and sub_d.type == 'function') or \
                         d.type == 'class':
@@ -109,7 +109,7 @@ def defined_names(request_data):
     global _old_definitions
     ret_val = []
     path = request_data['path']
-    toplvl_definitions = jedi.defined_names(
+    toplvl_definitions = jedi.names(
         request_data['code'], path, 'utf-8')
     for d in toplvl_definitions:
         definition = _extract_def(d, path)
@@ -135,7 +135,7 @@ def quick_doc(request_data):
     except jedi.NotFoundError:
         return []
     else:
-        ret_val = [d.doc for d in definitions]
+        ret_val = [d.docstring() for d in definitions]
         return ret_val
 
 
