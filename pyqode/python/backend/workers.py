@@ -145,7 +145,7 @@ def run_pep8(request_data):
 
     :returns a list of tuples (msg, msg_type, line_number)
     """
-    import pep8
+    import pycodestyle
     from pyqode.python.backend.pep8utils import CustomChecker
     WARNING = 1
     code = request_data['code']
@@ -153,11 +153,11 @@ def run_pep8(request_data):
     max_line_length = request_data['max_line_length']
     ignore_rules = request_data['ignore_rules']
     ignore_rules += ['W291', 'W292', 'W293', 'W391']
-    pep8.MAX_LINE_LENGTH = max_line_length
+    pycodestyle.MAX_LINE_LENGTH = max_line_length
     # setup our custom style guide with our custom checker which returns a list
     # of strings instread of spitting the results at stdout
-    pep8style = pep8.StyleGuide(parse_argv=False, config_file='',
-                                checker_class=CustomChecker)
+    pep8style = pycodestyle.StyleGuide(parse_argv=False, config_file='',
+                                       checker_class=CustomChecker)
     try:
         results = pep8style.input_file(path, lines=code.splitlines(True))
     except Exception:
