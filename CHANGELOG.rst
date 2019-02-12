@@ -1,10 +1,15 @@
 Changelog
 =========
 
+2.11.1
+------
+
+Try again to switch to pycodestyle.
+
 2.11.0
 ------
 
-Switch from pep8 to pycodestyle
+Switch from pep8 to pycodestyle.
 
 2.10.2
 ------
