@@ -72,7 +72,7 @@ def test_extract_def():
     editor.show()
     app.exec()
     """
-    for definition in jedi.defined_names(code):
+    for definition in jedi.names(code):
         result = workers._extract_def(definition, "")
         assert result
 
