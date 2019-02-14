@@ -58,7 +58,7 @@ requirements = [
     'pyqode.qt',
     'pyqode.core',
     'jedi',
-    'pep8',
+    'pycodestyle',
     'pyflakes',
     'docutils'
 ]
