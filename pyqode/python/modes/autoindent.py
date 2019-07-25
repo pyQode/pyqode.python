@@ -60,7 +60,7 @@ class PyAutoIndentMode(AutoIndentMode):
             elif line.endswith("\\"):
                 # if user typed \ and press enter -> indent is always
                 # one level higher
-                post += self.editor.tab_length * " "
+                post += self._single_indent
             elif (fullline.endswith((')', '}', ']')) and
                     lastword.endswith((')', '}', ']'))):
                 post = self._handle_indent_after_paren(cursor, post)
@@ -260,11 +260,11 @@ class PyAutoIndentMode(AutoIndentMode):
         open_line_txt = self._helper.line_text(open_line)
         open_line_indent = len(open_line_txt) - len(open_line_txt.lstrip())
         if prev_open:
-            post = (open_line_indent + self.editor.tab_length) * ' '
+            post = open_line_indent * self._indent_char + self._single_indent
         elif next_close and prev_char != ',':
-            post = open_line_indent * ' '
+            post = open_line_indent * self._indent_char
         elif tc.block().blockNumber() == open_line:
-            post = open_symbol_col * ' '
+            post = open_symbol_col * self._indent_char
 
         # adapt indent if cursor on closing line and next line have same
         # indent -> PEP8 compliance
@@ -272,12 +272,12 @@ class PyAutoIndentMode(AutoIndentMode):
             txt = self._helper.line_text(close_line)
             bn = tc.block().blockNumber()
             flg = bn == close_line
-            next_indent = self._helper.line_indent(bn + 1) * ' '
+            next_indent = self._helper.line_indent(bn + 1) * self._indent_char
             if flg and txt.strip().endswith(':') and next_indent == post:
                 # | look at how the previous line ( ``':'):`` ) was
                 # over-indented, this is actually what we are trying to
                 # achieve here
-                post += self.editor.tab_length * ' '
+                post += self._single_indent
 
         # breaking string
         if next_char in ['"', "'"]:
@@ -319,19 +319,19 @@ class PyAutoIndentMode(AutoIndentMode):
         # break string with a '\' at the end of the original line, always
         # breaking strings enclosed by parens is done in the
         # _handle_between_paren method
-        n = self.editor.tab_length
         pre = '%s \\' % char
-        post += n * ' '
+        post += self._single_indent
         if fullline.endswith(':'):
-            post += n * " "
+            post += self._single_indent
         post += char
         return post, pre
 
     def _handle_new_scope_indentation(self, cursor, fullline):
         try:
-            indent = (self._get_indent_of_opening_paren(cursor) +
-                      self.editor.tab_length)
-            post = indent * " "
+            post = (
+                self._get_indent_of_opening_paren(cursor) * self._indent_char +
+                self._single_indent
+            )
         except TypeError:
             # e.g indent is None (meaning the line does not ends with ):, ]:
             # or }:
@@ -349,15 +349,15 @@ class PyAutoIndentMode(AutoIndentMode):
             while not check_kw_in_line(kw, l) and ln:
                 ln -= 1
                 l = self._helper.line_text(ln)
-            indent = (len(l) - len(l.lstrip())) * " "
-            indent += self.editor.tab_length * " "
+            indent = (len(l) - len(l.lstrip())) * self._indent_char
+            indent += self._single_indent
             post = indent
         return post
 
     def _handle_indent_after_paren(self, cursor, post):
         indent = self._get_indent_of_opening_paren(cursor)
         if indent is not None:
-            post = indent * " "
+            post = indent * self._indent_char
         return post
 
     def _handle_indent_in_statement(self, fullline, lastword, post, pre):
@@ -366,7 +366,7 @@ class PyAutoIndentMode(AutoIndentMode):
                 pre += " \\"
             else:
                 pre += '\\'
-        post += self.editor.tab_length * " "
+        post += self._single_indent
         if fullline.endswith(':'):
-            post += self.editor.tab_length * " "
+            post += self._single_indent
         return post, pre
