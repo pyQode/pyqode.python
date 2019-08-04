@@ -38,7 +38,14 @@ def calltips(request_data):
     # encoding = request_data['encoding']
     encoding = 'utf-8'
     # use jedi to get call signatures
-    script = jedi.Script(code, line, column, path, encoding)
+    try:
+        script = jedi.Script(code, line, column, path, encoding)
+    except ValueError:
+        # Is triggered when an the position is invalid, for example if the
+        # column is larger or equal to the line length. This may be due to a
+        # bug elsewhere in PyQode, but this at least suppresses the error
+        # message, and does not seem to hve any adverse side effects.
+        return []
     signatures = script.call_signatures()
     for sig in signatures:
         results = (str(sig.module_name), str(sig.name),
@@ -315,7 +322,7 @@ class JediCompletionProvider:
             script = jedi.Script(code, line + 1, column, path, encoding)
             completions = script.completions()
             print('completions: %r' % completions)
-        except jedi.NotFoundError:
+        except RuntimeError:
             completions = []
         for completion in completions:
             ret_val.append({
