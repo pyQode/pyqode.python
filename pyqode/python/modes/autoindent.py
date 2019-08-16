@@ -169,6 +169,8 @@ class PyAutoIndentMode(AutoIndentMode):
         else:
             ol, oc = self.editor.modes.get(SymbolMatcherMode).symbol_pos(
                 tc, character, char_type)
+            if ol is None:
+                return 0
             line = self._helper.line_text(ol)
             return len(line) - len(line.lstrip())
 
