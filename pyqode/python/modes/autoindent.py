@@ -222,7 +222,6 @@ class PyAutoIndentMode(AutoIndentMode):
         mapping = {'(': PAREN, '[': SQUARE, '{': BRACE}
         tc2 = QTextCursor(tc)
         tc2.setPosition(pos)
-        import sys
         ol, oc = self.editor.modes.get(SymbolMatcherMode).symbol_pos(
             tc2, OPEN, mapping[char])
         cl, cc = self.editor.modes.get(SymbolMatcherMode).symbol_pos(
