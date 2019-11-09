@@ -204,6 +204,7 @@ def run_pyflakes(request_data):
     code = request_data['code']
     path = request_data['path']
     encoding = request_data['encoding']
+    ignore_rules = request_data['ignore_rules']
     if not encoding:
         encoding = 'utf-8'
     if not path:
@@ -232,6 +233,8 @@ def run_pyflakes(request_data):
             w = checker.Checker(tree, os.path.split(path)[1])
             w.messages.sort(key=lambda m: m.lineno)
             for message in w.messages:
+                if any(message.message.startswith(ir) for ir in ignore_rules):
+                    continue
                 msg = "[pyFlakes] %s" % str(message).split(':')[-1].strip()
                 line = message.lineno - 1
                 status = WARNING \
