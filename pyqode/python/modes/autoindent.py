@@ -362,8 +362,8 @@ class PyAutoIndentMode(AutoIndentMode):
         return post
 
     def _handle_indent_in_statement(self, fullline, lastword, post, pre):
-        if lastword[-1] != ':':
-            if lastword and lastword[-1] != " ":
+        if lastword and lastword[-1] != ':':
+            if lastword[-1] != " ":
                 pre += " \\"
             else:
                 pre += '\\'
