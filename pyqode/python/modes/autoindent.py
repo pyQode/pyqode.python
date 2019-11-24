@@ -268,8 +268,12 @@ class PyAutoIndentMode(AutoIndentMode):
         elif next_close and prev_char != ',':
             post = open_line_indent * self._indent_char
         elif tc.block().blockNumber() == open_line:
-            post = open_symbol_col * self._indent_char
-
+            if self._indent_char == '\t':
+                # When using tab indents, we indent by one level
+                post = (open_line_indent + 1) * self._indent_char
+            else:
+                # When using space indents, we indent to the opening paren
+                post = open_symbol_col * self._indent_char
         # adapt indent if cursor on closing line and next line have same
         # indent -> PEP8 compliance
         if close_line and close_col:
