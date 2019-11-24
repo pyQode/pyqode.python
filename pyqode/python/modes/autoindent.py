@@ -46,8 +46,11 @@ class PyAutoIndentMode(AutoIndentMode):
         else:
             lastword = self._get_last_word(cursor)
             lastwordu = self._get_last_word_unstripped(cursor)
+            # A * can als be a wildcard import, so we make an exception for
+            # those
             end_with_op = fullline.endswith(
-                ('+', '-', '*', '/', '=', ' and', ' or', '%'))
+                ('+', '-', '*', '/', '=', ' and', ' or', '%')
+            ) and not fullline.endswith('import *')
             in_string_def, char = self._is_in_string_def(fullline, column)
             if in_string_def:
                 post, pre = self._handle_indent_inside_string(

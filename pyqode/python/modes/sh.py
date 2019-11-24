@@ -173,7 +173,7 @@ class PythonSH(BaseSH):
                         self.setFormat(start, end - start,
                                        self.formats["string"])
                         state = self.INSIDE_DQSTRING
-                    elif key == 'builtin':
+                    elif key in ('builtin', 'builtin_fct'):
                         # trick to highlight __init__, __add__ and so on with
                         # builtin color
                         self.setFormat(start, end - start,
