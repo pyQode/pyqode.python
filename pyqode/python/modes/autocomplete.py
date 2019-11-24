@@ -13,6 +13,12 @@ class PyAutoCompleteMode(AutoCompleteMode):
         - function completion adds "):" to the function definition.
         - method completion adds "self):" to the method definition.
     """
+
+    def __init__(self):
+
+        super(PyAutoCompleteMode, self).__init__()
+        self.AVOID_DUPLICATES = ')', ']', '}', ':'
+
     def _in_method_call(self):
         helper = TextHelper(self.editor)
         line_nbr = helper.current_line_nbr() - 1
