@@ -31,7 +31,7 @@ class PyCodeEditBase(api.CodeEdit):
         super(PyCodeEditBase, self).__init__(parent, create_default_actions)
         self.file = pymanagers.PyFileManager(self)
 
-    def setPlainText(self, txt, mimetype='text/x-python', encoding='utf-8'):
+    def setPlainText(self, txt, mime_type='text/x-python', encoding='utf-8'):
         """
         Extends QCodeEdit.setPlainText to allow user to setPlainText without
         mimetype (since the python syntax highlighter does not use it).
@@ -41,7 +41,7 @@ class PyCodeEditBase(api.CodeEdit):
             self.syntax_highlighter.import_statements[:] = []
         except AttributeError:
             pass
-        super(PyCodeEditBase, self).setPlainText(txt, mimetype, encoding)
+        super(PyCodeEditBase, self).setPlainText(txt, mime_type, encoding)
 
 
 class PyCodeEdit(PyCodeEditBase):

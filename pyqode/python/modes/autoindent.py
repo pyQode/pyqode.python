@@ -46,8 +46,11 @@ class PyAutoIndentMode(AutoIndentMode):
         else:
             lastword = self._get_last_word(cursor)
             lastwordu = self._get_last_word_unstripped(cursor)
+            # A * can als be a wildcard import, so we make an exception for
+            # those
             end_with_op = fullline.endswith(
-                ('+', '-', '*', '/', '=', ' and', ' or', '%'))
+                ('+', '-', '*', '/', '=', ' and', ' or', '%')
+            ) and not fullline.endswith('import *')
             in_string_def, char = self._is_in_string_def(fullline, column)
             if in_string_def:
                 post, pre = self._handle_indent_inside_string(
@@ -169,6 +172,8 @@ class PyAutoIndentMode(AutoIndentMode):
         else:
             ol, oc = self.editor.modes.get(SymbolMatcherMode).symbol_pos(
                 tc, character, char_type)
+            if ol is None:
+                return 0
             line = self._helper.line_text(ol)
             return len(line) - len(line.lstrip())
 
@@ -222,7 +227,6 @@ class PyAutoIndentMode(AutoIndentMode):
         mapping = {'(': PAREN, '[': SQUARE, '{': BRACE}
         tc2 = QTextCursor(tc)
         tc2.setPosition(pos)
-        import sys
         ol, oc = self.editor.modes.get(SymbolMatcherMode).symbol_pos(
             tc2, OPEN, mapping[char])
         cl, cc = self.editor.modes.get(SymbolMatcherMode).symbol_pos(
@@ -264,8 +268,12 @@ class PyAutoIndentMode(AutoIndentMode):
         elif next_close and prev_char != ',':
             post = open_line_indent * self._indent_char
         elif tc.block().blockNumber() == open_line:
-            post = open_symbol_col * self._indent_char
-
+            if self._indent_char == '\t':
+                # When using tab indents, we indent by one level
+                post = (open_line_indent + 1) * self._indent_char
+            else:
+                # When using space indents, we indent to the opening paren
+                post = open_symbol_col * self._indent_char
         # adapt indent if cursor on closing line and next line have same
         # indent -> PEP8 compliance
         if close_line and close_col:
@@ -361,8 +369,8 @@ class PyAutoIndentMode(AutoIndentMode):
         return post
 
     def _handle_indent_in_statement(self, fullline, lastword, post, pre):
-        if lastword[-1] != ':':
-            if lastword and lastword[-1] != " ":
+        if lastword and lastword[-1] != ':':
+            if lastword[-1] != " ":
                 pre += " \\"
             else:
                 pre += '\\'
