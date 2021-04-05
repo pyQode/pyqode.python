@@ -39,14 +39,14 @@ def calltips(request_data):
     encoding = 'utf-8'
     # use jedi to get call signatures
     try:
-        script = jedi.Script(code, line, column, path, encoding)
+        script = jedi.Script(code=code, path=path)
     except ValueError:
         # Is triggered when an the position is invalid, for example if the
         # column is larger or equal to the line length. This may be due to a
         # bug elsewhere in PyQode, but this at least suppresses the error
         # message, and does not seem to hve any adverse side effects.
         return []
-    signatures = script.call_signatures()
+    signatures = script.get_signatures(line=line, column=column)
     for sig in signatures:
         results = (str(sig.module_name), str(sig.name),
                    [p.description for p in sig.params], sig.index,
@@ -67,9 +67,9 @@ def goto_assignments(request_data):
     path = request_data['path']
     # encoding = request_data['encoding']
     encoding = 'utf-8'
-    script = jedi.Script(code, line, column, path, encoding)
+    script = jedi.Script(code=code, path=path)
     try:
-        definitions = script.goto_assignments()
+        definitions = script.goto(line=line, column=column)
     except jedi.NotFoundError:
         pass
     else:
@@ -116,8 +116,7 @@ def defined_names(request_data):
     global _old_definitions
     ret_val = []
     path = request_data['path']
-    toplvl_definitions = jedi.names(
-        request_data['code'], path, 'utf-8')
+    toplvl_definitions = jedi.Script(code=request_data['code'], path=path).get_names()
     for d in toplvl_definitions:
         definition = _extract_def(d, path)
         if d.type != 'import':
@@ -136,9 +135,9 @@ def quick_doc(request_data):
     path = request_data['path']
     # encoding = 'utf-8'
     encoding = 'utf-8'
-    script = jedi.Script(code, line, column, path, encoding)
+    script = jedi.Script(code=code, path=path)
     try:
-        definitions = script.goto_definitions()
+        definitions = script.infer(line=line, column=column)
     except jedi.NotFoundError:
         return []
     else:
@@ -319,8 +318,8 @@ class JediCompletionProvider:
         """
         ret_val = []
         try:
-            script = jedi.Script(code, line + 1, column, path, encoding)
-            completions = script.completions()
+            script = jedi.Script(code=code, path=path)
+            completions = script.complete(line=line + 1, column=column)
             print('completions: %r' % completions)
         except RuntimeError:
             completions = []
