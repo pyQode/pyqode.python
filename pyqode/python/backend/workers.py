@@ -176,7 +176,6 @@ def run_pep8(request_data):
 
 PYFLAKES_ERROR_MESSAGES = [
     messages.DoctestSyntaxError,
-    messages.ReturnWithArgsInsideGenerator,
     messages.UndefinedExport,
     messages.UndefinedName,
     messages.UndefinedLocal
