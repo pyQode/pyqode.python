@@ -5,7 +5,6 @@ This setup script packages pyqode.python
 """
 import sys
 from setuptools import setup, find_packages
-from pyqode.python import __version__
 from setuptools.command.test import test as TestCommand
 
 #
@@ -19,6 +18,11 @@ try:
     cmdclass = {'build_ui': build_ui}
 except ImportError:
     cmdclass = {}
+
+
+version = {}
+with open("pyqode/python/__init__.py") as f:
+    exec(f.read(), version)
 
 
 class PyTest(TestCommand):
@@ -66,7 +70,7 @@ requirements = [
 setup(
     name='pyqode.python',
     namespace_packages=['pyqode'],
-    version=__version__,
+    version=version['__version__'],
     packages=[p for p in find_packages() if 'test' not in p],
     keywords=["CodeEdit PySide PyQt code editor widget python"],
     package_dir={'pyqode': 'pyqode'},
