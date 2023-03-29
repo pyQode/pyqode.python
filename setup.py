@@ -5,7 +5,6 @@ This setup script packages pyqode.python
 """
 import sys
 from setuptools import setup, find_packages
-from pyqode.python import __version__
 from setuptools.command.test import test as TestCommand
 
 #
@@ -19,6 +18,11 @@ try:
     cmdclass = {'build_ui': build_ui}
 except ImportError:
     cmdclass = {}
+
+
+version = {}
+with open("pyqode/python/__init__.py") as f:
+    exec(f.read(), version)
 
 
 class PyTest(TestCommand):
@@ -66,7 +70,7 @@ requirements = [
 setup(
     name='pyqode.python',
     namespace_packages=['pyqode'],
-    version=__version__,
+    version=version['__version__'],
     packages=[p for p in find_packages() if 'test' not in p],
     keywords=["CodeEdit PySide PyQt code editor widget python"],
     package_dir={'pyqode': 'pyqode'},
@@ -76,6 +80,7 @@ setup(
     author_email='colin.duquesnoy@gmail.com',
     description=DESCRIPTION,
     long_description=readme(),
+    python_requires='~=3.2',
     install_requires=requirements,
     tests_require=['pytest-cov', 'pytest-pep8', 'pytest'],
     entry_points={'pyqode_plugins':
@@ -91,13 +96,15 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Operating System :: Microsoft :: Windows',
         'Operating System :: POSIX :: Linux',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3.2',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
         'Topic :: Software Development :: Libraries :: Application Frameworks',
         'Topic :: Software Development :: Widget Sets',
         'Topic :: Text Editors :: Integrated Development Environments (IDE)'
